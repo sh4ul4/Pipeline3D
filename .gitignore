@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+
+# Additional Files
+Release
+Debug
+out
+SDL
+.vs
+CMakeSettings.json
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CMakeFiles
+RelWithDebInfo
