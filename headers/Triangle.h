@@ -12,6 +12,7 @@ public:
 	std::vector<Triangle> tmp;
 	Vertex a, b, c;
 	Point2 a2, b2, c2;
+	float wa, wb, wc;
 	Bitmap* bmp = nullptr;
 	Point2 bmpA;
 	Point2 bmpB;
@@ -219,7 +220,7 @@ public:
 		}
 
 		// far-clipping + 2D points calculation
-		float wa, wb, wc;
+		
 		if ((distanceToCamera > Camera::getCurrent().far) == false) {
 			a2 = Camera::getCurrent().get2D({ a.x,a.y,a.z,1 }, farclipA, wa, window);
 			b2 = Camera::getCurrent().get2D({ b.x,b.y,b.z,1 }, farclipB, wb, window);
@@ -400,9 +401,9 @@ private:
 		TextureManager::transformv3(src,
 			a2, b2, c2,
 			bmpA,bmpB,bmpC,//{ src.surface->w,0 }, { 0,src.surface->h },{src.surface->w,src.surface->h}, // points on bitmap
-			a.distance(Camera::getCurrent().getCameraPosition()),
-			b.distance(Camera::getCurrent().getCameraPosition()),
-			c.distance(Camera::getCurrent().getCameraPosition()),
+			wa,
+			wb,
+			wc,
 			dst,
 			light);
 	}

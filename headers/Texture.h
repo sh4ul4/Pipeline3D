@@ -306,10 +306,11 @@ public:
 	}
 
 	// fill triangle with given texture
+	// fill triangle with given texture
 	static inline void transformv3(const Bitmap& bmp,
 		const Point2& dsta, const Point2& dstb, const Point2& dstc,
 		const Point2& srca, const Point2& srcb, const Point2& srcc,
-		float srcadepth, float srcbdepth, float srccdepth,
+		const float& srcadepth, const float& srcbdepth, const float& srccdepth,
 		GlobalTexture& globalTexture, const float& light) {
 		if (bmp.surface == nullptr)return;
 		const Uint32* const srcpixels = (Uint32*)bmp.surface->pixels;
@@ -321,12 +322,10 @@ public:
 		std::unordered_map<int/*y*/, Point2/*x-min & x-max*/> contour;
 		//contour.
 		ScanLine(dsta.x, dsta.y, dstb.x, dstb.y, contour, dsth, dstw);
-		ScanLine(dstc.x, dstc.y, dstb.x, dstb.y, contour,dsth, dstw);
+		ScanLine(dstc.x, dstc.y, dstb.x, dstb.y, contour, dsth, dstw);
 		ScanLine(dsta.x, dsta.y, dstc.x, dstc.y, contour, dsth, dstw);
 		////////////////////////////////////////////
-		/*srcadepth = 1 / srcadepth;
-		srcbdepth = 1 / srcbdepth;
-		srccdepth = 1 / srccdepth;*/
+
 		////////////////////////////////////////////
 		// pre calculate values
 		float bymincy = dstb.y - dstc.y;
@@ -339,14 +338,6 @@ public:
 		cxminbx /= divisor;
 		cyminay /= divisor;
 		axmincx /= divisor;
-		//////////////////////////
-		/*Point2 sta(0, 0);
-		Point2 stb(1, 0);
-		Point2 stc(0, 1);
-		sta.x /= srcadepth; sta.y /= srcadepth;
-		stb.x /= srcbdepth; stb.y /= srcbdepth;
-		stc.x /= srccdepth; stc.y /= srccdepth;*/
-		//////////////////////////
 		//const float denominator1 = 
 		//const float denominator1 =
 		// iterate through lines changing y
@@ -360,48 +351,21 @@ public:
 				// pre calculate some other values
 				const float pxmincx = i - dstc.x;
 				const float pymincy = it.first - dstc.y;
-				//////////////////
-				/*Vertex v0(srca.x, srca.y, srcadepth);
-				Vertex v1(srcb.x, srcb.y, srcbdepth);
-				Vertex v2(srcc.x, srcc.y, srccdepth);
-				Vertex p(i, it.first, 0);
-				float area = edgeFunction(v0, v1, v2);
-				float w0 = edgeFunction(v1, v2, p);
-				float w1 = edgeFunction(v2, v0, p);
-				float w2 = edgeFunction(v0, v1, p);
-				w0 /= area;
-				w1 /= area;
-				w2 /= area;*/
-				//////////////////
 				// calculate barycentric coordinates
-				float baryA = bymincy* pxmincx + cxminbx * pymincy;
-				float baryB = cyminay* pxmincx + axmincx * pymincy;
-				float baryC = 1.0f - baryA - baryB;
+				const float baryA = bymincy * pxmincx + cxminbx * pymincy;
+				const float baryB = cyminay * pxmincx + axmincx * pymincy;
+				const float baryC = 1.0f - baryA - baryB;
 				// get new pixel depth
 				const float pixdepth = baryA * srcadepth + baryB * srcbdepth + baryC * srccdepth;
 				// calculate point coordinates (with perspective corrected barycentric coordinates)
 				Point2 res = { srca.x * baryA + srcb.x * baryB + srcc.x * baryC , srca.y * baryA + srcb.y * baryB + srcc.y * baryC };
-				//res = res / pixdepth;
-				////////////////
-				/*Vertex v0(srca.x, srca.y, srcadepth);
-				Vertex v1(srcb.x, srcb.y, srcbdepth);
-				Vertex v2(srcc.x, srcc.y, srccdepth);
-				Vertex p(res.x, res.y, 0);
-				float area = edgeFunction(v0, v1, v2);
-				float w0 = edgeFunction(v1, v2, p);
-				float w1 = edgeFunction(v2, v0, p);
-				float w2 = edgeFunction(v0, v1, p);
-				w0 /= area;
-				w1 /= area;
-				w2 /= area;
-				//float s = baryA * sta[0] + baryB * stb[0] + baryC * stc[0];
-				//float t = baryA * sta[1] + baryB * stb[1] + baryC * stc[1];
-				float z = 1 / (w0 * srcadepth + w1 * srcbdepth + w2 * srccdepth);
-				//s *= z, t *= z;
-				res.x /= z, res.y /= z;*/
 				////////////////
 				//float z = 1 / (baryA / srcadepth + baryB / srcbdepth + baryC * srccdepth);
-				//res = res * z;
+				//res = res / z;
+				float w_ = (1 / srcadepth) * baryA + (1 / srcbdepth) * baryB + (1 / srccdepth) * baryC;
+				float u_ = (srca.x / srcadepth) * baryA + (srcb.x / srcbdepth) * baryB + (srcc.x / srccdepth) * baryC;
+				float v_ = (srca.y / srcadepth) * baryA + (srcb.y / srcbdepth) * baryB + (srcc.y / srccdepth) * baryC;
+				res = {u_/w_,v_ / w_ };
 				////////////////
 				/*Point2F resf = { baryA / srcadepth * srca.x + baryB / srcbdepth * srcb.x + baryC / srccdepth * srcc.x ,
 					 baryA / srcadepth * srca.y + baryB / srcbdepth * srcb.y + baryC / srccdepth * srcc.y };
@@ -442,7 +406,7 @@ public:
 				const Uint8 Bres = Bprev + An * (B - Bprev);
 				const Uint8 Ares = Aprev + A - Aprev * A;
 				globalTexture[index] = (concat(light, Bres) << 24) + (concat(light, Gres) << 16) + (concat(light, Rres) << 8) + (Ares);
-				//globalTexture[index] = ((int)pixdepth%255 << 24) + ((int)pixdepth % 255 << 16) + ((int)pixdepth % 255 << 8) + (Ares);
+				//globalTexture[index] = ((Uint8)pixdepth%255 << 24) + ((Uint8)pixdepth % 255 << 16) + ((Uint8)pixdepth % 255 << 8) + (Ares);
 			}
 		}
 		//const char* error_f = SDL_GetError();
