@@ -356,7 +356,7 @@ public:
 				const float baryB = cyminay * pxmincx + axmincx * pymincy;
 				const float baryC = 1.0f - baryA - baryB;
 				// get new pixel depth
-				const float pixdepth = baryA * srcadepth + baryB * srcbdepth + baryC * srccdepth;
+				//const float pixdepth = baryA * srcadepth + baryB * srcbdepth + baryC * srccdepth;
 				// calculate point coordinates (with perspective corrected barycentric coordinates)
 				Point2 res = { srca.x * baryA + srcb.x * baryB + srcc.x * baryC , srca.y * baryA + srcb.y * baryB + srcc.y * baryC };
 				////////////////
@@ -366,6 +366,7 @@ public:
 				float u_ = (srca.x / srcadepth) * baryA + (srcb.x / srcbdepth) * baryB + (srcc.x / srccdepth) * baryC;
 				float v_ = (srca.y / srcadepth) * baryA + (srcb.y / srcbdepth) * baryB + (srcc.y / srccdepth) * baryC;
 				res = {u_/w_,v_ / w_ };
+				const float pixdepth = 1/w_;
 				////////////////
 				/*Point2F resf = { baryA / srcadepth * srca.x + baryB / srcbdepth * srcb.x + baryC / srccdepth * srcc.x ,
 					 baryA / srcadepth * srca.y + baryB / srcbdepth * srcb.y + baryC / srccdepth * srcc.y };

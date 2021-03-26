@@ -421,9 +421,9 @@ private:
 			b.distance(Camera::getCurrent().getCameraPosition()),
 			c.distance(Camera::getCurrent().getCameraPosition()), dst);*/
 		TextureManager::transformv4(color, a2, b2, c2,
-			a.distance(Camera::getCurrent().getCameraPosition()),
-			b.distance(Camera::getCurrent().getCameraPosition()),
-			c.distance(Camera::getCurrent().getCameraPosition()),
+			wa,
+			wb,
+			wc,
 			dst,light);
 	}
 };
