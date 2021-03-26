@@ -1,3 +1,6 @@
+/**
+ * @class GlobalTexture pour contenir et mettre à jour la frame en bout de Pipeline
+ */
 class GlobalTexture {
 
 private:
