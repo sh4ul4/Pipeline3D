@@ -31,8 +31,9 @@ public:
 	void addSphere(const Sphere& sphere) {
 		shapes.emplace_back(new Sphere(sphere));
 	}
-	void addCube(const Vertex& center, const double& width, Bitmap* bmp) {
-		shapes.emplace_back(new Cube(center, width, bmp));
+	void addCube(const Vertex& center, const double& width, Bitmap* bmp = nullptr) {
+		if(bmp == nullptr) shapes.emplace_back(new Cube(center, width));
+		else shapes.emplace_back(new Cube(center, width, bmp));
 	}
 	void addCube(const Cube& cube) {
 		shapes.emplace_back(new Cube(cube));

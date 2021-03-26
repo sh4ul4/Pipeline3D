@@ -398,12 +398,10 @@ private:
 	}
 
 	void renderTexture(const Bitmap& src, GlobalTexture& dst, const float& light) const {
-		TextureManager::transformv3(src,
+		TextureManager::transform(src,
 			a2, b2, c2,
-			bmpA,bmpB,bmpC,//{ src.surface->w,0 }, { 0,src.surface->h },{src.surface->w,src.surface->h}, // points on bitmap
-			wa,
-			wb,
-			wc,
+			bmpA,bmpB,bmpC,
+			wa, wb, wc,
 			dst,
 			light);
 	}
@@ -420,10 +418,8 @@ private:
 			a.distance(Camera::getCurrent().getCameraPosition()),
 			b.distance(Camera::getCurrent().getCameraPosition()),
 			c.distance(Camera::getCurrent().getCameraPosition()), dst);*/
-		TextureManager::transformv4(color, a2, b2, c2,
-			wa,
-			wb,
-			wc,
+		TextureManager::transform(color, a2, b2, c2,
+			wa, wb, wc,
 			dst,light);
 	}
 };

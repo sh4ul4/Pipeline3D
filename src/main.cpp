@@ -65,8 +65,8 @@ int main(int argc, char* argv[]) {
 	manager.addCube({ 6,6,18 }, 12, &t1); // ANGLE
 
 	// Frigo
-	manager.addCube({ 54,6,6 }, 12, &t5);
-	manager.addCube({ 54,18,6 }, 12, &t5);
+	manager.addCube({ 54,6,6 }, 12);
+	manager.addCube({ 54,18,6 }, 12);
 
 	// petit meuble avec plante (lol)
 	manager.addCube({ 74,6,6 }, 12, &t1);

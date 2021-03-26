@@ -160,7 +160,7 @@ public:
 
 class Cube : public Shape {
 public:
-	Cube(const Vertex& center, const double& width, Bitmap* bmp = nullptr) :Shape({}, center, bmp), width(width) {
+	Cube(const Vertex& center, const double& width, Bitmap* bmp) :Shape({}, center, bmp), width(width) {
 		const int half_width = static_cast<int>(width) / 2;
 		// set 8 points
 		const Vertex a(center.x + half_width, center.y - half_width, center.z - half_width);
@@ -195,6 +195,46 @@ public:
 		triangles.push_back(Triangle(a,f,e, blue, bmp, { 0,bmp->surface->h }, { bmp->surface->w,0 }, { 0,bmp->surface->h }));
 		triangles.back().color = maroon; triangles.back().fillIt(true);
 		triangles.push_back(Triangle(a,f,b, blue, bmp, { 0,bmp->surface->h }, { bmp->surface->w,0 }, { 0,bmp->surface->h }));
+		triangles.back().color = olive; triangles.back().fillIt(true);
+		for (int i = 0; i < static_cast<int>(triangles.size()); i++) {
+			triangles[i].fillIt(true);
+		}
+	}
+	Cube(const Vertex& center, const double& width) :Shape({}, center, bmp), width(width) {
+		const int half_width = static_cast<int>(width) / 2;
+		// set 8 points
+		const Vertex a(center.x + half_width, center.y - half_width, center.z - half_width);
+		const Vertex b(center.x + half_width, center.y + half_width, center.z - half_width);
+		const Vertex c(center.x + half_width, center.y + half_width, center.z + half_width);
+		const Vertex d(center.x + half_width, center.y - half_width, center.z + half_width);
+		const Vertex e(center.x - half_width, center.y - half_width, center.z - half_width);
+		const Vertex f(center.x - half_width, center.y + half_width, center.z - half_width);
+		const Vertex g(center.x - half_width, center.y + half_width, center.z + half_width);
+		const Vertex h(center.x - half_width, center.y - half_width, center.z + half_width);
+		// set 12 triangles
+		triangles.push_back(Triangle(a, b, d, blue));
+		triangles.back().color = blue; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(c, b, d, blue));
+		triangles.back().color = red; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(b, g, c, blue));
+		triangles.back().color = green; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(b, g, f, blue));
+		triangles.back().color = white; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(d, g, c, blue));
+		triangles.back().color = black; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(d, g, h, blue));
+		triangles.back().color = yellow; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(e, g, h, blue));
+		triangles.back().color = cyan; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(e, g, f, blue));
+		triangles.back().color = gray; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(a, h, d, blue));
+		triangles.back().color = dark_gray; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(a, h, e, blue));
+		triangles.back().color = lime; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(a, f, e, blue));
+		triangles.back().color = maroon; triangles.back().fillIt(true);
+		triangles.push_back(Triangle(a, f, b, blue));
 		triangles.back().color = olive; triangles.back().fillIt(true);
 		for (int i = 0; i < static_cast<int>(triangles.size()); i++) {
 			triangles[i].fillIt(true);
