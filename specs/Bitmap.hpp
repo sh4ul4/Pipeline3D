@@ -3,7 +3,6 @@
  */ 
 
 /** @brief class Bitmap
- *
  * La classe Bitmap permet de contenir les données d'une bitmap graphique et de simplifier sa création.
  */
 class Bitmap{
