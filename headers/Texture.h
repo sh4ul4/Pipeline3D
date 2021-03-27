@@ -335,7 +335,7 @@ public:
 	static inline void rasterize(const Bitmap& bmp,
 		const Point2& triA, const Point2& triB, const Point2& triC,
 		const Point2& bmpA, const Point2& bmpB, const Point2& bmpC,
-		float depthA, float depthB, float depthC,
+		const float& depthA, const float& depthB, const float& depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		// setup initial values
 		if (bmp.surface == nullptr)return;
