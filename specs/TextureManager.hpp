@@ -21,7 +21,7 @@ public:
 	// rasteriser et colorier un triangle avec une couleur unique tout en respectant la perspective
 	static inline void rasterize(const Color& color,
 		const Point2& triA, const Point2& triB, const Point2& triC,
-		const float& depthA, const float& depthB, const float& depthC,
+		float depthA, float depthB, float depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		// extraire les informations en variables locales avant la boucle par soucis d'optimisation
 		// calculer la bounding box du triangle dans la frame / clipping
@@ -42,7 +42,7 @@ public:
 	static inline void rasterize(const Bitmap& bmp,
 		const Point2& triA, const Point2& triB, const Point2& triC,
 		const Point2& bmpA, const Point2& bmpB, const Point2& bmpC,
-		const float& srcadepth, const float& srcbdepth, const float& srccdepth,
+		const float& depthA, const float& depthB, const float& depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		// extraire les informations en variables locales avant la boucle par soucis d'optimisation
 		// calculer la bounding box du triangle dans la frame / clipping
