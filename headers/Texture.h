@@ -254,7 +254,7 @@ public:
 	// fill triangle with single color
 	static inline void rasterize(const Color& color,
 		const Point2& triA, const Point2& triB, const Point2& triC,
-		const float& depthA, const float& depthB, const float& depthC,
+		float depthA, float depthB, float depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		const int dstw = globalTexture.getWidth();
 		const int dsth = globalTexture.getHeight();
@@ -278,9 +278,9 @@ public:
 		cyminay /= divisor;
 		axmincx /= divisor;
 
-		srcadepth = 1 / srcadepth;
-		srcbdepth = 1 / srcbdepth;
-		srccdepth = 1 / srccdepth;
+		depthA = 1 / depthA;
+		depthB = 1 / depthB;
+		depthC = 1 / depthC;
 
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
@@ -298,7 +298,7 @@ public:
 					const float baryB = cyminay * pxmincx + axmincx * pymincy;
 					const float baryC = 1.0f - baryA - baryB;
 					// add perspective correction
-					float w_ = (1 / depthA) * baryA + (1 / depthB) * baryB + (1 / depthC) * baryC;
+					float w_ = depthA * baryA + depthB * baryB + depthC * baryC;
 					// set new-pixel depth
 					const float pixdepth = 1 / w_;
 					// define pos in bitmap
@@ -335,7 +335,7 @@ public:
 	static inline void rasterize(const Bitmap& bmp,
 		const Point2& triA, const Point2& triB, const Point2& triC,
 		const Point2& bmpA, const Point2& bmpB, const Point2& bmpC,
-		const float& srcadepth, const float& srcbdepth, const float& srccdepth,
+		float depthA, float depthB, float depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		// setup initial values
 		if (bmp.surface == nullptr)return;
@@ -364,10 +364,6 @@ public:
 		cyminay /= divisor;
 		axmincx /= divisor;
 
-		srcadepth = 1 / srcadepth;
-		srcbdepth = 1 / srcbdepth;
-		srccdepth = 1 / srccdepth;
-
 		// pixel mapping loop
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
@@ -386,9 +382,9 @@ public:
 					const float baryB = cyminay * pxmincx + axmincx * pymincy;
 					const float baryC = 1.0f - baryA - baryB;
 					// add perspective correction
-					float w_ = (1 / srcadepth) * baryA + (1 / srcbdepth) * baryB + (1 / srccdepth) * baryC;
-					float u_ = (bmpA.x / srcadepth) * baryA + (bmpB.x / srcbdepth) * baryB + (bmpC.x / srccdepth) * baryC;
-					float v_ = (bmpA.y / srcadepth) * baryA + (bmpB.y / srcbdepth) * baryB + (bmpC.y / srccdepth) * baryC;
+					float w_ = (1 / depthA) * baryA + (1 / depthB) * baryB + (1 / depthC) * baryC;
+					float u_ = (bmpA.x / depthA) * baryA + (bmpB.x / depthB) * baryB + (bmpC.x / depthC) * baryC;
+					float v_ = (bmpA.y / depthA) * baryA + (bmpB.y / depthB) * baryB + (bmpC.y / depthC) * baryC;
 					// set position of source-pixel and new-pixel depth
 					const Point2 res = { u_ / w_,v_ / w_ };
 					const float pixdepth = 1 / w_;
