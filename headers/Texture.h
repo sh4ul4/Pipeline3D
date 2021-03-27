@@ -236,7 +236,8 @@ public:
 };
 
 class TextureManager {
-public:
+	TextureManager() = delete;
+private:
 
 	static inline Uint8 concat(const float& a, const Uint8& b) {
 		const double res = a + b;
@@ -249,27 +250,28 @@ public:
 		return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 	}
 
+public:
 	// fill triangle with single color
-	static inline void transform(const Color& color,
-		const Point2& dsta, const Point2& dstb, const Point2& dstc,
-		const float& srcadepth, const float& srcbdepth, const float& srccdepth,
+	static inline void rasterize(const Color& color,
+		const Point2& triA, const Point2& triB, const Point2& triC,
+		const float& depthA, const float& depthB, const float& depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		const int dstw = globalTexture.getWidth();
 		const int dsth = globalTexture.getHeight();
 		const Uint8 R = color.r, G = color.g, B = color.b, A = color.a;
 		// bounding box + clipping
-		Point2 min(Min(dsta.x, Min(dstb.x, dstc.x)), Min(dsta.y, Min(dstb.y, dstc.y)));
-		Point2 max(Max(dsta.x, Max(dstb.x, dstc.x)), Max(dsta.y, Max(dstb.y, dstc.y)));
+		Point2 min(Min(triA.x, Min(triB.x, triC.x)), Min(triA.y, Min(triB.y, triC.y)));
+		Point2 max(Max(triA.x, Max(triB.x, triC.x)), Max(triA.y, Max(triB.y, triC.y)));
 		min.x = Max(min.x, 0);
 		min.y = Max(min.y, 0);
 		max.x = Min(max.x, dstw - 1);
 		max.y = Min(max.y, dsth - 1);
 		// pre calculate values
-		float bymincy = dstb.y - dstc.y;
-		float cxminbx = dstc.x - dstb.x;
-		float axmincx = dsta.x - dstc.x;
-		float aymincy = dsta.y - dstc.y;
-		float cyminay = dstc.y - dsta.y;
+		float bymincy = triB.y - triC.y;
+		float cxminbx = triC.x - triB.x;
+		float axmincx = triA.x - triC.x;
+		float aymincy = triA.y - triC.y;
+		float cyminay = triC.y - triA.y;
 		float divisor = bymincy * axmincx + cxminbx * aymincy;
 		bymincy /= divisor;
 		cxminbx /= divisor;
@@ -279,20 +281,19 @@ public:
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
 				const Point2 p(x, y);
-				int bary0 = sign(dstb, dstc, p);
-				int bary1 = sign(dstc, dsta, p);
-				int bary2 = sign(dsta, dstb, p);
+				int bary0 = sign(triB, triC, p);
+				int bary1 = sign(triC, triA, p);
+				int bary2 = sign(triA, triB, p);
 				if (!(((bary0 < 0) || (bary1 < 0) || (bary2 < 0)) && ((bary0 > 0) || (bary1 > 0) || (bary2 > 0)))) {
-					// get new pixel depth
 					// pre calculate some other values
-					const float pxmincx = x - dstc.x;
-					const float pymincy = y - dstc.y;
+					const float pxmincx = x - triC.x;
+					const float pymincy = y - triC.y;
 					// calculate barycentric coordinates
 					const float baryA = bymincy * pxmincx + cxminbx * pymincy;
 					const float baryB = cyminay * pxmincx + axmincx * pymincy;
 					const float baryC = 1.0f - baryA - baryB;
 					// add perspective correction
-					float w_ = (1 / srcadepth) * baryA + (1 / srcbdepth) * baryB + (1 / srccdepth) * baryC;
+					float w_ = (1 / depthA) * baryA + (1 / depthB) * baryB + (1 / depthC) * baryC;
 					// set new-pixel depth
 					const float pixdepth = 1 / w_;
 					// define pos in bitmap
@@ -326,9 +327,9 @@ public:
 		}
 	}
 
-	static inline void transform(const Bitmap& bmp,
-		const Point2& dsta, const Point2& dstb, const Point2& dstc,
-		const Point2& srca, const Point2& srcb, const Point2& srcc,
+	static inline void rasterize(const Bitmap& bmp,
+		const Point2& triA, const Point2& triB, const Point2& triC,
+		const Point2& bmpA, const Point2& bmpB, const Point2& bmpC,
 		const float& srcadepth, const float& srcbdepth, const float& srccdepth,
 		GlobalTexture& globalTexture, const float& light) {
 		// setup initial values
@@ -340,18 +341,18 @@ public:
 		const int dsth = globalTexture.getHeight();
 		const SDL_PixelFormat* srcFormat = bmp.surface->format;
 		// bounding box + clipping
-		Point2 min(Min(dsta.x, Min(dstb.x, dstc.x)), Min(dsta.y, Min(dstb.y, dstc.y)));
-		Point2 max(Max(dsta.x, Max(dstb.x, dstc.x)), Max(dsta.y, Max(dstb.y, dstc.y)));
+		Point2 min(Min(triA.x, Min(triB.x, triC.x)), Min(triA.y, Min(triB.y, triC.y)));
+		Point2 max(Max(triA.x, Max(triB.x, triC.x)), Max(triA.y, Max(triB.y, triC.y)));
 		min.x = Max(min.x, 0);
 		min.y = Max(min.y, 0);
 		max.x = Min(max.x, dstw - 1);
 		max.y = Min(max.y, dsth - 1);
 		// pre calculate values
-		float bymincy = dstb.y - dstc.y;
-		float cxminbx = dstc.x - dstb.x;
-		float axmincx = dsta.x - dstc.x;
-		float aymincy = dsta.y - dstc.y;
-		float cyminay = dstc.y - dsta.y;
+		float bymincy = triB.y - triC.y;
+		float cxminbx = triC.x - triB.x;
+		float axmincx = triA.x - triC.x;
+		float aymincy = triA.y - triC.y;
+		float cyminay = triC.y - triA.y;
 		float divisor = bymincy * axmincx + cxminbx * aymincy;
 		bymincy /= divisor;
 		cxminbx /= divisor;
@@ -362,22 +363,22 @@ public:
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
 				const Point2 p(x, y);
-				int bary0 = sign(dstb, dstc, p);
-				int bary1 = sign(dstc, dsta, p);
-				int bary2 = sign(dsta, dstb, p);
+				int bary0 = sign(triB, triC, p);
+				int bary1 = sign(triC, triA, p);
+				int bary2 = sign(triA, triB, p);
 				if (!(((bary0 < 0) || (bary1 < 0) || (bary2 < 0)) && ((bary0 > 0) || (bary1 > 0) || (bary2 > 0)))) {
 					// get new pixel depth
 					// pre calculate some other values
-					const float pxmincx = x - dstc.x;
-					const float pymincy = y - dstc.y;
+					const float pxmincx = x - triC.x;
+					const float pymincy = y - triC.y;
 					// calculate barycentric coordinates
 					const float baryA = bymincy * pxmincx + cxminbx * pymincy;
 					const float baryB = cyminay * pxmincx + axmincx * pymincy;
 					const float baryC = 1.0f - baryA - baryB;
 					// add perspective correction
 					float w_ = (1 / srcadepth) * baryA + (1 / srcbdepth) * baryB + (1 / srccdepth) * baryC;
-					float u_ = (srca.x / srcadepth) * baryA + (srcb.x / srcbdepth) * baryB + (srcc.x / srccdepth) * baryC;
-					float v_ = (srca.y / srcadepth) * baryA + (srcb.y / srcbdepth) * baryB + (srcc.y / srccdepth) * baryC;
+					float u_ = (bmpA.x / srcadepth) * baryA + (bmpB.x / srcbdepth) * baryB + (bmpC.x / srccdepth) * baryC;
+					float v_ = (bmpA.y / srcadepth) * baryA + (bmpB.y / srcbdepth) * baryB + (bmpC.y / srccdepth) * baryC;
 					// set position of source-pixel and new-pixel depth
 					const Point2 res = { u_ / w_,v_ / w_ };
 					const float pixdepth = 1 / w_;

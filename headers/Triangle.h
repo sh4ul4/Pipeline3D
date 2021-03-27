@@ -398,7 +398,7 @@ private:
 	}
 
 	void renderTexture(const Bitmap& src, GlobalTexture& dst, const float& light) const {
-		TextureManager::transform(src,
+		TextureManager::rasterize(src,
 			a2, b2, c2,
 			bmpA,bmpB,bmpC,
 			wa, wb, wc,
@@ -418,7 +418,7 @@ private:
 			a.distance(Camera::getCurrent().getCameraPosition()),
 			b.distance(Camera::getCurrent().getCameraPosition()),
 			c.distance(Camera::getCurrent().getCameraPosition()), dst);*/
-		TextureManager::transform(color, a2, b2, c2,
+		TextureManager::rasterize(color, a2, b2, c2,
 			wa, wb, wc,
 			dst,light);
 	}
