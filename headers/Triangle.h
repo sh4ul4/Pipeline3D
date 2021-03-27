@@ -12,7 +12,7 @@ public:
 	std::vector<Triangle> tmp;
 	Vertex a, b, c;
 	Point2 a2, b2, c2;
-	float wa, wb, wc;
+	float wa = 0, wb = 0, wc = 0;
 	Bitmap* bmp = nullptr;
 	Point2 bmpA;
 	Point2 bmpB;

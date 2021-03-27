@@ -240,7 +240,7 @@ class TextureManager {
 private:
 
 	static inline Uint8 concat(const float& a, const Uint8& b) {
-		const double res = a + b;
+		const double res = (double)a + (double)b;
 		if (res >= 255)return 255;
 		if (res <= 0)return 0;
 		return res;
@@ -277,6 +277,11 @@ public:
 		cxminbx /= divisor;
 		cyminay /= divisor;
 		axmincx /= divisor;
+
+		srcadepth = 1 / srcadepth;
+		srcbdepth = 1 / srcbdepth;
+		srccdepth = 1 / srccdepth;
+
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
@@ -345,8 +350,8 @@ public:
 		Point2 max(Max(triA.x, Max(triB.x, triC.x)), Max(triA.y, Max(triB.y, triC.y)));
 		min.x = Max(min.x, 0);
 		min.y = Max(min.y, 0);
-		max.x = Min(max.x, dstw - 1);
-		max.y = Min(max.y, dsth - 1);
+		max.x = Min(max.x, dstw);
+		max.y = Min(max.y, dsth);
 		// pre calculate values
 		float bymincy = triB.y - triC.y;
 		float cxminbx = triC.x - triB.x;
@@ -358,6 +363,11 @@ public:
 		cxminbx /= divisor;
 		cyminay /= divisor;
 		axmincx /= divisor;
+
+		srcadepth = 1 / srcadepth;
+		srcbdepth = 1 / srcbdepth;
+		srccdepth = 1 / srccdepth;
+
 		// pixel mapping loop
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
@@ -390,7 +400,7 @@ public:
 					if (globalTexture.zbuffer[it] < pixdepth) continue;
 					globalTexture.zbuffer[it] = pixdepth;
 					// src pixel position
-					const size_t indexsrc = res.y * srcw + res.x;
+					const size_t indexsrc = (size_t)res.y * (size_t)srcw + (size_t)res.x;
 					// get texture pixel values (dst)
 					const Uint8 A = srcpixels[indexsrc];
 					const Uint8 R = srcpixels[indexsrc] >> 8;

@@ -95,7 +95,7 @@ public:
 			triangles[triangles.size() - 1].fillIt(1);
 		}
 		for (int i = precision; i < ps.size(); i++) {
-			triangles.push_back({ ps[i],ps[(int)(i - 1)],ps[(int)(i - precision)],black, bmp,{ 0,bmp->surface->h }, { bmp->surface->w,0 }, { 0,bmp->surface->h } });
+			triangles.push_back({ ps[i],ps[(size_t)i - 1],ps[(size_t)i - (size_t)precision],black, bmp,{ 0,bmp->surface->h }, { bmp->surface->w,0 }, { 0,bmp->surface->h } });
 			triangles[triangles.size() - 1].fillIt(1);
 		}
 		for (int i = 0; i < ps.size() && i < triangles.size(); i++) {
