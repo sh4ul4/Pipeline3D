@@ -14,24 +14,13 @@ public:
 	Color(const Uint8 R = NULL, const Uint8 G = NULL, const Uint8 B = NULL, const Uint8 A = 255) : r(R), g(G), b(B), a(A) {}
 
 	// conversion vers la classe SDL_Color
-	SDL_Color toSDL_Color() const {
-		SDL_Color color;
-		color.a = a;
-		color.r = r;
-		color.g = g;
-		color.b = b;
-		return color;
-	}
+	SDL_Color toSDL_Color() const;
 
 	// correspondance entre deux couleurs
-	bool operator == (const Color& col) {
-		return (col.r == r && col.g == g && col.b == b && col.a == a);
-	}
+	bool operator == (const Color& col);
 
 	// inégalité entre deux couleurs
-	bool operator != (const Color& col) {
-		return (col.r != r || col.g != g || col.b != b || col.a != a);
-	}
+	bool operator != (const Color& col);
 
 };
 
