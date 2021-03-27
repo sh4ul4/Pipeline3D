@@ -13,23 +13,24 @@ int main(int argc, char* argv[]) {
 	InputEvent inputEvent;
 	ShapeManager manager;
 	Camera cam1({ -100,250,150 }, 60, 0, 0);
+	cam1.setSun({ 10,10,0 });
 	// Camera cam2({ 60,10,50 }, 60, 0, 0);
 	Camera cam2({ 50,50,200 }, 60, 0, 0);
 	//cam2.setSun(Vertex(-2, 10, 3));
 
-	 cam2.addToPath({ -50,50,50 });
-	 cam2.addToPath({ 50,50,-20 });
-	 cam2.addToPath({ -50,-30,50 });
-	 cam2.addToPath({ 50,50,10 });
+	cam2.addToPath({ -50,50,50 });
+	cam2.addToPath({ 50,50,-20 });
+	cam2.addToPath({ -50,-30,50 });
+	cam2.addToPath({ 50,50,10 });
 
 	Render r(window);
 	Bitmap t0("../textures/space.gif");
 	Bitmap t2("../textures/rgba2.png");
 	//Texture t0("../textures/space.jpg", window.getRenderer());
-	Bitmap t5("../textures/space2.jpg");
-	Bitmap t1("../textures/32x32.gif");
+	Bitmap t3("../textures/space2.jpg");
+	Bitmap t5("../textures/32x32.gif");
 	Bitmap t4("../textures/rgba2.png");
-	Bitmap t3("../textures/80s_1.jpg");
+	Bitmap t1("../textures/80s_1.jpg");
 	//Texture t2("../textures/queque.png", window.getRenderer());
 	manager.addCube({ 0,0,0 }, 5, &t1);
 	manager.setSubject(0);

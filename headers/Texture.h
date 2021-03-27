@@ -239,7 +239,7 @@ class TextureManager {
 public:
 
 	static inline Uint8 concat(const float& a, const Uint8& b) {
-		const double res = a + b;
+		const double res = (double)a + (double)b;
 		if (res >= 255)return 255;
 		if (res <= 0)return 0;
 		return res;
@@ -252,7 +252,7 @@ public:
 	// fill triangle with single color
 	static inline void transform(const Color& color,
 		const Point2& dsta, const Point2& dstb, const Point2& dstc,
-		const float& srcadepth, const float& srcbdepth, const float& srccdepth,
+		float srcadepth, float srcbdepth, float srccdepth,
 		GlobalTexture& globalTexture, const float& light) {
 		const int dstw = globalTexture.getWidth();
 		const int dsth = globalTexture.getHeight();
@@ -275,6 +275,11 @@ public:
 		cxminbx /= divisor;
 		cyminay /= divisor;
 		axmincx /= divisor;
+
+		srcadepth = 1 / srcadepth;
+		srcbdepth = 1 / srcbdepth;
+		srccdepth = 1 / srccdepth;
+
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
@@ -292,7 +297,7 @@ public:
 					const float baryB = cyminay * pxmincx + axmincx * pymincy;
 					const float baryC = 1.0f - baryA - baryB;
 					// add perspective correction
-					float w_ = (1 / srcadepth) * baryA + (1 / srcbdepth) * baryB + (1 / srccdepth) * baryC;
+					float w_ = srcadepth * baryA + srcbdepth * baryB + srccdepth * baryC;
 					// set new-pixel depth
 					const float pixdepth = 1 / w_;
 					// define pos in bitmap
@@ -329,7 +334,7 @@ public:
 	static inline void transform(const Bitmap& bmp,
 		const Point2& dsta, const Point2& dstb, const Point2& dstc,
 		const Point2& srca, const Point2& srcb, const Point2& srcc,
-		const float& srcadepth, const float& srcbdepth, const float& srccdepth,
+		float srcadepth, float srcbdepth, float srccdepth,
 		GlobalTexture& globalTexture, const float& light) {
 		// setup initial values
 		if (bmp.surface == nullptr)return;
@@ -344,8 +349,8 @@ public:
 		Point2 max(Max(dsta.x, Max(dstb.x, dstc.x)), Max(dsta.y, Max(dstb.y, dstc.y)));
 		min.x = Max(min.x, 0);
 		min.y = Max(min.y, 0);
-		max.x = Min(max.x, dstw - 1);
-		max.y = Min(max.y, dsth - 1);
+		max.x = Min(max.x, dstw);
+		max.y = Min(max.y, dsth);
 		// pre calculate values
 		float bymincy = dstb.y - dstc.y;
 		float cxminbx = dstc.x - dstb.x;
@@ -357,6 +362,11 @@ public:
 		cxminbx /= divisor;
 		cyminay /= divisor;
 		axmincx /= divisor;
+
+		srcadepth = 1 / srcadepth;
+		srcbdepth = 1 / srcbdepth;
+		srccdepth = 1 / srccdepth;
+
 		// pixel mapping loop
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
@@ -375,9 +385,9 @@ public:
 					const float baryB = cyminay * pxmincx + axmincx * pymincy;
 					const float baryC = 1.0f - baryA - baryB;
 					// add perspective correction
-					float w_ = (1 / srcadepth) * baryA + (1 / srcbdepth) * baryB + (1 / srccdepth) * baryC;
-					float u_ = (srca.x / srcadepth) * baryA + (srcb.x / srcbdepth) * baryB + (srcc.x / srccdepth) * baryC;
-					float v_ = (srca.y / srcadepth) * baryA + (srcb.y / srcbdepth) * baryB + (srcc.y / srccdepth) * baryC;
+					float w_ = srcadepth * baryA + srcbdepth * baryB + srccdepth * baryC;
+					float u_ = (srca.x * srcadepth) * baryA + (srcb.x * srcbdepth) * baryB + (srcc.x * srccdepth) * baryC;
+					float v_ = (srca.y * srcadepth) * baryA + (srcb.y * srcbdepth) * baryB + (srcc.y * srccdepth) * baryC;
 					// set position of source-pixel and new-pixel depth
 					const Point2 res = { u_ / w_,v_ / w_ };
 					const float pixdepth = 1 / w_;
@@ -389,7 +399,7 @@ public:
 					if (globalTexture.zbuffer[it] < pixdepth) continue;
 					globalTexture.zbuffer[it] = pixdepth;
 					// src pixel position
-					const size_t indexsrc = res.y * srcw + res.x;
+					const size_t indexsrc = (size_t)res.y * (size_t)srcw + (size_t)res.x;
 					// get texture pixel values (dst)
 					const Uint8 A = srcpixels[indexsrc];
 					const Uint8 R = srcpixels[indexsrc] >> 8;
