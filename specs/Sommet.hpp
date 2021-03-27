@@ -5,7 +5,7 @@
 #include <array>
 
 /**
- * @file Représente un Sommet à 3 coordonnées, issu du module de Géométrie 
+ * @class Représente un Sommet à 3 coordonnées, issu du module de Géométrie 
  */
 
 class Sommet {
