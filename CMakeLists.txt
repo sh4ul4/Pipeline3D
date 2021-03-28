@@ -21,7 +21,7 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_I
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
 
-set(SRCS src/main.cpp "headers/Texture.h")
+set(SRCS src/main.cpp "headers/Point.cpp")
 set(HEADERS headers/Camera.h
 			headers/Draw.h
 			headers/library.h
@@ -34,14 +34,14 @@ set(HEADERS headers/Camera.h
 			headers/FrameRate.h
 			headers/Window.h
 			headers/Triangle.h
-			headers/Point.h
-			headers/Input
- "headers/Texture.h")
+			#headers/Point.h
+			headers/Input.h
+ "headers/Texture.h" "headers/Point.hpp")
 
 
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (Pipeline3d  ${SRCS} ${HEADERS}  "headers/Texture.h")
+add_executable (Pipeline3d  ${SRCS} ${HEADERS})
 
 target_include_directories(Pipeline3d PRIVATE headers)
 

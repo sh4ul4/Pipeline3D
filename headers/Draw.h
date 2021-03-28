@@ -25,21 +25,21 @@ class Draw {
 			_19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, _33, _34;
 	};
 public:
-	static void DrawPoint(const Point2& point, const Color& color, SDL_Renderer* renderer)
+	static void DrawPoint(const Point2D& point, const Color& color, SDL_Renderer* renderer)
 	{
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderDrawPoint(renderer, point.x, point.y);
 	}
-	static void DrawLine(const Point2& point1, const Point2& Point2, const Color& color, SDL_Renderer* renderer)
+	static void DrawLine(const Point2D& point1, const Point2D& point2, const Color& color, SDL_Renderer* renderer)
 	{
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
-		SDL_RenderDrawLine(renderer, point1.x, point1.y, Point2.x, Point2.y);
+		SDL_RenderDrawLine(renderer, point1.x, point1.y, point2.x, point2.y);
 	}
-	static void DrawLine(const Point2& point1, const Point2& Point2, SDL_Renderer* renderer)
+	static void DrawLine(const Point2D& point1, const Point2D& point2, SDL_Renderer* renderer)
 	{
-		SDL_RenderDrawLine(renderer, point1.x, point1.y, Point2.x, Point2.y);
+		SDL_RenderDrawLine(renderer, point1.x, point1.y, point2.x, point2.y);
 	}
-	static void DrawTriangle(const Point2& a, const Point2& b, const Point2& c, SDL_Renderer* renderer)
+	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, SDL_Renderer* renderer)
 	{
 		const SDL_Point p[4] = {
 		{a.x, a.y},
@@ -49,7 +49,7 @@ public:
 		};
 		SDL_RenderDrawLines(renderer, p, 4);
 	}
-	static void DrawTriangle(const Point2& a, const Point2& b, const Point2& c, const Color& color, SDL_Renderer* renderer)
+	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, const Color& color, SDL_Renderer* renderer)
 	{
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
@@ -57,7 +57,7 @@ public:
 		SDL_RenderDrawLine(renderer, c.x, c.y, a.x, a.y);
 	}
 private:
-	void DrawFillBottomFlatTriangle(const Point2& v1, const Point2& v2, const Point2& v3, SDL_Renderer* renderer)
+	void DrawFillBottomFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer)
 	{
 		float invslope1_f = float((v2.x - v1.x) / (v2.y - v1.y));
 		float invslope2_f = float((v3.x - v1.x) / (v3.y - v1.y));
@@ -70,7 +70,7 @@ private:
 			curx2_f += invslope2_f;
 		}
 	}
-	void DrawFillTopFlatTriangle(const Point2& v1, const Point2& v2, const Point2& v3, SDL_Renderer* renderer)
+	void DrawFillTopFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer)
 	{
 		float invslope1_f = float((v3.x - v1.x) / (v3.y - v1.y));
 		float invslope2_f = float((v3.x - v2.x) / (v3.y - v2.y));
@@ -84,10 +84,10 @@ private:
 		}
 	}
 public:
-	static void DrawFillTriangle(const Point2& p1, const Point2& p2, const Point2& p3, const Color& color, SDL_Renderer* renderer)
+	static void DrawFillTriangle(const Point2D& p1, const Point2D& p2, const Point2D& p3, const Color& color, SDL_Renderer* renderer)
 	{
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
-		Point2 tri_f[3];
+		Point2D tri_f[3];
 		tri_f[0] = p1;
 		if (p2.x < p1.x) { tri_f[0] = p2; tri_f[1] = p1; }
 		else { tri_f[1] = p2; }
@@ -105,8 +105,8 @@ public:
 		facteury_f = -(tri_f[0].y - tri_f[2].y);
 		const double fx_1_3_f = facteury_f / facteurx_f;
 		const double fy_1_3_f = tri_f[0].y - (fx_1_3_f * tri_f[0].x);
-		Point2 remplissage1_f;
-		Point2 remplissage2_f;
+		Point2D remplissage1_f;
+		Point2D remplissage2_f;
 		int ix_f = tri_f[0].x;
 		const int size = (tri_f[2].x - ix_f) * 2;
 		int it = 0;
@@ -206,7 +206,7 @@ public:
 		}
 		for (int i = static_cast<int>(chars_f.size()) - 1; i >= 0; i--)
 		{
-			Point2 a, b;
+			Point2D a, b;
 			if (chars_f[i]._1) {
 				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
 				a.y = y;
@@ -474,7 +474,7 @@ public:
 		if (sign) { num_f.push_back({ 0, 0, 0, 1, 0, 0, 0 }); }
 		for (int i = static_cast<int>(num_f.size()) - 1; i >= 0; i--)
 		{
-			Point2 a, b;
+			Point2D a, b;
 			if (num_f[i]._1) {
 				a.x = (static_cast<int>(num_f.size()) - i - 1) * size + X;
 				a.y = size / 2 + Y;

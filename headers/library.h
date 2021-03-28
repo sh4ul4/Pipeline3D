@@ -34,7 +34,7 @@
 #include <SDL_thread.h>
 #include <climits>
 #include "Vertex.h"
-#include "Point.h"
+#include "Point.hpp"
 
 //  SOUND
 SDL_AudioSpec wavSpec_GLOBAL, secWavSpec_GLOBAL;
@@ -321,14 +321,14 @@ inline const T& Min(const T& first_value, const T& second_value) noexcept // ret
 {
 	return (first_value < second_value) ? first_value : second_value;
 }
-bool isOnLineSegments(const Point2& P, const Point2& A, const Point2& B, const Point2& C, const Point2& D) {
+bool isOnLineSegments(const Point2D& P, const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D) {
 	const int approx = 0;
 	return P.x - approx <= Max(A.x, B.x) && P.x + approx >= Min(A.x, B.x) &&
 		P.x - approx <= Max(C.x, D.x) && P.x + approx >= Min(C.x, D.x) &&
 		P.y - approx <= Max(A.y, B.y) && P.y + approx >= Min(A.y, B.y) &&
 		P.y - approx <= Max(C.y, D.y) && P.y + approx >= Min(C.y, D.y);
 }
-Point2 lineLineIntersection(const Point2& A, const Point2& B, const Point2& C, const Point2& D)
+Point2D lineLineIntersection(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D)
 {
 	// Line AB represented as a1x + b1y = c1
 	const double a1 = (double)(B.y) - (double)(A.y);

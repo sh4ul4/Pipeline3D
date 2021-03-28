@@ -1,7 +1,7 @@
 #pragma once
 
 //#include "library.h"
-#include "Point.h"
+#include "Point.hpp"
 #include <array>
 
 struct Vertex {
@@ -9,7 +9,7 @@ struct Vertex {
 	float y;
 	float z;
 	Vertex() : x(0), y(0), z(0) {}
-	Vertex(const Point3& p) :x(p.x), y(p.y), z(p.z) {}
+	Vertex(const Point3D& p) :x(p.x), y(p.y), z(p.z) {}
 	Vertex(const std::array<float, 3>& vec3d) :x(vec3d[0]), y(vec3d[1]), z(vec3d[2]) {}
 	Vertex(const float& x, const float& y, const float& z) : x(x), y(y), z(z) {}
 	template<class T1, class T2, class T3>
@@ -98,8 +98,8 @@ struct Vertex {
 		}
 		std::cout << "Index out of bounds for instance of [Vertex]" << std::endl; exit(1);
 	}
-	Point3 toPoint3()const {
-		return Point3(x,y,z);
+	Point3D toPoint3()const {
+		return Point3D(x,y,z);
 	}
 
 	static void normalize(Vertex& v) {

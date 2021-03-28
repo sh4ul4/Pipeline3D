@@ -32,7 +32,7 @@ struct Point2 {
 	Point2 operator-(const T& val)const {
 		return { x - val,y - val };
 	}
-	const int& operator[](const int& i) {
+	int& operator[](const int& i) {
 		if (i < 0 || i > 1) {
 			std::cout << "Index out of bounds for instance of [Vertex]" << std::endl;
 			exit(1);

@@ -199,7 +199,7 @@ public:
 		return { x, y, m[0][3] };
 	}
 
-	Point2 get2DwithoutPerspective(Matrix::m4d m, bool* clip, const Window& window) {
+	Point2D get2DwithoutPerspective(Matrix::m4d m, bool* clip, const Window& window) {
 		*clip = false;
 		if (m.size() == 0) {
 			return {};
@@ -219,7 +219,7 @@ public:
 		return { x,y };
 	}
 
-	Point2 get2DonlyPerspective(Matrix::m4d m, bool* clip, const Window& window) {
+	Point2D get2DonlyPerspective(Matrix::m4d m, bool* clip, const Window& window) {
 		*clip = false;
 		if (m.size() == 0) {
 			return {};

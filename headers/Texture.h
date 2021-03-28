@@ -114,7 +114,7 @@ public:
 			pixelsV[i * 4 + 3] = 255;
 		}*/
 	}
-	void renderTexture(SDL_Renderer* renderer, const Point2& topLeft, const unsigned int& width, const unsigned int& height, const int& flip, const double& angle) const
+	void renderTexture(SDL_Renderer* renderer, const Point2D& topLeft, const unsigned int& width, const unsigned int& height, const int& flip, const double& angle) const
 	{
 		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
 		SDL_Rect rect_f;
@@ -137,7 +137,7 @@ public:
 	private:
 	// Bresenham's line drawing algorithm
 	inline static void ScanLine(const int& x1, const int& y1, const int& x2, const int& y2,
-		std::vector<Point2>& line, const int& maxHeight, const int& maxWidth)
+		std::vector<Point2D>& line, const int& maxHeight, const int& maxWidth)
 	{
 		int dx1, dy1, dx2, dy2, x, y, m, n, k, cnt;
 		const int sx = x2 - x1;
@@ -188,8 +188,8 @@ public:
 		}
 	}
 	public:
-	void drawLine(const GlobalTexture& globalTexture, const Point2& a, const float& adepth, const Point2& b, const float& bdepth, const Color& color) {
-		std::vector<Point2> line;
+	void drawLine(const GlobalTexture& globalTexture, const Point2D& a, const float& adepth, const Point2D& b, const float& bdepth, const Color& color) {
+		std::vector<Point2D> line;
 		ScanLine(a.x, a.y, b.x, b.y, line, height, width);
 		//float rela = bdepth - adepth;
 		for (auto& p : line) {
@@ -242,22 +242,22 @@ private:
 		return res;
 	}
 
-	inline static const int sign(const Point2& p1, const Point2& p2, const Point2& p3) {
+	inline static const int sign(const Point2D& p1, const Point2D& p2, const Point2D& p3) {
 		return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 	}
 
 public:
 	// fill triangle with single color
 	static inline void rasterize(const Color& color,
-		const Point2& triA, const Point2& triB, const Point2& triC,
+		const Point2D& triA, const Point2D& triB, const Point2D& triC,
 		float depthA, float depthB, float depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		const int dstw = globalTexture.getWidth();
 		const int dsth = globalTexture.getHeight();
 		const Uint8 R = color.r, G = color.g, B = color.b, A = color.a;
 		// bounding box + clipping
-		Point2 min(Min(triA.x, Min(triB.x, triC.x)), Min(triA.y, Min(triB.y, triC.y)));
-		Point2 max(Max(triA.x, Max(triB.x, triC.x)), Max(triA.y, Max(triB.y, triC.y)));
+		Point2D min(Min(triA.x, Min(triB.x, triC.x)), Min(triA.y, Min(triB.y, triC.y)));
+		Point2D max(Max(triA.x, Max(triB.x, triC.x)), Max(triA.y, Max(triB.y, triC.y)));
 		min.x = Max(min.x, 0);
 		min.y = Max(min.y, 0);
 		max.x = Min(max.x, dstw - 1);
@@ -281,7 +281,7 @@ public:
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
-				const Point2 p(x, y);
+				const Point2D p(x, y);
 				int bary0 = sign(triB, triC, p);
 				int bary1 = sign(triC, triA, p);
 				int bary2 = sign(triA, triB, p);
@@ -329,8 +329,8 @@ public:
 	}
 
 	static inline void rasterize(const Bitmap& bmp,
-		const Point2& triA, const Point2& triB, const Point2& triC,
-		const Point2& bmpA, const Point2& bmpB, const Point2& bmpC,
+		const Point2D& triA, const Point2D& triB, const Point2D& triC,
+		const Point2D& bmpA, const Point2D& bmpB, const Point2D& bmpC,
 		const float& depthA, const float& depthB, const float& depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		// setup initial values
@@ -342,8 +342,8 @@ public:
 		const int dsth = globalTexture.getHeight();
 		const SDL_PixelFormat* srcFormat = bmp.surface->format;
 		// bounding box + clipping
-		Point2 min(Min(triA.x, Min(triB.x, triC.x)), Min(triA.y, Min(triB.y, triC.y)));
-		Point2 max(Max(triA.x, Max(triB.x, triC.x)), Max(triA.y, Max(triB.y, triC.y)));
+		Point2D min(Min(triA.x, Min(triB.x, triC.x)), Min(triA.y, Min(triB.y, triC.y)));
+		Point2D max(Max(triA.x, Max(triB.x, triC.x)), Max(triA.y, Max(triB.y, triC.y)));
 		min.x = Max(min.x, 0);
 		min.y = Max(min.y, 0);
 		max.x = Min(max.x, dstw);
@@ -364,7 +364,7 @@ public:
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
-				const Point2 p(x, y);
+				const Point2D p(x, y);
 				int bary0 = sign(triB, triC, p);
 				int bary1 = sign(triC, triA, p);
 				int bary2 = sign(triA, triB, p);
@@ -382,7 +382,7 @@ public:
 					float u_ = (bmpA.x / depthA) * baryA + (bmpB.x / depthB) * baryB + (bmpC.x / depthC) * baryC;
 					float v_ = (bmpA.y / depthA) * baryA + (bmpB.y / depthB) * baryB + (bmpC.y / depthC) * baryC;
 					// set position of source-pixel and new-pixel depth
-					const Point2 res = { u_ / w_,v_ / w_ };
+					const Point2D res = { u_ / w_,v_ / w_ };
 					const float pixdepth = 1 / w_;
 					// define pos in bitmap
 					const int it = x + offset;

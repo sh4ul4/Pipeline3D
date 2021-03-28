@@ -13,9 +13,9 @@ public:
 	Vertex a, b, c;
 	Vertex aScreen, bScreen, cScreen;
 	Bitmap* bmp = nullptr;
-	Point2 bmpA;
-	Point2 bmpB;
-	Point2 bmpC;
+	Point2D bmpA;
+	Point2D bmpB;
+	Point2D bmpC;
 private:
 	bool visible = false;
 	bool fill = true;
@@ -33,7 +33,7 @@ public:
 	Triangle(){}
 	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Color& color = black, const bool& fill = true) :a(a), b(b), c(c), color(color), fill(fill) {}
 	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Color& color,
-		Bitmap* bmp, const Point2& bmpA, const Point2& bmpB, const Point2& bmpC)
+		Bitmap* bmp, const Point2D& bmpA, const Point2D& bmpB, const Point2D& bmpC)
 		:a(a), b(b), c(c), color(color),
 		bmp(bmp), bmpA(bmpA), bmpB(bmpB), bmpC(bmpC) {}
 	/*Triangle(const Triangle& t) :a(t.a), b(t.b), c(t.c), a2(t.a2), b2(t.b2), c2(t.c2), bmp(t.bmp),
@@ -296,7 +296,7 @@ public:
 		return true;
 	}
 
-	Point3 ClosestPointOnLine(const Vertex& l1, const Vertex& l2, const Vertex& p) const {
+	Point3D ClosestPointOnLine(const Vertex& l1, const Vertex& l2, const Vertex& p) const {
 		const Matrix::vec3d a = { l1.x,l1.y,l1.z };
 		const Matrix::vec3d b = { l2.x,l2.y,l2.z };
 
@@ -306,7 +306,7 @@ public:
 		);
 
 		t = clamp(t, 0.0, 1.0);
-		const Point3 d(a[0] + t * b[0] - a[0], a[1] + t * b[1] - a[1], a[2] + t * b[2] - a[2]);
+		const Point3D d(a[0] + t * b[0] - a[0], a[1] + t * b[1] - a[1], a[2] + t * b[2] - a[2]);
 		return d;
 	}
 
@@ -316,9 +316,9 @@ public:
 		if (PointInTriangle(p)) {
 			return p;
 		}
-		const Point3 c1 = ClosestPointOnLine(a,b, p);
-		const Point3 c2 = ClosestPointOnLine(b,c, p);
-		const Point3 c3 = ClosestPointOnLine(c,a, p);
+		const Point3D c1 = ClosestPointOnLine(a,b, p);
+		const Point3D c2 = ClosestPointOnLine(b,c, p);
+		const Point3D c3 = ClosestPointOnLine(c,a, p);
 
 		const float mag1 = p.distance(c1);
 		const float mag2 = p.distance(c2);
@@ -370,7 +370,7 @@ private:
 
 	void draw(const Bitmap& src, GlobalTexture& dst, const float& light) const {
 		TextureManager::rasterize(src,
-			Point2(aScreen.x, aScreen.y), Point2(bScreen.x, bScreen.y), Point2(cScreen.x, cScreen.y),
+			Point2D(aScreen.x, aScreen.y), Point2D(bScreen.x, bScreen.y), Point2D(cScreen.x, cScreen.y),
 			bmpA, bmpB, bmpC,
 			aScreen.z, bScreen.z, cScreen.z,
 			dst, light);
@@ -378,7 +378,7 @@ private:
 
 	void draw(const Color& color, GlobalTexture& dst, const float& light) const {
 		TextureManager::rasterize(color,
-			Point2(aScreen.x,aScreen.y), Point2(bScreen.x, bScreen.y), Point2(cScreen.x, cScreen.y),
+			Point2D(aScreen.x,aScreen.y), Point2D(bScreen.x, bScreen.y), Point2D(cScreen.x, cScreen.y),
 			aScreen.z, bScreen.z, cScreen.z,
 			dst,light);
 	}
