@@ -175,11 +175,10 @@ public:
 		return n.x * (vec.x - pos.x) + n.y * (vec.y - pos.y) + n.z * (vec.z - pos.z);
 	}
 
-	Point2 get2D(Matrix::m4d m, bool& clip, float& w, const Window& window) {
+	Vertex get2D(Matrix::m4d m, bool& clip, const Window& window) {
 		//world space
 		clip = false;
 		if (m.size() == 0) {
-			w = 0;
 			return {};
 		}
 		m[0][3] = 1;
@@ -187,19 +186,17 @@ public:
 		// camera space
 		if (Matrix::lengthV(m) > far) {
 			clip = true;
-			w = 0;
-			return { (int)m[0][0],(int)m[0][1] };
+			return { (int)m[0][0],(int)m[0][1], 0 };
 		}
 		Matrix::optmult(m, Matrix::P, m);
 		//homogeneous clip space
-		w = m[0][3];
 		int x = (int)(m[0][0] / m[0][3]);
 		int y = (int)(m[0][1] / m[0][3]);
 		//NDC space[-1,1]
 		x += window.getWidthCenter();
 		y += window.getHeightCenter();
 		//raster space
-		return { x, y };
+		return { x, y, m[0][3] };
 	}
 
 	Point2 get2DwithoutPerspective(Matrix::m4d m, bool* clip, const Window& window) {
