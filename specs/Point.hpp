@@ -35,14 +35,14 @@ public:
 	 * Un constructeur.
 	 * Assigne les coordonnées.
 	 */
-	Point2D(const int &x, const int &y) : x(x), y(y);
+	Point2D(const int &x, const int &y) : x(x), y(y) {}
 
 	/**
 	 * Un constructeur.
 	 * Prend des templates en entrée et cast vers int.
 	 */
 	template <class T1, class T2>
-	Point2D(const T1 &x, const T2 &y) : x((int)x), y((int)y);
+	Point2D(const T1 &x, const T2 &y) : x((int)x), y((int)y) {}
 
 	/**
 	 * Un constructeur.
@@ -109,7 +109,7 @@ public:
 	 * Renvoie la valeur de x ou y en fonction de si i = 0 ou 1.
 	 * Renvoie une erreur si i est différent de 0 ou 1.
 	 */
-	const int &operator[](const int &i);
+	int &operator[](const int &i);
 
 	/**
 	 * Un opérateur public.
