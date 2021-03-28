@@ -1,5 +1,5 @@
 /**
- * @file Module Texturing ?
+ * @file Module Texturing
  */ 
 
 /** @brief class Bitmap
@@ -7,26 +7,30 @@
  */
 class Bitmap{
 public:
-	// Classe SDL qui contient les informations d'une surface graphique, à savoir la bitmap, les dimensions et les formats.
+	/**
+	 * Une variable publique.
+	 * Contient les informations d'une surface graphique (bitmap, dimensions, formats).
+	 */
 	SDL_Surface* surface = nullptr;
 
 	// suppression du constructeur de base
 	Bitmap() = delete;
 
-  	/**	@brief Constructeur 
-      *
-      *	- vérifier si l'argument path est valide
-      *	- créer une nouvelle surface avec la fonction IMG_Load()
-      *	- définir la variable temporaire pixelFormat avec la fonction SDL_AllocFormat()
-      *	- convertir la surface avec le nouveau format défini
-      *	- bloquer les pixels de la surface avec SDL_LockSurface()
-      * - vérifier les erreurs avec SDL_GetError() et supprimer les variables temporaires
-      */
+    /**
+     * Un constructeur.
+     * @param path le chemin d'accès vers l'image source
+     * Vérifier si l'argument path est valide.
+     * Créer une nouvelle surface avec la fonction IMG_Load().
+     * Définir la variable temporaire pixelFormat avec la fonction SDL_AllocFormat().
+     * Convertir la surface avec le nouveau format défini.
+     * Bloquer les pixels de la surface avec SDL_LockSurface().
+     * Vérifier les erreurs avec SDL_GetError() et supprimer les variables temporaires.
+     */
 	Bitmap(const char* path) {}
 
-  	/** @brief Destructeur
-	  *
-	  * débloquer et libérer les pixel de la bitmap
-	  */
-	~Bitmap() {}
+	/**
+	 * Un destructeur.
+	 * Débloquer et libérer les pixels de la bitmap.
+	 */
+	~Bitmap();
 };

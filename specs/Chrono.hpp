@@ -1,18 +1,42 @@
-#pragma once
-
 /**
- * @class Chronomètre
- * @brief Crée un chronomètre avec l'heure de début et dans une fonction retourne le temps écoulé
+ * @class Timer
+ * @brief Minuteur avec contrôle du lancement et du temps écoulé
  */
 
-class Chrono {
+class Timer {
 private:
-	Uint32 start = NULL; // temps début chrono
-	Uint32 now = NULL; // temps chrono actuel
-public:
-	// Définie le début du chronomètre
-	Uint32 setStartChrono(const Uint32& end){ }
+	/**
+	 * Une variable privée.
+	 * Indique le temps de départ.
+	 */
+	Uint32 start = NULL;
 
-	// Retourne le temps écoulé du chronomètre
-	Float getTimeElapsed(void){ }
+	/**
+	 * Une variable privée.
+	 * Indique le temps actuel.
+	 */
+	Uint32 current = NULL;
+
+	/**
+	 * Une variable privée.
+	 * Indique le temps maximal.
+	 */
+	Uint32 stop = NULL;
+
+public:
+	// suppression du constructeur de base
+	Timer() = delete;
+
+	/**
+	 * Un constructeur.
+	 * @param end Nombre de secondes jusqu'à l'écoulement du minuteur.
+	 * Démarre le minuteur.
+	 */
+	Timer(const Uint32& end);
+
+	/**
+	 * Une fonction publique.
+	 * Vérifie l'écoulement du minuteur : true si temps écoulé, false sinon.
+	 */
+	bool checkTimer();
 };

@@ -1,9 +1,3 @@
-#pragma once
-//#include "library.h"
-#include <iostream>
-#include <math.h>
-#include "ErrorsHandler.h"
-
 /**
  * @file Issu du module de Géométrie, sous-module (?) 
  * Regroupe les classes Point2D et Point 3D
@@ -19,52 +13,123 @@
 class Point2D
 {
 public:
-	// Coordonnées entières x et y du Point2D
+	/**
+	 * Une variable publique.
+	 * Coordonnée x du point.
+	 */
 	int x;
+
+	/**
+	 * Une variable publique.
+	 * Coordonnée y du point.
+	 */
 	int y;
 
-	// Constructeurs: par défaut et normal
+	/**
+	 * Un constructeur.
+	 * Met les coordonnées à zéro.
+	 */
 	Point2D() : x(0), y(0) {}
+
+	/**
+	 * Un constructeur.
+	 * Assigne les coordonnées.
+	 */
 	Point2D(const int &x, const int &y) : x(x), y(y);
 
-	// Constructeur par template en castant en entier
+	/**
+	 * Un constructeur.
+	 * Prend des templates en entrée et cast vers int.
+	 */
 	template <class T1, class T2>
 	Point2D(const T1 &x, const T2 &y) : x((int)x), y((int)y);
 
-	// Constructeur par copie d'un Point2D
+	/**
+	 * Un constructeur.
+	 * @param p Point copié.
+	 * Copie les coordonnées du point.
+	 */
 	Point2D(const Point2D &p) : x(p.x), y(p.y) {}
 
-	// Surcharges d'opérateurs
-	// Const à la fin: ne modifie pas la classe qu'il appelle (renvoie un nouveau point)
-	// const: signifie qu'il renvoie un nouveau point sans modifier la classe qu'il appelle
-	Point2D operator+(const Point2D &point) const; // Additionne les coordonnées du point en paramètre avec le point courant
-	Point2D operator-(const Point2D &point) const; // soustrait les coordonnées du point en paramètre avec le point courant
+	/**
+	 * Un opérateur public.
+	 * @param p Deuxième opérande.
+	 * Additionne les coordonnées du point en paramètre avec le point courant.
+	 * Ne modifie pas le point courant mais en renvoie un nouveau.
+	 */
+	Point2D operator+(const Point2D &p) const;
 
-	// Surcharges avec classe template
+	/**
+	 * Un opérateur public.
+	 * @param p Deuxième opérande.
+	 * Soustrait les coordonnées du point en paramètre de celle du point courant.
+	 * Ne modifie pas le point courant mais en renvoie un nouveau.
+	 */
+	Point2D operator-(const Point2D &p) const;
+
+	/**
+	 * Un opérateur public.
+	 * @param val Opérande de n'importe quel type de base.
+	 * Multiplie les coordonnées du point courant avec la valeur en paramètre.
+	 * Ne modifie pas le point courant mais en renvoie un nouveau.
+	 */
 	template <class T>
-	Point2D operator*(const T &val) const; // Multiplie les coordonnées du point courant par un float, int, ou double
+	Point2D operator*(const T &val) const;
 
+	/**
+	 * Un opérateur public.
+	 * @param val Opérande de n'importe quel type de base.
+	 * Divise les coordonnées du point courant par la valeur en paramètre.
+	 * Ne modifie pas le point courant mais en renvoie un nouveau.
+	 */
 	template <class T>
-	Point2D operator/(const T &val) const; // divise les coordonnées du point courant par un float, int, ou double
+	Point2D operator/(const T &val) const;
 
+	/**
+	 * Un opérateur public.
+	 * @param val Opérande de n'importe quel type de base.
+	 * Additionne la valeur en paramètre avec les coordonnées du point courant.
+	 * Ne modifie pas le point courant mais en renvoie un nouveau.
+	 */
 	template <class T>
-	Point2D operator+(const T &val) const; // Additionne les coordonnées du point courant par un float, int, ou double
+	Point2D operator+(const T &val) const;
 
+	/**
+	 * Un opérateur public.
+	 * @param val Opérande de n'importe quel type de base.
+	 * Soustrait la valeur en paramètre des coordonnées du point courant.
+	 * Ne modifie pas le point courant mais en renvoie un nouveau.
+	 */
 	template <class T>
-	Point2D operator-(const T &val) const; // Soustrait les coordonnées du point courant par un float, int, ou double
+	Point2D operator-(const T &val) const;
 
-	// Opérateur [], renvoie x ou y si i = 0 ou 1
-	// Operateur[] qui renvoie x ou y en fonction de si i est égal à 0 ou 1.
-	// Renvoie une erreur si i est différent de 0 ou 1.
+	/**
+	 * Un opérateur public.
+	 * @param i Indice de coordonnée.
+	 * Renvoie la valeur de x ou y en fonction de si i = 0 ou 1.
+	 * Renvoie une erreur si i est différent de 0 ou 1.
+	 */
 	const int &operator[](const int &i);
 
-	// Test d'égalité entre deux points
+	/**
+	 * Un opérateur public.
+	 * @param p Deuxième opérande.
+	 * Test d'égalité entre deux points.
+	 */
 	bool operator==(const Point2D &p) const;
 
-	// Formate le print pour un Point2D, affiche ses coordonnées (x,y)
+	/**
+	 * Une fonction publique.
+	 * Formate le print pour un Point2D, affiche ses coordonnées (x,y).
+	 */
 	void print() const;
 
-	// Rédredéfinition de l'opérateur <<, servant à l'affichage sur la sortie standard
+	/**
+	 * Une opérateur friend.
+	 * @param os Sortie standard.
+	 * @param p Point affiché.
+	 * Redéfinition de l'opérateur <<, servant à l'affichage sur la sortie standard.
+	 */
 	friend std::ostream &operator<<(std::ostream &os, const Point2D &p);
 
 	/** @brief Calcule la distance entre 2 points passés en paramètres
