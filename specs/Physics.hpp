@@ -1,10 +1,10 @@
 
 namespace Physics
 {
-	// Valeurs correspondant aux lois physiques utilisées dans l'application Systeme Stellaire
+	// Valeurs correspondant aux lois physiques utilisées
 	bool applyPhysics = false;
 	Vertex playerHB = { 0,0,0 };
-	float interactionDistance = 0.001;// 2;
+	float interactionDistance = 0.001;
 	float speed = 1;
 	float slippiness = 0.1f;
 	bool intentionalMoving = false;
@@ -22,8 +22,9 @@ namespace Physics
 		}
 	}
 	
-	// 
+	// résoudre les intéractions trouvées entre les formes
 	void resolvePhysics(const ShapeManager& manager, const Vertex& pos, const Vertex& step, const float& speed, const bool& falling, const int& depth);
-	// 
+
+	// appliquer les mouvements sur les formes
 	void move(InputEvent& inputEvent, const ShapeManager& manager);
 }
