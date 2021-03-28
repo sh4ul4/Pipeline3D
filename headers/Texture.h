@@ -62,8 +62,7 @@ public:
 		SDL_UpdateTexture(texture, NULL, pixels.data(), pitch);
 		//SDL_UpdateTexture(texture, NULL, pixelsV.data(), pitch);
 	}
-	/*void applyBlackNWhite() {
-		Uint32* pixels = lock();
+	void applyBlackNWhite() {
 		for (int i = 0; i < height * width; i++) {
 			const Uint8 a = pixels[i];
 			const Uint8 r = pixels[i] >> 8;
@@ -72,32 +71,29 @@ public:
 			const Uint8 val = (r + g + b) / 3;
 			pixels[i] = (val << 24) + (val << 16) + (val << 8) + (a); // bgra
 		}
-		unlock();
 	}
 	void applySobel() {
 		applyBlackNWhite();
-		Uint32* pixels = lock();
 		Uint32* origin = new Uint32[width * height];
-		memcpy(origin, pixels, width * height * sizeof(Uint32));
+		memcpy(origin, pixels.data(), width * height * sizeof(Uint32));
 		for (size_t y = 1; y < height - 1; y++) {
 			for (size_t x = 1; x < width - 1; x++) {
 				Uint8 magX = 0;// origin[y * width + x] >> 24;
 				magX -= origin[(y-1)*width + (x-1)] >> 24;
-				//magX += origin[(y-1)*width + (x)];
+				magX += origin[(y-1)*width + (x)];
 				magX += origin[(y-1)*width + (x+1)] >> 24;
 				magX -= origin[(y)*width + (x-1)] >> 24;
-				//magX += origin[(y)*width + (x)];
+				magX += origin[(y)*width + (x)];
 				magX += origin[(y)*width + (x+1)] >> 24;
 				magX -= origin[(y+1)*width + (x-1)] >> 24;
-				//magX += origin[(y+1)*width + (x)];
+				magX += origin[(y+1)*width + (x)];
 				magX += origin[(y+1)*width + (x+1)] >> 24;
 				pixels[y * width + x] = rgbaToUint32((Uint8)magX, (Uint8)magX, (Uint8)magX, 255);
 			}
 		}
 		//memcpy_s(pixels, sizeof(pixels), origin, sizeof(origin));
 		delete[] origin;
-		unlock();
-	}*/
+	}
 	inline Uint32& operator[] (const unsigned& i) {
 		return pixels[i];
 	}

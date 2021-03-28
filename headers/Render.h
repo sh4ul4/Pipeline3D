@@ -76,9 +76,9 @@ private:
 			// render triangle
 			toRender[i]->render(window, globalTexture);
 		}
-		globalTexture.updateTexture(window);
 		//globalTexture.applySobel();
 		//globalTexture.applyBlackNWhite();
+		globalTexture.updateTexture(window);
 		globalTexture.renderTexture(window.getRenderer(), { 0,0 }, window.getRenderWidth(), window.getRenderHeight(), 0, 0);
 		//toRenderOneFrame.clear();
 	}
