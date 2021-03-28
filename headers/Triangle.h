@@ -11,8 +11,7 @@ class Triangle {
 public:
 	std::vector<Triangle> tmp;
 	Vertex a, b, c;
-	Point2 a2, b2, c2;
-	float wa = 0, wb = 0, wc = 0;
+	Vertex aScreen, bScreen, cScreen;
 	Bitmap* bmp = nullptr;
 	Point2 bmpA;
 	Point2 bmpB;
@@ -48,36 +47,12 @@ public:
 	inline bool operator>(const Triangle& node) const {
 		return (this->distanceToCamera > node.distanceToCamera);
 	}
-	inline void setColor(const Color& color) { this->color = color; }
 	inline void move(const Vertex& movement) {
 		a += movement;
 		b += movement;
 		c += movement;
 	}
-	std::vector<Matrix::m4d> getCoord()const {
-		return { {{a.x,a.y,a.z}},{{b.x,b.y,b.z}}, {{c.x,c.y,c.z}} };
-	}
-	Point2 getIntersection(const Point2& a, const Point2& b, const int& maxX, const int& maxY)const {
-		Point2 P;
-		P = lineLineIntersection(a, b, { 0,0 }, { maxX,0 });
-		if (isOnLineSegments(P, a, b, { 0,0 }, { maxX,0 })) {
-			return P;
-		}
-		P = lineLineIntersection(a, b, { 0,0 }, { 0,maxY });
-		if (isOnLineSegments(P, a, b, { 0,0 }, { 0,maxY })) {
-			return P;
-		}
-		P = lineLineIntersection(a, b, { 0,maxY }, { maxX,maxY });
-		if (isOnLineSegments(P, a, b, { 0,maxY }, { maxX,maxY })) {
-			return P;
-		}
-		P = lineLineIntersection(a, b, { maxX,0 }, { maxX,maxY });
-		if (isOnLineSegments(P, a, b, { maxX,0 }, { maxX,maxY })) {
-			return P;
-		}
-		return { 0,0 };
-	}
-	void set2d(const Window& window, const bool& clip) {
+	void setScreenCoord(const Window& window, const bool& clip) {
 		visible = false;
 		distanceToCamera = distanceToPoint(Camera::getCurrent().getCameraPosition());
 		// near clip
@@ -222,9 +197,9 @@ public:
 		// far-clipping + 2D points calculation
 		
 		if ((distanceToCamera > Camera::getCurrent().far) == false) {
-			a2 = Camera::getCurrent().get2D({ a.x,a.y,a.z,1 }, farclipA, wa, window);
-			b2 = Camera::getCurrent().get2D({ b.x,b.y,b.z,1 }, farclipB, wb, window);
-			c2 = Camera::getCurrent().get2D({ c.x,c.y,c.z,1 }, farclipC, wc, window);
+			aScreen = Camera::getCurrent().get2D({ a.x,a.y,a.z,1 }, farclipA, window);
+			bScreen = Camera::getCurrent().get2D({ b.x,b.y,b.z,1 }, farclipB, window);
+			cScreen = Camera::getCurrent().get2D({ c.x,c.y,c.z,1 }, farclipC, window);
 		}
 		if (/*!nearclipA && !nearclipB && !nearclipC &&*/!farclipA && !farclipB && !farclipC && visible) { // no clip
 			visible = true;
@@ -233,15 +208,15 @@ public:
 	}
 	void render(const Window& window, GlobalTexture& globalTexture)  {
 		if (!visible) return;
-		if (abs(a2.x) > 10000 || abs(a2.y) > 10000 ||
-			abs(b2.x) > 10000 || abs(b2.y) > 10000 ||
-			abs(c2.x) > 10000 || abs(c2.y) > 10000) {
+		if (abs(aScreen.x) > 10000 || abs(aScreen.y) > 10000 ||
+			abs(bScreen.x) > 10000 || abs(bScreen.y) > 10000 ||
+			abs(cScreen.x) > 10000 || abs(cScreen.y) > 10000) {
 			//clip here
 			return;
 		}
 		// render
 		for (Triangle t : tmp) {
-			t.set2d(window, false);
+			t.setScreenCoord(window, false);
 			t.render(window, globalTexture);
 		}tmp.clear(); tmp.shrink_to_fit();
 		const Vertex sunLight = Camera::getCurrent().getSunLight();
@@ -249,17 +224,17 @@ public:
 		light /= 30;
 		light = abs(light);
 		if (fill) {
-			if (bmp != nullptr) renderTexture(*bmp, globalTexture, light);
-			else renderTexture(color, globalTexture, light);
+			if (bmp != nullptr) draw(*bmp, globalTexture, light);
+			else draw(color, globalTexture, light);
 		}
 		else if (contour) {
 			/*Vertex campos = Camera::getCurrent().getCameraPosition();
 			globalTexture.drawLine(globalTexture, a2, a.distance(campos), b2, b.distance(campos), color);
 			globalTexture.drawLine(globalTexture, b2, b.distance(campos), c2, c.distance(campos), color);
 			globalTexture.drawLine(globalTexture, a2, a.distance(campos), c2, c.distance(campos), color);*/
-			globalTexture.drawLine(globalTexture, a2, 0, b2, 0, color);
-			globalTexture.drawLine(globalTexture, b2, 0, c2, 0, color);
-			globalTexture.drawLine(globalTexture, a2, 0, c2, 0, color);
+			globalTexture.drawLine(globalTexture, { aScreen.x,aScreen.y }, 0, { bScreen.x,bScreen.y }, 0, color);
+			globalTexture.drawLine(globalTexture, { bScreen.x,bScreen.y }, 0, { cScreen.x,cScreen.y }, 0, color);
+			globalTexture.drawLine(globalTexture, { aScreen.x,aScreen.y }, 0, { cScreen.x,cScreen.y }, 0, color);
 		}
 	}
 	inline void fillIt(const bool& b) {
@@ -335,10 +310,6 @@ public:
 		return d;
 	}
 
-	inline float distancePointPoint(const Vertex& a, const Vertex& b) const {
-		return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
-	}
-
 	Vertex ClosestPoint(const Vertex& point) const {
 		const Vertex p = ClosestPointOnPlane(a,b,c, point);
 
@@ -349,9 +320,9 @@ public:
 		const Point3 c2 = ClosestPointOnLine(b,c, p);
 		const Point3 c3 = ClosestPointOnLine(c,a, p);
 
-		const float mag1 = distancePointPoint(p, c1);
-		const float mag2 = distancePointPoint(p, c2);
-		const float mag3 = distancePointPoint(p, c3);
+		const float mag1 = p.distance(c1);
+		const float mag2 = p.distance(c2);
+		const float mag3 = p.distance(c3);
 
 		const float min = Min(Min(mag1, mag2),mag3);
 
@@ -383,43 +354,32 @@ public:
 		return res;
 	}
 	inline float getTriangleArea() const {
-		return abs(a2.x * (b2.y - c2.y) + b2.x * (c2.y - a2.y) + c2.x * (a2.y - b2.y)) / 2;
+		return abs(aScreen.x * (bScreen.y - cScreen.y) + bScreen.x * (cScreen.y - aScreen.y) + cScreen.x * (aScreen.y - bScreen.y)) / 2;
 	}
 	inline Vertex getPlaneNormal() const {
 		return Vertex::cross(b - a, c - a);
 	}
 private:
-	void renderTexture(const Bitmap& src, GlobalTexture& dst) const {
+	void draw(const Bitmap& src, GlobalTexture& dst) const {
 		const Vertex sun = Camera::getCurrent().getSun();
 		float light = getPlaneNormal().dot(sun);
 		light /= 30;
 		light = abs(light);
-		renderTexture(src, dst, light);
+		draw(src, dst, light);
 	}
 
-	void renderTexture(const Bitmap& src, GlobalTexture& dst, const float& light) const {
+	void draw(const Bitmap& src, GlobalTexture& dst, const float& light) const {
 		TextureManager::rasterize(src,
-			a2, b2, c2,
-			bmpA,bmpB,bmpC,
-			wa, wb, wc,
-			dst,
-			light);
+			Point2(aScreen.x, aScreen.y), Point2(bScreen.x, bScreen.y), Point2(cScreen.x, cScreen.y),
+			bmpA, bmpB, bmpC,
+			aScreen.z, bScreen.z, cScreen.z,
+			dst, light);
 	}
 
-	void renderTexture(const Color& color, GlobalTexture& dst, const float& light) const {
-		const float area = getTriangleArea();
-		/*if(area > 200)
-		TextureManager::transformv3(color, a2, b2, c2,
-			a.distance(Camera::getCurrent().getCameraPosition()),
-			b.distance(Camera::getCurrent().getCameraPosition()),
-			c.distance(Camera::getCurrent().getCameraPosition()), dst);
-		else TextureManager::transformv4(color, a2, b2, c2, dst);*/
-		/*TextureManager::transformv3(color, a2, b2, c2,
-			a.distance(Camera::getCurrent().getCameraPosition()),
-			b.distance(Camera::getCurrent().getCameraPosition()),
-			c.distance(Camera::getCurrent().getCameraPosition()), dst);*/
-		TextureManager::rasterize(color, a2, b2, c2,
-			wa, wb, wc,
+	void draw(const Color& color, GlobalTexture& dst, const float& light) const {
+		TextureManager::rasterize(color,
+			Point2(aScreen.x,aScreen.y), Point2(bScreen.x, bScreen.y), Point2(cScreen.x, cScreen.y),
+			aScreen.z, bScreen.z, cScreen.z,
 			dst,light);
 	}
 };

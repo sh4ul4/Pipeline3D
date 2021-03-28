@@ -49,7 +49,7 @@ private:
 	};
 	static void threadfunc1(const std::vector<Triangle*> toRender, GlobalTexture& globalTexture, const Window& w, int min, int max) {
 		for (int i = min; i < max; i++) {
-			toRender[i]->set2d(w, true);
+			toRender[i]->setScreenCoord(w, true);
 			// render triangle
 			toRender[i]->render(w, globalTexture);
 		}
@@ -72,7 +72,7 @@ private:
 		thread3.join();*/
 		// signlethreaded version
 		for (int i = 0; i < max3; i++) {
-			toRender[i]->set2d(window, true);
+			toRender[i]->setScreenCoord(window, true);
 			// render triangle
 			toRender[i]->render(window, globalTexture);
 		}

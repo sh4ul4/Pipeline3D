@@ -47,7 +47,7 @@ public:
 	void set2ds(const Window& window) {
 		for (int i = 0; i < static_cast<int>(shapes.size()); i++) {
 			for (int j = 0; j < static_cast<int>(shapes[i]->triangles.size()); j++)
-				shapes[i]->triangles[j].set2d(window, true);
+				shapes[i]->triangles[j].setScreenCoord(window, true);
 		}
 	}
 	bool getFirstInteraction(const Vertex& startingPos, const Vertex& movement, Triangle& intersectionZone, Vertex& intersectionPoint, const float& interactionDistance)const {

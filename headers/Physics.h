@@ -5,7 +5,7 @@
 
 namespace Physics
 {
-	bool applyPhysics = false;
+	bool applyPhysics = true;
 	Vertex playerHB = { 0,0,0 };
 	float interactionDistance = 0.001;// 2;
 	float speed = 1;
