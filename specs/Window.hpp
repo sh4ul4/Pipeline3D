@@ -1,81 +1,90 @@
 /**
  * @class Window pour permet d'encapsuler les informations nécessaires à la fenêtre graphique générée avec SDL
  */
-class Window {
+class Window
+{
 
 private:
+	/**********************************************************************************************
+	 * 		Attributs
+	 * *******************************************************************************************/
 
-	// largeur de la fenêtre graphique
+	// Largeur de la fenêtre graphique
 	int width = NULL;
 
-	// hauteur de la fenêtre graphique
+	// Hauteur de la fenêtre graphique
 	int height = NULL;
 
-	// résolution de la fenêtre graphique selon l'axe x
+	// Résolution de la fenêtre graphique selon l'axe x
 	int renderWidth = NULL;
 
-	// résolution de la fenêtre graphique selon l'axe x
+	// Résolution de la fenêtre graphique selon l'axe y
 	int renderHeight = NULL;
 
-	// booléen pour gérer l'activation du mode plein écran
+	// Booléen pour gérer l'activation du mode plein écran
 	bool fullScreen = false;
 
-	// variable SDL pour contenir les données de la fenêtre graphique
-	SDL_Window* window = NULL;
+	// Variable SDL pour contenir les données de la fenêtre graphique
+	SDL_Window *window = NULL;
 
-	// variable SDL pour contenir le pinceau pour dessiner dans la fenêtre graphique
-	SDL_Renderer* renderer = NULL;
+	// Variable SDL pour contenir le pinceau pour dessiner dans la fenêtre graphique
+	SDL_Renderer *renderer = NULL;
 
-	// variable pour gérer la fermeture de la fenêtre
+	// Variable pour gérer la fermeture de la fenêtre
 	bool shuttingDown = false;
 
+	/**********************************************************************************************
+	 * 		Méthode privée
+	 * *******************************************************************************************/
+
+	// Fermeture des différentes composantes de l'environnement graphique
+	void Shutdown();
+
 public:
+	/**********************************************************************************************
+	 * 		Méthodes permettant l'accès à une donnée spécifique
+	 * *******************************************************************************************/
 
-	// fonctions pour donner accès à la donnée spécifique
-	int getWidth() const { return width; }
-	int getHeight() const { return height; }
-	int getRenderWidth() const { return renderWidth; }
-	int getRenderHeight() const { return renderHeight; }
-	int getWidthCenter() const { return width / 2; }
-	int getHeightCenter() const { return height / 2; }
-	SDL_Renderer* getRenderer() const { return renderer; }
-	SDL_Window* getWindow() const { return window; }
+	// Retoune la largeur de la fenêtre graphique
+	int getWidth() const;
+	// Retoune la hauteur de la fenêtre graphique
+	int getHeight() const;
+	// Retoune la résolution de la fenêtre graphique sur l'axe x
+	int getRenderWidth() const;
+	// Retoune la résolution de la fenêtre graphique sur l'axe y
+	int getRenderHeight() const;
+	// Retourne la coordonné x du centre de la fenêtre graphique
+	int getWidthCenter() const;
+	// Retourne la coordonné y du centre de la fenêtre graphique
+	int getHeightCenter() const;
+	// Retourne le pointeur sur le render (SDL)
+	SDL_Renderer *getRenderer() const;
+	// Retourne le pointeur sur la fenêtre (SDL)
+	SDL_Window *getWindow() const;
 
-	// suppression du constructeur par défaut
+	// Suppression du constructeur par défaut
 	Window() = delete;
 
-	// instantier la fenêtre graphique avec une résolution et des dimensions
-	Window(const int& resolutionWidth, const int& resolutionHeight, const int& width, const int& height)
-	 : width(width), height(height), renderWidth(resolutionWidth), renderHeight(resolutionHeight) {}
+	// Instantier la fenêtre graphique avec une résolution et des dimensions
+	Window(const int &resolutionWidth, const int &resolutionHeight, const int &width, const int &height)
+		: width(width), height(height), renderWidth(resolutionWidth), renderHeight(resolutionHeight) {}
 
-	// instantier la fenêtre graphique avec des dimensions
-	Window(const int& width, const int& height)
-	 : width(width), height(height), renderWidth(width), renderHeight(height) {}
+	// Instantier la fenêtre graphique avec des dimensions
+	Window(const int &width, const int &height)
+		: width(width), height(height), renderWidth(width), renderHeight(height) {}
 
-	// destructeur de la classe
-	~Window() { Shutdown(); }
+	// destructeur de la classe (le destructeur appellera la méthode Shutdown)
+	~Window();
 
-private:
+	// Mettre en pause la fenêtre graphique pour un lapse de temps donné
+	void Wait(const Uint32 &time) const;
 
-	// fermeture des différentes composantes de l'environnement graphique
-	void Shutdown() {}
+	// Remplir la fenêtre avec une couleur donnée
+	void FillScreen(const Color &color) const;
 
-public:
+	// Mettre à jour l'affichage de la fenêtre
+	void RenderScreen() const;
 
-	// mettre en pause la fenêtre graphique pour un lapse de temps donné
-	void Wait(const Uint32& time) const { SDL_Delay(time); }
-
-	// remplir la fenêtre avec une couleur donnée
-	void FillScreen(const Color& color) const
-	{
-		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-		SDL_RenderClear(renderer);
-	}
-
-	// mettre à jour l'affichage de la fenêtre
-	void RenderScreen() const { SDL_RenderPresent(renderer); }
-
-	// changer de plein écran à fenêtré ou inversement
-	void ToggleWindow(const int& width, const int& height) {}
-
+	// Changer de plein écran à fenêtré ou inversement
+	void ToggleWindow(const int &width, const int &height);
 };
