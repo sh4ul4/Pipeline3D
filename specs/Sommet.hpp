@@ -35,6 +35,7 @@ public:
 	Sommet(const Sommet &v) : x(v.x), y(v.y), z(v.z) {}
 	
 	/* --- Surchages d'opérateurs --- */
+	// Opérateurs s'assignement
 	Sommet &operator=(const Sommet &other); // Le sommet courant prend les coordonnées du sommet en paramètre
 	Sommet &operator+=(const Sommet &other); // Les coordonnées du sommet courant sont égal à la somme d'eux-même avec les coordonnées du sommet en paramètre 
 	Sommet &operator-=(const Sommet &other); // ---- différence ---
@@ -46,46 +47,15 @@ public:
 	Sommet &operator/=(const int &val); // Division des coordonnées du sommet courant par une valeur int
 	Sommet &operator/=(const double &val); // Division des coordonnées du sommet courant par une valeur double
 
-	const Sommet operator*(const float &val) const
-	{
-		return Sommet(x * val, y * val, z * val);
-	}
-	const Sommet operator*(const double &val) const
-	{
-		return Sommet(x * val, y * val, z * val);
-	}
-	const Sommet operator*(const int &val) const
-	{
-		return Sommet(x * val, y * val, z * val);
-	}
-	const Sommet operator/(const float &val) const
-	{
-		//if(val == 0) { std::cout << "ERROR : cannot divide by 0" << std::endl; exit(1); }
-		return Sommet(x / val, y / val, z / val);
-	}
-	const Sommet operator/(const double &val) const
-	{
-		//if(val == 0) { std::cout << "ERROR : cannot divide by 0" << std::endl; exit(1); }
-		return Sommet(x / val, y / val, z / val);
-	}
-	const Sommet operator/(const int &val) const
-	{
-		//if(val == 0) { std::cout << "ERROR : cannot divide by 0" << std::endl; exit(1); }
-		return Sommet(x / val, y / val, z / val);
-	}
-	float &operator[](const unsigned &i)
-	{
-		switch (i)
-		{
-		case 0:
-			return x;
-		case 1:
-			return y;
-		case 2:
-			return z;
-		}
-		FATAL_ERR("Index out of bounds for instance of [Vertex]")
-	}
+	// Opérateurs d'affectation
+	const Sommet operator*(const float &val) const;
+	const Sommet operator*(const double &val) const;
+	const Sommet operator*(const int &val) const;
+	const Sommet operator/(const float &val) const;
+	const Sommet operator/(const double &val) const;
+	const Sommet operator/(const int &val) const;
+	// Operateur [] qui renvoie x,y ou z en fonction de la valeur de i
+	float &operator[](const unsigned &i);
 	// Return Point3D with the value of sommet
 	Point3D toPoint3D() const
 	{
@@ -102,7 +72,7 @@ public:
 	{
 		return x * v.x + y * v.y + z * v.z;
 	}
-	//Renvoie un sommet qui le résultat produit en croix de 2 sommets
+	//Renvoie un sommet qui est le résultat produit en croix de 2 sommets
 	Sommet crossProduct(const Sommet &v) const
 	{
 		return Sommet(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
@@ -114,7 +84,7 @@ public:
 	}
 
 	/**
-	 * @brief Calcule la distance le point actuel et 2 points formant une ligne
+	 * @brief Calcule la distance entre le point actuel et le 2e point formant une ligne
 	 * 
 	 * @param Sommet& P0 Premier point formant la ligne
 	 * @param Sommet& P2 Deuxième point formant la ligne
@@ -128,21 +98,10 @@ public:
 	{
 		std::cout << "[" << x << "|" << y << "|" << z << "]";
 	}
+	// 
 	friend std::ostream &operator<<(std::ostream &os, const Sommet &v);
 
-	void normalizeOnLength(const float &length)
-	{
-		const float sum = abs(x) + abs(y) + abs(z);
-		if (sum == 0)
-		{
-			this->x = this->y = this->z = 0;
-			return;
-		}
-		const float normalizedLength = length / sum;
-		x *= normalizedLength;
-		y *= normalizedLength;
-		z *= normalizedLength;
-	}
+	void normalizeOnLength(const float &length);
 	// Retourne la distance par rapport à l'origine du rapport
 	float getLength(void) const
 	{
@@ -167,21 +126,9 @@ inline const Sommet operator/(const Sommet &v1, const Sommet &v2)
 	return Sommet(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z);
 }
 
-float Sommet::distanceToLine(const Sommet &P0, const Sommet &P1) const
-{
-	Sommet v = P1 - P0;
-	const Sommet w = *this - P0;
-
-	const float c1 = w.dotProduct(v);
-	if (c1 <= 0) // before P0
-		return this->distance(P0);
-	const float c2 = v.dotProduct(v);
-	if (c2 <= c1) // after P1
-		return this->distance(P1);
-	v *= (c1 / c2);
-	return this->distance(P0 + v);
-}
-//affiche les coordonées des sommets en surchageant l'opérateur <<
+// Calcule la distance entre le point actuel et le 2e point formant une ligne
+float Sommet::distanceToLine(const Sommet &P0, const Sommet &P1) const;
+//affiche les coordonnées des sommets en surchageant l'opérateur <<
 std::ostream &operator<<(std::ostream &os, const Sommet &v)
 {
 	return (os << "[" << v.x << "|" << v.y << "|" << v.z << "]");
