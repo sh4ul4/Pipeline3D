@@ -7,10 +7,10 @@ class Triangle {
 public:
 
 	// sommets du triangle en world-coordinates
-	Vertex a, b, c;
+	Sommet a, b, c;
 
 	// sommets du triangle en screen-coordinates (clip-space)
-	Vertex aScreen, bScreen, cScreen;
+	Sommet aScreen, bScreen, cScreen;
 
 	// pointeur vers la texture bitmap du triangle
 	Bitmap* bmp = nullptr;
@@ -26,6 +26,9 @@ public:
 
 	// vecteur de triangles temporaires pour le clipping
 	std::vector<Triangle> tmp;
+
+	// sommet qui indique le vecteur normal du triangle
+	Sommet normalVec;
 
 private:
 
@@ -49,13 +52,13 @@ private:
 public:
 
 	// constructeur sans texture
-	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Color& color = black, const bool& fill = true)
-		: a(a), b(b), c(c), color(color), fill(fill) {}
+	Triangle(const Sommet& a, const Sommet& b, const Sommet& c, const Sommet& normalVec, const Color& color = black, const bool& fill = true)
+		: a(a), b(b), c(c), normalVec(normalVec), color(color), fill(fill) {}
 
 	// constructeur avec texture
-	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Color& color,
-		Bitmap* bmp, const Point2& bmpA, const Point2& bmpB, const Point2& bmpC)
-		: a(a), b(b), c(c), color(color),
+	Triangle(const Sommet& a, const Sommet& b, const Sommet& c, const Sommet& normalVec,
+		const Color& color, Bitmap* bmp, const Point2& bmpA, const Point2& bmpB, const Point2& bmpC)
+		: a(a), b(b), c(c), normalVec(normalVec), color(color),
 		bmp(bmp), bmpA(bmpA), bmpB(bmpB), bmpC(bmpC) {}
 	
 	// comparaison de deux triangles en fonction de leurs distance à la caméra
@@ -67,7 +70,7 @@ public:
 	}
 
 	// bouger tout le triangle sur un vecteur
-	inline void move(const Vertex& movement) {
+	inline void move(const Sommet& movement) {
 		a += movement;
 		b += movement;
 		c += movement;
@@ -107,22 +110,22 @@ private:
 public:
 
 	// renvoie la distance point triangle
-	float distanceToPoint(const Vertex& p) const {}
+	float distanceToPoint(const Sommet& p) const {}
 
 	// renvoie le point du plan le plus proche du point
-	static Vertex ClosestPointOnPlane(const Vertex& pl1, const Vertex& pl2, const Vertex& pl3, const Vertex& p) {}
+	static Sommet ClosestPointOnPlane(const Sommet& pl1, const Sommet& pl2, const Sommet& pl3, const Sommet& p) {}
 
 	// renvoie true si le point est dans le triangle, false autrement
-	bool PointInTriangle(const Vertex& p) const {}
+	bool PointInTriangle(const Sommet& p) const {}
 
 	// renvoie le point du segment le plus proche du point
-	Point3 ClosestPointOnLine(const Vertex& l1, const Vertex& l2, const Vertex& p) const {}
+	Point3 ClosestPointOnLine(const Sommet& l1, const Sommet& l2, const Sommet& p) const {}
 
 	// renvoie le point du triangle le plus proche du point
-	Vertex ClosestPoint(const Vertex& p) const {}
+	Sommet ClosestPoint(const Sommet& p) const {}
 
 	// renvoie le point d'intersection entre un segment et un plan
-	static Vertex getIntersectionWithPlane(const Vertex& rayPoint, const Vertex& rayVector, const Vertex& planeNormal, const Vertex& planePoint) {}
+	static Sommet getIntersectionWithPlane(const Sommet& rayPoint, const Sommet& rayVector, const Sommet& planeNormal, const Sommet& planePoint) {}
 
 private:
 
