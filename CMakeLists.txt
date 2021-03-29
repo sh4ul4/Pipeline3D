@@ -21,7 +21,10 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_I
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
 
-set(SRCS src/main.cpp "headers/Point.cpp")
+set(SRCS	src/main.cpp
+			headers/Point.cpp
+			headers/Bitmap.cpp)
+
 set(HEADERS headers/Camera.h
 			headers/Draw.h
 			headers/library.h
@@ -36,7 +39,9 @@ set(HEADERS headers/Camera.h
 			headers/Triangle.h
 			#headers/Point.h
 			headers/Input.h
- "headers/Texture.h" "headers/Point.hpp")
+			headers/Bitmap.hpp
+			headers/Texture.h
+			headers/Point.hpp)
 
 
 

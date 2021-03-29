@@ -10,6 +10,7 @@ int main(int argc, char* argv[]) {
 	//Window window(1200,600, 400, 200);
 	//Window window(1200,600, 800, 400);
 	Window window(1200, 600);
+	//Window window(1600, 1080);
 	InputEvent inputEvent;
 	ShapeManager manager;
 	Camera cam1({ -100,250,150 }, 60, 0, 0);

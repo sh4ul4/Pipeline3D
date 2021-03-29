@@ -9,9 +9,9 @@
 	 Point2D
  ===========================================================================================*/
 
- /**
-  * @class Point à deux coordonnées entières
-  */
+/**
+ * @class Point à deux coordonnées entières
+ */
 class Point2D
 {
 public:
