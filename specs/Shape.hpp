@@ -44,9 +44,9 @@ public:
 
 	/**
 	 * @brief Rotation autour de l'axe x sur la shape courante avec un angle donné.
-     * Déplacement des points de la shape par rapport au Sommet qui sera le centre de rotation, 
-     * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
-     * 
+	 * Déplacement des points de la shape par rapport au Sommet qui sera le centre de rotation, 
+	 * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
+	 * 
 	 * @param p Sommet centre de rotation
 	 * @param angle Angle de rotation 
 	 */
@@ -55,7 +55,7 @@ public:
 	/**
 	 * @brief Rotation autour de l'axe y sur la shape courante avec un angle donné.
 	 * Déplacement des points de la shape par rapport au Sommet qui sera le centre de rotation, 
-     * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
+	 * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
 	 * 
 	 * @param p Sommet centre de rotation
 	 * @param angle Angle de rotation
@@ -65,7 +65,7 @@ public:
 	/**
 	 * @brief Rotation autour de l'axe z sur la shape courante avec un angle donné.
 	 * Déplacement des points de la shape par rapport au Sommet qui sera le centre de rotation, 
-     * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
+	 * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
 	 * 
 	 * @param p Sommet centre de rotation
 	 * @param angle Angle de rotation
