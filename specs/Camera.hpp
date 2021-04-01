@@ -10,9 +10,28 @@
 
 /**
  * @class Camera
- * @brief Gestion et mise à jour de la caméra 
+ * @brief Gestion et mise à jour de la caméra
+ * 
+ * @private `current`			Pointeur vers la camera utilisée.
+ * @private `pos`			Position de la camera.
+ * @private `subject`			Si il y a un sujet, la camera tourne et ce concentre sur celui ci.
+ * @private `distanceToSubject`		Vecteur distance entre [pos] et [sujet].
+ * @private `LastAngleX`		Angle d'observation horizontal.
+ * @private `LastAngleY`		Angle d'observation vertical.
+ *
+ * @public `hasSubject`		Si la camera a un sujet ou non.
+ * @public `angleView`		L'angle de vue, exprimé en degrées.
+ * @public `minAngleView`	L'angle de vue minimum.
+ * @public `maxAngleView`	L'angle de vue maximum.
+ * @public `sensitivity`	Défini la sensibilité de rotation de la camera.
+ * @public `near`		Limite du clipping de proximité.
+ * @public `far`		Limite du clipping de distance.
+ * @public `angleX`		Angle d'observation horizontal.
+ * @public `angleY`		Angle d'observation vertical.
+ * @public `locked`		Cette variable indique si il peut être altéré seulement intérieurement.
+ * @public `path`		Vecteur du chemin qui peut être utilisé pour bouger la camera.
+ * @public `pathMoveSpeed`	Vitesse de mouvement de la camera pendant qu'elle suit le chemin.
  */
-
 class Camera
 {
 private:
@@ -46,16 +65,6 @@ private:
 	 * Angle d'observation vertical.
 	 */		
 	float LastAngleY = 0;
-	/**
-	 * Une variable privée.
-	 * Angle de rotation de la caméra sur elle même.
-	 */		
-	float LastAngleZ = 0; 
-	/**
-	 * Une variable privée.
-	 * Vecteur de la direction de la lumière du soleil.
-	 */			
-	Vertex sun; 
 public:
 	/**
 	 * Une variable publique.
@@ -64,7 +73,7 @@ public:
 	bool hasSubject = false;
 	/**
 	 * Une variable publique.
-	 * L'angle de vue.
+	 * L'angle de vue, exprimé en degrée.
 	 */		
 	float angleView = 80;
 	/**
@@ -104,13 +113,8 @@ public:
 	float angleY = 0;
 	/**
 	 * Une variable publique.
-	 * Angle de rotation sur elle même.
-	 */			
-	float angleZ = 0; 
-	/**
-	 * Une variable publique.
 	 * Cette variable indique si il peut être altéré seulement intérieurement.
-	 */		
+	 */
 	bool locked = false;
 	/**
 	 * Une variable publique.
@@ -129,7 +133,7 @@ public:
 	 * Construit la camera et si aucune n'est utilisée, la fait devenir celle utilisée.
 	 */		
 	Camera(const std::array<float, 3>& pos, const float& angleOfView, const float& nearClipping, const float& farClipping, const float& angleX, const float& angleY)
-		:pos(pos), angleView(angleOfView), near(nearClipping), far(farClipping), angleX(angleX), angleY(angleY) {
+		:pos(pos), angleView(angleOfView), near(nearClipping), far(farClipping), angleX(angleX), angleY(angleY), angleZ(angleZ) {
 		if (current == nullptr)setCurrent();
 	}
 	/**
@@ -138,11 +142,11 @@ public:
 	 * Construit la camera et si aucune n'est utilisée, la fait devenir celle utilisée.
 	 */			
 	Camera(const std::array<float, 3>& pos, const float& angleView, const float& angleX, const float& angleY)
-		:pos(pos), angleView(angleView), angleX(angleX), angleY(angleY) {
+		:pos(pos), angleView(angleView), angleX(angleX), angleY(angleY), angleZ(angleZ) {
 		if (current == nullptr)setCurrent();
 	}
 	/**
-	 * Un constructeur.
+	 * Un destructeur.
 	 * @param aucun
 	 * Supprime la camera.
 	 */		
@@ -211,27 +215,16 @@ public:
 	}
 
 	/**
-	 * @brief La camera tourne de tous les angles possibles et ça refresh la visualisation 2D
+	 * @brief Création des nouvelle matrices de vue et projection de la frame actuelle.
 	 */	
 	void refresh2D() {
 		Matrix::V = Matrix::makeFPviewMatrix({ pos.x,pos.y,pos.z }, angleY, angleX); // rotation is done around camera
 		Matrix::P = Matrix::makeProjectionMatrix(angleView, far, near, -0.003);
 		Matrix::makeWorldToCameraMatrix();
 	}
-
-	/*// move camera depending on world axes
-	void moveCameraWorldCoord(const float& front, const float& side, const float& up) {
-		const Matrix::m4d tmp = { {-side,0,-front,0} };
-		pos[0] += tmp[0][0];
-		pos[1] += up;
-		pos[2] += tmp[0][2];
-	}*/
-
-	// v[0] : front  v[1] : side  v[2] : up
-	// view-angle not incorporated
 	
 	/**
-	 * @brief Permet de fixé la camera aux coordonnées du monde
+	 * @brief Permet de fixé la camera aux coordonnées du monde.
 	 * @param v Vecteur 3D des coordonnées du monde
 	 */		
 	void FPfixedCoordToWorldCoord(Matrix::vec3d& v) {
@@ -241,12 +234,9 @@ public:
 		v[1] += pos[1];
 		v[2] = tmp[0][2] + pos[2];
 	}
-
-	// v[0] : front  v[1] : side  v[2] : up
-	// view-angle incorporated
 	
 	/**
-	 * @brief Permet de fixé la camera aux coordonnées du monde
+	 * @brief Permet de fixé la camera aux coordonnées du monde.
 	 * @param v Vecteur 3D des coordonnées du monde
 	 */		
 	void FPrelativeCoordToWorldCoord(Matrix::vec3d& v) {
@@ -257,28 +247,9 @@ public:
 		v[2] = tmp[0][2] + pos[2];
 	}
 
-	/*// move camera depending on first-person looking direction
-	// ignoring up-looking direction
-	void moveCameraFPCoord(const float& front, const float& side, const float& up, const float& speed) {
-		Matrix::vec3d v;
-		v = { front,side,up };
-		v = Matrix::normalizeOnLength(v, speed);
-		Matrix::m4d tmp = { {-v[1],0,-v[0],0} };
-		Matrix::mult(tmp, Matrix::V, tmp);
-		if (hasSubject) {
-			subject.x += tmp[0][0];
-			subject.y += up;
-			subject.z += tmp[0][2];
-		}
-		else {
-			pos[0] += tmp[0][0];
-			pos[1] += up;
-			pos[2] += tmp[0][2];
-		}
-	}*/
 	/**
-	 * @brief 
-	 * @param front , side, up, speed Vitesse de la camera
+	 * @brief Precalcule le point de la position de la caméra concidérant sa direction et sa vitesse.
+	 * @param front coordonnée X de la trajectoire de la caméra, side coordonnée Z de la trajectoire de la caméra, up coordonnée Y de la trajectoire de la caméra, speed Vitesse de la camera
 	 * @return
 	 */	
 	static Vertex getMovementVector(const float& front, const float& side, const float& up, const float& speed) {
@@ -290,8 +261,8 @@ public:
 	}
 
 	/**
-	 * @brief 
-	 * @param v Vecteur de sujet de la camera
+	 * @brief Applique à la caméra une nouvelle position en fonction d'un vecteur de déplacement.
+	 * @param v Vecteur de déplacement
 	 * @return
 	 */	
 	void moveCameraPreCalculated(const Vertex& v) {
@@ -305,46 +276,29 @@ public:
 		}
 	}
 
-	/*// move camera depending on first-person looking direction
-	void moveCameraFPCoordUpIncl(const float& front, const float& side, const float& up, const float& speed) {
-		Vertex v(front, side, up);
-		v.normalizeOnLength(speed);
-		Matrix::m4d tmp = { {-v[1],-v[2],-v[0],0} };
-		Matrix::mult(tmp, Matrix::Vi, tmp);
-		if (hasSubject) {
-			subject.x += tmp[0][0];
-			subject.y += tmp[0][1];
-			subject.z += tmp[0][2];
-		}
-		else {
-			pos[0] += tmp[0][0];
-			pos[1] += tmp[0][1];
-			pos[2] += tmp[0][2];
-		}
-	}*/
 	/**
-	 * @brief 
-	 * @param vec Vecteur où se deplace la camera
+	 * @brief Déplace la caméra directement à un point.
+	 * @param point Point où se deplace la caméra
 	 * @return
 	 */
-	void moveTo(const Vertex& vec) {
-		pos = Matrix::toVec3d(vec);
+	void moveTo(const Vertex& point) {
+		pos = Matrix::toVec3d(point);
 	}
 
 	/**
-	 * @brief 
-	 * @param vec
+	 * @brief Retourner la distance par rapport au point. Négatif si le point est derrière la caméra.
+	 * @param point Point dont la distance est mesurée
 	 * @return
 	 */
-	float relationToClipPlane(const Vertex& vec) {
+	float relationToClipPlane(const Vertex& point) {
 		const Vertex pos = this->pos + getMovementVector(1, 0, 0, near);
 		const Vertex n = getMovementVector(1, 0, 0, 10); // should be negative if going backwards !
-		return n.x * (vec.x - pos.x) + n.y * (vec.y - pos.y) + n.z * (vec.z - pos.z);
+		return n.x * (point.x - pos.x) + n.y * (point.y - pos.y) + n.z * (point.z - pos.z);
 	}
 
 	/**
-	 * @brief 
-	 * @param m , clip , windows
+	 * @brief Renvois la position d'un point par rapport au plan de la caméra, avec application de la perspective
+	 * @param m matrice 4x4 contenant les coordonnées du point, clip valeur de clipping du point, windows fenetre dans laquelle calculer la position.
 	 * @return 
 	 */
 	Vertex get2D(Matrix::m4d m, bool& clip, const Window& window) {
@@ -369,61 +323,6 @@ public:
 		y += window.getHeightCenter();
 		//raster space
 		return { x, y, m[0][3] };
-	}
-
-	/**
-	 * @brief 
-	 * @param m, clip, window 
-	 * @return
-	 */
-	Point2D get2DwithoutPerspective(Matrix::m4d m, bool* clip, const Window& window) {
-		*clip = false;
-		if (m.size() == 0) {
-			return {};
-		}
-		m[0][3] = 1;
-		Matrix::mult(m, Matrix::V, m);
-		if (Matrix::lengthV(m) > far) {
-			*clip = true;
-			return { (int)m[0][0],(int)m[0][1] };
-		}
-		if (m[0][3] < near) {
-			*clip = true;
-			return { (int)m[0][0],(int)m[0][1] };
-		}
-		const int x = (int)(m[0][0] / m[0][3]) + window.getWidthCenter();
-		const int y = (int)(m[0][1] / m[0][3]) + window.getHeightCenter();
-		return { x,y };
-	}
-
-	/**
-	 * @brief 
-	 * @param m, clip^, window
-	 * @return
-	 */
-	Point2D get2DonlyPerspective(Matrix::m4d m, bool* clip, const Window& window) {
-		*clip = false;
-		if (m.size() == 0) {
-			return {};
-		}
-		m[0][3] = 1;
-		//Matrix::mult(m, Matrix::V, &m);
-		if (Matrix::lengthV(m) > far) {
-			*clip = true;
-			return { (int)m[0][0],(int)m[0][1] };
-		}
-		if (m[0][3] < near) {
-			*clip = true;
-			/*normalize(&m);
-			m[0][0] *= -1;
-			m[0][1] *= -1;
-			m[0][0] += winCenterX;
-			m[0][1] += winCenterY;*/
-			return { (int)m[0][0],(int)m[0][1] };
-		}
-		const int x = (int)(m[0][0] / m[0][3]) + window.getWidthCenter();
-		const int y = (int)(m[0][1] / m[0][3]) + window.getHeightCenter();
-		return { x,y };
 	}
 
 	/**
@@ -479,10 +378,14 @@ private:
 public:
 
 	/**
-	 * Fonction publique
-	 * @param inputEvent, window
-	 * @brief
-	 */	
+     	 * Fonction publique
+     	 * @param inputEvent, window
+     	 * @brief Mettre à jour tous les paramètre changeants de la caméra à chaques frame.
+     	 * - angle de vue
+     	 * - direction du regard (1ère personne ou 3ème personne)
+     	 * - mouvements 3D (caméra et sujet de la caméra)
+     	 * - matrice de vue et matrice de perspective
+     	 */
 	void update(InputEvent& inputEvent, const Window& window) {
 		if (inputEvent.keyboard.z && angleView > minAngleView) {
 			inputEvent.keyboard.z = false;
