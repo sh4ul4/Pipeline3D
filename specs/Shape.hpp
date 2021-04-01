@@ -2,10 +2,13 @@
  * @class Shape
  * @brief Contient les informations de base d'une forme.
  * Cette classe est adaptée pour le polymorphisme
+ * 
+ * @public `std::vector` Vecteur des triangles qui composent la shape
+ * @public `Sommet`      Point 3D qui défini le centre de la shape
+ * @public `bool`        Booléen qui indique la visibilité
+ * @public `Bitmap`      Pointeur vers la texture bitmap utilisée
  */
-class Shape
-{
-
+class Shape {
 public:
 	// Vecteur des triangles qui composent la shape
 	std::vector<Triangle> triangles;
@@ -24,17 +27,20 @@ public:
 
 	/**
 	 * @brief Constructeur basique
-	 * @param triangles liste de triangles (vector)
-	 * @param center ???
-	 * @param bpm ???
+	 * @param triangles Liste de triangles (vector)
+	 * @param center    Centre de la forme 
+	 * @param bpm       Pointeur vers la Bitmap de texture si existante 
 	 */
-	Shape(const std::vector<Triangle> &triangles, const Vertex &center, Bitmap *bmp = nullptr) : triangles(triangles), center(center), bmp(bmp) {}
+	Shape(const std::vector<Triangle> &triangles, const Sommet &center, Bitmap *bmp = nullptr) : 
+            triangles(triangles), center(center), bmp(bmp) {}
 
 	/**
 	 * @brief Constructeur par copie
 	 * @param shape objet à copier
 	 */
-	Shape(const Shape &shape) : triangles(shape.triangles), center(shape.center), visible(shape.visible), bmp(shape.bmp) {}
+	Shape(const Shape &shape) : 
+            triangles(shape.triangles), center(shape.center), visible(shape.visible), bmp(shape.bmp) {}
+
 
 	// rotation autour de l'axe x avec un angle donné
 	/**
