@@ -45,7 +45,12 @@ private:
 	 * Une variable privée.
 	 * Angle d'observation vertical.
 	 */		
-	float LastAngleY = 0; // looking-direction angle vertical
+	float LastAngleY = 0;
+	/**
+	 * Une variable privée.
+	 * Angle de rotation de la caméra sur elle même.
+	 */		
+	float LastAngleZ = 0; 
 	/**
 	 * Une variable privée.
 	 * Vecteur de la direction de la lumière du soleil.
@@ -61,7 +66,7 @@ public:
 	 * Une variable publique.
 	 * L'angle de vue.
 	 */		
-	float angleView = 10;
+	float angleView = 80;
 	/**
 	 * Une variable publique.
 	 * L'angle de vue minimum.
@@ -96,7 +101,12 @@ public:
 	 * Une variable publique.
 	 * Angle d'observation vertical.
 	 */			
-	float angleY = 0; 	
+	float angleY = 0;
+	/**
+	 * Une variable publique.
+	 * Angle de rotation sur elle même.
+	 */			
+	float angleZ = 0; 
 	/**
 	 * Une variable publique.
 	 * Cette variable indique si il peut être altéré seulement intérieurement.
