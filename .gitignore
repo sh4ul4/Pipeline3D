@@ -37,6 +37,7 @@ Debug
 out
 # SDL
 .vs
+.vscode/
 CMakeSettings.json
 CMakeCache.txt
 cmake_install.cmake

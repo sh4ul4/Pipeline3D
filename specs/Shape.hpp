@@ -2,10 +2,13 @@
  * @class Shape
  * @brief Contient les informations de base d'une forme.
  * Cette classe est adaptée pour le polymorphisme
+ * 
+ * @public `std::vector` Vecteur des triangles qui composent la shape
+ * @public `Sommet`      Point 3D qui défini le centre de la shape
+ * @public `bool`        Booléen qui indique la visibilité
+ * @public `Bitmap`      Pointeur vers la texture bitmap utilisée
  */
-class Shape
-{
-
+class Shape {
 public:
 	// Vecteur des triangles qui composent la shape
 	std::vector<Triangle> triangles;
@@ -24,45 +27,56 @@ public:
 
 	/**
 	 * @brief Constructeur basique
-	 * @param triangles liste de triangles (vector)
-	 * @param center ???
-	 * @param bpm ???
+	 * @param triangles Liste de triangles (vector)
+	 * @param center    Centre de la forme 
+	 * @param bpm       Pointeur vers la Bitmap de texture si existante 
 	 */
-	Shape(const std::vector<Triangle> &triangles, const Vertex &center, Bitmap *bmp = nullptr) : triangles(triangles), center(center), bmp(bmp) {}
+	Shape(const std::vector<Triangle> &triangles, const Sommet &center, Bitmap *bmp = nullptr) : 
+            triangles(triangles), center(center), bmp(bmp) {}
 
 	/**
 	 * @brief Constructeur par copie
 	 * @param shape objet à copier
 	 */
-	Shape(const Shape &shape) : triangles(shape.triangles), center(shape.center), visible(shape.visible), bmp(shape.bmp) {}
+	Shape(const Shape &shape) : 
+            triangles(shape.triangles), center(shape.center), visible(shape.visible), bmp(shape.bmp) {}
 
-	// rotation autour de l'axe x avec un angle donné
+
 	/**
-	 * @brief Effectue une rotation sur la shape courante
-	 * @param p ???
+	 * @brief Rotation autour de l'axe x sur la shape courante avec un angle donné.
+	 * Déplacement des points de la shape par rapport au Sommet qui sera le centre de rotation, 
+	 * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
+	 * 
+	 * @param p Sommet centre de rotation
 	 * @param angle Angle de rotation 
 	 */
-	void rotateX(const Vertex &p, const float &angle);
+	void rotateX(const Sommet &p, const float &angle);
 
 	/**
-	 * @brief Rotation autour de l'axe y avec un angle donné
-	 * @param p ???
+	 * @brief Rotation autour de l'axe y sur la shape courante avec un angle donné.
+	 * Déplacement des points de la shape par rapport au Sommet qui sera le centre de rotation, 
+	 * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
+	 * 
+	 * @param p Sommet centre de rotation
 	 * @param angle Angle de rotation
 	 */
-	void rotateY(const Vertex &p, const float &angle);
+	void rotateY(const Sommet &p, const float &angle);
 
 	/**
-	 * @brief Rotation autour de l'axe z avec un angle donné
-	 * @param p ???
+	 * @brief Rotation autour de l'axe z sur la shape courante avec un angle donné.
+	 * Déplacement des points de la shape par rapport au Sommet qui sera le centre de rotation, 
+	 * puis rotation selon l'angle (Calcul matriciel) et redéplacement à la position initiale. 
+	 * 
+	 * @param p Sommet centre de rotation
 	 * @param angle Angle de rotation
 	 */
-	void rotateZ(const Vertex &p, const float &angle);
+	void rotateZ(const Sommet &p, const float &angle);
 
 	/**
-	 * @brief Déplace tous les triangles de la shape ainsi que son centre
-	 * @param movement ??? 
+	 * @brief Déplace le centre ainsi que tous les triangles de la shape vers une nouvelle position 
+	 * @param movement Vecteur de déplacement pour le mouvement de l'ensemble des triangles de la Shape
 	 */
-	void move(const Vertex &movement);
+	void move(const Sommet &movement);
 };
 
 /*

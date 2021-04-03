@@ -1,9 +1,3 @@
-#pragma once
-
-//#include "library.h"
-#include "Point.h"
-#include <array>
-
 /**
  * @class Représente un Sommet à 3 coordonnées, issu du module de Géométrie 
  */
@@ -230,9 +224,9 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, const Sommet &v);
 
 	/**
-	 * @brief ???
+	 * @brief Normaliser les coordonnées pour que leur somme corresponde à la variable length
 	 * 
-	 * @param length ???
+	 * @param length longueur requise
 	 */
 	void normalizeOnLength(const float &length);
 
