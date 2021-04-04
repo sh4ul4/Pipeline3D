@@ -1,14 +1,11 @@
-class InputEvent {	// Enregistre les actions de l'utilisateur sur la souris et le clavier
+class InputEvent {
 public:
+	InputEvent() { SDL_StopTextInput(); }
 	SDL_Event event;
 	Mouse mouse;
-	KeyBoard keyboard;
-	
-	// Constructeur
-	InputEvent() {
-		update();
-	}
-	
-	//Met à jour la valeur suivant l'action faite par l'utilisateur
+	Keyboard keyboard;
+	std::string text;
+	void updateMouse(Mouse& mouse) { mouse = this->mouse; }
+	void updateKeyBoard(Keyboard& keyboard) { keyboard = this->keyboard; }
 	void update();
 };

@@ -2,6 +2,7 @@
 // Région déclarative contenant des valeurs et des méthodes concernant la physique étudiant le mouvement 
 namespace Physics
 {
+	Keyboard keyboard;
 	/* ----- Valeurs correspondant aux lois physiques utilisées ----- */
 
 	bool applyPhysics = false;

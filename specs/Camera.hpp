@@ -65,6 +65,10 @@ private:
 	 * Angle d'observation vertical.
 	 */		
 	float LastAngleY = 0;
+
+	Mouse mouse;
+
+	Keyboard keyboard;
 public:
 	/**
 	 * Une variable publique.
