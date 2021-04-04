@@ -3,6 +3,12 @@
 #include "library.h"
 
 class Draw {
+
+	/**
+	 * Une structure publique.
+	 * Elle contient la gestion des chiffres analogiques
+	 */	
+
 	struct AnalogNumber {
 		AnalogNumber(bool one = NULL, bool two = NULL, bool three = NULL,
 			bool four = NULL, bool five = NULL, bool six = NULL, bool seven = NULL)
@@ -10,6 +16,12 @@ class Draw {
 		~AnalogNumber() {}
 		bool _1, _2, _3, _4, _5, _6, _7;
 	};
+	
+	/**
+	 * Une structure publique.
+	 * Elle contient la gestion des caractéres analogiques
+	 */		
+	
 	struct AnalogChar {
 		AnalogChar(bool A = NULL, bool B = NULL, bool C = NULL, bool D = NULL, bool E = NULL,
 			bool F = NULL, bool G = NULL, bool H = NULL, bool I = NULL, bool J = NULL, bool K = NULL,
