@@ -10,6 +10,9 @@
  */
 class Shape {
 public:
+	// Le nom unique de la shape
+	std::string name;
+
 	// Vecteur des triangles qui composent la shape
 	std::vector<Triangle> triangles;
 
@@ -22,16 +25,23 @@ public:
 	// Pointeur vers la texture bitmap utilisée
 	Bitmap *bmp = nullptr;
 
-	// Constructeur par défaut modifié
-	Shape();
+	// suppression du constructeur par défaut
+	Shape() = delete;
+
+	/**
+	 * @brief Constructeur par défaut
+	 * @param name Nom unique de la shape
+	 */
+	Shape(const std::string& name);
 
 	/**
 	 * @brief Constructeur basique
+	 * @param name Nom unique de la shape
 	 * @param triangles Liste de triangles (vector)
 	 * @param center    Centre de la forme 
 	 * @param bpm       Pointeur vers la Bitmap de texture si existante 
 	 */
-	Shape(const std::vector<Triangle> &triangles, const Sommet &center, Bitmap *bmp = nullptr) : 
+	Shape(const std::string& name, const std::vector<Triangle> &triangles, const Sommet &center, Bitmap *bmp = nullptr) : 
             triangles(triangles), center(center), bmp(bmp) {}
 
 	/**

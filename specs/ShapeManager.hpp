@@ -18,6 +18,20 @@ public:
 	 *===========================================================================================*/
 
 	/**
+	 * @brief Vérifie si une shape avec le nom donnée existe déjà
+	 * 
+	 * @param name Nom à vérifier
+	 */
+	bool checkName(const std::string& name);
+
+	/**
+	 * @brief Donne le premier nom unique disponible
+	 * 
+	 * @param name Nom à vérifier
+	 */
+	std::string giveUniqueName() const;
+
+	/**
 	 * @brief Met un indice de shape en sujet à la caméra courante
 	 * 
 	 * @param val indice en paramètre
@@ -27,11 +41,12 @@ public:
 	/**
 	 * @brief Ajouter une nouvelle forme à partir de triangles, d'un centre et d'une texture
 	 * 
+	 * @param Nom unique de la shape
 	 * @param triangles Vecteur de triangles qui composent la forme
 	 * @param center Le sommet centre de la forme
 	 * @param bmp La texture de la forme
 	 */
-	void addShape(const std::vector<Triangle> &triangles, const Sommet &center, Bitmap *bmp = nullptr);
+	void addShape(const std::string& name, const std::vector<Triangle> &triangles, const Sommet &center, Bitmap *bmp = nullptr);
 
 	/**
 	 * @brief Ajouter une nouvelle forme à partir d'une forme existante
@@ -43,22 +58,24 @@ public:
 	/**
 	 * @brief Ajoute une nouvelle sphere
 	 * 
+	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param radius Valeur numérique représentant l'angle de la sphère
 	 * @param bmp Bitmap
 	 * @param precision Degré de précision (par defaut : 20)
 	 */
-	void addSphere(const Sommet &center, const double &radius, Bitmap *bmp, const int &precision = 20);
+	void addSphere(const std::string& name, const Sommet &center, const double &radius, Bitmap *bmp, const int &precision = 20);
 
 	/**
 	 * @brief Ajoute une nouvelle sphère
 	 * 
+	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param radius Valeur numérique représentant l'angle de la sphère
 	 * @param color Indique la couleur de la sphère
 	 * @param precision Degré de précision (par defaut : 20)
 	 */
-	void addSphere(const Sommet &center, const double &radius, const Color &color, const int &precision = 20);
+	void addSphere(const std::string& name, const Sommet &center, const double &radius, const Color &color, const int &precision = 20);
 
 	/**
 	 * @brief Ajoute une sphère pré-existante
@@ -70,11 +87,12 @@ public:
 	/**
 	 * @brief Ajoute un cube
 	 * 
+	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param width indique la largeur du cube (Taille des arètes)
 	 * @param bmp Bitmap
 	 */
-	void addCube(const Sommet &center, const double &width, Bitmap *bmp = nullptr);
+	void addCube(const std::string& name, const Sommet &center, const double &width, Bitmap *bmp = nullptr);
 
 	/**
 	 * @brief Ajoute un cube pré-existant
@@ -86,10 +104,11 @@ public:
 	/**
 	 * @brief Ajoute un rectangle
 	 * 
+	 * @param Nom unique de la shape
 	 * @param a,b,c,d Sommets du rectangle, permettant de le dessiner
 	 * @param bmp Bitmap
 	 */
-	void addRectangle(const Sommet &a, const Sommet &b, const Sommet &c, const Sommet &d, Bitmap *bmp = nullptr);
+	void addRectangle(const std::string& name, const Sommet &a, const Sommet &b, const Sommet &c, const Sommet &d, Bitmap *bmp = nullptr);
 
 	/**
 	 * @brief Ajoute un rectangle pré-existant
