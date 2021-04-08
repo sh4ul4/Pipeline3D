@@ -7,8 +7,7 @@ class Draw {
 	/**
 	 * Une structure publique.
 	 * Elle contient la gestion des chiffres analogiques
-	 */	
-
+	 */
 	struct AnalogNumber {
 		AnalogNumber(bool one = NULL, bool two = NULL, bool three = NULL,
 			bool four = NULL, bool five = NULL, bool six = NULL, bool seven = NULL)
@@ -21,7 +20,6 @@ class Draw {
 	 * Une structure publique.
 	 * Elle contient la gestion des caractéres analogiques
 	 */		
-	
 	struct AnalogChar {
 		AnalogChar(bool A = NULL, bool B = NULL, bool C = NULL, bool D = NULL, bool E = NULL,
 			bool F = NULL, bool G = NULL, bool H = NULL, bool I = NULL, bool J = NULL, bool K = NULL,
@@ -44,8 +42,7 @@ public:
 	 * @param point Point 2D pré-existant
 	 * @param color Couleur du futur point
 	 * @param renderer Moteur de rendu SDL
-	 */	
-
+	 */
 	static void DrawPoint(const Point2D& point, const Color& color, SDL_Renderer* renderer);
 
 	/**
@@ -54,8 +51,7 @@ public:
 	 * @param point1, point2 Points 2D pré-existants
 	 * @param color Couleur de la future ligne 
 	 * @param renderer Moteur de rendu SDL
-	 */	
-		
+	 */
 	static void DrawLine(const Point2D& point1, const Point2D& point2, const Color& color, SDL_Renderer* renderer);
 	
 	/**
@@ -63,8 +59,7 @@ public:
 	 * @brief Dessine une ligne 2D avec deux points pré existants et la derniére couleur utilisée par le renderer 
 	 * @param point1, point2 Points 2D pré-existants
 	 * @param renderer Moteur de rendu SDL
-	 */	
-	
+	 */
 	static void DrawLine(const Point2D& point1, const Point2D& point2, SDL_Renderer* renderer);
 	
 	/**
@@ -72,8 +67,7 @@ public:
 	 * @brief Dessine un triangle 2D avec trois points pré existants, en reliant des lignes et la derniére couleur utilisée par le renderer 
 	 * @param a, b, c Points 2D pré-existants
 	 * @param renderer Moteur de rendu SDL
-	 */	
-	
+	 */
 	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, SDL_Renderer* renderer);
 	
 	/**
@@ -82,8 +76,7 @@ public:
 	 * @param a, b, c Points 2D pré-existants
 	 * @param color Couleur du futur triangle 
 	 * @param renderer Moteur de rendu SDL
-	 */		
-	
+	 */
 	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, const Color& color, SDL_Renderer* renderer);
 	
 	
@@ -94,8 +87,7 @@ private:
 	 * @brief Rempli la partie inférieure d'un triangle 2D tant que ça ne dépasse pas des points donnés 
 	 * @param v1, v2, v3 Points 2D pré-existants
 	 * @param renderer Moteur de rendu SDL
-	 */		
-
+	 */
 	void DrawFillBottomFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer);
 	
 	/**
@@ -103,8 +95,7 @@ private:
 	 * @brief Rempli la partie superieure d'un triangle 2D tant que ça ne va paq en dessous des points donnés 
 	 * @param v1, v2, v3 Points 2D pré-existants
 	 * @param renderer Moteur de rendu SDL
-	 */		
-
+	 */	
 	void DrawFillTopFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer);
 	
 public:
@@ -115,8 +106,7 @@ public:
 	 * @param p1, p2, p3 Points 2D pré-existants
 	 * @param color Couleur de remplissage du triangle
 	 * @param renderer Moteur de rendu SDL
-	 */		
-
+	 */	
 	static void DrawFillTriangle(const Point2D& p1, const Point2D& p2, const Point2D& p3, const Color& color, SDL_Renderer* renderer);
 	
 	/**
@@ -127,8 +117,6 @@ public:
 	 * @param color Couleur du cercle 
 	 * @param renderer Moteur de rendu SDL
 	 */		
-	
-	
 	static void DrawCircle(const int& X, const int& Y, const int& radius, const Color& color, SDL_Renderer* renderer);
 	
   	 /**
@@ -139,9 +127,28 @@ public:
 	 * @param color Couleur de remplissage du cercle 
 	 * @param renderer Moteur de rendu SDL
 	 */	
-	 
 	 static void DrawFillCircle(const int& X, const int& Y, const int& radius, const Color& color, SDL_Renderer* renderer);
 	 
-	
+	 /**
+	 * Une fonction publique.
+	 * @brief Affiche un texte 2D 
+	 * @param x,y Coordonnées de la zone de texte 
+	 * @param size Taille des caracteres
+	 * @param string Texte à afficher
+	 * @param color Couleur du texte à afficher
+	 * @param renderer Moteur de rendu SDL
+	 */	
+	bool RenderString(const int& x, const int& y, const int& size, const std::string& string, const Color& color, SDL_Renderer* renderer);
+
+	/**
+	 * Une fonction publique.
+	 * @brief Affiche un nombre 2D 
+	 * @param x,y Coordonnées de la zone de chiffre 
+	 * @param size Taille des chiffres
+	 * @param Num Nombre à afficher
+	 * @param color Couleur du nombre à afficher
+	 * @param renderer Moteur de rendu SDL
+	 */		
+	static bool RenderDigits(const int& X, const int& Y, const int& size, long long int Num, const Color& color, SDL_Renderer* renderer);
 	
 };
