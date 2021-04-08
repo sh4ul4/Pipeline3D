@@ -1,32 +1,63 @@
-namespace matrtix{
+template <size_t T1,size_t T2>
+class matrix{
+    public:
+    //tableau à 2 dimensions représentant la matrice
+    std::array<std::array<float,T1>,T2> m;
 
-    //défintiond'un type dune matrice de taille 4*4 avec un tableau en 2 dimensions
-    typedef std::array<std::array<float,4>,4> m4d;
-    typedef std::array<std::array<float,3>,3> m3d;
-    typedef std::array<std::array<float,2>,2> m2d;
-    
-    //copié une matrice de taille 4*4
-    m4d copyM4d(const m4d& m);
-    //addition entre 2 matrice de taille 4*4
-    void addM4d(const m4d& m1,const m4d& m2,m4d& res);
-    //soustraction entre 2 matrice de taille 4*4
-    void subM4d(const m4d& m1,const m4d& m2,m4d& res);
-    //multiplication d'un matrice 4*4 avec un scalaire
-    void scalarMultM4d(m4d& m,const float f);
-    //multiplication entre 2 matrice de taille 4*4
-    void multM4d(const m4d& m1, const m4d& m2,m4d& res);
-    //inversion de matrice de taille 4*4
-    void invertM4d(m4d& m);
-    //transposée d'un matrice de taille 4*4
-    void transposeM4d(m4d& m);
-    //renvoie le déterminant de la matrice 4*4
-    int determinantM4d(const m4d m);
-    
+    //Initialisation d'un matrice de taille T1*T2
+    matrix();
+    /*
+     * @brief Renvoie une copie de la matrice
+    */
+    matrix copy();
 
-    //tab 
-    //Constructeur
-    //vecteur
-    //
+    /*
+     * @brief renvoie l'addition de 2 matrices
+     * 
+     * @param this la première matrice additionée
+     * @param m2 la deuxième matrice additionée
+    */
+    matrix operator+(const matrix& m2);
 
-}
+    /*
+     * @brief renvoie la soustraction de 2 matrices
+     * 
+     * @param this la première matrice additionée
+     * @param m2 la deuxième matrice additionée
+    */
+    matrix operator-(const matrix& m2);
+
+    /*
+     *@brief renvoie la multiplication de 2 matrices
+     * 
+     * @param this la première matrice additionée
+     * @param m2 la deuxième matrice multiplié
+    */
+    matrix operator*(const matrix& m2);
+
+    /*
+     * @brief renvoie la matrice inverse
+     */
+    matrix invert();
+    /*
+     * @brief renvoie la transposée de la matrice
+    */
+    matrix transpose(m4d& m);
+    /*
+     * @brief  multiplie la matrice par un scalaire
+     * 
+     * @param f le scalaire
+     */
+  
+    void scalarMult(const float f);
+    /*
+     * @brief renvoie le déterminant de la matrice
+    */
+    float determinantM4d();
+
+    /*
+     * @brief affiche la matrice
+    */
+    void print();
+   
 }
