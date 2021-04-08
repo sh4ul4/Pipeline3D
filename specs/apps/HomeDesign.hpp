@@ -66,6 +66,10 @@ public:
 
     /**
      * @brief Permet le déplacement de l'objet par clic maintenu - Sprite dragging (ou glissement d'objet)
+     * 
+     * - Tant que le clic gauche de souris reste maintenu, le meuble passe en mode transparence
+     * - Une fois le clic lâché, si la place est disponible pour les dimensions du meuble, le meuble est placé
+     * - Si la place n'est pas disponible, le meuble demeure en mode transparence 
      */ 
     void dragSprite(Mouse mouse);
 
@@ -102,6 +106,15 @@ public:
 }
 
 
+/**
+ * @brief Classe principale représentant l'application externe "Modélisation d'Aménagement Intérieur"
+ * 
+ * @private string  Nom de la scène donné à l'ouverture de l'application
+ * @private vector  Vector ensemble de 4 murs délimitant la pièce intérieure
+ * @private vector  Vector des meubles (classe Furniture) existants sur l'instance courante
+ * 
+ * [+] Interface graphique et intéraction utilisateur
+ */ 
 class HomeDesign {
 private:
     /**
@@ -111,7 +124,7 @@ private:
 
     /**
      * @brief Vector ensemble de 4 (ou plus) rectangles représentant 
-     *        des murs délimitant la pièce intérieur
+     *        des murs délimitant la pièce intérieure
      */ 
     std::vector<Rectangle> walls; 
     
