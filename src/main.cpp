@@ -13,10 +13,15 @@ int main(int argc, char* argv[]) {
 	Camera cam2({ 50,50,200 }, 60, 0, 0);
 	//cam2.setSun(Vertex(-2, 10, 3));
 
-	cam2.addToPath({ -50,50,50 });
-	cam2.addToPath({ 50,50,-20 });
-	cam2.addToPath({ -50,-30,50 });
-	cam2.addToPath({ 50,50,10 });
+	TextBox::initLibrary();
+
+	TextBox tb("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(50, 50), window.getRenderer());
+
+	ButtonManager bm(inputEvent);
+
+	bm.addButton("buttonA", nullptr, dark_gray, black, &tb, Point2D(50, 200), 50, 18);
+
+	bm.getButton("buttonA").setAction([]() { std::cout << "ok" << std::endl; });
 
 	Render r(window);
 	Bitmap t0("../textures/space.gif");
@@ -108,6 +113,9 @@ int main(int argc, char* argv[]) {
 			window.ToggleWindow(window.getRenderWidth(), window.getRenderHeight());
 		}
 		r.render(inputEvent, window, manager /*, &t0*/);
+
+		bm.checkButtons();
+		bm.renderButtons(window.getRenderer());
 
 		window.RenderScreen();
 		window.FillScreen(teal);

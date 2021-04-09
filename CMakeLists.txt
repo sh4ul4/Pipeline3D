@@ -50,6 +50,7 @@ set(HEADERS headers/Bitmap.hpp
 			headers/Vector.hpp
 			headers/Vertex.hpp
 			headers/Window.hpp
+			headers/Button.hpp
 			)
 
 

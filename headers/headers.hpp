@@ -64,3 +64,7 @@
 #include "Physics.hpp"
 
 #include "Render.hpp"
+
+#include "Textbox.hpp"
+
+#include "Button.hpp"
