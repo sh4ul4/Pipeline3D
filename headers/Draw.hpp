@@ -1,8 +1,11 @@
 #pragma once
 
-#include "library.h"
-
 class Draw {
+
+	/**
+	 * Une structure publique.
+	 * Elle contient la gestion des chiffres analogiques
+	 */
 	struct AnalogNumber {
 		AnalogNumber(bool one = NULL, bool two = NULL, bool three = NULL,
 			bool four = NULL, bool five = NULL, bool six = NULL, bool seven = NULL)
@@ -10,6 +13,11 @@ class Draw {
 		~AnalogNumber() {}
 		bool _1, _2, _3, _4, _5, _6, _7;
 	};
+	
+	/**
+	 * Une structure publique.
+	 * Elle contient la gestion des caractéres analogiques
+	 */		
 	struct AnalogChar {
 		AnalogChar(bool A = NULL, bool B = NULL, bool C = NULL, bool D = NULL, bool E = NULL,
 			bool F = NULL, bool G = NULL, bool H = NULL, bool I = NULL, bool J = NULL, bool K = NULL,
@@ -25,22 +33,48 @@ class Draw {
 			_19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, _33, _34;
 	};
 public:
-	static void DrawPoint(const Point2D& point, const Color& color, SDL_Renderer* renderer)
-	{
+
+	/**
+	 * Une fonction publique.
+	 * @brief Dessine un point 2D pré existant avec une couleur donnée en parametre
+	 * @param point Point 2D pré-existant
+	 * @param color Couleur du futur point
+	 * @param renderer Moteur de rendu SDL
+	 */
+	static void DrawPoint(const Point2D& point, const Color& color, SDL_Renderer* renderer) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderDrawPoint(renderer, point.x, point.y);
 	}
-	static void DrawLine(const Point2D& point1, const Point2D& point2, const Color& color, SDL_Renderer* renderer)
-	{
+
+	/**
+	 * Une fonction publique.
+	 * @brief Dessine une ligne 2D avec deux points pré existants et une couleur donnée 
+	 * @param point1, point2 Points 2D pré-existants
+	 * @param color Couleur de la future ligne 
+	 * @param renderer Moteur de rendu SDL
+	 */
+	static void DrawLine(const Point2D& point1, const Point2D& point2, const Color& color, SDL_Renderer* renderer) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderDrawLine(renderer, point1.x, point1.y, point2.x, point2.y);
 	}
-	static void DrawLine(const Point2D& point1, const Point2D& point2, SDL_Renderer* renderer)
-	{
+	
+	/**
+	 * Une fonction publique.
+	 * @brief Dessine une ligne 2D avec deux points pré existants et la derniére couleur utilisée par le renderer 
+	 * @param point1, point2 Points 2D pré-existants
+	 * @param renderer Moteur de rendu SDL
+	 */
+	static void DrawLine(const Point2D& point1, const Point2D& point2, SDL_Renderer* renderer) {
 		SDL_RenderDrawLine(renderer, point1.x, point1.y, point2.x, point2.y);
 	}
-	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, SDL_Renderer* renderer)
-	{
+	
+	/**
+	 * Une fonction publique.
+	 * @brief Dessine un triangle 2D avec trois points pré existants, en reliant des lignes et la derniére couleur utilisée par le renderer 
+	 * @param a, b, c Points 2D pré-existants
+	 * @param renderer Moteur de rendu SDL
+	 */
+	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, SDL_Renderer* renderer) {
 		const SDL_Point p[4] = {
 		{a.x, a.y},
 		{b.x, b.y},
@@ -49,16 +83,31 @@ public:
 		};
 		SDL_RenderDrawLines(renderer, p, 4);
 	}
-	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, const Color& color, SDL_Renderer* renderer)
-	{
+	
+	/**
+	 * Une fonction publique.
+	 * @brief Dessine un triangle 2D avec trois points pré existants, en reliant des lignes et une couleur donnée
+	 * @param a, b, c Points 2D pré-existants
+	 * @param color Couleur du futur triangle 
+	 * @param renderer Moteur de rendu SDL
+	 */
+	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, const Color& color, SDL_Renderer* renderer) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
 		SDL_RenderDrawLine(renderer, b.x, b.y, c.x, c.y);
 		SDL_RenderDrawLine(renderer, c.x, c.y, a.x, a.y);
 	}
+	
+	
 private:
-	void DrawFillBottomFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer)
-	{
+
+	/**
+	 * Une fonction privée.
+	 * @brief Rempli la partie inférieure d'un triangle 2D tant que ça ne dépasse pas des points donnés 
+	 * @param v1, v2, v3 Points 2D pré-existants
+	 * @param renderer Moteur de rendu SDL
+	 */
+	void DrawFillBottomFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer) {
 		float invslope1_f = float((v2.x - v1.x) / (v2.y - v1.y));
 		float invslope2_f = float((v3.x - v1.x) / (v3.y - v1.y));
 		float curx1_f = float(v1.x);
@@ -70,8 +119,14 @@ private:
 			curx2_f += invslope2_f;
 		}
 	}
-	void DrawFillTopFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer)
-	{
+	
+	/**
+	 * Une fonction privée.
+	 * @brief Rempli la partie superieure d'un triangle 2D tant que ça ne va paq en dessous des points donnés 
+	 * @param v1, v2, v3 Points 2D pré-existants
+	 * @param renderer Moteur de rendu SDL
+	 */	
+	void DrawFillTopFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer) {
 		float invslope1_f = float((v3.x - v1.x) / (v3.y - v1.y));
 		float invslope2_f = float((v3.x - v2.x) / (v3.y - v2.y));
 		float curx1_f = float(v3.x);
@@ -83,9 +138,17 @@ private:
 			curx2_f -= invslope2_f;
 		}
 	}
+	
 public:
-	static void DrawFillTriangle(const Point2D& p1, const Point2D& p2, const Point2D& p3, const Color& color, SDL_Renderer* renderer)
-	{
+
+	/**
+	 * Une fonction publique.
+	 * @brief Remplie avec une couleur donnée un triangle 2D compris entre des points 2D qui forment des lignes 
+	 * @param p1, p2, p3 Points 2D pré-existants
+	 * @param color Couleur de remplissage du triangle
+	 * @param renderer Moteur de rendu SDL
+	 */	
+	static void DrawFillTriangle(const Point2D& p1, const Point2D& p2, const Point2D& p3, const Color& color, SDL_Renderer* renderer) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		Point2D tri_f[3];
 		tri_f[0] = p1;
@@ -139,8 +202,16 @@ public:
 		SDL_RenderDrawLines(renderer, lines, size);
 		free(lines);
 	}
-	static void DrawCircle(const int& X, const int& Y, const int& radius, const Color& color, SDL_Renderer* renderer)
-	{
+	
+	/**
+	 * Une fonction publique.
+	 * @brief Dessine avec une couleur donnée un cercle 2D définis par un centre (x,y) et un rayon
+	 * @param x,y Coordonnées du centre du cercle 
+	 * @param radius Rayon du cercle
+	 * @param color Couleur du cercle 
+	 * @param renderer Moteur de rendu SDL
+	 */		
+	static void DrawCircle(const int& X, const int& Y, const int& radius, const Color& color, SDL_Renderer* renderer) {
 		if (radius < 0) { std::cout << "Radius must be positive.\n"; return; }
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		for (int y = -radius; y <= radius; y++) {
@@ -151,8 +222,16 @@ public:
 			}
 		}
 	}
-	static void DrawFillCircle(const int& X, const int& Y, const int& radius, const Color& color, SDL_Renderer* renderer)
-	{
+	
+  	 /**
+	 * Une fonction publique.
+	 * @brief Remplie avec une couleur donnée un cercle 2D définis par un centre (x,y) et un rayon
+	 * @param x,y Coordonnées du centre du cercle 
+	 * @param radius Rayon du cercle
+	 * @param color Couleur de remplissage du cercle 
+	 * @param renderer Moteur de rendu SDL
+	 */	
+	static void DrawFillCircle(const int& X, const int& Y, const int& radius, const Color& color, SDL_Renderer* renderer) {
 		if (radius < 0) { std::cout << "Radius must be positive.\n"; return; }
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		for (int y = -radius; y <= radius; y++) {
@@ -162,9 +241,18 @@ public:
 				}
 			}
 		}
-	}
-	bool RenderString(const int& x, const int& y, const int& size, const std::string& string, const Color& color, SDL_Renderer* renderer) // ! in progress !
-	{
+	 }
+	 
+	 /**
+	 * Une fonction publique.
+	 * @brief Affiche un texte 2D 
+	 * @param x,y Coordonnées de la zone de texte 
+	 * @param size Taille des caracteres
+	 * @param string Texte à afficher
+	 * @param color Couleur du texte à afficher
+	 * @param renderer Moteur de rendu SDL
+	 */	
+	bool RenderString(const int& x, const int& y, const int& size, const std::string& string, const Color& color, SDL_Renderer* renderer) {
 		std::vector< AnalogChar> chars_f;
 		for (int i = static_cast<int>(string.size()) - 1; i >= 0; i--)
 		{
@@ -212,7 +300,7 @@ public:
 				a.y = y;
 				b.x = a.x + size / 4;
 				b.y = a.y;
-				DrawLine(a, b, color,renderer);
+				DrawLine(a, b, color, renderer);
 			}
 			if (chars_f[i]._2) {
 				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
@@ -448,8 +536,17 @@ public:
 		}
 		return 0;
 	}
-	static bool RenderDigits(const int& X, const int& Y, const int& size, long long int Num, const Color& color, SDL_Renderer* renderer) // render Digits
-	{
+
+	/**
+	 * Une fonction publique.
+	 * @brief Affiche un nombre 2D 
+	 * @param x,y Coordonnées de la zone de chiffre 
+	 * @param size Taille des chiffres
+	 * @param Num Nombre à afficher
+	 * @param color Couleur du nombre à afficher
+	 * @param renderer Moteur de rendu SDL
+	 */		
+	static bool RenderDigits(const int& X, const int& Y, const int& size, long long int Num, const Color& color, SDL_Renderer* renderer) {
 		std::vector<AnalogNumber> num_f;
 		const bool sign = (Num < 0);
 		if (sign) { Num *= -1; } // can handle negative numbers
@@ -527,4 +624,5 @@ public:
 		}
 		return 0;
 	}
+	
 };

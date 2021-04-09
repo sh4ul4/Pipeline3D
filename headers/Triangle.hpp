@@ -1,57 +1,85 @@
 #pragma once
-//#include "library.h"
-//#include "Draw.h"
-#include "Texture.h"
-//#include "Vertex.h"
-#include "Camera.h"
-
-//#define CLIP
-
+/**
+ * @class Triangle permet d'encapsuler les données d'un triangle, à la fois sous sa forme 3D
+ * dans l'environnement et sous sa forme 2D dans la frame.
+ */
 class Triangle {
+
 public:
-	std::vector<Triangle> tmp;
+
+	// sommets du triangle en world-coordinates
 	Vertex a, b, c;
+
+	// sommets du triangle en screen-coordinates (clip-space)
 	Vertex aScreen, bScreen, cScreen;
+
+	// pointeur vers la texture bitmap du triangle
 	Bitmap* bmp = nullptr;
-	Point2D bmpA;
-	Point2D bmpB;
-	Point2D bmpC;
+
+	// sommets du triangle en coordonnées de texture
+	Point2D bmpA, bmpB, bmpC;
+
+	// couleur du triangle
+	Color color = black;
+
+	// distance du triangle à la caméra
+	float distanceToCamera = INFINITY;
+
+	// vecteur de triangles temporaires pour le clipping
+	std::vector<Triangle> tmp;
+
+	// sommet qui indique le vecteur normal du triangle
+	Vector normalVec;
+
 private:
+
+	// booléen pour indiquer la visibilité du triangle
 	bool visible = false;
+
+	// booléen pour indiquer si le triangle est rempli
 	bool fill = true;
+
+	// booléen pour indiquer si le triangle est contourné
 	bool contour = true;
+
+	// variables propres au clipping
 	bool farclipA = false;
 	bool farclipB = false;
 	bool farclipC = false;
 	bool nearclipA = false;
 	bool nearclipB = false;
 	bool nearclipC = false;
-public:
-	Color color = black;
-	float distanceToCamera = INFINITY;
-public:
-	Triangle(){}
-	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Color& color = black, const bool& fill = true) :a(a), b(b), c(c), color(color), fill(fill) {}
-	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Color& color,
-		Bitmap* bmp, const Point2D& bmpA, const Point2D& bmpB, const Point2D& bmpC)
-		:a(a), b(b), c(c), color(color),
-		bmp(bmp), bmpA(bmpA), bmpB(bmpB), bmpC(bmpC) {}
-	/*Triangle(const Triangle& t) :a(t.a), b(t.b), c(t.c), a2(t.a2), b2(t.b2), c2(t.c2), bmp(t.bmp),
-		visible(t.visible), fill(t.fill), contour(t.contour), nearclipA(t.nearclipA), nearclipB(t.nearclipB), nearclipC(t.nearclipC),
-		farclipA(t.farclipA), farclipB(t.farclipB), farclipC(t.farclipC),
-		color(t.color), distanceToCamera(t.distanceToCamera) {}*/
 	
+public:
+
+	Triangle() {}
+
+	// constructeur sans texture
+	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Vector& normalVec, const Color& color = black, const bool& fill = true)
+		: a(a), b(b), c(c), normalVec(normalVec), color(color), fill(fill) {}
+
+	// constructeur avec texture
+	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Vector& normalVec,
+		const Color& color, Bitmap* bmp, const Point2D& bmpA, const Point2D& bmpB, const Point2D& bmpC)
+		: a(a), b(b), c(c), normalVec(normalVec), color(color),
+		bmp(bmp), bmpA(bmpA), bmpB(bmpB), bmpC(bmpC) {}
+	
+	// comparaison de deux triangles en fonction de leurs distance à la caméra
 	inline bool operator<(const Triangle& node) const {
 		return (this->distanceToCamera < node.distanceToCamera);
 	}
 	inline bool operator>(const Triangle& node) const {
 		return (this->distanceToCamera > node.distanceToCamera);
 	}
-	inline void move(const Vertex& movement) {
+
+	// bouger tout le triangle sur un vecteur
+	inline void move(const Vector& movement) {
 		a += movement;
 		b += movement;
 		c += movement;
 	}
+
+	// set screen coordinates and handle clipping
 	void setScreenCoord(const Window& window, const bool& clip) {
 		visible = false;
 		distanceToCamera = distanceToPoint(Camera::getCurrent().getCameraPosition());
@@ -197,15 +225,22 @@ public:
 		// far-clipping + 2D points calculation
 		
 		if ((distanceToCamera > Camera::getCurrent().far) == false) {
-			aScreen = Camera::getCurrent().get2D({ a.x,a.y,a.z,1 }, farclipA, window);
-			bScreen = Camera::getCurrent().get2D({ b.x,b.y,b.z,1 }, farclipB, window);
-			cScreen = Camera::getCurrent().get2D({ c.x,c.y,c.z,1 }, farclipC, window);
+			Matrix<4, 4> ma;
+			ma.m[0] = { a.x,a.y,a.z,1 };
+			ma.m[1] = { 0, 0, 0, 0 }; 
+			ma.m[2] = { 0, 0, 0, 0 }; 
+			ma.m[3] = { 0, 0, 0, 0 };
+			aScreen = Camera::getCurrent().get2D(ma, farclipA, window);
+			bScreen = Camera::getCurrent().get2D(ma, farclipB, window);
+			cScreen = Camera::getCurrent().get2D(ma, farclipC, window);
 		}
 		if (/*!nearclipA && !nearclipB && !nearclipC &&*/!farclipA && !farclipB && !farclipC && visible) { // no clip
 			visible = true;
 		}
 		else visible = false;
 	}
+
+	// dessiner le triangle dans la frame
 	void render(const Window& window, GlobalTexture& globalTexture)  {
 		if (!visible) return;
 		if (abs(aScreen.x) > 10000 || abs(aScreen.y) > 10000 ||
@@ -219,10 +254,11 @@ public:
 			t.setScreenCoord(window, false);
 			t.render(window, globalTexture);
 		}tmp.clear(); tmp.shrink_to_fit();
-		const Vertex sunLight = Camera::getCurrent().getSunLight();
+		/*const Vertex sunLight = Camera::getCurrent().getSunLight();
 		float light = getPlaneNormal().dot(sunLight);
 		light /= 30;
-		light = abs(light);
+		light = abs(light);*/
+		float light = 1;
 		if (fill) {
 			if (bmp != nullptr) draw(*bmp, globalTexture, light);
 			else draw(color, globalTexture, light);
@@ -237,94 +273,93 @@ public:
 			globalTexture.drawLine(globalTexture, { aScreen.x,aScreen.y }, 0, { cScreen.x,cScreen.y }, 0, color);
 		}
 	}
-	inline void fillIt(const bool& b) {
-		this->fill = b;
-	}
-	inline void contourIt(const bool& b) {
-		this->contour = b;
-	}
+
+	// afficher l'intérieur du triangle
+	inline void fillIt(const bool& b) { this->fill = b; }
+
+	// afficher les contours du triangle
+	inline void contourIt(const bool& b) { this->contour = b; }
+
 private:
-	inline int sign(const float& n) const {
-		return (0.0 < n) - (n < 0.0);
-	}
+
+	// renvoie 1 si x positif, -1 si x negatif et sinon 0
+	inline int sign(const float& x) const { return (0.0 < x) - (x < 0.0); }
+
+	// renvoie x entre min et max
 	inline float clamp(const float& x, const float& min, const float& max) const {
 		if (x < min) return min;
 		else if (x > max) return max;
 		else return x;
 	}
+
 public:
+
+	// renvoie la distance point triangle
 	float distanceToPoint(const Vertex& p) const {
-		const Matrix::vec3d v21 = { b.x - a.x,b.y - a.y,b.z - a.z }; const Matrix::vec3d p1 = { p.x - a.x,p.y - a.y,p.z - a.z };
-		const Matrix::vec3d v32 = { c.x - b.x,c.y - b.y,c.z - b.z }; const Matrix::vec3d p2 = { p.x - b.x,p.y - b.y,p.z - b.z };
-		const Matrix::vec3d v13 = { a.x - c.x,a.y - c.y,a.z - c.z }; const Matrix::vec3d p3 = { p.x - c.x,p.y - c.y,p.z - c.z };
-		const Matrix::vec3d nor = Matrix::cross(v21, v13);
-		if ((sign(Matrix::dotV3(Matrix::cross(v21, nor), p1)) + sign(Matrix::dotV3(Matrix::cross(v32, nor), p2)) + sign(Matrix::dotV3(Matrix::cross(v13, nor), p3)) < 2)) {
-			return sqrtf(Min(Min(
-				Matrix::dot2V3(Matrix::minus(Matrix::mult(v21, clamp(Matrix::dotV3(v21, p1) / Matrix::dot2V3(v21), 0.0, 1.0)), p1)),
-				Matrix::dot2V3(Matrix::minus(Matrix::mult(v32, clamp(Matrix::dotV3(v32, p2) / Matrix::dot2V3(v32), 0.0, 1.0)), p2))),
-				Matrix::dot2V3(Matrix::minus(Matrix::mult(v13, clamp(Matrix::dotV3(v13, p3) / Matrix::dot2V3(v13), 0.0, 1.0)), p3))));
+		const Vector v21 = { b.x - a.x,b.y - a.y,b.z - a.z }; const Vector p1 = { p.x - a.x,p.y - a.y,p.z - a.z };
+		const Vector v32 = { c.x - b.x,c.y - b.y,c.z - b.z }; const Vector p2 = { p.x - b.x,p.y - b.y,p.z - b.z };
+		const Vector v13 = { a.x - c.x,a.y - c.y,a.z - c.z }; const Vector p3 = { p.x - c.x,p.y - c.y,p.z - c.z };
+		const Vector nor = v21.cross(v13);
+		if (sign(v21.cross(nor).dot(p1)) + sign((v32.cross(nor).dot(p2)) + sign(v13.cross(nor).dot(p3)) < 2)) {
+			const Vector vec1 = v21 * clamp(v21.dot(p1) / v21.dot(v21), 0.0, 1.0) - p1;
+			const Vector vec2 = v32 * clamp(v32.dot(p2) / v32.dot(v32), 0.0, 1.0) - p2;
+			const Vector vec3 = v13 * clamp(v13.dot(p3) / v13.dot(v13), 0.0, 1.0) - p3;
+			return sqrtf(std::min(std::min(vec1.dot(vec1), vec2.dot(vec2)), vec3.dot(vec3)));
 		}
 		else {
-			return sqrtf(Matrix::dotV3(nor, p1) * Matrix::dotV3(nor, p1) / Matrix::dot2V3(nor));
+			return sqrtf(nor.dot(p1) * nor.dot(p1) / nor.dot(nor));
 		}
 	}
 
-	static Vertex ClosestPointOnPlane(const Vertex& pl1, const Vertex& pl2, const Vertex& pl3, const Vertex& point) {
-		Vertex plNormal = Vertex::cross(Vertex(pl2.x - pl1.x, pl2.y - pl1.y, pl2.z - pl1.z), Vertex(pl3.x - pl1.x, pl3.y - pl1.y, pl3.z - pl1.z));
+	// renvoie le point du plan le plus proche du point
+	static Vertex ClosestPointOnPlane(const Vertex& pl1, const Vertex& pl2, const Vertex& pl3, const Vertex& p) {
+		Vector plNormal = Vector(pl2.x - pl1.x, pl2.y - pl1.y, pl2.z - pl1.z).cross(Vector(pl3.x - pl1.x, pl3.y - pl1.y, pl3.z - pl1.z));
 		plNormal.normalize();
-		const float distance = plNormal.dot(point) - plNormal.dot(pl1);
-		if (distance == 0)return point;
-		const Vertex result(point.x - distance * plNormal.x, point.y - distance * plNormal.y, point.z - distance * plNormal.z);
+		const float distance = plNormal.dot(p.getOriginVector()) - plNormal.dot(pl1.getOriginVector());
+		if (distance == 0)return p;
+		const Vertex result(p.x - distance * plNormal.x, p.y - distance * plNormal.y, p.z - distance * plNormal.z);
 		return result;
 	}
 
-	bool PointInTriangle(const Vertex& point) const {
-		const Matrix::vec3d ta = { a.x - point.x,a.y - point.y,a.z - point.z };
-		const Matrix::vec3d tb = { b.x - point.x,b.y - point.y,b.z - point.z };
-		const Matrix::vec3d tc = { c.x - point.x,c.y - point.y,c.z - point.z };
+	// renvoie true si le point est dans le triangle, false autrement
+	bool PointInTriangle(const Vertex& p) const {
+		const Vector ta = a - p;
+		const Vector tb = b - p;
+		const Vector tc = c - p;
 
-		const Matrix::vec3d u = Matrix::cross(tb, tc);
-		const Matrix::vec3d v = Matrix::cross(tc, ta);
-		const Matrix::vec3d w = Matrix::cross(ta, tb);
+		const Vector u = tb.cross(tc);
+		const Vector v = tc.cross(ta);
+		const Vector w = ta.cross(tb);
 
-		if (Matrix::dotV3(u, v) < 0.0) {
-			return false;
-		}
-		if (Matrix::dotV3(u, w) < 0.0) {
-			return false;
-		}
+		if (u.dot(v) < 0.0) return false;
+		if (u.dot(w) < 0.0) return false;
 		return true;
 	}
 
-	Point3D ClosestPointOnLine(const Vertex& l1, const Vertex& l2, const Vertex& p) const {
-		const Matrix::vec3d a = { l1.x,l1.y,l1.z };
-		const Matrix::vec3d b = { l2.x,l2.y,l2.z };
-
-		float t = Matrix::dotV3({ p.x - a[0],p.y - a[1],p.z - a[2] },
-			{ b[0] - a[0],b[1] - a[1],b[2] - a[2] }) / Matrix::dotV3({ b[0] - a[0],b[1] - a[1],b[2] - a[2] },
-				{ b[0] - a[0],b[1] - a[1],b[2] - a[2] }
-		);
-
+	// renvoie le point du segment le plus proche du point
+	Vertex ClosestPointOnLine(const Vertex& l1, const Vertex& l2, const Vertex& p) const {
+		const Vector line = l2 - l1;
+		float t = Vector(p - l1).dot(line) / line.dot(line);
 		t = clamp(t, 0.0, 1.0);
-		const Point3D d(a[0] + t * b[0] - a[0], a[1] + t * b[1] - a[1], a[2] + t * b[2] - a[2]);
-		return d;
+		return Vertex(l1.x + t * line.x, l1.y + t * line.y, l1.z + t * line.z);
 	}
 
+	// renvoie le point du triangle le plus proche du point
 	Vertex ClosestPoint(const Vertex& point) const {
-		const Vertex p = ClosestPointOnPlane(a,b,c, point);
+		const Vertex p = ClosestPointOnPlane(a, b, c, point);
 
 		if (PointInTriangle(p)) {
 			return p;
 		}
-		const Point3D c1 = ClosestPointOnLine(a,b, p);
-		const Point3D c2 = ClosestPointOnLine(b,c, p);
-		const Point3D c3 = ClosestPointOnLine(c,a, p);
+		const Vertex c1 = ClosestPointOnLine(a, b, p);
+		const Vertex c2 = ClosestPointOnLine(b, c, p);
+		const Vertex c3 = ClosestPointOnLine(c, a, p);
 
 		const float mag1 = p.distance(c1);
 		const float mag2 = p.distance(c2);
 		const float mag3 = p.distance(c3);
 
-		const float min = Min(Min(mag1, mag2),mag3);
+		const float min = std::min(std::min(mag1, mag2),mag3);
 
 		if (min == mag1) {
 			return c1;
@@ -335,14 +370,15 @@ public:
 		return c3;
 	}
 
-	static Vertex getIntersectionWithPlane(const Vertex& rayPoint, const Vertex& rayVector, const Vertex& planeNormal, const Vertex& planePoint) {
+	// renvoie le point d'intersection entre un segment et un plan
+	static Vertex getIntersectionWithPlane(const Vertex& rayPoint, const Vector& rayVector, const Vector& planeNormal, const Vertex& planePoint) {
 		if (rayVector.x == 0 && rayVector.y == 0 && rayVector.z == 0) {
 			return Vertex();
 		}
 		if (planeNormal.x == 0 && planeNormal.y == 0 && planeNormal.z == 0) {
 			return Vertex();
 		}
-		const Vertex diff = rayPoint - planePoint;
+		const Vector diff = rayPoint - planePoint;
 		const double prod1 = diff.dot(planeNormal);
 		const double prod2 = rayVector.dot(planeNormal);
 		if (prod2 == 0) { return Vertex(); }
@@ -350,24 +386,13 @@ public:
 		if (abs(prod3) == INFINITY) {
 			return Vertex();
 		}
-		const Vertex res = rayPoint - rayVector * prod3;
+		const Vertex res = rayPoint - (rayVector * prod3);
 		return res;
 	}
-	inline float getTriangleArea() const {
-		return abs(aScreen.x * (bScreen.y - cScreen.y) + bScreen.x * (cScreen.y - aScreen.y) + cScreen.x * (aScreen.y - bScreen.y)) / 2;
-	}
-	inline Vertex getPlaneNormal() const {
-		return Vertex::cross(b - a, c - a);
-	}
-private:
-	void draw(const Bitmap& src, GlobalTexture& dst) const {
-		const Vertex sun = Camera::getCurrent().getSun();
-		float light = getPlaneNormal().dot(sun);
-		light /= 30;
-		light = abs(light);
-		draw(src, dst, light);
-	}
 
+private:
+
+	// dessiner le triangle dans la frame
 	void draw(const Bitmap& src, GlobalTexture& dst, const float& light) const {
 		TextureManager::rasterize(src,
 			Point2D(aScreen.x, aScreen.y), Point2D(bScreen.x, bScreen.y), Point2D(cScreen.x, cScreen.y),
@@ -376,6 +401,7 @@ private:
 			dst, light);
 	}
 
+	// dessiner le triangle dans la frame
 	void draw(const Color& color, GlobalTexture& dst, const float& light) const {
 		TextureManager::rasterize(color,
 			Point2D(aScreen.x,aScreen.y), Point2D(bScreen.x, bScreen.y), Point2D(cScreen.x, cScreen.y),

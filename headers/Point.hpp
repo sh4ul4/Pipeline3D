@@ -1,195 +1,277 @@
 #pragma once
-#include <iostream>
 /**
- * @file Issu du module de Géométrie, sous-module (?)
+ * @file Issu du module de GÃ©omÃ©trie, sous-module (?) 
  * Regroupe les classes Point2D et Point 3D
  */
 
- /*===========================================================================================
-	 Point2D
- ===========================================================================================*/
+/*===========================================================================================
+	Point2D
+===========================================================================================*/
 
 /**
- * @class Point à deux coordonnées entières
+ * @class Point Ã  deux coordonnÃ©es entiÃ¨res
  */
 class Point2D
 {
 public:
 	/**
 	 * Une variable publique.
-	 * Coordonnée x du point.
+	 * CoordonnÃ©e x du point.
 	 */
 	int x;
 
 	/**
 	 * Une variable publique.
-	 * Coordonnée y du point.
+	 * CoordonnÃ©e y du point.
 	 */
 	int y;
 
 	/**
 	 * Un constructeur.
-	 * Met les coordonnées à zéro.
+	 * Met les coordonnÃ©es Ã  zÃ©ro.
 	 */
 	Point2D() : x(0), y(0) {}
 
 	/**
 	 * Un constructeur.
-	 * Assigne les coordonnées.
+	 * Assigne les coordonnÃ©es.
 	 */
-	Point2D(const int& x, const int& y) : x(x), y(y) {}
+	Point2D(const int &x, const int &y) : x(x), y(y) {}
 
 	/**
 	 * Un constructeur.
-	 * Prend des templates en entrée et cast vers int.
+	 * Prend des templates en entrÃ©e et cast vers int.
 	 */
 	template <class T1, class T2>
-	Point2D(const T1& x, const T2& y) : x((int)x), y((int)y) {}
+	Point2D(const T1 &x, const T2 &y) : x((int)x), y((int)y) {}
 
 	/**
 	 * Un constructeur.
-	 * @param p Point copié.
-	 * Copie les coordonnées du point.
+	 * @param p Point copiÃ©.
+	 * Copie les coordonnÃ©es du point.
 	 */
-	Point2D(const Point2D& p) : x(p.x), y(p.y) {}
+	Point2D(const Point2D &p) : x(p.x), y(p.y) {}
 
 	/**
-	 * Un opérateur public.
-	 * @param p Deuxième opérande.
-	 * Additionne les coordonnées du point en paramètre avec le point courant.
+	 * Un opÃ©rateur public.
+	 * @param p DeuxiÃ¨me opÃ©rande.
+	 * Additionne les coordonnÃ©es du point en paramÃ¨tre avec le point courant.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
-	Point2D operator+(const Point2D& p) const { return { x + p.x, y + p.y }; }
+	Point2D operator+(const Point2D& p) const {
+		return { x + p.x,y + p.y };
+	}
 
 	/**
-	 * Un opérateur public.
-	 * @param p Deuxième opérande.
-	 * Soustrait les coordonnées du point en paramètre de celle du point courant.
+	 * Un opÃ©rateur public.
+	 * @param p DeuxiÃ¨me opÃ©rande.
+	 * Soustrait les coordonnÃ©es du point en paramÃ¨tre de celle du point courant.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
-	Point2D operator-(const Point2D& p) const { return { x - p.x, y - p.y }; }
+	Point2D operator-(const Point2D& p) const {
+		return { x - p.x,y - p.y };
+	}
 
 	/**
-	 * Un opérateur public.
-	 * @param val Opérande de n'importe quel type de base.
-	 * Multiplie les coordonnées du point courant avec la valeur en paramètre.
-	 * Ne modifie pas le point courant mais en renvoie un nouveau.
-	 */
-	template <class T>
-	Point2D operator*(const T& val) const;
-
-	/**
-	 * Un opérateur public.
-	 * @param val Opérande de n'importe quel type de base.
-	 * Divise les coordonnées du point courant par la valeur en paramètre.
+	 * Un opÃ©rateur public.
+	 * @param val OpÃ©rande de n'importe quel type de base.
+	 * Multiplie les coordonnÃ©es du point courant avec la valeur en paramÃ¨tre.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
 	template <class T>
-	Point2D operator/(const T& val) const;
+	Point2D operator*(const T& val) const {
+		return { x * val,y * val };
+	}
 
 	/**
-	 * Un opérateur public.
-	 * @param val Opérande de n'importe quel type de base.
-	 * Additionne la valeur en paramètre avec les coordonnées du point courant.
+	 * Un opÃ©rateur public.
+	 * @param val OpÃ©rande de n'importe quel type de base.
+	 * Divise les coordonnÃ©es du point courant par la valeur en paramÃ¨tre.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
 	template <class T>
-	Point2D operator+(const T& val) const;
+	Point2D operator/(const T& val) const {
+		return { x / val,y / val };
+	}
 
 	/**
-	 * Un opérateur public.
-	 * @param val Opérande de n'importe quel type de base.
-	 * Soustrait la valeur en paramètre des coordonnées du point courant.
+	 * Un opÃ©rateur public.
+	 * @param val OpÃ©rande de n'importe quel type de base.
+	 * Additionne la valeur en paramÃ¨tre avec les coordonnÃ©es du point courant.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
 	template <class T>
-	Point2D operator-(const T& val) const;
+	Point2D operator+(const T& val) const {
+		return { x + val,y + val };
+	}
 
 	/**
-	 * Un opérateur public.
-	 * @param i Indice de coordonnée.
+	 * Un opÃ©rateur public.
+	 * @param val OpÃ©rande de n'importe quel type de base.
+	 * Soustrait la valeur en paramÃ¨tre des coordonnÃ©es du point courant.
+	 * Ne modifie pas le point courant mais en renvoie un nouveau.
+	 */
+	template <class T>
+	Point2D operator-(const T& val) const {
+		return { x - val,y - val };
+	}
+
+	/**
+	 * Un opÃ©rateur public.
+	 * @param i Indice de coordonnÃ©e.
 	 * Renvoie la valeur de x ou y en fonction de si i = 0 ou 1.
-	 * Renvoie une erreur si i est différent de 0 ou 1.
+	 * Renvoie une erreur si i est diffÃ©rent de 0 ou 1.
 	 */
-	int& operator[](const int& i);
+	int& operator[](const int& i) {
+		if (i < 0 || i > 1) {
+			std::cout << "Index out of bounds for instance of [Vertex]" << std::endl;
+			exit(1);
+		}
+		switch (i) {
+		case 0: return x;
+		case 1: return y;
+		}
+	}
 
 	/**
-	 * Un opérateur public.
-	 * @param p Deuxième opérande.
-	 * Test d'égalité entre deux points.
+	 * Un opÃ©rateur public.
+	 * @param p DeuxiÃ¨me opÃ©rande.
+	 * Test d'Ã©galitÃ© entre deux points.
 	 */
-	bool operator==(const Point2D& p) const;
+	bool operator==(const Point2D& p) const {
+		return ((p.x == x) && (p.y == y));
+	}
 
 	/**
 	 * Une fonction publique.
-	 * Formate le print pour un Point2D, affiche ses coordonnées (x,y).
+	 * Formate le print pour un Point2D, affiche ses coordonnÃ©es (x,y).
 	 */
-	void print() const;
+	void print() const {
+		std::cout << "[" << x << "|" << y << "]";
+	}
 
 	/**
-	 * Une opérateur friend.
+	 * Une opÃ©rateur friend.
 	 * @param os Sortie standard.
-	 * @param p Point affiché.
-	 * Redéfinition de l'opérateur <<, servant à l'affichage sur la sortie standard.
+	 * @param p Point affichÃ©.
+	 * RedÃ©finition de l'opÃ©rateur <<, servant Ã  l'affichage sur la sortie standard.
 	 */
-	friend std::ostream& operator<<(std::ostream& os, const Point2D& p);
+	friend std::ostream &operator<<(std::ostream &os, const Point2D &p);
 
-	/** @brief Calcule la distance entre 2 points passés en paramètres
+	/** @brief Calcule la distance entre 2 points passÃ©s en paramÃ¨tres
 	* @param Point2D a
 	* @param Point2D b
-	* @return Distance entière calculée entre a et b
+	* @return Distance entiÃ¨re calculÃ©e entre a et b
 	*/
-	static int distance(const Point2D& a, const Point2D& b);
+	static int distance(const Point2D& a, const Point2D& b) {
+		return static_cast<int>(sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)));
+	}
 
 	/** @brief Calcule la distance entre un point et le point actuel
 	* @param Point2D p
-	* @return Distance entière calculée entre this et p
+	* @return Distance entiÃ¨re calculÃ©e entre this et p
 	*/
-	int distance(const Point2D& p) const;
+	int distance(const Point2D& p) const {
+		return static_cast<int>(sqrtf((x - p.x) * (x - p.x) + (y - p.y) * (y - p.y)));
+	}
 };
+
+std::ostream& operator<<(std::ostream& os, const Point2D& p)
+{
+	return (os << "[" << p.x << "|" << p.y << "]");
+}
 
 /*===========================================================================================
 	Point3D
 ===========================================================================================*/
 
 /**
- * @class Point3D à trois coordonnées entières
+ * @class Point3D Ã  trois coordonnÃ©es entiÃ¨res
  */
 class Point3D
 {
 public:
-	// Coordonnées entières x, y et z du Point3D
+	// CoordonnÃ©es entiÃ¨res x, y et z du Point3D
 	int x;
 	int y;
 	int z;
 
-	// Constructeurs: par défaut et normal via Template
+	// Constructeurs: par dÃ©faut et normal via Template
 	Point3D(void) : x(0), y(0), z(0) {}
 	template <class T1, class T2, class T3>
-	Point3D(const T1& x, const T2& y, const T3& z) : x((int)x), y((int)y), z((int)z) {}
-	Point3D(const Point3D& p) : x(p.x), y(p.y), z(p.z) {}
+	Point3D(const T1 &x, const T2 &y, const T3 &z) : x((int)x), y((int)y), z((int)z) {}
+	Point3D(const Point3D &p) : x(p.x), y(p.y), z(p.z) {}
 
-	// Surcharge des opérateurs (Opérations basiques)
-	Point3D& operator+(const Point3D& p);
-	Point3D& operator-(const Point3D& p);
-	Point3D& operator*(const Point3D& p);
-	Point3D& operator/(const Point3D& p);
+	// Surcharge des opÃ©rateurs (OpÃ©rations basiques)
+	Point3D& operator+(const Point3D& point) {
+		x += point.x;
+		y += point.y;
+		z += point.z;
+		return *this;
+	}
+	Point3D& operator-(const Point3D& point) {
+		x -= point.x;
+		y -= point.y;
+		z -= point.z;
+		return *this;
+	}
+	Point3D& operator*(const Point3D& point) {
+		x *= point.x;
+		y *= point.y;
+		z *= point.z;
+		return *this;
+	}
+	Point3D& operator/(const Point3D& point) {
+		x /= point.x;
+		y /= point.y;
+		z /= point.z;
+		return *this;
+	}
 
-	// Multiplication et division par des cordonnées par une valeur 'val'
+	// Multiplication et division par des cordonnÃ©es par une valeur 'val'
 	template <class T>
-	Point3D& operator*(const T& val);
+	Point3D& operator*(const T& val) {
+		x *= val;
+		y *= val;
+		z *= val;
+		return *this;
+	}
 	template <class T>
-	Point3D& operator/(const T& val);
+	Point3D& operator/(const T& val) {
+		x /= val;
+		y /= val;
+		z /= val;
+		return *this;
+	}
 
 	//
-	int& operator[](const int& i);
+	int& operator[](const int& i) {
+		if (i < 0 || i > 2) {
+			std::cout << "Index out of bounds for instance of [Vertex]" << std::endl;
+			exit(1);
+		}
+		switch (i) {
+		case 0: return x;
+		case 1: return y;
+		case 2: return z;
+		}
+	}
 
-	// Test l'égalité entre deux point 3D
-	inline bool operator==(const Point3D& p) const;
+	// Test l'Ã©galitÃ© entre deux point 3D
+	inline bool operator==(const Point3D& p) const {
+		return ((p.x == x) && (p.y == y) && (p.z == z));
+	}
 
 	//
-	void print() const;
+	void print() const {
+		std::cout << "[" << x << "|" << y << "|" << z << "]";
+	}
 
-	// Redéfinition de l'opérateur <<
-	friend std::ostream& operator<<(std::ostream& os, const Point3D& p);
+	// RedÃ©finition de l'opÃ©rateur <<
+	friend std::ostream &operator<<(std::ostream &os, const Point3D &p);
 };
+
+std::ostream& operator<<(std::ostream& os, const Point3D& p)
+{
+	return (os << "[" << p.x << "|" << p.y << "|" << p.z << "]");
+}
