@@ -21,27 +21,36 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_I
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
 
-set(SRCS	src/main.cpp
-			headers/Point.cpp
-			headers/Bitmap.cpp)
+set(SRCS	src/main.cpp)
 
-set(HEADERS headers/Camera.h
-			headers/Draw.h
-			headers/library.h
-			headers/Matrix.h
-			headers/Physics.h
-			headers/Shape.h
-			headers/ShapeManager.h
-			headers/Vertex.h
-			headers/Render.h
-			headers/FrameRate.h
-			headers/Window.h
-			headers/Triangle.h
-			#headers/Point.h
-			headers/Input.h
-			headers/Bitmap.hpp
-			headers/Texture.h
-			headers/Point.hpp)
+set(HEADERS headers/Bitmap.hpp
+			headers/Camera.hpp
+			headers/Chrono.hpp
+			headers/Color.hpp
+			headers/Draw.hpp
+			headers/ErrorsHandler.hpp
+			headers/FrameRate.hpp
+			headers/GlobalTexture.hpp
+			headers/headers.hpp
+			headers/InputEvent.hpp
+			headers/Keyboard.hpp
+			headers/Maths.hpp
+			headers/Matrix.hpp
+			headers/Mouse.hpp
+			headers/Physics.hpp
+			headers/Point.hpp
+			headers/Render.hpp
+			headers/Shape.hpp
+			headers/ShapeManager.hpp
+			headers/TextBox.hpp
+			headers/TextInput.hpp
+			headers/Texture.hpp
+			headers/TextureManager.hpp
+			headers/Triangle.hpp
+			headers/Vector.hpp
+			headers/Vertex.hpp
+			headers/Window.hpp
+			)
 
 
 
