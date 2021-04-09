@@ -137,7 +137,6 @@ public:
 		cxminbx /= divisor;
 		cyminay /= divisor;
 		axmincx /= divisor;
-
 		// pixel mapping loop
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;

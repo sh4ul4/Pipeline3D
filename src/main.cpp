@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 	Bitmap t1("../textures/80s_1.jpg");
 	//Texture t2("../textures/queque.png", window.getRenderer());
 	manager.addCube("cube1", { 0,0,0 }, 5, &t1);
-	manager.setSubject(0);
+	manager.setSubject("cube1");
 
 	// La chambre d'Elyn
 	cam2.setCurrent();

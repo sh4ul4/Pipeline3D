@@ -95,7 +95,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const Vector& v);
 
 	void normalizeOnLength(const float& length) {
-		const float sum = std::abs(x) + std::abs(y) + std::abs(z);
+		const float sum = abs(x) + abs(y) + abs(z);
 		if (sum == 0) {
 			this->x = this->y = this->z = 0; return;
 		}
@@ -158,7 +158,7 @@ float Vertex::distanceToLine(const Vertex& p0, const Vertex& p1) const {
 }
 
 Vector Vertex::getOriginVector() const {
-	return Vector(x, y, z);
+	return Vector(this->x, this->y, this->z);
 }
 
 inline Vector operator+(const Vertex& v1, const Vertex& v2) {

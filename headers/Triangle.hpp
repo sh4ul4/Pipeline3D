@@ -227,12 +227,13 @@ public:
 		if ((distanceToCamera > Camera::getCurrent().far) == false) {
 			Matrix<4, 4> ma;
 			ma.m[0] = { a.x,a.y,a.z,1 };
-			ma.m[1] = { 0, 0, 0, 0 }; 
-			ma.m[2] = { 0, 0, 0, 0 }; 
-			ma.m[3] = { 0, 0, 0, 0 };
+			Matrix<4, 4> mb;
+			mb.m[0] = { b.x,b.y,b.z,1 };
+			Matrix<4, 4> mc;
+			mc.m[0] = { c.x,c.y,c.z,1 };
 			aScreen = Camera::getCurrent().get2D(ma, farclipA, window);
-			bScreen = Camera::getCurrent().get2D(ma, farclipB, window);
-			cScreen = Camera::getCurrent().get2D(ma, farclipC, window);
+			bScreen = Camera::getCurrent().get2D(mb, farclipB, window);
+			cScreen = Camera::getCurrent().get2D(mc, farclipC, window);
 		}
 		if (/*!nearclipA && !nearclipB && !nearclipC &&*/!farclipA && !farclipB && !farclipC && visible) { // no clip
 			visible = true;

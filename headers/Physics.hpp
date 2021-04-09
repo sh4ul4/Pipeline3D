@@ -4,6 +4,7 @@ namespace Physics
 {
 	/* ----- Valeurs correspondant aux lois physiques utilisées ----- */
 
+	Keyboard keyboard;
 	bool applyPhysics = false;
 	Vertex playerHB = {0, 0, 0};
 	float interactionDistance = 0.001;
@@ -84,5 +85,27 @@ namespace Physics
 	 * @param inputEvent ???
 	 * @param manager ???
 	 */
-	void move(InputEvent &inputEvent, const ShapeManager &manager);
+	void move(InputEvent& inputEvent, ShapeManager& manager) {
+		inputEvent.updateKeyBoard(keyboard);
+		//if (!Camera::currentExists())return;
+		Vector step( 0,0,0 );// -G::getGravityForce()}; // front side up
+		if (keyboard.up.pressed) step[0] += speed;
+		if (keyboard.down.pressed) step[0] -= speed;
+		if (keyboard.left.pressed) step[1] += speed;
+		if (keyboard.right.pressed) step[1] -= speed;
+		intentionalMoving = abs(step[0]) > 0 || abs(step[1]) > 0 || abs(step[2]) > 0;
+		if (keyboard.space.pressed) {
+			Gravity::timeFalling = 0;
+			step[2] = speed;
+		}
+		if (keyboard.c.pressed) step[2] -= speed;
+		bool falling;
+		if (step[1] < 0)falling = true;
+		else falling = false;
+		Vector stepWithGravity = Camera::getCurrent().getMovementVector(step[0], step[1], step[2], speed);
+		stepWithGravity.y -= Gravity::getGravityForce();
+		playerHB = { Camera::getCurrent().getSubjectPosition().x, Camera::getCurrent().getSubjectPosition().x /*- 5*/, Camera::getCurrent().getSubjectPosition().z };
+		//playerHB = Matrix::toVertex(Camera::getCurrent().pos) + Camera::getCurrent().getMovementVector(1, 0, 0, 10);// { Camera::getCurrent().pos[0], Camera::getCurrent().pos[1]/* - 20*/, Camera::getCurrent().pos[2] };
+		resolvePhysics(manager, playerHB, stepWithGravity, speed, falling, 0);
+	}
 }

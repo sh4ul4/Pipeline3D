@@ -102,7 +102,7 @@ private:
 
 public:
 	// Rendering écran
-	void render(InputEvent& inputEvent, const Window& window, const ShapeManager& manager, Bitmap* background = nullptr) {
+	void render(InputEvent& inputEvent, const Window& window, ShapeManager& manager, Bitmap* background = nullptr) {
 		inputEvent.update();
 		if (Camera::currentExists()) {
 			Physics::move(inputEvent, manager);

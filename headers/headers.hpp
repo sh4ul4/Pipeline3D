@@ -42,12 +42,12 @@
 
 #include "Bitmap.hpp"
 
+#include "Matrix.hpp"
+#include "Maths.hpp"
+
 #include "Texture.hpp"
 #include "GlobalTexture.hpp"
 #include "TextureManager.hpp"
-
-#include "Matrix.hpp"
-#include "Maths.hpp"
 
 #include "Mouse.hpp"
 #include "Keyboard.hpp"

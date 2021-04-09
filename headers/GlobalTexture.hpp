@@ -108,9 +108,9 @@ public:
 	}
 
 	// renvoyer la largeur de la bitmap
-	inline const int& getWidth()const { return width; }
+	inline int getWidth()const { return width; }
 	// renvoyer la hauteur de la bitmap
-	inline const int& getHeight()const { return height; }
+	inline int getHeight()const { return height; }
 
 	// transformer des valeurs 8-bit rouge, vert, bleu, transparence en un pixel 32-bit
 	static inline Uint32 rgbaToUint32(const Uint8& r, const Uint8& g, const Uint8& b, const Uint8& a) {

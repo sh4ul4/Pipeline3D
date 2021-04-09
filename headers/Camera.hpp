@@ -196,16 +196,17 @@ public:
 		const Vector xaxis = { cosYaw, 0, -sinYaw };
 		const Vector yaxis = { sinYaw * sinPitch, cosPitch, cosYaw * sinPitch };
 		const Vector zaxis = { sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw };
+		const Vector eyeVec = eye.getOriginVector();
 
 		Matrix<4, 4> viewMatrix;
 		viewMatrix.m[0] = { xaxis.x, yaxis.x, zaxis.x, 0 };
 		viewMatrix.m[1] = { xaxis.y, yaxis.y, zaxis.y, 0 };
 		viewMatrix.m[2] = { xaxis.z, yaxis.z, zaxis.z, 0 };
-		viewMatrix.m[3] = { -(xaxis.dot(eye.getOriginVector())),
-		-(yaxis.dot(eye.getOriginVector())),
-		-(zaxis.dot(eye.getOriginVector())),
-		1 };
-
+		viewMatrix.m[3] = { - xaxis.dot(eyeVec), - yaxis.dot(eyeVec), - zaxis.dot(eyeVec), 1 };
+		//std::cout << "eye" << std::endl;
+		//eye.print(); eyeVec.print();
+		//std::cout << "matrix" << std::endl;
+		//viewMatrix.print();
 		return viewMatrix;
 	}
 
@@ -223,7 +224,8 @@ public:
 	}
 
 	void makeWorldToCameraMatrix(Matrix<4, 4>& m) {
-		m = viewMatrix.inverse();
+		m = inverseMatrix(viewMatrix);
+		//m = viewMatrix.inverse();
 	}
 
 	/**
@@ -245,7 +247,7 @@ public:
 		tmp.m[1] = { 0, 0, 0, 0 };
 		tmp.m[2] = { 0, 0, 0, 0 };
 		tmp.m[3] = { 0, 0, 0, 0 };
-		tmp *= viewMatrix;
+		tmp = optimizedProduct(tmp, viewMatrix);
 		v.x = tmp.m[0][0] + pos.x;
 		v.y += pos.y;
 		v.z = tmp.m[0][2] + pos.z;
@@ -261,7 +263,7 @@ public:
 		tmp.m[1] = { 0, 0, 0, 0 };
 		tmp.m[2] = { 0, 0, 0, 0 };
 		tmp.m[3] = { 0, 0, 0, 0 };
-		tmp *= viewMatrix;
+		tmp = optimizedProduct(tmp, inverseViewMatrix);
 		v.x = tmp.m[0][0] + pos.x;
 		v.y = tmp.m[0][1] + pos.y;
 		v.z = tmp.m[0][2] + pos.z;
@@ -276,12 +278,12 @@ public:
 		Vector v(front, side, up);
 		v.normalizeOnLength(speed);
 		Matrix<4, 4> tmp;
-		tmp.m[0] = { -v[1],-v[2],-v[0],0 };
-		tmp.m[1] = { 0, 0, 0, 0 };
-		tmp.m[2] = { 0, 0, 0, 0 };
-		tmp.m[3] = { 0, 0, 0, 0 };
-		tmp *= viewMatrix;
-		return Vector(tmp.get(0, 0), tmp.get(0, 1), tmp.get(0, 2));
+		tmp.m[0][0] = -v.y;
+		tmp.m[0][1] = -v.z;
+		tmp.m[0][2] = -v.x;
+		tmp = optimizedProduct(tmp, inverseViewMatrix);
+		const Vector res(tmp.m[0][0], tmp.m[0][1], tmp.m[0][2]);
+		return res;
 	}
 
 	/**
@@ -307,9 +309,9 @@ public:
 	 * @return
 	 */
 	float relationToClipPlane(const Vertex& point) const {
-		const Vertex pos = this->pos + getMovementVector(1, 0, 0, near);
+		const Vertex position = pos + getMovementVector(1, 0, 0, near);
 		const Vector n = getMovementVector(1, 0, 0, 10); // should be negative if going backwards !
-		return n.x * (point.x - pos.x) + n.y * (point.y - pos.y) + n.z * (point.z - pos.z);
+		return n.x * (point.x - position.x) + n.y * (point.y - position.y) + n.z * (point.z - position.z);
 	}
 
 	/**
@@ -321,13 +323,13 @@ public:
 		//world space
 		clip = false;
 		m.m[0][3] = 1;
-		optimizedProduct(m, viewMatrix, m);
+		m = optimizedProduct(m, viewMatrix);
 		// camera space
 		if (optimizedLength(m) > far) {
 			clip = true;
 			return { (int)m.m[0][0],(int)m.m[0][1], 0 };
 		}
-		optimizedProduct(m, projectionMatrix, m);
+		m = optimizedProduct(m, projectionMatrix);
 		//homogeneous clip space
 		int x = (int)(m.m[0][0] / m.m[0][3]);
 		int y = (int)(m.m[0][1] / m.m[0][3]);
@@ -403,20 +405,15 @@ public:
 	void update(InputEvent& inputEvent, const Window& window) {
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
-		//inputEvent.update(mouse, keyboard);
-		//SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
-		//std::cout << mouse.x << " " << mouse.y << std::endl;
+		SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
 		if (keyboard.z.pressed && angleView > minAngleView) {
-			//inputEvent.keyboard.z = false;
 			angleView -= 1;
 		}
 		if (keyboard.e.pressed && angleView < maxAngleView) {
-			//inputEvent.keyboard.e = false;
 			angleView += 1;
 		}
 		if (!locked) {
 			// set angles
-
 			angleX += sensitivity * (float)(mouse.x - window.getWidthCenter());
 			angleX = clampAngleX(angleX);
 			angleY += sensitivity * (float)(mouse.y - window.getHeightCenter());
