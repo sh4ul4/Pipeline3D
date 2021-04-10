@@ -39,6 +39,11 @@ public:
 		return newName;
 	}
 
+	/**
+	 * @brief Renvoie la shape demandée par reference
+	 *
+	 * @param name Nom de la shape désirée
+	 */
 	Shape& getShape(const std::string& name) {
 		for (int i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return *shapes[i];
 		std::cout << "Error: there is no shape named " << name << std::endl;
@@ -161,6 +166,21 @@ public:
 	void addRectangle(const Rectangle& rectangle) {
 		if (nameTaken(rectangle.name)) { std::cout << "error" << std::endl; return; }
 		shapes.emplace_back(new Rectangle(rectangle));
+	}
+
+	/**
+	 * @brief Retire la shape qui porte le nom donné
+	 *
+	 * @param name Nom de la shape recherchée
+	 */
+	void removeShape(const std::string& name) {
+		for (int i = 0; i < shapes.size(); i++)
+			if (!shapes[i]->name.compare(name)) {
+				shapes.erase(shapes.begin() + i);
+				shapes.shrink_to_fit();
+				return;
+			}
+		std::cout << "Warning : A Shape named " << name << " does not exist" << std::endl;
 	}
 
 	/**

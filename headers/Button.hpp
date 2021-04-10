@@ -206,11 +206,21 @@ public:
 		buttons.emplace_back(new RoundButton<paramType>(name, bgTex, bgCol, contCol, tb, pos, radius));
 	}
 
+	void removeButton(const std::string& name) {
+		for (int i = 0; i < buttons.size(); i++)
+			if (!buttons[i]->name.compare(name)) {
+				buttons.erase(buttons.begin() + i);
+				buttons.shrink_to_fit();
+				return;
+			}
+		std::cout << "Warning : A Button named " << name << " does not exist" << std::endl;
+	}
+
 	void renderButtons(SDL_Renderer* renderer) const {
 		for (int i = 0; i < buttons.size(); i++) buttons[i]->render(renderer);
 	}
 
-	void checkButtons() {
+	void checkButtons() const {
 		for (int i = 0; i < buttons.size(); i++) {
 			if (!buttons[i]->isClicked() && buttons[i]->mouseClickInside(inputEvent)) buttons[i]->playAction();
 			else buttons[i]->mouseClickInside(inputEvent);
