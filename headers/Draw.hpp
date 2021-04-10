@@ -242,6 +242,75 @@ public:
 			}
 		}
 	 }
+
+	static void DrawFillRoundedRect(const Point2D& p, const int& w, const int& h, const int& edgeSize, const Color& color, SDL_Renderer* renderer) {
+		Point2D c1(p + edgeSize);
+		DrawFillCircle(c1.x, c1.y, edgeSize, color, renderer);
+		Point2D c2(c1.x - 2 * edgeSize + w,c1.y);
+		DrawFillCircle(c2.x, c2.y, edgeSize, color, renderer);
+		Point2D c3(c1.x, c1.y - 2 * edgeSize + h);
+		DrawFillCircle(c3.x, c3.y, edgeSize, color, renderer);
+		Point2D c4(c2.x, c3.y);
+		DrawFillCircle(c4.x, c4.y, edgeSize, color, renderer);
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+		SDL_Rect rect1;
+		rect1.x = p.x + edgeSize;
+		rect1.y = p.y;
+		rect1.w = w - 2 * edgeSize;
+		rect1.h = h + 1;
+		SDL_RenderFillRect(renderer, &rect1);
+		SDL_Rect rect2;
+		rect2.x = p.x ;
+		rect2.y = p.y + edgeSize;
+		rect2.w = edgeSize;
+		rect2.h = h - 2 * edgeSize;
+		SDL_RenderFillRect(renderer, &rect2);
+		SDL_Rect rect3;
+		rect3.x = c2.x;
+		rect3.y = c2.y;
+		rect3.w = edgeSize + 1;
+		rect3.h = h - 2 * edgeSize;
+		SDL_RenderFillRect(renderer, &rect3);
+	}
+
+	static void DrawFillRoundedRectContoured(const Point2D& p, const int& w, const int& h, const int& edgeSize, const Color& middle, const Color& contour, SDL_Renderer* renderer) {
+		const Point2D c1(p + edgeSize);
+		DrawFillCircle(c1.x, c1.y, edgeSize, middle, renderer);
+		DrawCircle(c1.x, c1.y, edgeSize, contour, renderer);
+		const Point2D c2(c1.x - 2 * edgeSize + w, c1.y);
+		DrawFillCircle(c2.x, c2.y, edgeSize, middle, renderer);
+		DrawCircle(c2.x, c2.y, edgeSize, contour, renderer);
+		const Point2D c3(c1.x, c1.y - 2 * edgeSize + h);
+		DrawFillCircle(c3.x, c3.y, edgeSize, middle, renderer);
+		DrawCircle(c3.x, c3.y, edgeSize, contour, renderer);
+		const Point2D c4(c2.x, c3.y);
+		DrawFillCircle(c4.x, c4.y, edgeSize, middle, renderer);
+		DrawCircle(c4.x, c4.y, edgeSize, contour, renderer);
+		SDL_SetRenderDrawColor(renderer, middle.r, middle.g, middle.b, middle.a);
+		SDL_Rect rect1;
+		rect1.x = p.x + edgeSize;
+		rect1.y = p.y;
+		rect1.w = w - 2 * edgeSize;
+		rect1.h = h + 1;
+		SDL_RenderFillRect(renderer, &rect1);
+		SDL_Rect rect2;
+		rect2.x = p.x;
+		rect2.y = p.y + edgeSize;
+		rect2.w = edgeSize;
+		rect2.h = h - 2 * edgeSize;
+		SDL_RenderFillRect(renderer, &rect2);
+		SDL_Rect rect3;
+		rect3.x = c2.x;
+		rect3.y = c2.y;
+		rect3.w = edgeSize + 1;
+		rect3.h = h - 2 * edgeSize;
+		SDL_RenderFillRect(renderer, &rect3);
+		SDL_SetRenderDrawColor(renderer, contour.r, contour.g, contour.b, contour.a);
+		SDL_RenderDrawLine(renderer, c1.x, p.y, c2.x, p.y);
+		SDL_RenderDrawLine(renderer, p.x + w, c2.y, p.x + w, c4.y);
+		SDL_RenderDrawLine(renderer, c1.x, p.y + h, c2.x, p.y + h);
+		SDL_RenderDrawLine(renderer, p.x, c2.y, p.x, c4.y);
+	}
 	 
 	 /**
 	 * Une fonction publique.
