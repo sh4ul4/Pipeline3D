@@ -103,11 +103,11 @@ int main(int argc, char* argv[]) {
 	manager.addRectangle("rect10", { 100, 25, 80 }, { 100, 0, 80 }, { 100, 25, 90 }, { 100, 0, 90 }, &t1);
 	manager.addRectangle("rect11", { 98, 0, 80 }, { 90, 0, 80 }, { 98, 0, 90 }, { 90, 0, 90 }, &t1);
 	
-	r.updateTriangleSize(manager);
+	r.updateTriangles(manager);
 	Mouse mouse;
 	Keyboard keyboard;
 	while (!keyboard.escape.down) {
-		r.updateTriangleSize(manager);
+		r.updateTriangles(manager);
 		//inputEvent.update(mouse, keyboard);
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);

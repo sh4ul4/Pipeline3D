@@ -17,6 +17,9 @@ class Render
 	// Prochain triangle à render
 	std::vector<Triangle*> toRender;
 
+	// nombre de shapes incluses après la dernière mise-à-jour de toRender
+	size_t shapesNumber = 0;
+
 public:
 	// Texture globale
 	GlobalTexture globalTexture; 
@@ -37,13 +40,15 @@ public:
 	}
 
 	// Change la taille d'un triangle pour que ça rentre 
-	void updateTriangleSize(const ShapeManager& manager) {
+	void updateTriangles(const ShapeManager& manager) {
 		const size_t size = toRender.size();
+		if (shapesNumber == manager.shapes.size()) return;
 		toRender.clear();
 		toRender.shrink_to_fit();
 		toRender.reserve(size);
 
 		const size_t max1 = manager.shapes.size();
+		shapesNumber = max1;
 		for (int j = 0; j < max1; j++) {
 			const size_t max2 = manager.shapes[j]->triangles.size();
 			for (int i = 0; i < max2; i++) {
