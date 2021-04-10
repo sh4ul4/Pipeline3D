@@ -12,9 +12,6 @@ public:
 	// Un vecteur de pointeurs vers les shapes
 	std::vector<std::unique_ptr<Shape>> shapes;
 
-	// Indice vers la shape sujet de la caméra ou bien -1
-	std::string subject;
-
 	/*=============================================================================================
 	 *		Méthodes
 	 *===========================================================================================*/
@@ -48,17 +45,6 @@ public:
 		for (int i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return *shapes[i];
 		std::cout << "Error: there is no shape named " << name << std::endl;
 		exit(1);
-	}
-
-	/**
-	 * @brief Met un indice de shape en sujet à la caméra courante
-	 * 
-	 * @param val indice en paramètre
-	 */
-	void setSubject(const std::string& name) {
-		subject = name;
-		if (nameTaken(subject)) Camera::getCurrent().setSubject(getShape(name).center);
-		else Camera::getCurrent().hasSubject = false;
 	}
 
 	/**

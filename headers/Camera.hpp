@@ -164,6 +164,8 @@ public:
 		hasSubject = true;
 	}
 
+	void removeSubject() { hasSubject = false; }
+
 	/**
 	 * Un getter.
 	 * @return Retourne la position actuelle de la camera
@@ -405,7 +407,7 @@ public:
 	void update(InputEvent& inputEvent, const Window& window) {
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
-		SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
+		//SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
 		if (keyboard.z.pressed && angleView > minAngleView) {
 			angleView -= 1;
 		}

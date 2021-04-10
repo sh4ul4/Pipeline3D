@@ -1,55 +1,47 @@
 #include "headers.hpp"
 
-Bitmap* bmp;
-
-void f(ShapeManager* manager) {
-	manager->addCube("cubeX", { 6,6,6 }, 40, bmp);
-}
-
 int main(int argc, char* argv[]) {
-	//Window window(1200,600, 400, 200);
-	//Window window(1200,600, 800, 400);
 	Window window(1200, 600);
-	//Window window(1600, 1080);
 	InputEvent inputEvent;
 	ShapeManager manager;
 	Camera cam1({ -100,250,150 }, 60, 0, 0);
-	//cam1.setSun({ 10,10,0 });
-	// Camera cam2({ 60,10,50 }, 60, 0, 0);
+	cam1.setSubject({ 0,0,0 });
 	Camera cam2({ 50,50,200 }, 60, 0, 0);
-	//cam2.setSun(Vertex(-2, 10, 3));
-
 	TextBox::initLibrary();
+	ButtonManager bm(inputEvent);
+	Render r(window);
 
 	TextBox tb("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(50, 50), window.getRenderer());
-
-	ButtonManager bm(inputEvent);
 
 	bm.addButton<void*>("buttonA", nullptr, dark_gray, black, &tb, Point2D(50, 200), 50, 18);
 	bm.getButton<void*>("buttonA").setAction([](void* a = nullptr) { std::cout << "ok" << std::endl; });
 
-	Render r(window);
 	Bitmap t0("../textures/space.gif");
-	Bitmap t2("../textures/rgba2.png");
-	//Texture t0("../textures/space.jpg", window.getRenderer());
-	Bitmap t3("../textures/space2.jpg");
 	Bitmap t5("../textures/32x32.gif");
-	Bitmap t4("../textures/rgba2.png");
 	Bitmap t1("../textures/80s_1.jpg");
-	//Texture t2("../textures/queque.png", window.getRenderer());
-	manager.addCube("cube1", { 0,0,0 }, 5, &t1);
-	manager.setSubject("cube1");
 
-	bmp = &t1;
+	manager.addCube("cube1", { 0,0,0 }, 5, &t1);
+
 	/*RectButton<ShapeManager*> rb("buttonB", nullptr, dark_gray, black, &tb, Point2D(50, 230), 50, 18);
 	rb.setAction(f, &manager);
 	rb.playAction();*/
 
-	bm.addButton<ShapeManager*>("buttonC", nullptr, dark_gray, black, &tb, Point2D(50, 230), 50);
-	bm.getButton<ShapeManager*>("buttonC").setAction(f, &manager);
+	struct Function {
+		Bitmap* bmp;
+		ShapeManager* sm;
+		void f(Function* f) {
+			f->sm->addCube("cubeX", { 6,6,6 }, 40, bmp);
+		}
+	};
+	Function func;
+	func.bmp = &t1;
+	func.sm = &manager;
 
-	bm.addButton<void*>("buttonD", nullptr, dark_gray, black, &tb, Point2D(50, 350), 20);
-	bm.getButton<void*>("buttonD").setAction([](void* a = nullptr) { std::cout << "ok" << std::endl; });
+	bm.addButton<Function*>("buttonC", nullptr, dark_gray, black, &tb, Point2D(50, 230), 50);
+	bm.getButton<Function*>("buttonC").setAction([](Function* f) { f->sm->addCube("cubeX", { 6,6,6 }, 40, f->bmp); }, &func);
+
+	bm.addButton<ShapeManager*>("buttonD", nullptr, dark_gray, black, &tb, Point2D(50, 350), 20);
+	bm.getButton<ShapeManager*>("buttonD").setAction([](ShapeManager* s) { s->removeShape("cube1"); }, &manager);
 
 	// La chambre d'Elyn
 	cam2.setCurrent();

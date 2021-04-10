@@ -43,7 +43,6 @@ namespace Physics
 	void resolvePhysics(ShapeManager& manager, const Vertex& pos, const Vector& step, const float& speed, const bool& falling, const int& depth) {
 		if (applyPhysics == false) {
 			Camera::getCurrent().moveCameraPreCalculated(step);
-			if (Camera::getCurrent().hasSubject)manager.getShape(manager.subject).move(step);
 			return;
 		}
 		Triangle triangle;
@@ -74,7 +73,6 @@ namespace Physics
 		}
 		else {
 			Camera::getCurrent().moveCameraPreCalculated(step);
-			if (Camera::getCurrent().hasSubject)manager.getShape(manager.subject).move(step);
 			Gravity::timeFalling++;
 		}
 	}
