@@ -4,7 +4,6 @@ Bitmap* bmp;
 
 void f(ShapeManager* manager) {
 	manager->addCube("cubeX", { 6,6,6 }, 40, bmp);
-	std::cout << "done" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -26,8 +25,8 @@ int main(int argc, char* argv[]) {
 
 	ButtonManager bm(inputEvent);
 
-	bm.addButton("buttonA", nullptr, dark_gray, black, &tb, Point2D(50, 200), 50, 18);
-	bm.getButton<int>("buttonA").setAction([]() { std::cout << "ok" << std::endl; });
+	bm.addButton<void*>("buttonA", nullptr, dark_gray, black, &tb, Point2D(50, 200), 50, 18);
+	bm.getButton<void*>("buttonA").setAction([](void* a = nullptr) { std::cout << "ok" << std::endl; });
 
 	Render r(window);
 	Bitmap t0("../textures/space.gif");
@@ -48,6 +47,9 @@ int main(int argc, char* argv[]) {
 
 	bm.addButton<ShapeManager*>("buttonC", nullptr, dark_gray, black, &tb, Point2D(50, 230), 50);
 	bm.getButton<ShapeManager*>("buttonC").setAction(f, &manager);
+
+	bm.addButton<void*>("buttonD", nullptr, dark_gray, black, &tb, Point2D(50, 350), 20);
+	bm.getButton<void*>("buttonD").setAction([](void* a = nullptr) { std::cout << "ok" << std::endl; });
 
 	// La chambre d'Elyn
 	cam2.setCurrent();
