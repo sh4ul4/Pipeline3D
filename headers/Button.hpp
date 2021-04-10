@@ -1,5 +1,4 @@
-template <class paramType>
-class Button {
+class ButtonBase {
 public:
 	const std::string name;
 protected:
@@ -14,9 +13,39 @@ protected:
 
 	void (*action)(void) = nullptr;
 
+	bool* signal = nullptr;
+public:
+	virtual void setSignal(bool& signal) {}
+
+	virtual void removeSignal() {}
+
+	virtual bool isClicked()const { return clicked; }
+	virtual bool isSelected()const { return selected; }
+
+	virtual void setAction(void (*func)(void)) {}
+
+	virtual void playAction() {}
+
+	virtual void render(SDL_Renderer* renderer) const {}
+
+	virtual bool mouseInside(const InputEvent& ie) { return false; }
+
+	virtual bool mouseClickInside(const InputEvent& ie) { return false; }
+
+	virtual void checkButton(const InputEvent& inputEvent) {}
+protected:
+	ButtonBase(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb)
+		: name(name), backgroundTex(bgTex), backgroundCol(bgCol), contourCol(contCol), textBox(tb) {}
+
+	ButtonBase() = delete;
+};
+
+template <class paramType>
+class Button : public ButtonBase {
+protected:
 	void (*fun)(paramType t) = nullptr;
 
-	bool* signal = nullptr;
+	paramType param;
 public:
 	void setSignal(bool& signal) {
 		signal = false;
@@ -30,8 +59,8 @@ public:
 	bool isClicked()const { return clicked; }
 	bool isSelected()const { return selected; }
 
-	template <typename paramType>
-	void setAction(void (*func)(paramType p)) {
+	void setAction(void (*func)(paramType p), paramType param) {
+		this->param = param;
 		fun = func;
 	}
 	void playAction(paramType param) {
@@ -45,7 +74,10 @@ public:
 
 	void playAction() {
 		std::cout << "play" << std::endl;
-		if (action != nullptr) action();
+		if (fun != nullptr) { std::cout << "with parameter" << std::endl; fun(param); }
+		if (action != nullptr) {
+			std::cout << "without parameter" << std::endl; action();
+		}
 	}
 
 	virtual void render(SDL_Renderer* renderer) const {}
@@ -68,7 +100,7 @@ public:
 
 protected:
 	Button(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb)
-		: name(name), backgroundTex(bgTex), backgroundCol(bgCol), contourCol(contCol), textBox(tb) {}
+		: ButtonBase(name,bgTex,bgCol,contCol,tb) {}
 
 	Button() = delete;
 };
@@ -150,16 +182,17 @@ public:
 	ButtonManager(const InputEvent& inputEvent) : inputEvent(inputEvent) {}
 	ButtonManager() = delete;
 
-	std::vector<std::unique_ptr<Button<int>>> buttons;
+	std::vector<std::unique_ptr<ButtonBase>> buttons;
 
 	void addButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D& pos, const int& width, const int& height) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new RectButton<int>(name, bgTex, bgCol, contCol, tb, pos, width, height));
 	}
 
+	template <class paramType>
 	void addButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D& pos, const int& radius) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
-		buttons.emplace_back(new RoundButton<int>(name, bgTex, bgCol, contCol, tb, pos, radius));
+		buttons.emplace_back(new RoundButton<paramType>(name, bgTex, bgCol, contCol, tb, pos, radius));
 	}
 
 	void renderButtons(SDL_Renderer* renderer) const {
@@ -173,9 +206,10 @@ public:
 		}
 	}
 
-	Button<int>& getButton(const std::string& name) {
+	template <class paramType>
+	Button<paramType>& getButton(const std::string& name) {
 		for (int i = 0; i < buttons.size(); i++)
-			if (!buttons[i]->name.compare(name)) return *buttons[i];
+			if (!buttons[i]->name.compare(name)) return dynamic_cast<Button<paramType>&>(*buttons[i]);
 		std::cout << "There is no Button named " << name << std::endl;
 		exit(1);
 	}

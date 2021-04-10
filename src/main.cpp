@@ -1,5 +1,12 @@
 #include "headers.hpp"
 
+Bitmap* bmp;
+
+void f(ShapeManager* manager) {
+	manager->addCube("cubeX", { 6,6,6 }, 40, bmp);
+	std::cout << "done" << std::endl;
+}
+
 int main(int argc, char* argv[]) {
 	//Window window(1200,600, 400, 200);
 	//Window window(1200,600, 800, 400);
@@ -20,8 +27,7 @@ int main(int argc, char* argv[]) {
 	ButtonManager bm(inputEvent);
 
 	bm.addButton("buttonA", nullptr, dark_gray, black, &tb, Point2D(50, 200), 50, 18);
-
-	bm.getButton("buttonA").setAction([]() { std::cout << "ok" << std::endl; });
+	bm.getButton<int>("buttonA").setAction([]() { std::cout << "ok" << std::endl; });
 
 	Render r(window);
 	Bitmap t0("../textures/space.gif");
@@ -35,12 +41,21 @@ int main(int argc, char* argv[]) {
 	manager.addCube("cube1", { 0,0,0 }, 5, &t1);
 	manager.setSubject("cube1");
 
+	bmp = &t1;
+	/*RectButton<ShapeManager*> rb("buttonB", nullptr, dark_gray, black, &tb, Point2D(50, 230), 50, 18);
+	rb.setAction(f, &manager);
+	rb.playAction();*/
+
+	bm.addButton<ShapeManager*>("buttonC", nullptr, dark_gray, black, &tb, Point2D(50, 230), 50);
+	bm.getButton<ShapeManager*>("buttonC").setAction(f, &manager);
+
 	// La chambre d'Elyn
 	cam2.setCurrent();
 	Vertex hg = { 0, 100, 0 };
 	Vertex bg = { 0, 0, 0 };
 	Vertex hd = { 100, 100, 0 };
 	Vertex bd = { 100, 0, 0 };
+
 	// Mur de face
 	manager.addRectangle("rect1", hg, bg, hd, bd, &t1); // original
 
@@ -92,6 +107,7 @@ int main(int argc, char* argv[]) {
 	Mouse mouse;
 	Keyboard keyboard;
 	while (!keyboard.escape.down) {
+		r.updateTriangleSize(manager);
 		//inputEvent.update(mouse, keyboard);
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
