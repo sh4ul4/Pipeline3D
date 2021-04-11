@@ -33,7 +33,7 @@ public:
      * @param speed Vitesse de la planète autour
      * @param visible Détermine la visibilité de la planète
      */
-    Planet(int rayon, int mass, std::pair<float, float> &position, std::pair<float, float> &speed, bool visible = true) : Luminary(rayon, mass, position) {}
+    Planet(int rayon, int mass, Point2D &position, std::pair<float, float> &speed, bool visible = true) : Luminary(rayon, mass, position) {}
 
     /*===========================================================================================
      *      METHODES
@@ -60,12 +60,21 @@ public:
      */
     int getDistance();
 
-    /* Je ne pense qu'il soit intéressant de récupérer la vitesse initiale d'une planète */
-
     /**
      * @brief Récupère la vitesse sur l'axe x et la vitesse sur l'axe y
      * 
      * @return Retourne un std::pair : first --> speedX, second --> speedY 
      */
     std::pair<float, float> getSpeed();
+
+    /* ----- METHODES ----- */
+
+    /**
+     * @brief check la distance qui sépare la planète courante du soleil, pour savoir si la planète est sortie du système stellaire ou non
+     * 
+     * @return bool ? void ? autre ?
+     * 
+     *      /!\ Que faire si une planète sors du système stellaire ? on l'a supprime ?
+     */
+    ??? checkDistance();
 };

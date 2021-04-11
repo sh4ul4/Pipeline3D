@@ -3,6 +3,8 @@
 #include "Star.hpp"
 #include <vector>
 
+#define PLANETMAX 15 // Nos systèmes stellaires comprendront au maximum 15 planètes
+
 /**
  * @class Cette classe représente un système stellaire, avec une étoile autour de laquelle tournent des planètes
  */
@@ -13,7 +15,7 @@ private:
      *      ATTRIBUTS
     ===========================================================================================*/
 
-    // Liste de planètes présentes dans le système stellaire
+    // Liste de planètes présentées dans le système stellaire
     std::vector<Planet> planets;
     // Représente l'étoile du système
     Star sun;
@@ -76,4 +78,41 @@ public:
      * @param speed Facteur de vitesse de la simulation
      */
     void setSimulationSpeed(float speed);
+
+    /* ----- GETTERS ----- */
+
+    /**
+     * @brief Récupère la liste des planètes présentent dans le système stellaire courant
+     * 
+     * @return objet du type std::vector<Planet> 
+     */
+    std::vector<Planet> getPlanets();
+
+    /**
+     * @brief Récupère l'étoile du système stellaire courant
+     * 
+     * @return objet du type Star 
+     */
+    Star getStar();
+
+    /**
+     * @brief Récupère la vitesse de simulation du système stellaire courant
+     * 
+     * @return float --> le facteur de vitesse
+     */
+    float getSimulationSpeed();
+
+    /* ----- METHODES ----- */
+
+    // Appelle la méthode 'checkDistance' de chaque planète du système, afin de vérifier qu'elles sont dans les limites imposées
+    void checkPlanets();
+
+    /**
+     * @brief Appelle la méthode 'checkCollision' de chaque planète du système, pour vérifier qu'il n'y ait aucune collision à l'instant T
+     * 
+     * @return ???
+     * 
+     *      /!\ Que fait-on si une collision se produit ?
+     */
+    ??? checkCollision();
 };

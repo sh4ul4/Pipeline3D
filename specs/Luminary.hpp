@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Point.hpp"
 
 /**
  * @class Cette classe permet la factorisation de code. Les classes 'Planet' et 'Star' hériteront de 'Luminary'
@@ -15,7 +16,9 @@ protected:
     // Masse de la planète (en Kg --> important pour les formules physiques)
     int mass;
     // Position en x et y du corps celeste
-    std::pair<float, float> position;
+    Point2D position;
+    // Donne un nom à l'astre
+    std::string name;
 
 public:
     /*===========================================================================================
@@ -29,7 +32,7 @@ public:
      * @param mass Masse (en Kg) du corps celeste
      * @param position Paire contenant la coordonnée x et y du centre du corps celeste
      */
-    Luminary(int rayon, int mass, std::pair<float, float> &position);
+    Luminary(int rayon, int mass, Point2D &position);
 
     Luminary() = delete;
 
@@ -56,9 +59,9 @@ public:
     /**
      * @brief Affecte une nouvelle position au corps celeste
      * 
-     * @param position 
+     * @param position Un point 2D qui sera les nouvelles coordonnées de l'astre courant
      */
-    void setPosition(std::pair<float, float> &position);
+    void setPosition(Point2D &position);
 
     /* ----- GETTERS ----- */
 
@@ -79,7 +82,7 @@ public:
     /**
      * @brief Récupère les coordonnées du centre du corps celeste
      * 
-     * @return std::pair<float, float> 
+     * @return Objet du type Point2D 
      */
-    std::pair<float, float> getPosition();
+    Point2D getPosition();
 };
