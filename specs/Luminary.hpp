@@ -14,7 +14,7 @@ protected:
     // Rayon de la planète (Détermine sa taille)
     int rayon;
     // Masse de la planète (en Kg --> important pour les formules physiques)
-    int mass;
+    float mass;
     // Position en x et y du corps celeste
     Point2D position;
     // Donne un nom à l'astre
@@ -32,7 +32,7 @@ public:
      * @param mass Masse (en Kg) du corps celeste
      * @param position Paire contenant la coordonnée x et y du centre du corps celeste
      */
-    Luminary(int rayon, int mass, Point2D &position);
+    Luminary(int rayon, float mass, Point2D &position);
 
     Luminary() = delete;
 
@@ -54,7 +54,7 @@ public:
      * 
      * @param masse Nouvelle masse à affectée
      */
-    void setMass(int mass);
+    void setMass(float mass);
 
     /**
      * @brief Affecte une nouvelle position au corps celeste
@@ -75,7 +75,7 @@ public:
     /**
      * @brief Récupère la masse de la planète courante
      * 
-     * @return Retourn la masse de la planète (int) 
+     * @return Retourn la masse de la planète (float) 
      */
     int getMass();
 
