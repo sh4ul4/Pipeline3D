@@ -41,7 +41,7 @@ namespace Physics
 		 * @param force Forces exercées sur la planète (il faudrait un std::vector des forces)
 		 * @return std::pair<float, float> --> vecteur accélération
 		 */
-		std::pair<float, float> Newton2nd(float mass, std::pair<float, float> force);
+		std::pair<float, float> Newton2nd(double mass, std::pair<float, float> force);
 	}
 
 	/* ----- Méthodes ----- */
