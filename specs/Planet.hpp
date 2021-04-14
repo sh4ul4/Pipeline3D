@@ -33,7 +33,7 @@ public:
      * @param speed Vitesse de la planète autour
      * @param visible Détermine la visibilité de la planète
      */
-    Planet(int rayon, int mass, Point2D &position, std::pair<float, float> &speed, bool visible = true) : Luminary(rayon, mass, position) {}
+    Planet(float rayon, double mass, Point2D &position, std::pair<float, float> &speed, bool visible = true) : Luminary(rayon, mass, position) {}
 
     /*===========================================================================================
      *      METHODES
