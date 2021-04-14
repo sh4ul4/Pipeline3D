@@ -45,7 +45,7 @@ public:
     /**
      * @brief Affecte un nouveau rayon à la planète courante
      * 
-     * @param rayon Nouveau rayn à affecté
+     * @param rayon Nouveau rayon à affecter
      */
     void setRayon(float rayon);
 
