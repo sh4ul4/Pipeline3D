@@ -11,6 +11,9 @@ int main(int argc, char* argv[]) {
 	ButtonManager bm(inputEvent);
 	Render r(window);
 
+	TextInput ti("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(450, 50), window.getRenderer());
+	ti.start(inputEvent);
+
 	TextBox tb("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(50, 50), window.getRenderer());
 
 	bm.addButton<void*>("buttonA", nullptr, dark_gray, black, &tb, Point2D(50, 200), 50, 18);
@@ -21,10 +24,6 @@ int main(int argc, char* argv[]) {
 	Bitmap t1("../textures/80s_1.jpg");
 
 	manager.addCube("cube1", { 0,0,0 }, 5, &t1);
-
-	/*RectButton<ShapeManager*> rb("buttonB", nullptr, dark_gray, black, &tb, Point2D(50, 230), 50, 18);
-	rb.setAction(f, &manager);
-	rb.playAction();*/
 
 	struct Function {
 		Bitmap* bmp;
@@ -101,13 +100,11 @@ int main(int argc, char* argv[]) {
 	Mouse mouse;
 	Keyboard keyboard;
 	while (!keyboard.escape.down) {
+		inputEvent.update();
+		ti.checkForInput(inputEvent, window.getRenderer());
 		r.updateTriangles(manager);
-		//inputEvent.update(mouse, keyboard);
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
-		// manager.shapes[3]->rotateY({  100,50,50 }, (float)0.019); // Tapis droit
-		// manager.shapes[5]->rotateX({  0, 50, 50 }, (float)0.019); // Tapis gauche
-		// manager.shapes[7]->rotateY({  50, 0, 50 }, (float)0.019); // Tapis sol
 		manager.shapes[15]->rotateY({ 74, 12, 3 }, (float)0.019); // PLANTE (lol)
 		if (keyboard.one.down) {
 			cam1.setCurrent();
@@ -127,8 +124,11 @@ int main(int argc, char* argv[]) {
 		bm.checkButtons();
 		bm.renderButtons(window.getRenderer());
 
+		Draw::DrawFillRoundedRectContoured({ 200,200 }, 100, 50, 6, gray, dark_gray, window.getRenderer());
+		ti.render(window.getRenderer(), 0, 30);
 		window.RenderScreen();
 		window.FillScreen(teal);
 	}
+	ti.stop(inputEvent);
 	return 0;
 }
