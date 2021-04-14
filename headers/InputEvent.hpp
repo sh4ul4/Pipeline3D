@@ -17,7 +17,7 @@ class InputEvent {
     ===========================================================================================*/
 private:
 	// @brief Event SDL pour suivre les entrées utilisateurs diverses.
-	SDL_Event event;
+	SDL_Event event{};
 
 	// @brief Classe pour enregistrer et mettre à jour les données de la souris.
 	Mouse mouse;
