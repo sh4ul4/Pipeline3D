@@ -1,3 +1,4 @@
+#pragma once
 // base-class of a button without the template parameters
 class ButtonBase {
 public:
