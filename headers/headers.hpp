@@ -67,4 +67,6 @@
 
 #include "Textbox.hpp"
 
+#include "TextInput.hpp"
+
 #include "Button.hpp"

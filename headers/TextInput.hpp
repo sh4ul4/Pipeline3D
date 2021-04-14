@@ -54,24 +54,42 @@ public:
 	 * @param flip Application de l'effet miroir (horizontal ou vertical)
 	 * @param angle Rotation de la texture lors de l'affichage
 	 */
-	void render(SDL_Renderer* renderer, const int& flip, const double& angle) const;
+	void render(SDL_Renderer* renderer, const int& flip, const double& angle) const {
+		if (!text.empty()) TextBox::render(renderer, flip, angle);
+	}
 
 	/**
 	 * @brief Démarrer l'enregistrement de l'input utilisateur.
 	 * @param ie Event pour suivre l'input utilisateur.
 	 */
-	void start(InputEvent& ie);
+	void start(InputEvent& ie) {
+		running = true;
+		ie.clearText();
+		SDL_StartTextInput();
+	}
 
 	/**
 	 * @brief Arrêter l'enregistrement de l'input utilisateur.
 	 * @param ie Event pour suivre l'input utilisateur.
 	 */
-	void stop(InputEvent& ie);
+	void stop(InputEvent& ie) {
+		running = false;
+		ie.clearText();
+		SDL_StopTextInput();
+	}
 
 	/**
 	 * @brief Mettre à jour le texte et son affichage en fonction de l'input utilisateur.
 	 * @param ie Event pour suivre l'input utilisateur.
 	 * @param renderer Renderer SDL
 	 */
-	void checkForInput(InputEvent& ie, SDL_Renderer* renderer);
+	void checkForInput(InputEvent& ie, SDL_Renderer* renderer) {
+		if (!running)return;
+		const int size1 = text.length();
+		text = ie.getText();
+		const int size2 = text.length();
+		if (size1 != size2 && !text.empty()) {
+			update(text, renderer);
+		}
+	}
 };
