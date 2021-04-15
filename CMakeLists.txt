@@ -23,6 +23,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
 
 set(SRCS	src/main.cpp)
 
+# add_compile_options(-Wall -g)
+
 set(HEADERS headers/Bitmap.hpp
 			headers/Camera.hpp
 			headers/Chrono.hpp

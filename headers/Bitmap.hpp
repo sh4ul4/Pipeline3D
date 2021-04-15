@@ -5,7 +5,7 @@
  */
 
 /** @brief class Bitmap
- * La classe Bitmap permet de contenir les données d'une bitmap graphique et de simplifier sa création.
+ * La classe Bitmap permet de contenir les donnï¿½es d'une bitmap graphique et de simplifier sa crï¿½ation.
  */
 class Bitmap {
 public:
@@ -20,18 +20,18 @@ public:
 
 	/**
 	 * Un constructeur.
-	 * @param path le chemin d'accès vers l'image source
-	 * Vérifier si l'argument path est valide.
-	 * Créer une nouvelle surface avec la fonction IMG_Load().
-	 * Définir la variable temporaire pixelFormat avec la fonction SDL_AllocFormat().
-	 * Convertir la surface avec le nouveau format défini.
+	 * @param path le chemin d'accï¿½s vers l'image source
+	 * Vï¿½rifier si l'argument path est valide.
+	 * Crï¿½er une nouvelle surface avec la fonction IMG_Load().
+	 * Dï¿½finir la variable temporaire pixelFormat avec la fonction SDL_AllocFormat().
+	 * Convertir la surface avec le nouveau format dï¿½fini.
 	 * Bloquer les pixels de la surface avec SDL_LockSurface().
-	 * Vérifier les erreurs avec SDL_GetError() et supprimer les variables temporaires.
+	 * Vï¿½rifier les erreurs avec SDL_GetError() et supprimer les variables temporaires.
 	 */
-	Bitmap(const char* path) {
-		if (path == nullptr) { std::cout << "Wrong path name for object of class [Bitmap].\n"; exit(1); }
+	Bitmap(const std::string& path) {
+		// if (path.c_str() == nullptr) { std::cout << "Wrong path name for object of class [Bitmap].\n"; exit(1); }
 		SDL_Surface* newsurface = nullptr;
-		newsurface = IMG_Load(path);
+		newsurface = IMG_Load(path.c_str());
 		if (newsurface == nullptr) { std::cout << "ERROR : [" << path << "] could not be loaded.\n"; exit(1); }
 		SDL_PixelFormat* pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB32); // convert the pixel-format of the surface to ARGB32/ARGB8888
 		surface = SDL_ConvertSurface(newsurface, pixelFormat, 0);
@@ -45,7 +45,7 @@ public:
 
 	/**
 	 * Un destructeur.
-	 * Débloquer et libérer les pixels de la bitmap.
+	 * Dï¿½bloquer et libï¿½rer les pixels de la bitmap.
 	 */
 	~Bitmap() {
 		SDL_UnlockSurface(surface);

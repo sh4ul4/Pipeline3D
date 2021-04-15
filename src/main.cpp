@@ -1,5 +1,11 @@
 #include "headers.hpp"
 
+#if defined(_WIN32)
+	std::string pth = "../";
+#else
+	std::string pth = "./";
+#endif
+
 int main(int argc, char* argv[]) {
 	Window window(1200, 600);
 	InputEvent inputEvent;
@@ -11,17 +17,18 @@ int main(int argc, char* argv[]) {
 	ButtonManager bm(inputEvent);
 	Render r(window);
 
-	TextInput ti("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(450, 50), 200, 50, window.getRenderer());
+
+	TextInput ti("Hello world!", pth+std::string("fonts/calibri.ttf"), 30, black, Point2D(450, 50), 200, 50, window.getRenderer());
 	ti.start(inputEvent);
 
-	TextBox tb("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(50, 50), window.getRenderer());
+	TextBox tb("Hello world!", pth+std::string("fonts/calibri.ttf"), 30, black, Point2D(50, 50), window.getRenderer());
 
 	bm.addButton<void*>("buttonA", nullptr, dark_gray, black, &tb, Point2D(50, 200), 50, 18);
 	bm.getButton<void*>("buttonA").setAction([](void* a = nullptr) { std::cout << "ok" << std::endl; });
 
-	Bitmap t0("../textures/space.gif");
-	Bitmap t5("../textures/32x32.gif");
-	Bitmap t1("../textures/80s_1.jpg");
+	Bitmap t0(pth+std::string("textures/space.gif"));
+	Bitmap t5(pth+std::string("textures/32x32.gif"));
+	Bitmap t1(pth+std::string("textures/80s_1.jpg"));
 
 	manager.addCube("cube1", { 0,0,0 }, 5, &t1);
 
@@ -52,12 +59,12 @@ int main(int argc, char* argv[]) {
 	// Mur de face
 	manager.addRectangle("rect1", hg, bg, hd, bd, &t1); // original
 
-	// coté droit
+	// cotï¿½ droit
 	manager.addRectangle("rect2", hg, bg, { 0, 100, 100 }, { 0, 0, 100 });
 	// tapis, shape 3
 	manager.addRectangle("rect3", { 0, 80, 20 }, { 0, 20, 20 }, { 0, 80, 80 }, { 0, 20, 80 }, &t1);
 
-	// parallèle (coté gauche)
+	// parallï¿½le (cotï¿½ gauche)
 	manager.addRectangle("rect4", hd, bd, { 100, 100, 100 }, { 100, 0, 100 });
 	// tapis
 	manager.addRectangle("rect5", { 100, 80, 20 }, { 100, 20, 20 }, { 100, 80, 80 }, { 100, 20, 80 }, &t1);
