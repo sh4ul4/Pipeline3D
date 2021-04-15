@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 	ButtonManager bm(inputEvent);
 	Render r(window);
 
-	TextInput ti("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(450, 50), window.getRenderer());
+	TextInput ti("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(450, 50), 200, 50, window.getRenderer());
 	ti.start(inputEvent);
 
 	TextBox tb("Hello world!", "../fonts/calibri.ttf", 30, black, Point2D(50, 50), window.getRenderer());
@@ -125,7 +125,7 @@ int main(int argc, char* argv[]) {
 		bm.renderButtons(window.getRenderer());
 
 		Draw::DrawFillRoundedRectContoured({ 200,200 }, 100, 50, 6, gray, dark_gray, window.getRenderer());
-		ti.render(window.getRenderer(), 0, 30);
+		ti.render(window.getRenderer(), 0, 0);
 		window.RenderScreen();
 		window.FillScreen(teal);
 	}
