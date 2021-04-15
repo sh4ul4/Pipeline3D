@@ -104,15 +104,20 @@ public:
 
     /* ----- METHODES ----- */
 
-    // Appelle la méthode 'checkDistance' de chaque planète du système, afin de vérifier qu'elles sont dans les limites imposées
+    /** Appelle la méthode 'checkDistance' de chaque planète du système, afin de vérifier 
+     *      qu'elles sont dans les limites imposées.
+    */
     void checkPlanets();
 
     /**
-     * @brief Appelle la méthode 'checkCollision' de chaque planète du système, pour vérifier qu'il n'y ait aucune collision à l'instant T
-     * 
-     * @return ???
-     * 
-     *      /!\ Que fait-on si une collision se produit ?
+     * @brief Appelle la méthode 'checkCollision' de chaque planète du système, 
+     *          pour vérifier qu'il n'y ait aucune collision à l'instant T
      */
-    ??? checkCollision();
+    void checkCollision();
+
+    /**
+     * @brief Appelle les fonctions dans cinématique et physiques sur les planètes du système stellaires.
+     *      Gère la progression de la simulation vérifie collisions et les limites.
+     */
+    void simulation();
 };
