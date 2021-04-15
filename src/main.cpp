@@ -1,5 +1,6 @@
 #include "headers.hpp"
 
+// __unix __WIN32
 #if defined(_WIN32)
 	std::string pth = "../";
 #else
