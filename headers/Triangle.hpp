@@ -31,8 +31,6 @@ public:
 	// sommet qui indique le vecteur normal du triangle
 	Vector normalVec;
 
-private:
-
 	// booléen pour indiquer la visibilité du triangle
 	bool visible = false;
 
@@ -41,7 +39,7 @@ private:
 
 	// booléen pour indiquer si le triangle est contourné
 	bool contour = true;
-
+private:
 	// variables propres au clipping
 	bool farclipA = false;
 	bool farclipB = false;

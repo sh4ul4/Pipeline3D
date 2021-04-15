@@ -1,7 +1,5 @@
 #pragma once
-#include <string>
-#include "Shape.hpp"
-#include "Camera.hpp"
+#include <iomanip>
 class ShapeManager
 {
 public:
@@ -15,6 +13,77 @@ public:
 	/*=============================================================================================
 	 *		Méthodes
 	 *===========================================================================================*/
+
+	void exprt(const std::string& name)const {
+		std::ofstream out(name + ".flanf");
+		for (int s = 0; s < shapes.size(); s++) {
+			out << "shape " + shapes[s]->name + "\n";
+			for (int t = 0; t < shapes[s]->triangles.size(); t++) {
+				out << "tr ";
+				out << (Uint8)shapes[s]->triangles[t].color.r << " "
+					<< (Uint8)shapes[s]->triangles[t].color.g << " "
+					<< (Uint8)shapes[s]->triangles[t].color.b << " "
+					<< (Uint8)shapes[s]->triangles[t].color.a << " ";
+				out << (bool)shapes[s]->triangles[t].fill << " ";
+				out << std::fixed << std::setprecision(8);
+				out << shapes[s]->triangles[t].a.x << " "
+					<< shapes[s]->triangles[t].a.y << " "
+					<< shapes[s]->triangles[t].a.z << " "
+					<< shapes[s]->triangles[t].b.x << " "
+					<< shapes[s]->triangles[t].b.y << " "
+					<< shapes[s]->triangles[t].b.z << " "
+					<< shapes[s]->triangles[t].c.x << " "
+					<< shapes[s]->triangles[t].c.y << " "
+					<< shapes[s]->triangles[t].c.z << " endtr\n";
+			}
+			out << "endshape\n";
+		}
+	}
+
+	void imprt(const std::string& name) {
+		std::ifstream in(name + ".flanf");
+		std::string nxt;
+		while (in >> nxt) {
+			//std::cout << nxt << std::endl;
+			if (!nxt.compare("shape")) {
+				std::string name;
+				in >> name;
+				std::string tr;
+				std::vector<Triangle> trs;
+				while (in >> tr) {
+					if (!tr.compare("tr")) {
+						Vertex a, b, c;
+						Vector n{};
+						Color color = black;
+						bool fill = true;
+						in >> (Uint8)color.r;
+						in >> (Uint8)color.g;
+						in >> (Uint8)color.b;
+						in >> (Uint8)color.a;
+						in >> (bool)fill;
+						in >> a.x;
+						in >> a.y;
+						in >> a.z;
+						in >> b.x;
+						in >> b.y;
+						in >> b.z;
+						in >> c.x;
+						in >> c.y;
+						in >> c.z;
+						trs.push_back(Triangle(a, b, c, n, color, fill));
+					}
+					else if (!tr.compare("endtr")) continue;
+					else if (!tr.compare("endshape")) break;
+				}
+				std::cout << name << std::endl;
+				for (auto& tr : trs) {
+					std::cout << tr.fill << std::endl;
+					std::cout << (unsigned)tr.color.r << " " << (unsigned)tr.color.g << " " << (unsigned)tr.color.b << " " << (unsigned)tr.color.a << std::endl;
+				}
+				addShape(name, trs, { 0,0,0 }, nullptr);
+			}
+		}
+	}
 
 	/**
 	 * @brief Vérifie si une shape avec le nom donnée existe déjà
