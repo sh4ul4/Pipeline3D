@@ -19,7 +19,7 @@ public:
      * @param mass Masse de l'étoile (en Kg)
      * La position est initialisé à (0,0) car nous considérons ce point comme étant le centre du système stellaire
      */
-    Star(int rayon, int mass) : Luminary(rayon, mass, {0,0}) {}
+    Star(float rayon, double mass) : Luminary(rayon, mass, {0,0}) {}
 
     Star() = delete;
 };

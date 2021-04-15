@@ -33,7 +33,7 @@ public:
      * @param speed Vitesse de la planète autour
      * @param visible Détermine la visibilité de la planète
      */
-    Planet(int rayon, int mass, Point2D &position, std::pair<float, float> &speed, bool visible = true) : Luminary(rayon, mass, position) {}
+    Planet(float rayon, double mass, Point2D &position, std::pair<float, float> &speed, bool visible = true) : Luminary(rayon, mass, position) {}
 
     /*===========================================================================================
      *      METHODES
@@ -69,12 +69,20 @@ public:
 
     /* ----- METHODES ----- */
 
+
     /**
-     * @brief check la distance qui sépare la planète courante du soleil, pour savoir si la planète est sortie du système stellaire ou non
-     * 
-     * @return bool ? void ? autre ?
-     * 
-     *      /!\ Que faire si une planète sors du système stellaire ? on l'a supprime ?
+     * @brief Vérifie que la planète n'est pas sortie des limites du système stellaires si la planète est en dehors 
+     *      des limites arrêt de la simulation
      */
-    ??? checkDistance();
+    void checkDistance();
+    
+    /**
+     * @brief Vérifie que deux planètes ne sont pas en collisions.Si deux planètes sont en collisions arrêt 
+     *         de la simulation 
+     * 
+     * @param this Première planète
+     * @param p Deuxième planète 
+     */
+    void checkCollision(const Planet &p);
+    
 };
