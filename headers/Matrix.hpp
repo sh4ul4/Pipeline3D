@@ -21,7 +21,7 @@ public:
                 m[i][j] = 0;
     }
 
-    Matrix(const std::array<std::array<float, T1>, T2>& src) :rows(T1), columns(T2) {
+    Matrix(const std::array<std::array<float, T1>, T2>& src) {
         for (int i = 0; i < T1; i++)
             for (int j = 0; j < T2; j++)
                 m[i][j] = src[i][j];
@@ -107,17 +107,17 @@ public:
 
 template <size_t T1, size_t T2>
 inline const Matrix<T1,T2> operator+(const Matrix<T1, T2>& v1, const Matrix<T1, T2>& v2) {
-    return Matrix();
+    return Matrix<T1,T2>();
 }
 
 template <size_t T1, size_t T2>
 inline const Matrix<T1, T2> operator-(const Matrix<T1, T2>& v1, const Matrix<T1, T2>& v2) {
-    return Matrix();
+    return Matrix<T1,T2>();
 }
 
 template <size_t T1, size_t T2>
 inline const Matrix<T1, T2> operator*(const Matrix<T1, T2>& v1, const Matrix<T1, T2>& v2) {
-    return Matrix();
+    return Matrix<T1,T2>();
 }
 
 inline Matrix<4, 4> optimizedProduct(const Matrix<4, 4>& m1, const Matrix<4, 4>& m2) {

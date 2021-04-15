@@ -124,29 +124,28 @@ public:
 	int height;
 
 	RectButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb,
-		const Point2D& pos, const int& width, const int& height)
-		: Button(name, bgTex, bgCol, contCol, tb),
+		const Point2D& pos, const int& width, const int& height) : Button<paramType>(name, bgTex, bgCol, contCol, tb),
 		pos(pos), width(width), height(height) {}
 
 	RectButton() = delete;
 
 	void render(SDL_Renderer* renderer) const {
 		SDL_Rect rect{ pos.x, pos.y, width, height };
-		if (backgroundTex) backgroundTex->render(renderer, 0, 0);
+		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);
 		else {
-			SDL_SetRenderDrawColor(renderer, backgroundCol.r, backgroundCol.g, backgroundCol.b, backgroundCol.a);
+			SDL_SetRenderDrawColor(renderer, ButtonBase::backgroundCol.r, ButtonBase::backgroundCol.g, ButtonBase::backgroundCol.b, ButtonBase::backgroundCol.a);
 			SDL_RenderFillRect(renderer, &rect);
 		}
-		if (textBox) textBox->render(renderer, 0, 0);
-		SDL_SetRenderDrawColor(renderer, contourCol.r, contourCol.g, contourCol.b, contourCol.a);
+		if (ButtonBase::textBox) ButtonBase::textBox->render(renderer, 0, 0);
+		SDL_SetRenderDrawColor(renderer, ButtonBase::contourCol.r, ButtonBase::contourCol.g, ButtonBase::contourCol.b, ButtonBase::contourCol.a);
 		SDL_RenderDrawRect(renderer, &rect);
 	}
 
 	bool mouseInside(const InputEvent& ie) {
-		ie.updateMouse(mouse);
-		const Point2D m(mouse.x, mouse.y);
-		selected = m.x < pos.x + width && m.x > pos.x && m.y < pos.y + height && m.y > pos.y;
-		return selected;
+		ie.updateMouse(ButtonBase::mouse);
+		const Point2D m(ButtonBase::mouse.x, ButtonBase::mouse.y);
+		ButtonBase::selected = m.x < pos.x + width && m.x > pos.x && m.y < pos.y + height && m.y > pos.y;
+		return ButtonBase::selected;
 	}
 };
 
@@ -158,25 +157,25 @@ public:
 
 	RoundButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb,
 		const Point2D& pos, const int& radius)
-		: Button(name, bgTex, bgCol, contCol, tb),
+		: Button<paramType>(name, bgTex, bgCol, contCol, tb),
 		pos(pos), radius(radius) {}
 
 	RoundButton() = delete;
 
 	void render(SDL_Renderer* renderer) const {
-		if (backgroundTex) backgroundTex->render(renderer, 0, 0);
+		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);
 		else {
-			Draw::DrawFillCircle(pos.x, pos.y, radius, backgroundCol, renderer);
+			Draw::DrawFillCircle(pos.x, pos.y, radius, ButtonBase::backgroundCol, renderer);
 		}
-		if (textBox) textBox->render(renderer, 0, 0);
-		Draw::DrawCircle(pos.x, pos.y, radius, contourCol, renderer);
+		if (ButtonBase::textBox) ButtonBase::textBox->render(renderer, 0, 0);
+		Draw::DrawCircle(pos.x, pos.y, radius, ButtonBase::contourCol, renderer);
 	}
 
 	bool mouseInside(const InputEvent& ie) {
-		ie.updateMouse(mouse);
-		const Point2D mouse(mouse.x, mouse.y);
-		selected = mouse.distance(pos) < radius;
-		return selected;
+		ie.updateMouse(ButtonBase::mouse);
+		const Point2D mouse2(ButtonBase::mouse.x, ButtonBase::mouse.y);
+		ButtonBase::selected = mouse2.distance(pos) < radius;
+		return ButtonBase::selected;
 	}
 };
 

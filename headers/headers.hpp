@@ -65,7 +65,7 @@
 
 #include "Render.hpp"
 
-#include "Textbox.hpp"
+#include "TextBox.hpp"
 
 #include "TextInput.hpp"
 
