@@ -10,9 +10,15 @@ class TextBox {
 	/*===========================================================================================
      *      ATTRIBUTS
     ===========================================================================================*/
-private:
+protected:
 	// Coordonnées 2D du point haut-gauche de la texture.
 	Point2D pos;
+
+	// Largeur de la texture.
+	int maxWidth = 999999;
+
+	// Hauteur de la texture.
+	int maxHeight = 999999;
 
 	// Largeur de la texture.
 	int width;
@@ -46,7 +52,7 @@ public:
 	 */
 	TextBox(std::string text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
 		const Point2D& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
-		: pos(topLeft), width(width), height(height), fontColor(fontColor) {
+		: pos(topLeft), maxWidth(width), maxHeight(height), fontColor(fontColor) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
 		if (text.empty()) text = " ";
@@ -71,6 +77,8 @@ public:
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
 		TTF_SizeText(font, text.c_str(), &width, &height);
+		if (width > maxWidth)width = maxWidth;
+		if (height > maxHeight)height = maxHeight;
 		if (text.empty()) text = " ";
 		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
 		if (texture) SDL_DestroyTexture(texture);
@@ -122,6 +130,8 @@ public:
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
 		TTF_SizeText(font, text.c_str(), &width, &height);
+		if (width > maxWidth)width = maxWidth;
+		if (height > maxHeight)height = maxHeight;
 		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
 		if (texture) SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -135,6 +145,8 @@ public:
 	 */
 	void update(const std::string& text, SDL_Renderer* renderer) {
 		TTF_SizeText(font, text.c_str(), &width, &height);
+		if (width > maxWidth)width = maxWidth;
+		if (height > maxHeight)height = maxHeight;
 		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
 		if (texture) SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
