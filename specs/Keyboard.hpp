@@ -1,15 +1,40 @@
+/**
+ * @file Module Interaction utilisateur
+ */
 
-struct Key {
+/** @brief class Key
+ * La classe Key gère les interactions utilisateur qui passent par une touche du clavier.
+ */
+class Key {
+public:
+	/** @brief up Touche noon appuyée. */
 	bool up = false;
+
+	/** @brief down Touche appuyée. */
 	bool down = false;
+
+	/** @brief pressed Touche vient d'être enfoncée. */
 	bool pressed = false;
+
+	/** @brief Mettre à zéro la touche. */
 	void setBack();
+
+	/** @brief Appuyer sur la touche. */
 	void press();
+
+	/** @brief Relacher la touche. */
 	void release();
+
+	/** @brief Copier la touche correctement. */
 	Key& operator=(const Key& other);
 };
 
-struct Keyboard {
+/** @brief class Keyboard
+ * La classe Keyboard gère les différentes touches du clavier.
+ */
+class Keyboard {
+public:
+	/** Touches du clavier. */
 	Key a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
 	Key A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
 	Key zero, one, two, three, four, five, six, seven, eight, nine;
