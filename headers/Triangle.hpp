@@ -49,13 +49,9 @@ private:
 	bool nearclipC = false;
 	
 public:
-<<<<<<< HEAD
+
 	Triangle(){}
 
-=======
-	Triangle() {}
-	
->>>>>>> 8d8bd825d1686084da7243ea797101d77976e6dd
 	// constructeur sans texture
 	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Vector& normalVec, const Color& color = black, const bool& fill = true)
 		: a(a), b(b), c(c), normalVec(normalVec), color(color), fill(fill) {}
