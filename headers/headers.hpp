@@ -24,6 +24,8 @@
 
 #include <thread>
 
+#include <assert.h>
+
 #include "ErrorsHandler.hpp"
 
 #include "Point.hpp"

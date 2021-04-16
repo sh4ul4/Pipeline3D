@@ -229,9 +229,8 @@ public:
 
 	template <class paramType>
 	Button<paramType>& getButton(const std::string& name) const {
+		assert(nameUsed(name), "There is no Button with this name.");
 		for (int i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) return dynamic_cast<Button<paramType>&>(*buttons[i]);
-		std::cout << "There is no Button named " << name << std::endl;
-		exit(1);
 	}
 };
