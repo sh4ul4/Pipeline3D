@@ -35,6 +35,9 @@
 Release
 Debug
 out
+build
+.vscode
+
 # SDL
 .vs
 CMakeSettings.json
