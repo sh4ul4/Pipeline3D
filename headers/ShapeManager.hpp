@@ -25,6 +25,13 @@ public:
 					<< (Uint8)shapes[s]->triangles[t].color.b << " "
 					<< (Uint8)shapes[s]->triangles[t].color.a << " ";
 				out << (bool)shapes[s]->triangles[t].fill << " ";
+				if (shapes[s]->triangles[t].bmp == nullptr) {
+					out << "null null ";
+				}
+				else {
+					out << shapes[s]->triangles[t].bmp->name << " "
+						<< shapes[s]->triangles[t].bmp->path << " ";
+				}
 				out << std::fixed << std::setprecision(8);
 				out << shapes[s]->triangles[t].a.x << " "
 					<< shapes[s]->triangles[t].a.y << " "
@@ -56,11 +63,15 @@ public:
 						Vector n{};
 						Color color = black;
 						bool fill = true;
+						std::string bmpName;
+						std::string bmpPath;
 						in >> (Uint8)color.r;
 						in >> (Uint8)color.g;
 						in >> (Uint8)color.b;
 						in >> (Uint8)color.a;
 						in >> (bool)fill;
+						in >> (std::string)bmpName; // handle "null"
+						in >> (std::string)bmpPath;
 						in >> a.x;
 						in >> a.y;
 						in >> a.z;
@@ -80,6 +91,7 @@ public:
 					std::cout << tr.fill << std::endl;
 					std::cout << (unsigned)tr.color.r << " " << (unsigned)tr.color.g << " " << (unsigned)tr.color.b << " " << (unsigned)tr.color.a << std::endl;
 				}
+				//Bitmap::newBitmap(bmpName)
 				addShape(name, trs, { 0,0,0 }, nullptr);
 			}
 		}

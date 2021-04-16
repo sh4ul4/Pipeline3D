@@ -9,12 +9,26 @@
  */
 class Bitmap {
 public:
+
+	static std::vector<Bitmap*> bitmaps;
+
+	std::string name{};
+
+	std::string path{};
+
 	/**
 	 * Une variable publique.
 	 * Contient les informations d'une surface graphique (bitmap, dimensions, formats).
 	 */
 	SDL_Surface* surface = nullptr;
 
+public:
+	static bool bitmapExists(const std::string& name) {
+		for (int i = 0; i < bitmaps.size(); i++)
+			if (!name.compare(bitmaps[i]->name)) return true;
+		return false;
+	}
+	
 	// suppression du constructeur de base
 	Bitmap() = delete;
 
@@ -28,8 +42,7 @@ public:
 	 * Bloquer les pixels de la surface avec SDL_LockSurface().
 	 * V�rifier les erreurs avec SDL_GetError() et supprimer les variables temporaires.
 	 */
-	Bitmap(const std::string& path) {
-		// if (path.c_str() == nullptr) { std::cout << "Wrong path name for object of class [Bitmap].\n"; exit(1); }
+	Bitmap(const std::string& name, const std::string& path) :name(name), path(path) {
 		SDL_Surface* newsurface = nullptr;
 		newsurface = IMG_Load(path.c_str());
 		if (newsurface == nullptr) { std::cout << "ERROR : [" << path << "] could not be loaded.\n"; exit(1); }
@@ -43,6 +56,28 @@ public:
 		if (surface == nullptr) { std::cout << "ERROR : surface conversion.\n"; exit(1); }
 	}
 
+	static void newBitmap(const std::string& name, const std::string& path) {
+		if (!bitmapExists(name)) bitmaps.emplace_back(new Bitmap(name, path));
+	}
+
+	static void deleteBitmap(const std::string& name) {
+		for (int i = 0; i < bitmaps.size(); i++) {
+			if (!name.compare(bitmaps[i]->name)) {
+				delete bitmaps[i];
+				bitmaps[i] = nullptr;
+				bitmaps.erase(bitmaps.begin() + i);
+				--i;
+				bitmaps.shrink_to_fit();
+			}
+		}
+	}
+
+	static Bitmap* getBitmap(const std::string& name) {
+		for (int i = 0; i < bitmaps.size(); i++)
+			if (!name.compare(bitmaps[i]->name)) return bitmaps[i];
+		return nullptr;
+	}
+
 	/**
 	 * Un destructeur.
 	 * D�bloquer et lib�rer les pixels de la bitmap.
@@ -52,3 +87,5 @@ public:
 		SDL_FreeSurface(surface);
 	}
 };
+
+std::vector<Bitmap*> Bitmap::bitmaps{};
