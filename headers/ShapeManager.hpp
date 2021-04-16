@@ -14,6 +14,70 @@ public:
 	 *		Méthodes
 	 *===========================================================================================*/
 
+	void exprtShapeObj(const std::string& shape) {
+		if (!nameTaken(shape))return; // no shape named that way
+
+		std::ofstream mtl("../OBJ/" + shape + ".mtl");
+		mtl << "newmtl" << shape <<
+			"Ns 10.0000\nNi 1.5000\nd 1.0000\nTr 0.0000\nTf 1.0000 1.0000 1.0000\nillum 2\nKa 0.0000 0.0000 0.0000\nKd 0.5880 0.5880 0.5880\nKs 0.0000 0.0000 0.0000\nKe 0.0000 0.0000 0.0000\nmap_Ka "
+			<< shape << ".jpg\nmap_Kd " << shape << ".jpg\n";
+
+
+		std::ofstream out("../OBJ/" + shape + ".obj");
+		out << "# " + shape + ".obj\n";
+		out << "#\n\n";
+		out << "o " + shape + "\n";
+		out << "mtllib " << shape<< ".mtl\n";
+		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+			out << std::fixed << std::setprecision(8);
+			out << "v "
+				<< getShape(shape).triangles[tr].a.x << " "
+				<< getShape(shape).triangles[tr].a.y << " "
+				<< getShape(shape).triangles[tr].a.z << "\n";
+
+			out << "v "
+				<< getShape(shape).triangles[tr].b.x << " "
+				<< getShape(shape).triangles[tr].b.y << " "
+				<< getShape(shape).triangles[tr].b.z << "\n";
+
+			out << "v "
+				<< getShape(shape).triangles[tr].c.x << " "
+				<< getShape(shape).triangles[tr].c.y << " "
+				<< getShape(shape).triangles[tr].c.z << "\n";
+		}
+		out << "\n";
+		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+			out << std::fixed << std::setprecision(8);
+			out << "vt "
+				<< getShape(shape).triangles[tr].bmpA.x << " "
+				<< getShape(shape).triangles[tr].bmpA.y << "\n";
+
+			out << "vt "
+				<< getShape(shape).triangles[tr].bmpB.x << " "
+				<< getShape(shape).triangles[tr].bmpB.y << "\n";
+
+			out << "vt "
+				<< getShape(shape).triangles[tr].bmpC.x << " "
+				<< getShape(shape).triangles[tr].bmpC.y << "\n";
+		}
+		out << "\n";
+		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+			out << std::fixed << std::setprecision(8);
+			out << "vn "
+				<< getShape(shape).triangles[tr].normalVec.x << " "
+				<< getShape(shape).triangles[tr].normalVec.y << " "
+				<< getShape(shape).triangles[tr].normalVec.z << "\n";
+		}
+		out << "\ng " + shape + "\n";
+		out << "usemtl " << shape << "\n";
+		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+			out << std::fixed << std::setprecision(8);
+			out << "f " << std::to_string((tr + 1) * 3 - 2) << "/" << std::to_string((tr + 1) * 3 - 2) << "/" << std::to_string(tr + 1) << " ";
+			out << std::to_string((tr + 1) * 3 - 1) << "/" << std::to_string((tr + 1) * 3 - 1) << "/" << std::to_string(tr + 1) << " ";
+			out << std::to_string((tr + 1) * 3) << "/" << std::to_string((tr + 1) * 3) << "/" << std::to_string(tr + 1) << "\n";
+		}
+	}
+
 	void exprt(const std::string& name)const {
 		std::ofstream out(name + ".flanf");
 		for (int s = 0; s < shapes.size(); s++) {
