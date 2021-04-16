@@ -36,36 +36,217 @@ public:
 			iss >> type;
 
 			if (!type.compare("v")) {
-				Vertex tmp{};
-				iss >> tmp.x >> tmp.y >> tmp.z;
-				v.push_back(tmp);
+				float n;
+				std::vector<float> vals;
+				while (iss >> n) {
+					vals.push_back(n);
+				}
+				if (vals.size() == 3) {
+					Vertex tmp(vals[0], vals[1], vals[2]);
+					v.push_back(tmp);
+				}
+				else {
+					std::cerr << "wrong input values v" << std::endl;
+					return;
+				}
 			}
 			if (!type.compare("vt")) {
-				Point2D tmp{};
-				iss >> tmp.x >> tmp.y;
-				vt.push_back(tmp);
+				float n;
+				std::vector<float> vals;
+				while (iss >> n) {
+					vals.push_back(n);
+				}
+				if (vals.size() == 2 || vals.size() == 3) {
+					Point2D tmp(vals[0], vals[1]);
+					vt.push_back(tmp);
+				}
+				else {
+					std::cerr << "wrong input values vt" << std::endl;
+					return;
+				}
 			}
 			if (!type.compare("vn")) {
-				Vector tmp{};
-				iss >> tmp.x >> tmp.y >> tmp.z;
-				vn.push_back(tmp);
+				float n;
+				std::vector<float> vals;
+				while (iss >> n) {
+					vals.push_back(n);
+				}
+				if (vals.size() == 3) {
+					Vector tmp(vals[0], vals[1], vals[2]);
+					vn.push_back(tmp);
+				}
+				else {
+					std::cerr << "wrong input values vn" << std::endl;
+					return;
+				}
 			}
 			if (!type.compare("f")) {
-				int n;
-				std::vector<int> ind;
+				std::string n;
+				std::vector<std::vector<int>> ind;
 				while (iss >> n) {
-					ind.push_back(n);
+					std::vector<int> tmpvec;
+					std::string tmpstr;
+					for(char c : n) {
+						if (c == '/') {
+							tmpvec.push_back(atoi(tmpstr.c_str()));
+							tmpstr.clear();
+						}
+						else tmpstr += c;
+					}
+					tmpvec.push_back(atoi(tmpstr.c_str()));
+					tmpstr.clear();
+					ind.push_back(tmpvec);
 				}
+
 				if (ind.size() == 3) {
+					if (ind[0].size() == 3 && ind[1].size() == 3 && ind[2].size() == 3) {
+						// v vt vn
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[1][0] - 1],
+							v[ind[2][0] - 1],
+							vn[ind[0][2] - 1],
+							cyan,nullptr,
+							vt[ind[0][1] - 1],
+							vt[ind[1][1] - 1],
+							vt[ind[2][1] - 1]);
+					}
+					if (ind[0].size() == 2 && ind[1].size() == 2 && ind[2].size() == 2) {
+						// v vt
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[1][0] - 1],
+							v[ind[2][0] - 1],
+							Vector(1,1,1),
+							cyan, nullptr,
+							vt[ind[0][1] - 1],
+							vt[ind[1][1] - 1],
+							vt[ind[2][1] - 1]);
+					}
+					if (ind[0].size() == 1 && ind[1].size() == 1 && ind[2].size() == 1) {
+						// v vt
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[1][0] - 1],
+							v[ind[2][0] - 1],
+							Vector(1, 1, 1),
+							cyan, nullptr,
+							Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
+					}
+				}
+				if (ind.size() == 4) {
+					if (ind[0].size() == 3 && ind[1].size() == 3 && ind[2].size() == 3 && ind[3].size() == 3) {
+						// v vt vn
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[1][0] - 1],
+							v[ind[2][0] - 1],
+							vn[ind[0][2] - 1],
+							cyan, nullptr,
+							vt[ind[0][1] - 1],
+							vt[ind[1][1] - 1],
+							vt[ind[2][1] - 1]);
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[2][0] - 1],
+							v[ind[3][0] - 1],
+							vn[ind[0][2] - 1],
+							cyan, nullptr,
+							vt[ind[0][1] - 1],
+							vt[ind[2][1] - 1],
+							vt[ind[3][1] - 1]);
+					}
+					if (ind[0].size() == 2 && ind[1].size() == 2 && ind[2].size() == 2 && ind[3].size() == 2) {
+						// v vt
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[1][0] - 1],
+							v[ind[2][0] - 1],
+							Vector(1, 1, 1),
+							cyan, nullptr,
+							vt[ind[0][1] - 1],
+							vt[ind[1][1] - 1],
+							vt[ind[2][1] - 1]);
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[2][0] - 1],
+							v[ind[3][0] - 1],
+							Vector(1, 1, 1),
+							cyan, nullptr,
+							vt[ind[0][1] - 1],
+							vt[ind[2][1] - 1],
+							vt[ind[3][1] - 1]);
+					}
+					if (ind[0].size() == 1 && ind[1].size() == 1 && ind[2].size() == 1 && ind[3].size() == 1) {
+						// v vt
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[1][0] - 1],
+							v[ind[2][0] - 1],
+							Vector(1, 1, 1),
+							cyan, nullptr,
+							Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
+						trs.emplace_back(
+							v[ind[0][0] - 1],
+							v[ind[2][0] - 1],
+							v[ind[3][0] - 1],
+							Vector(1, 1, 1),
+							cyan, nullptr,
+							Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
+					}
+				}
+
+				/*if (ind.size() == 3) {
 					trs.emplace_back(v[ind[0] - 1], v[ind[1] - 1], v[ind[2] - 1], Vector(0, 0, 0), cyan, true);
 				}
 				if (ind.size() == 4) {
 					trs.emplace_back(v[ind[0] - 1], v[ind[1] - 1], v[ind[2] - 1], Vector(0, 0, 0), cyan, true);
 					trs.emplace_back(v[ind[0] - 1], v[ind[2] - 1], v[ind[3] - 1], Vector(0, 0, 0), cyan, true);
+				}*/
+			}
+			if (!type.compare("mtllib")) {
+				std::string mtlpath;
+				iss >> mtlpath;
+				std::string tmp;
+				while (iss >> tmp) {
+					mtlpath += " " + tmp;
+				}
+
+				std::ifstream mtlfile("../OBJ/" + mtlpath);
+				if (!mtlfile.is_open()) {
+					mtlfile = std::ifstream("../OBJ/" + mtlpath);
+				}
+				if (!mtlfile.is_open()) {
+					std::cout << "no such file" << std::endl;
+					return; // no such file
+				}
+				std::string line;
+				while (std::getline(mtlfile, line)) {
+					std::istringstream iss(line);
+					std::string type;
+					iss >> type;
+
+					if (type.size() <= 0 || type[0] == '#') {
+						continue;
+					}
+					if (!type.compare("map_Ka")) {
+						std::string imgpath;
+						iss >> imgpath;
+						Bitmap::newBitmap(shape, "../OBJ/" + imgpath);
+					}
+					if (!type.compare("map_Kd")) {
+						std::string imgpath;
+						iss >> imgpath;
+						Bitmap::newBitmap(shape, "../OBJ/" + imgpath);
+					}
 				}
 			}
+			if (type.size() <= 0 || type[0] == '#' || !type.compare("vp") || !type.compare("l") || !type.compare("o") || !type.compare("usemtl")) {
+				continue;
+			}
 		}
-		addShape(shape, trs, { 0,0,0 }, nullptr);
+		for (auto& tr : trs)tr.bmp = Bitmap::getBitmap(shape);
+		addShape(shape, trs, { 0,0,0 }, Bitmap::getBitmap(shape));
 	}
 
 	void exprtShapeObj(const std::string& shape) {
