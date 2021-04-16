@@ -1,5 +1,6 @@
 #pragma once
 #include <iomanip>
+#include <sstream>
 class ShapeManager
 {
 public:
@@ -13,6 +14,59 @@ public:
 	/*=============================================================================================
 	 *		Méthodes
 	 *===========================================================================================*/
+
+	void imprtShapeObj(const std::string& shape) {
+		std::ifstream in("../OBJ/" + shape + ".obj");
+		if (!in.is_open()) {
+			in = std::ifstream("../OBJ/" + shape + ".OBJ");
+		}
+		if (!in.is_open()) {
+			std::cout << "no such file" << std::endl;
+			return; // no such file
+		}
+
+		std::vector<Vertex> v;
+		std::vector<Vector> vn;
+		std::vector<Point2D> vt;
+		std::vector<Triangle> trs;
+		std::string line;
+		while (std::getline(in, line)) {
+			std::istringstream iss(line);
+			std::string type;
+			iss >> type;
+
+			if (!type.compare("v")) {
+				Vertex tmp{};
+				iss >> tmp.x >> tmp.y >> tmp.z;
+				v.push_back(tmp);
+			}
+			if (!type.compare("vt")) {
+				Point2D tmp{};
+				iss >> tmp.x >> tmp.y;
+				vt.push_back(tmp);
+			}
+			if (!type.compare("vn")) {
+				Vector tmp{};
+				iss >> tmp.x >> tmp.y >> tmp.z;
+				vn.push_back(tmp);
+			}
+			if (!type.compare("f")) {
+				int n;
+				std::vector<int> ind;
+				while (iss >> n) {
+					ind.push_back(n);
+				}
+				if (ind.size() == 3) {
+					trs.emplace_back(v[ind[0] - 1], v[ind[1] - 1], v[ind[2] - 1], Vector(0, 0, 0), cyan, true);
+				}
+				if (ind.size() == 4) {
+					trs.emplace_back(v[ind[0] - 1], v[ind[1] - 1], v[ind[2] - 1], Vector(0, 0, 0), cyan, true);
+					trs.emplace_back(v[ind[0] - 1], v[ind[2] - 1], v[ind[3] - 1], Vector(0, 0, 0), cyan, true);
+				}
+			}
+		}
+		addShape(shape, trs, { 0,0,0 }, nullptr);
+	}
 
 	void exprtShapeObj(const std::string& shape) {
 		if (!nameTaken(shape))return; // no shape named that way
