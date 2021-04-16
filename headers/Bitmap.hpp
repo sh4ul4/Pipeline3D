@@ -10,19 +10,32 @@
 class Bitmap {
 public:
 
+	/**
+	 * @brief Contient les bitmaps créées avec la fonction newBitmap().
+	 */
 	static std::vector<Bitmap*> bitmaps;
 
+	/**
+	 * @brief Contient le nom unique de la bitmap.
+	 */
 	std::string name{};
 
+	/**
+	 * @brief Contient le chemin d'accès vers l'image source.
+	 */
 	std::string path{};
 
 	/**
-	 * Une variable publique.
-	 * Contient les informations d'une surface graphique (bitmap, dimensions, formats).
+	 * @brief Contient les informations d'une surface graphique (bitmap, dimensions, formats).
 	 */
 	SDL_Surface* surface = nullptr;
 
 public:
+
+	/**
+	 * @brief Renvoie true si une bitmap avec le nom donné existe dans le vecteur.
+	 * @param name Le nom unique de la bitmap dans le vecteur.
+	 */
 	static bool bitmapExists(const std::string& name) {
 		for (int i = 0; i < bitmaps.size(); i++)
 			if (!name.compare(bitmaps[i]->name)) return true;
@@ -56,10 +69,19 @@ public:
 		if (surface == nullptr) { std::cout << "ERROR : surface conversion.\n"; exit(1); }
 	}
 
+	/**
+	 * @brief Ajoute une nouvelle bitmap au vecteur.
+	 * @param path Le chemin d'accès vers l'image source.
+	 * @param name Le nom unique de la bitmap dans le vecteur.
+	 */
 	static void newBitmap(const std::string& name, const std::string& path) {
 		if (!bitmapExists(name)) bitmaps.emplace_back(new Bitmap(name, path));
 	}
 
+	/**
+	 * @brief Supprime la bitmap avec le nom donné du vecteur.
+	 * @param name Le nom unique de la bitmap dans le vecteur.
+	 */
 	static void deleteBitmap(const std::string& name) {
 		for (int i = 0; i < bitmaps.size(); i++) {
 			if (!name.compare(bitmaps[i]->name)) {
@@ -72,6 +94,10 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Renvoie un pointeur vers la bitmap au nom donné.
+	 * @param name Le nom unique de la bitmap dans le vecteur.
+	 */
 	static Bitmap* getBitmap(const std::string& name) {
 		for (int i = 0; i < bitmaps.size(); i++)
 			if (!name.compare(bitmaps[i]->name)) return bitmaps[i];
@@ -79,8 +105,7 @@ public:
 	}
 
 	/**
-	 * Un destructeur.
-	 * D�bloquer et lib�rer les pixels de la bitmap.
+	 * @brief Débloque et libére les pixels de la bitmap.
 	 */
 	~Bitmap() {
 		SDL_UnlockSurface(surface);
