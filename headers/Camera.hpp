@@ -100,7 +100,7 @@ public:
 	 * Une variable publique.
 	 * Limite du clipping de distance.
 	 */
-	float far = 5000;
+	float far = 10000;
 	/**
 	 * Une variable publique.
 	 * Angle d'observation horizontal.
@@ -162,6 +162,10 @@ public:
 	void setSubject(const Vertex& s) {
 		subject = s;
 		hasSubject = true;
+	}
+
+	void setDistanceToSubject(const float& distance) {
+		distanceToSubject = distance;
 	}
 
 	void removeSubject() { hasSubject = false; }
@@ -405,40 +409,42 @@ public:
 		 * - matrice de vue et matrice de perspective
 		 */
 	void update(InputEvent& inputEvent, const Window& window) {
-		inputEvent.updateMouse(mouse);
-		inputEvent.updateKeyBoard(keyboard);
-		//SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
-		if (keyboard.z.pressed && angleView > minAngleView) {
-			angleView -= 1;
-		}
-		if (keyboard.e.pressed && angleView < maxAngleView) {
-			angleView += 1;
-		}
 		if (!locked) {
+			inputEvent.updateMouse(mouse);
+			inputEvent.updateKeyBoard(keyboard);
+			SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
+			if (keyboard.z.pressed && angleView > minAngleView) {
+				angleView -= 1;
+			}
+			if (keyboard.e.pressed && angleView < maxAngleView) {
+				angleView += 1;
+			}
+
 			// set angles
 			angleX += sensitivity * (float)(mouse.x - window.getWidthCenter());
 			angleX = clampAngleX(angleX);
 			angleY += sensitivity * (float)(mouse.y - window.getHeightCenter());
 			angleY = clampAngleY(angleY);
-		}
-		if (path.size() > 0 && current == this) {
-			Vector direction = { path[0].x - subject.x,path[0].y - subject.y,path[0].z - subject.z }; // goal - start
-			if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal
-				for (size_t i = 0; i < path.size() - 1; i++) {
-					path[i] = path[i + 1];
-				}path.pop_back();
-			}
-			else {
-				direction.normalizeOnLength(pathMoveSpeed);
-				// move
-				subject += direction;
-			}
-		}
 
-		refresh2D();
-		if (hasSubject) {
-			const Vector look = getMovementVector(1, 0, 0, distanceToSubject);
-			pos = subject - look;
+			if (path.size() > 0 && current == this) {
+				Vector direction = { path[0].x - subject.x,path[0].y - subject.y,path[0].z - subject.z }; // goal - start
+				if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal
+					for (size_t i = 0; i < path.size() - 1; i++) {
+						path[i] = path[i + 1];
+					}path.pop_back();
+				}
+				else {
+					direction.normalizeOnLength(pathMoveSpeed);
+					// move
+					subject += direction;
+				}
+			}
+
+			refresh2D();
+			if (hasSubject) {
+				const Vector look = getMovementVector(1, 0, 0, distanceToSubject);
+				pos = subject - look;
+			}
 		}
 		refresh2D();
 	}
