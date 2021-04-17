@@ -100,7 +100,7 @@ public:
 	 * Une variable publique.
 	 * Limite du clipping de distance.
 	 */
-	float far = 10000;
+	float far = 100000;
 	/**
 	 * Une variable publique.
 	 * Angle d'observation horizontal.

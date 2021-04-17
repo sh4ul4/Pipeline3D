@@ -13,7 +13,7 @@ private:
 		float Tr{ 0 };
 		Color Tf = { 0,0,0 };
 		float Ni{ 0 };
-		std::string bmpPath = ".";
+		std::string bmpPath;
 		Point2D bmpDim{ 0,0 };
 		MTL() = delete;
 		MTL(const std::string& name) :name(name) {}
@@ -33,7 +33,7 @@ private:
 		}
 		if (!mtlfile.is_open()) {
 			std::cout << "no such mtl file" << std::endl;
-			return; // no such file
+			return;
 		}
 		std::string line;
 		while (std::getline(mtlfile, line)) {
@@ -101,12 +101,12 @@ private:
 
 	void caseG(std::istringstream& iss, std::vector<MTL>& mtls, std::vector<Triangle>& trs, std::string& currentObject) {
 		if (currentObject.length() > 0 && trs.size() > 0)
-			addShape(currentObject, trs, { 0,0,0 }, Bitmap::getBitmap(mtls.back().bmpPath));
+			addShape(currentObject, trs, { 0,0,0 }, mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr);
 		iss >> currentObject;
 		trs.clear();
 	}
 
-	void caseV(std::istringstream& iss, std::vector<MTL>& mtls, std::vector<Vertex>& v) {
+	void caseV(std::istringstream& iss, std::vector<MTL>& mtls, std::vector<Vertex>& v, const float& scale) {
 		if (mtls.size() == 0) {
 			mtls.emplace_back("tmp");
 		}
@@ -115,8 +115,8 @@ private:
 		while (iss >> n) {
 			vals.push_back(n);
 		}
-		if (vals.size() == 3) {
-			Vertex tmp(vals[0], vals[1], vals[2]);
+		if (vals.size() == 3 || vals.size() == 6) {
+			Vertex tmp(vals[0] * scale, vals[1] * scale, vals[2] * scale);
 			v.push_back(tmp);
 		}
 		else {
@@ -178,6 +178,12 @@ private:
 			tmpstr.clear();
 			ind.push_back(tmpvec);
 		}
+		for (int ite = 0; ite < ind.size(); ite++) {
+			if (ind[0].size() == 3 && ind[1].size() == 3 && ind[2].size() == 3) {
+
+			}
+		}
+
 		if (ind.size() == 3) {
 			if (ind[0].size() == 3 && ind[1].size() == 3 && ind[2].size() == 3) {
 				// v vt vn
@@ -186,7 +192,8 @@ private:
 					v[ind[1][0] - 1],
 					v[ind[2][0] - 1],
 					vn[ind[0][2] - 1],
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[1][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0));
@@ -198,7 +205,8 @@ private:
 					v[ind[1][0] - 1],
 					v[ind[2][0] - 1],
 					Vector(1, 1, 1),
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[1][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0));
@@ -210,7 +218,8 @@ private:
 					v[ind[1][0] - 1],
 					v[ind[2][0] - 1],
 					Vector(1, 1, 1),
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
 			}
 		}
@@ -222,7 +231,8 @@ private:
 					v[ind[1][0] - 1],
 					v[ind[2][0] - 1],
 					vn[ind[0][2] - 1],
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd, 
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[1][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0));
@@ -231,7 +241,8 @@ private:
 					v[ind[2][0] - 1],
 					v[ind[3][0] - 1],
 					vn[ind[0][2] - 1],
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd, 
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[3][1] - 1] : Point2D(0, 0));
@@ -243,7 +254,8 @@ private:
 					v[ind[1][0] - 1],
 					v[ind[2][0] - 1],
 					Vector(1, 1, 1),
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[1][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0));
@@ -252,7 +264,8 @@ private:
 					v[ind[2][0] - 1],
 					v[ind[3][0] - 1],
 					Vector(1, 1, 1),
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0),
 					vt.size() > 0 ? vt[ind[3][1] - 1] : Point2D(0, 0));
@@ -264,14 +277,110 @@ private:
 					v[ind[1][0] - 1],
 					v[ind[2][0] - 1],
 					Vector(1, 1, 1),
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd, mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
 				trs.emplace_back(
 					v[ind[0][0] - 1],
 					v[ind[2][0] - 1],
 					v[ind[3][0] - 1],
 					Vector(1, 1, 1),
-					mtls.back().Kd, Bitmap::getBitmap(mtls.back().bmpPath),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
+			}
+		}
+		if (ind.size() == 5) {
+			if (ind[0].size() == 3 && ind[1].size() == 3 && ind[2].size() == 3 && ind[3].size() == 3) {
+				// v vt vn
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[1][0] - 1],
+					v[ind[2][0] - 1],
+					vn[ind[0][2] - 1],
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[1][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0));
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[2][0] - 1],
+					v[ind[3][0] - 1],
+					vn[ind[0][2] - 1],
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[3][1] - 1] : Point2D(0, 0));
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[3][0] - 1],
+					v[ind[4][0] - 1],
+					vn[ind[0][2] - 1],
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[3][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[4][1] - 1] : Point2D(0, 0));
+			}
+			if (ind[0].size() == 2 && ind[1].size() == 2 && ind[2].size() == 2 && ind[3].size() == 2) {
+				// v vt
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[1][0] - 1],
+					v[ind[2][0] - 1],
+					Vector(1, 1, 1),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[1][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0));
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[2][0] - 1],
+					v[ind[3][0] - 1],
+					Vector(1, 1, 1),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[3][1] - 1] : Point2D(0, 0));
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[3][0] - 1],
+					v[ind[4][0] - 1],
+					Vector(1, 1, 1),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[3][1] - 1] : Point2D(0, 0),
+					vt.size() > 0 ? vt[ind[4][1] - 1] : Point2D(0, 0));
+			}
+			if (ind[0].size() == 1 && ind[1].size() == 1 && ind[2].size() == 1 && ind[3].size() == 1) {
+				// v vt
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[1][0] - 1],
+					v[ind[2][0] - 1],
+					Vector(1, 1, 1),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[2][0] - 1],
+					v[ind[3][0] - 1],
+					Vector(1, 1, 1),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
+					Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
+				trs.emplace_back(
+					v[ind[0][0] - 1],
+					v[ind[3][0] - 1],
+					v[ind[4][0] - 1],
+					Vector(1, 1, 1),
+					mtls.back().Kd,
+					mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr,
 					Point2D(0, 0), Point2D(0, 0), Point2D(0, 0));
 			}
 		}
@@ -289,7 +398,7 @@ public:
 	 *		Méthodes
 	 *===========================================================================================*/
 
-	void imprtShapeObj(const std::string& shape) {
+	void imprtShapeObj(const std::string& shape, const float& scale = 1) {
 		std::ifstream in("../OBJ/" + shape + ".obj");
 		if (!in.is_open()) {
 			in = std::ifstream("../OBJ/" + shape + ".OBJ");
@@ -319,7 +428,7 @@ public:
 				caseG(iss, mtls, trs, currentObject);
 			}
 			if (!type.compare("v")) {
-				caseV(iss, mtls, v);
+				caseV(iss, mtls, v, scale);
 			}
 			if (!type.compare("vt")) {
 				caseVt(iss, mtls, vt);
@@ -335,23 +444,24 @@ public:
 			}
 		}
 		if (currentObject.length() > 0 && trs.size() > 0)
-			addShape(currentObject, trs, { 0,0,0 }, Bitmap::getBitmap(mtls.back().bmpPath));
+			addShape(currentObject, trs, { 0,0,0 }, mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr);
 	}
 
 	void exprtShapeObj(const std::string& shape) {
 		if (!nameTaken(shape))return; // no shape named that way
 
 		std::ofstream mtl("../OBJ/" + shape + ".mtl");
-		mtl << "newmtl" << shape <<
-			"Ns 10.0000\nNi 1.5000\nd 1.0000\nTr 0.0000\nTf 1.0000 1.0000 1.0000\nillum 2\nKa 0.0000 0.0000 0.0000\nKd 0.5880 0.5880 0.5880\nKs 0.0000 0.0000 0.0000\nKe 0.0000 0.0000 0.0000\nmap_Ka "
-			<< shape << ".jpg\nmap_Kd " << shape << ".jpg\n";
+		mtl << "newmtl " << shape << "_mtl " <<
+			"\n\tKd 0 0 0 " <<
+			"\n\tmap_Ka " << getShape(shape).bmp->name.c_str() << ".png\n\tmap_Kd " << getShape(shape).bmp->name.c_str() << ".png\n";
+		IMG_SavePNG(getShape(shape).bmp->surface, std::string("../OBJ/" + getShape(shape).bmp->name + ".png").c_str());
 
 
 		std::ofstream out("../OBJ/" + shape + ".obj");
 		out << "# " + shape + ".obj\n";
 		out << "#\n\n";
 		out << "o " + shape + "\n";
-		out << "mtllib " << shape<< ".mtl\n";
+		out << "mtllib " << shape << ".mtl\n";
 		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "v "
@@ -373,16 +483,16 @@ public:
 		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "vt "
-				<< getShape(shape).triangles[tr].bmpA.x << " "
-				<< getShape(shape).triangles[tr].bmpA.y << "\n";
+				<< (float)getShape(shape).triangles[tr].bmpA.x / getShape(shape).triangles[tr].bmp->surface->w << " "
+				<< (float)getShape(shape).triangles[tr].bmpA.y / getShape(shape).triangles[tr].bmp->surface->h << "\n";
 
 			out << "vt "
-				<< getShape(shape).triangles[tr].bmpB.x << " "
-				<< getShape(shape).triangles[tr].bmpB.y << "\n";
+				<< (float)getShape(shape).triangles[tr].bmpB.x / getShape(shape).triangles[tr].bmp->surface->w << " "
+				<< (float)getShape(shape).triangles[tr].bmpB.y / getShape(shape).triangles[tr].bmp->surface->h << "\n";
 
 			out << "vt "
-				<< getShape(shape).triangles[tr].bmpC.x << " "
-				<< getShape(shape).triangles[tr].bmpC.y << "\n";
+				<< (float)getShape(shape).triangles[tr].bmpC.x / getShape(shape).triangles[tr].bmp->surface->w << " "
+				<< (float)getShape(shape).triangles[tr].bmpC.y / getShape(shape).triangles[tr].bmp->surface->h << "\n";
 		}
 		out << "\n";
 		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
@@ -393,7 +503,7 @@ public:
 				<< getShape(shape).triangles[tr].normalVec.z << "\n";
 		}
 		out << "\ng " + shape + "\n";
-		out << "usemtl " << shape << "\n";
+		out << "usemtl " << shape << "_mtl \n";
 		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "f " << std::to_string((tr + 1) * 3 - 2) << "/" << std::to_string((tr + 1) * 3 - 2) << "/" << std::to_string(tr + 1) << " ";
@@ -402,6 +512,7 @@ public:
 		}
 	}
 
+	// pas terminé
 	void exprt(const std::string& name)const {
 		std::ofstream out(name + ".flanf");
 		for (int s = 0; s < shapes.size(); s++) {
@@ -435,6 +546,7 @@ public:
 		}
 	}
 
+	// pas terminé
 	void imprt(const std::string& name) {
 		std::ifstream in(name + ".flanf");
 		std::string nxt;
