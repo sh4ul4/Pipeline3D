@@ -12,7 +12,7 @@ class TextBox {
     ===========================================================================================*/
 protected:
 	// Coordonnées 2D du point haut-gauche de la texture.
-	Point2D pos;
+	Point2D<int> pos;
 
 	// Largeur de la texture.
 	int maxWidth = 999999;
@@ -51,7 +51,7 @@ public:
 	 * @param renderer Renderer SDL
 	 */
 	TextBox(std::string text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
-		const Point2D& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
+		const Point2D<int>& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
 		: pos(topLeft), maxWidth(width), maxHeight(height), fontColor(fontColor) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
@@ -72,7 +72,7 @@ public:
 	 * @param renderer Renderer SDL
 	 */
 	TextBox(std::string text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
-		const Point2D& topLeft, SDL_Renderer* renderer)
+		const Point2D<int>& topLeft, SDL_Renderer* renderer)
 		: pos(topLeft), fontColor(fontColor) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
@@ -105,7 +105,7 @@ public:
 	 * @param renderer Renderer SDL
 	 */
 	void update(const std::string& text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
-		const Point2D& topLeft, const int& width, const int& height, SDL_Renderer* renderer) {
+		const Point2D<int>& topLeft, const int& width, const int& height, SDL_Renderer* renderer) {
 		pos = topLeft;
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
@@ -125,7 +125,7 @@ public:
 	 * @param renderer Renderer SDL
 	 */
 	void update(const std::string& text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
-		const Point2D& topLeft, SDL_Renderer* renderer) {
+		const Point2D<int>& topLeft, SDL_Renderer* renderer) {
 		pos = topLeft;
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
@@ -175,7 +175,7 @@ public:
 	 * @brief Changer la position de la texture du texte.
 	 * @param pos Position de la texture lors de l'affichage
 	 */
-	void setPosition(const Point2D& pos) { this->pos = pos; }
+	void setPosition(const Point2D<int>& pos) { this->pos = pos; }
 
 	/**
 	 * @brief Changer les dimensions de la texture du texte.

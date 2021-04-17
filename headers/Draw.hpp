@@ -41,7 +41,7 @@ public:
 	 * @param color Couleur du futur point
 	 * @param renderer Moteur de rendu SDL
 	 */
-	static void DrawPoint(const Point2D& point, const Color& color, SDL_Renderer* renderer) {
+	static void DrawPoint(const Point2D<int>& point, const Color& color, SDL_Renderer* renderer) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderDrawPoint(renderer, point.x, point.y);
 	}
@@ -53,7 +53,7 @@ public:
 	 * @param color Couleur de la future ligne 
 	 * @param renderer Moteur de rendu SDL
 	 */
-	static void DrawLine(const Point2D& point1, const Point2D& point2, const Color& color, SDL_Renderer* renderer) {
+	static void DrawLine(const Point2D<int>& point1, const Point2D<int>& point2, const Color& color, SDL_Renderer* renderer) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderDrawLine(renderer, point1.x, point1.y, point2.x, point2.y);
 	}
@@ -64,7 +64,7 @@ public:
 	 * @param point1, point2 Points 2D pré-existants
 	 * @param renderer Moteur de rendu SDL
 	 */
-	static void DrawLine(const Point2D& point1, const Point2D& point2, SDL_Renderer* renderer) {
+	static void DrawLine(const Point2D<int>& point1, const Point2D<int>& point2, SDL_Renderer* renderer) {
 		SDL_RenderDrawLine(renderer, point1.x, point1.y, point2.x, point2.y);
 	}
 	
@@ -74,7 +74,7 @@ public:
 	 * @param a, b, c Points 2D pré-existants
 	 * @param renderer Moteur de rendu SDL
 	 */
-	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, SDL_Renderer* renderer) {
+	static void DrawTriangle(const Point2D<int>& a, const Point2D<int>& b, const Point2D<int>& c, SDL_Renderer* renderer) {
 		const SDL_Point p[4] = {
 		{a.x, a.y},
 		{b.x, b.y},
@@ -91,7 +91,7 @@ public:
 	 * @param color Couleur du futur triangle 
 	 * @param renderer Moteur de rendu SDL
 	 */
-	static void DrawTriangle(const Point2D& a, const Point2D& b, const Point2D& c, const Color& color, SDL_Renderer* renderer) {
+	static void DrawTriangle(const Point2D<int>& a, const Point2D<int>& b, const Point2D<int>& c, const Color& color, SDL_Renderer* renderer) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
 		SDL_RenderDrawLine(renderer, b.x, b.y, c.x, c.y);
@@ -107,7 +107,7 @@ private:
 	 * @param v1, v2, v3 Points 2D pré-existants
 	 * @param renderer Moteur de rendu SDL
 	 */
-	void DrawFillBottomFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer) {
+	void DrawFillBottomFlatTriangle(const Point2D<int>& v1, const Point2D<int>& v2, const Point2D<int>& v3, SDL_Renderer* renderer) {
 		float invslope1_f = float((v2.x - v1.x) / (v2.y - v1.y));
 		float invslope2_f = float((v3.x - v1.x) / (v3.y - v1.y));
 		float curx1_f = float(v1.x);
@@ -126,7 +126,7 @@ private:
 	 * @param v1, v2, v3 Points 2D pré-existants
 	 * @param renderer Moteur de rendu SDL
 	 */	
-	void DrawFillTopFlatTriangle(const Point2D& v1, const Point2D& v2, const Point2D& v3, SDL_Renderer* renderer) {
+	void DrawFillTopFlatTriangle(const Point2D<int>& v1, const Point2D<int>& v2, const Point2D<int>& v3, SDL_Renderer* renderer) {
 		float invslope1_f = float((v3.x - v1.x) / (v3.y - v1.y));
 		float invslope2_f = float((v3.x - v2.x) / (v3.y - v2.y));
 		float curx1_f = float(v3.x);
@@ -148,9 +148,9 @@ public:
 	 * @param color Couleur de remplissage du triangle
 	 * @param renderer Moteur de rendu SDL
 	 */	
-	static void DrawFillTriangle(const Point2D& p1, const Point2D& p2, const Point2D& p3, const Color& color, SDL_Renderer* renderer) {
+	static void DrawFillTriangle(const Point2D<int>& p1, const Point2D<int>& p2, const Point2D<int>& p3, const Color& color, SDL_Renderer* renderer) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
-		Point2D tri_f[3];
+		Point2D<int> tri_f[3];
 		tri_f[0] = p1;
 		if (p2.x < p1.x) { tri_f[0] = p2; tri_f[1] = p1; }
 		else { tri_f[1] = p2; }
@@ -168,8 +168,8 @@ public:
 		facteury_f = -(tri_f[0].y - tri_f[2].y);
 		const double fx_1_3_f = facteury_f / facteurx_f;
 		const double fy_1_3_f = tri_f[0].y - (fx_1_3_f * tri_f[0].x);
-		Point2D remplissage1_f;
-		Point2D remplissage2_f;
+		Point2D<int> remplissage1_f;
+		Point2D<int> remplissage2_f;
 		int ix_f = tri_f[0].x;
 		const int size = (tri_f[2].x - ix_f) * 2;
 		int it = 0;
@@ -243,14 +243,14 @@ public:
 		}
 	 }
 
-	static void DrawFillRoundedRect(const Point2D& p, const int& w, const int& h, const int& edgeSize, const Color& color, SDL_Renderer* renderer) {
-		Point2D c1(p + edgeSize);
+	static void DrawFillRoundedRect(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& color, SDL_Renderer* renderer) {
+		Point2D<int> c1(p + edgeSize);
 		DrawFillCircle(c1.x, c1.y, edgeSize, color, renderer);
-		Point2D c2(c1.x - 2 * edgeSize + w,c1.y);
+		Point2D<int> c2(c1.x - 2 * edgeSize + w,c1.y);
 		DrawFillCircle(c2.x, c2.y, edgeSize, color, renderer);
-		Point2D c3(c1.x, c1.y - 2 * edgeSize + h);
+		Point2D<int> c3(c1.x, c1.y - 2 * edgeSize + h);
 		DrawFillCircle(c3.x, c3.y, edgeSize, color, renderer);
-		Point2D c4(c2.x, c3.y);
+		Point2D<int> c4(c2.x, c3.y);
 		DrawFillCircle(c4.x, c4.y, edgeSize, color, renderer);
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 		SDL_Rect rect1;
@@ -273,17 +273,17 @@ public:
 		SDL_RenderFillRect(renderer, &rect3);
 	}
 
-	static void DrawFillRoundedRectContoured(const Point2D& p, const int& w, const int& h, const int& edgeSize, const Color& middle, const Color& contour, SDL_Renderer* renderer) {
-		const Point2D c1(p + edgeSize);
+	static void DrawFillRoundedRectContoured(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& middle, const Color& contour, SDL_Renderer* renderer) {
+		const Point2D<int> c1(p + edgeSize);
 		DrawFillCircle(c1.x, c1.y, edgeSize, middle, renderer);
 		DrawCircle(c1.x, c1.y, edgeSize, contour, renderer);
-		const Point2D c2(c1.x - 2 * edgeSize + w, c1.y);
+		const Point2D<int> c2(c1.x - 2 * edgeSize + w, c1.y);
 		DrawFillCircle(c2.x, c2.y, edgeSize, middle, renderer);
 		DrawCircle(c2.x, c2.y, edgeSize, contour, renderer);
-		const Point2D c3(c1.x, c1.y - 2 * edgeSize + h);
+		const Point2D<int> c3(c1.x, c1.y - 2 * edgeSize + h);
 		DrawFillCircle(c3.x, c3.y, edgeSize, middle, renderer);
 		DrawCircle(c3.x, c3.y, edgeSize, contour, renderer);
-		const Point2D c4(c2.x, c3.y);
+		const Point2D<int> c4(c2.x, c3.y);
 		DrawFillCircle(c4.x, c4.y, edgeSize, middle, renderer);
 		DrawCircle(c4.x, c4.y, edgeSize, contour, renderer);
 		SDL_SetRenderDrawColor(renderer, middle.r, middle.g, middle.b, middle.a);
@@ -363,7 +363,7 @@ public:
 		}
 		for (int i = static_cast<int>(chars_f.size()) - 1; i >= 0; i--)
 		{
-			Point2D a, b;
+			Point2D<int> a, b;
 			if (chars_f[i]._1) {
 				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
 				a.y = y;
@@ -640,7 +640,7 @@ public:
 		if (sign) { num_f.push_back({ 0, 0, 0, 1, 0, 0, 0 }); }
 		for (int i = static_cast<int>(num_f.size()) - 1; i >= 0; i--)
 		{
-			Point2D a, b;
+			Point2D<int> a, b;
 			if (num_f[i]._1) {
 				a.x = (static_cast<int>(num_f.size()) - i - 1) * size + X;
 				a.y = size / 2 + Y;

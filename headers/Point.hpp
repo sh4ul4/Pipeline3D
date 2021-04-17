@@ -11,6 +11,7 @@
 /**
  * @class Point à deux coordonnées entières
  */
+template<class T>
 class Point2D
 {
 public:
@@ -18,13 +19,13 @@ public:
 	 * Une variable publique.
 	 * Coordonnée x du point.
 	 */
-	int x;
+	T x;
 
 	/**
 	 * Une variable publique.
 	 * Coordonnée y du point.
 	 */
-	int y;
+	T y;
 
 	/**
 	 * Un constructeur.
@@ -36,14 +37,14 @@ public:
 	 * Un constructeur.
 	 * Assigne les coordonnées.
 	 */
-	Point2D(const int &x, const int &y) : x(x), y(y) {}
+	Point2D(const T &x, const T &y) : x(x), y(y) {}
 
 	/**
 	 * Un constructeur.
 	 * Prend des templates en entrée et cast vers int.
 	 */
 	template <class T1, class T2>
-	Point2D(const T1 &x, const T2 &y) : x((int)x), y((int)y) {}
+	Point2D(const T1 &x, const T2 &y) : x((T)x), y((T)y) {}
 
 	/**
 	 * Un constructeur.
@@ -163,20 +164,21 @@ public:
 	* @param Point2D b
 	* @return Distance entière calculée entre a et b
 	*/
-	static int distance(const Point2D& a, const Point2D& b) {
-		return static_cast<int>(sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)));
+	static float distance(const Point2D& a, const Point2D& b) {
+		return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 	}
 
 	/** @brief Calcule la distance entre un point et le point actuel
 	* @param Point2D p
 	* @return Distance entière calculée entre this et p
 	*/
-	int distance(const Point2D& p) const {
-		return static_cast<int>(sqrtf((x - p.x) * (x - p.x) + (y - p.y) * (y - p.y)));
+	float distance(const Point2D& p) const {
+		return sqrtf((x - p.x) * (x - p.x) + (y - p.y) * (y - p.y));
 	}
 };
 
-std::ostream& operator<<(std::ostream& os, const Point2D& p)
+template<class T>
+std::ostream& operator<<(std::ostream& os, const Point2D<T>& p)
 {
 	return (os << "[" << p.x << "|" << p.y << "]");
 }

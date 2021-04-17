@@ -17,7 +17,7 @@ public:
 	Bitmap* bmp = nullptr;
 
 	// sommets du triangle en coordonnées de texture
-	Point2D bmpA, bmpB, bmpC;
+	Point2D<float> bmpA, bmpB, bmpC;
 
 	// couleur du triangle
 	Color color = black;
@@ -58,7 +58,7 @@ public:
 
 	// constructeur avec texture
 	Triangle(const Vertex& a, const Vertex& b, const Vertex& c, const Vector& normalVec,
-		const Color& color, Bitmap* bmp, const Point2D& bmpA, const Point2D& bmpB, const Point2D& bmpC)
+		const Color& color, Bitmap* bmp, const Point2D<float>& bmpA, const Point2D<float>& bmpB, const Point2D<float>& bmpC)
 		: a(a), b(b), c(c), normalVec(normalVec), color(color),
 		bmp(bmp), bmpA(bmpA), bmpB(bmpB), bmpC(bmpC) {}
 	
@@ -267,9 +267,9 @@ public:
 			globalTexture.drawLine(globalTexture, a2, a.distance(campos), b2, b.distance(campos), color);
 			globalTexture.drawLine(globalTexture, b2, b.distance(campos), c2, c.distance(campos), color);
 			globalTexture.drawLine(globalTexture, a2, a.distance(campos), c2, c.distance(campos), color);*/
-			globalTexture.drawLine(globalTexture, { aScreen.x,aScreen.y }, 0, { bScreen.x,bScreen.y }, 0, color);
-			globalTexture.drawLine(globalTexture, { bScreen.x,bScreen.y }, 0, { cScreen.x,cScreen.y }, 0, color);
-			globalTexture.drawLine(globalTexture, { aScreen.x,aScreen.y }, 0, { cScreen.x,cScreen.y }, 0, color);
+			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, 0, Point2D<int>{ bScreen.x,bScreen.y }, 0, color);
+			globalTexture.drawLine(globalTexture, Point2D<int>{ bScreen.x,bScreen.y }, 0, Point2D<int>{ cScreen.x,cScreen.y }, 0, color);
+			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, 0, Point2D<int>{ cScreen.x,cScreen.y }, 0, color);
 		}
 	}
 
@@ -394,8 +394,12 @@ private:
 	// dessiner le triangle dans la frame
 	void draw(const Bitmap& src, GlobalTexture& dst, const float& light) const {
 		TextureManager::rasterize(src,
-			Point2D(aScreen.x, aScreen.y), Point2D(bScreen.x, bScreen.y), Point2D(cScreen.x, cScreen.y),
-			bmpA, bmpB, bmpC,
+			Point2D<int>(aScreen.x, aScreen.y),
+			Point2D<int>(bScreen.x, bScreen.y),
+			Point2D<int>(cScreen.x, cScreen.y),
+			Point2D<int>(bmp->surface->w * bmpA.x, std::abs(bmp->surface->h * bmpA.y - bmp->surface->h)),
+			Point2D<int>(bmp->surface->w * bmpB.x, std::abs(bmp->surface->h * bmpB.y - bmp->surface->h)),
+			Point2D<int>(bmp->surface->w * bmpC.x, std::abs(bmp->surface->h * bmpC.y - bmp->surface->h)),
 			aScreen.z, bScreen.z, cScreen.z,
 			dst, light);
 	}
@@ -403,7 +407,9 @@ private:
 	// dessiner le triangle dans la frame
 	void draw(const Color& color, GlobalTexture& dst, const float& light) const {
 		TextureManager::rasterize(color,
-			Point2D(aScreen.x,aScreen.y), Point2D(bScreen.x, bScreen.y), Point2D(cScreen.x, cScreen.y),
+			Point2D<int>(aScreen.x, aScreen.y),
+			Point2D<int>(bScreen.x, bScreen.y),
+			Point2D<int>(cScreen.x, cScreen.y),
 			aScreen.z, bScreen.z, cScreen.z,
 			dst,light);
 	}

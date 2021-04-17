@@ -39,7 +39,7 @@ public:
 	 * @param renderer Renderer SDL.
 	 */
 	TextInput(const std::string& text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
-		const Point2D& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
+		const Point2D<int>& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
 		: TextBox(text,fontPath,fontSize,fontColor,topLeft,width,height,renderer), text(text) {}
 
 	// suppression du constructeur par défaut

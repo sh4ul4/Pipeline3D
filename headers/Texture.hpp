@@ -13,7 +13,7 @@ class Texture2D {
     ===========================================================================================*/
 public:
 	// Coordonnées 2D du point haut-gauche de la texture.
-	Point2D pos;
+	Point2D<int> pos;
 
 	// Largeur de la texture.
 	int width = 0;
@@ -52,7 +52,7 @@ public:
 	 * @param width Largeur de l'image
 	 * @param height Hauteur de l'image
 	 */
-	Texture2D(const std::string& path, SDL_Renderer* renderer, const Point2D& pos, const int& width, const int& height)
+	Texture2D(const std::string& path, SDL_Renderer* renderer, const Point2D<int>& pos, const int& width, const int& height)
 		: pos(pos), width(width), height(height) {
 		SDL_Surface* surface = IMG_Load(path.c_str());
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -90,7 +90,7 @@ public:
 	 * @param flip Application de l'effet miroir (horizontal ou vertical)
 	 * @param angle Rotation de la texture lors de l'affichage
 	 */
-	void render(SDL_Renderer* renderer, const Point2D& position, const int& w, const int& h, const int& flip, const double& angle) {
+	void render(SDL_Renderer* renderer, const Point2D<int>& position, const int& w, const int& h, const int& flip, const double& angle) {
 		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
 		pos = position;
 		width = w;

@@ -124,7 +124,7 @@ public:
 	}
 
 	// afficher la texture à la position demandée dans la fenêtre graphique à l'aide de SDL_RenderCopyEx()
-	void renderTexture(SDL_Renderer* renderer, const Point2D& topLeft, const unsigned int& width, const unsigned int& height, const int& flip, const double& angle) const {
+	void renderTexture(SDL_Renderer* renderer, const Point2D<int>& topLeft, const unsigned int& width, const unsigned int& height, const int& flip, const double& angle) const {
 		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
 		SDL_Rect rect_f;
 		rect_f.x = 0;
@@ -147,7 +147,7 @@ public:
 private:
 
 	// algorithme de Bresenham pour tracer une ligne
-	inline static void ScanLine(const int& x1, const int& y1, const int& x2, const int& y2, std::vector<Point2D>& line, const int& maxHeight, const int& maxWidth) {
+	inline static void ScanLine(const int& x1, const int& y1, const int& x2, const int& y2, std::vector<Point2D<int>>& line, const int& maxHeight, const int& maxWidth) {
 		int dx1, dy1, dx2, dy2, x, y, m, n, k, cnt;
 		const int sx = x2 - x1;
 		const int sy = y2 - y1;
@@ -200,8 +200,8 @@ private:
 public:
 
 	// dessiner une ligne à lintérieur de la bitmap de pixels
-	void drawLine(const GlobalTexture& globalTexture, const Point2D& a, const float& adepth, const Point2D& b, const float& bdepth, const Color& color) {
-		std::vector<Point2D> line;
+	void drawLine(const GlobalTexture& globalTexture, const Point2D<int>& a, const float& adepth, const Point2D<int>& b, const float& bdepth, const Color& color) {
+		std::vector<Point2D<int>> line;
 		ScanLine(a.x, a.y, b.x, b.y, line, height, width);
 		//float rela = bdepth - adepth;
 		for (auto& p : line) {

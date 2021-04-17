@@ -18,7 +18,7 @@ private:
 	}
 
 	// fonction de signe pour les coordonnées barycentriques
-	static inline const int sign(const Point2D& p1, const Point2D& p2, const Point2D& p3) {
+	static inline const int sign(const Point2D<int>& p1, const Point2D<int>& p2, const Point2D<int>& p3) {
 		return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 	}
 
@@ -26,15 +26,15 @@ public:
 
 	// rasteriser et colorier un triangle avec une couleur unique tout en respectant la perspective
 	static inline void rasterize(const Color& color,
-		const Point2D& triA, const Point2D& triB, const Point2D& triC,
+		const Point2D<int>& triA, const Point2D<int>& triB, const Point2D<int>& triC,
 		float depthA, float depthB, float depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		const int dstw = globalTexture.getWidth();
 		const int dsth = globalTexture.getHeight();
 		const Uint8 R = color.r, G = color.g, B = color.b, A = color.a;
 		// bounding box + clipping
-		Point2D min(std::min(triA.x, std::min(triB.x, triC.x)), std::min(triA.y, std::min(triB.y, triC.y)));
-		Point2D max(std::max(triA.x, std::max(triB.x, triC.x)), std::max(triA.y, std::max(triB.y, triC.y)));
+		Point2D<int> min(std::min(triA.x, std::min(triB.x, triC.x)), std::min(triA.y, std::min(triB.y, triC.y)));
+		Point2D<int> max(std::max(triA.x, std::max(triB.x, triC.x)), std::max(triA.y, std::max(triB.y, triC.y)));
 		min.x = std::max(min.x, 0);
 		min.y = std::max(min.y, 0);
 		max.x = std::min(max.x, dstw - 1);
@@ -58,7 +58,7 @@ public:
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
-				const Point2D p(x, y);
+				const Point2D<int> p(x, y);
 				int bary0 = sign(triB, triC, p);
 				int bary1 = sign(triC, triA, p);
 				int bary2 = sign(triA, triB, p);
@@ -107,8 +107,8 @@ public:
 
 	// rasteriser et colorier un triangle avec une texture tout en respectant la perspective
 	static inline void rasterize(const Bitmap& bmp,
-		const Point2D& triA, const Point2D& triB, const Point2D& triC,
-		const Point2D& bmpA, const Point2D& bmpB, const Point2D& bmpC,
+		const Point2D<int>& triA, const Point2D<int>& triB, const Point2D<int>& triC,
+		const Point2D<int>& bmpA, const Point2D<int>& bmpB, const Point2D<int>& bmpC,
 		const float& depthA, const float& depthB, const float& depthC,
 		GlobalTexture& globalTexture, const float& light) {
 		// setup initial values
@@ -120,8 +120,8 @@ public:
 		const int dsth = globalTexture.getHeight();
 		const SDL_PixelFormat* srcFormat = bmp.surface->format;
 		// bounding box + clipping
-		Point2D min(std::min(triA.x, std::min(triB.x, triC.x)), std::min(triA.y, std::min(triB.y, triC.y)));
-		Point2D max(std::max(triA.x, std::max(triB.x, triC.x)), std::max(triA.y, std::max(triB.y, triC.y)));
+		Point2D<int> min(std::min(triA.x, std::min(triB.x, triC.x)), std::min(triA.y, std::min(triB.y, triC.y)));
+		Point2D<int> max(std::max(triA.x, std::max(triB.x, triC.x)), std::max(triA.y, std::max(triB.y, triC.y)));
 		min.x = std::max(min.x, 0);
 		min.y = std::max(min.y, 0);
 		max.x = std::min(max.x, dstw);
@@ -141,7 +141,7 @@ public:
 		for (int y = min.y; y < max.y; y++) {
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
-				const Point2D p(x, y);
+				const Point2D<int> p(x, y);
 				int bary0 = sign(triB, triC, p);
 				int bary1 = sign(triC, triA, p);
 				int bary2 = sign(triA, triB, p);
@@ -159,7 +159,7 @@ public:
 					float u_ = (bmpA.x / depthA) * baryA + (bmpB.x / depthB) * baryB + (bmpC.x / depthC) * baryC;
 					float v_ = (bmpA.y / depthA) * baryA + (bmpB.y / depthB) * baryB + (bmpC.y / depthC) * baryC;
 					// set position of source-pixel and new-pixel depth
-					const Point2D res = { u_ / w_,v_ / w_ };
+					const Point2D<int> res = { u_ / w_,v_ / w_ };
 					const float pixdepth = 1 / w_;
 					// define pos in bitmap
 					const int it = x + offset;
