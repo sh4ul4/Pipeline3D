@@ -56,9 +56,9 @@ public:
     /**
      * @brief Récupère la distance qui sépare le centre de la planète courante du centre de l'étoile
      * 
-     * @return Retourne la distance (int) 
+     * @return Retourne la distance (float) 
      */
-    int getDistance();
+    float getDistance();
 
     /**
      * @brief Récupère la vitesse sur l'axe x et la vitesse sur l'axe y
