@@ -116,7 +116,7 @@ public:
     void checkCollision();
 
     /**
-     * @brief Appelle les fonctions dans cinématique et physiques sur les planètes du système stellaires.
+     * @brief Appelle les fonctions dans cinématique sur les planètes du système stellaires.
      *      Gère la progression de la simulation vérifie collisions et les limites.
      */
     void simulation();
