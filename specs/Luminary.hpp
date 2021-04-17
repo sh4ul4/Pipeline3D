@@ -31,8 +31,9 @@ public:
      * @param rayon Rayon (en mètre) du corps celeste
      * @param mass Masse (en Kg) du corps celeste
      * @param position Paire contenant la coordonnée x et y du centre du corps celeste
+     * @param name Nom de l'astre
      */
-    Luminary(float rayon, double mass, Point2D &position);
+    Luminary(float rayon, double mass, Point2D &position, std::string name);
 
     Luminary() = delete;
 
@@ -63,6 +64,13 @@ public:
      */
     void setPosition(Point2D &position);
 
+    /**
+     * @brief Change le nom de l'astre
+     * 
+     * @param name Nouveau nom donné à l'astre
+     */
+    void setName(std::string name);
+
     /* ----- GETTERS ----- */
 
     /**
@@ -85,4 +93,11 @@ public:
      * @return Objet du type Point2D 
      */
     Point2D getPosition();
+
+    /**
+     * @brief Récupère lenom de l'astre
+     * 
+     * @return Nom de l'astre
+     */
+    std::string getName();
 };

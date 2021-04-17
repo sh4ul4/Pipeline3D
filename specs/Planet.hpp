@@ -12,7 +12,13 @@ private:
     ===========================================================================================*/
 
     // Vitesse sur l'axe x et y
-    std::pair<float, float> speed;
+    std::pair<double, double> speed;
+    // Vitesse initial de la planète
+    std::pair<double, double> initialSpeed;
+    // Position initial de la planète
+    Point2D initialPosition;
+    // Acceleration de la planète
+    std::pair<double, double> acceleration;
     // Détermine si la planète et visible ou non : 1 --> visible ; 0 --> pas visible
     bool visible;
 
@@ -29,11 +35,12 @@ public:
      * 
      * @param rayon Rayon (en mètre) de la planète
      * @param mass Masse (en Kg) de la planète
-     * @param position Position en x et y de la planète
-     * @param speed Vitesse de la planète autour
+     * @param initialPosition Position initiale de la planète
+     * @param initialSpeed Vitesse initiale de la planète
+     * @param name Nom de la planète
      * @param visible Détermine la visibilité de la planète
      */
-    Planet(float rayon, double mass, Point2D &position, std::pair<float, float> &speed, bool visible = true) : Luminary(rayon, mass, position) {}
+    Planet(float rayon, double mass, Point2D &initialPosition, std::pair<double, double> &initialSpeed, std::string name, bool visible = true) : Luminary(rayon, mass, initialPosition, name) {}
 
     /*===========================================================================================
      *      METHODES
@@ -46,7 +53,7 @@ public:
      * 
      * @param speed Nouvelle vitesse à affecter : speed.first --> axe x, speed.second --> axe y
      */
-    void setSpeed(const std::pair<float, float> &speed);
+    void setSpeed(const std::pair<double, double> &speed);
 
     // Change la visiblité de la planète
     void changeVisibility();
@@ -66,23 +73,4 @@ public:
      * @return Retourne un std::pair : first --> speedX, second --> speedY 
      */
     std::pair<float, float> getSpeed();
-
-    /* ----- METHODES ----- */
-
-
-    /**
-     * @brief Vérifie que la planète n'est pas sortie des limites du système stellaires si la planète est en dehors 
-     *      des limites arrêt de la simulation
-     */
-    void checkDistance();
-    
-    /**
-     * @brief Vérifie que deux planètes ne sont pas en collisions.Si deux planètes sont en collisions arrêt 
-     *         de la simulation 
-     * 
-     * @param this Première planète
-     * @param p Deuxième planète 
-     */
-    void checkCollision(const Planet &p);
-    
 };

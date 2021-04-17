@@ -16,7 +16,7 @@ private:
     ===========================================================================================*/
 
     // Liste de planètes présentées dans le système stellaire
-    std::vector<Planet> planets;
+    std::vector<Planet&> planets;
     // Représente l'étoile du système
     Star sun;
     // Détermine la vitesse de simulation du système (c'est un facteur)
@@ -63,7 +63,7 @@ public:
      * 
      * @param planet Planète à ajouter
      */
-    void addPlanet(Planet planet);
+    void addPlanet(Planet &planet);
 
     /**
      * @brief Ajoute une étoile seulement si le système n'en possède pas
@@ -86,7 +86,7 @@ public:
      * 
      * @return objet du type std::vector<Planet> 
      */
-    std::vector<Planet> getPlanets();
+    std::vector<Planet&> getPlanets();
 
     /**
      * @brief Récupère l'étoile du système stellaire courant
@@ -104,20 +104,12 @@ public:
 
     /* ----- METHODES ----- */
 
-    /** Appelle la méthode 'checkDistance' de chaque planète du système, afin de vérifier 
-     *      qu'elles sont dans les limites imposées.
-    */
+    // Vérifie que les planètes sont dans les limites imposées (pas trop loin de l'étoile)
     void checkPlanets();
 
-    /**
-     * @brief Appelle la méthode 'checkCollision' de chaque planète du système, 
-     *          pour vérifier qu'il n'y ait aucune collision à l'instant T
-     */
+    // Vérifie qu'aucune collision n'a lieu dans le système stellaire
     void checkCollision();
 
-    /**
-     * @brief Appelle les fonctions dans cinématique sur les planètes du système stellaires.
-     *      Gère la progression de la simulation vérifie collisions et les limites.
-     */
+    // Appelle les fonctions dans cinématique sur les planètes du système stellaires. Calcule la nouvelle position de toutes les planètes du système stellaire.
     void simulation();
 };
