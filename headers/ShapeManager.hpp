@@ -477,16 +477,16 @@ public:
 		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "vt "
-				<< (float)getShape(shape).triangles[tr].bmpA.x / getShape(shape).triangles[tr].bmp->surface->w << " "
-				<< (float)getShape(shape).triangles[tr].bmpA.y / getShape(shape).triangles[tr].bmp->surface->h << "\n";
+				<< (float)getShape(shape).triangles[tr].bmpA.x << " "
+				<< (float)getShape(shape).triangles[tr].bmpA.y << "\n";
 
 			out << "vt "
-				<< (float)getShape(shape).triangles[tr].bmpB.x / getShape(shape).triangles[tr].bmp->surface->w << " "
-				<< (float)getShape(shape).triangles[tr].bmpB.y / getShape(shape).triangles[tr].bmp->surface->h << "\n";
+				<< (float)getShape(shape).triangles[tr].bmpB.x << " "
+				<< (float)getShape(shape).triangles[tr].bmpB.y << "\n";
 
 			out << "vt "
-				<< (float)getShape(shape).triangles[tr].bmpC.x / getShape(shape).triangles[tr].bmp->surface->w << " "
-				<< (float)getShape(shape).triangles[tr].bmpC.y / getShape(shape).triangles[tr].bmp->surface->h << "\n";
+				<< (float)getShape(shape).triangles[tr].bmpC.x << " "
+				<< (float)getShape(shape).triangles[tr].bmpC.y << "\n";
 		}
 		out << "\n";
 		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {

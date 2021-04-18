@@ -169,29 +169,29 @@ public:
 		const Vertex g(center.x - half_width, center.y + half_width, center.z + half_width);
 		const Vertex h(center.x - half_width, center.y - half_width, center.z + half_width);
 		// set 12 triangles
-		triangles.push_back(Triangle(a, b, d, { 0,0,0 }, blue, bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(a, b, d, { 0,0,0 }, blue, bmp, Point2D<float>{ 1,1 }, Point2D<float>{ 1,0 }, Point2D<float>{ 0,1 }));
 		triangles.back().color = blue; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(c,b,d, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(c,b,d, { 0,0,0 }, blue,bmp, Point2D<float>{ 1, 1 }, Point2D<float>{ 1, 0 }, Point2D<float>{ 0, 1 }));
 		triangles.back().color = red; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(b,g,c, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(b,g,c, { 0,0,0 }, blue,bmp, Point2D<float>{ 1, 1 }, Point2D<float>{ 1, 0 }, Point2D<float>{ 0, 1 }));
 		triangles.back().color = green; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(b,g,f, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(b,g,f, { 0,0,0 }, blue,bmp, Point2D<float>{ 1, 1 }, Point2D<float>{ 1, 0 }, Point2D<float>{ 0, 1 }));
 		triangles.back().color = white; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(d,g,c, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(d,g,c, { 0,0,0 }, blue,bmp, Point2D<float>{ 1, 1 }, Point2D<float>{ 1, 0 }, Point2D<float>{ 0, 1 }));
 		triangles.back().color = black; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(d,g,h, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(d,g,h, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,0 }, Point2D<float>{ 0,1 }));
 		triangles.back().color = yellow; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(e,g,h, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(e,g,h, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,0 }, Point2D<float>{ 0,1 }));
 		triangles.back().color = cyan; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(e,g,f, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(e,g,f, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,0 }, Point2D<float>{ 0,1 }));
 		triangles.back().color = gray; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(a,h,d, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(a,h,d, { 0,0,0 }, blue,bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,0 }, Point2D<float>{ 0,1 }));
 		triangles.back().color = dark_gray; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(a,h,e, { 0,0,0 }, blue, bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(a,h,e, { 0,0,0 }, blue, bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,0 }, Point2D<float>{ 0,1 }));
 		triangles.back().color = lime; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(a,f,e, { 0,0,0 }, blue, bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(a,f,e, { 0,0,0 }, blue, bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,0 }, Point2D<float>{ 0,1 }));
 		triangles.back().color = maroon; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(a,f,b, { 0,0,0 }, blue, bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }, Point2D<float>{ 0,bmp->surface->h }));
+		triangles.push_back(Triangle(a,f,b, { 0,0,0 }, blue, bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,0 }, Point2D<float>{ 0,1 }));
 		triangles.back().color = olive; triangles.back().fillIt(true);
 		for (int i = 0; i < static_cast<int>(triangles.size()); i++) {
 			triangles[i].fillIt(true);
@@ -269,8 +269,8 @@ public:
 			this->center.y /= 4;
 			this->center.z /= 4;
 			// set 2 triangles
-			triangles.push_back(Triangle(a, b, c, { 0,0,0 }, black, bmp, Point2D<float>{ 0,bmp->surface->h }, Point2D<float>{ bmp->surface->w,bmp->surface->h }, Point2D<float>{ 0,0 }));
-			triangles.push_back(Triangle(c, b, d, { 0,0,0 }, black, bmp, Point2D<float>{ 0,0 } , Point2D<float>{ bmp->surface->w,bmp->surface->h }, Point2D<float>{ bmp->surface->w,0 }));
+			triangles.push_back(Triangle(a, b, c, { 0,0,0 }, black, bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,1 }, Point2D<float>{ 0,0 }));
+			triangles.push_back(Triangle(c, b, d, { 0,0,0 }, black, bmp, Point2D<float>{ 0,0 } , Point2D<float>{ 1,1 }, Point2D<float>{ 1,0 }));
 			triangles[0].fillIt(1);
 			triangles[0].contourIt(0);
 			triangles[1].fillIt(1);
