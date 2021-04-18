@@ -749,10 +749,10 @@ public:
 	 * 
 	 * @param window Fenêtre avec laquelle on interagit
 	 */
-	void set2ds(const Window& window) {
+	void set2ds(const Window& window, const Point2D<int>& center) {
 		for (int i = 0; i < static_cast<int>(shapes.size()); i++) {
 			for (int j = 0; j < static_cast<int>(shapes[i]->triangles.size()); j++)
-				shapes[i]->triangles[j].setScreenCoord(window, true);
+				shapes[i]->triangles[j].setScreenCoord(window, true, center);
 		}
 	}
 

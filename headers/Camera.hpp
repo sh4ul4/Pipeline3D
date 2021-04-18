@@ -325,7 +325,7 @@ public:
 	 * @param m matrice 4x4 contenant les coordonnées du point, clip valeur de clipping du point, windows fenetre dans laquelle calculer la position.
 	 * @return
 	 */
-	Vertex get2D(Matrix<4, 4> m, bool& clip, const Window& window) {
+	Vertex get2D(Matrix<4, 4> m, bool& clip, const Point2D<int>& center) {
 		//world space
 		clip = false;
 		m.m[0][3] = 1;
@@ -340,8 +340,8 @@ public:
 		int x = (int)(m.m[0][0] / m.m[0][3]);
 		int y = (int)(m.m[0][1] / m.m[0][3]);
 		//NDC space[-1,1]
-		x += window.getWidthCenter();
-		y += window.getHeightCenter();
+		x += center.x;
+		y += center.y;
 		//raster space
 		return { x, y, m.m[0][3] };
 	}

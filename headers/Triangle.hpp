@@ -78,7 +78,7 @@ public:
 	}
 
 	// set screen coordinates and handle clipping
-	void setScreenCoord(const Window& window, const bool& clip) {
+	void setScreenCoord(const Window& window, const bool& clip, const Point2D<int>& center) {
 		visible = false;
 		distanceToCamera = distanceToPoint(Camera::getCurrent().getCameraPosition());
 		// near clip
@@ -229,9 +229,9 @@ public:
 			mb.m[0] = { b.x,b.y,b.z,1 };
 			Matrix<4, 4> mc;
 			mc.m[0] = { c.x,c.y,c.z,1 };
-			aScreen = Camera::getCurrent().get2D(ma, farclipA, window);
-			bScreen = Camera::getCurrent().get2D(mb, farclipB, window);
-			cScreen = Camera::getCurrent().get2D(mc, farclipC, window);
+			aScreen = Camera::getCurrent().get2D(ma, farclipA, center);
+			bScreen = Camera::getCurrent().get2D(mb, farclipB, center);
+			cScreen = Camera::getCurrent().get2D(mc, farclipC, center);
 		}
 		if (/*!nearclipA && !nearclipB && !nearclipC &&*/!farclipA && !farclipB && !farclipC && visible) { // no clip
 			visible = true;
@@ -240,7 +240,7 @@ public:
 	}
 
 	// dessiner le triangle dans la frame
-	void render(const Window& window, GlobalTexture& globalTexture)  {
+	void render(const Window& window, GlobalTexture& globalTexture, const Point2D<int>& center)  {
 		if (!visible) return;
 		if (abs(aScreen.x) > 10000 || abs(aScreen.y) > 10000 ||
 			abs(bScreen.x) > 10000 || abs(bScreen.y) > 10000 ||
@@ -250,8 +250,8 @@ public:
 		}
 		// render
 		for (Triangle t : tmp) {
-			t.setScreenCoord(window, false);
-			t.render(window, globalTexture);
+			t.setScreenCoord(window, false, center);
+			t.render(window, globalTexture, center);
 		}tmp.clear(); tmp.shrink_to_fit();
 		/*const Vertex sunLight = Camera::getCurrent().getSunLight();
 		float light = getPlaneNormal().dot(sunLight);

@@ -28,7 +28,7 @@ public:
 	Render() = delete; 
 
 	// Constructeur de la classe Render, appelant le constructeur de globalTexture
-	Render(const Window& window) :globalTexture(window) {
+	Render(const Window& window, int w, int h) :globalTexture(window, w, h) {
 		SDL_GL_SetSwapInterval(0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
@@ -67,17 +67,8 @@ private:
 		}
 	};
 
-	// Fonction de threading pour le rendering
-	static void threadRendering(const std::vector<Triangle*> toRender, GlobalTexture& globalTexture, const Window& w, int min, int max) {
-		for (int i = min; i < max; i++) {
-			toRender[i]->setScreenCoord(w, true);
-			// render triangle
-			toRender[i]->render(w, globalTexture);
-		}
-	}
-
 	// Rendering des triangles
-	void renderTriangles(const Window& window) {
+	void renderTriangles(const Window& window, const Point2D<int>& topLeft, const int& width, const int& height) {
 		if (Camera::currentExists() == false) { std::cout << "Error : current camera does not exist.\n"; exit(1); }
 		//std::sort(toRender.begin(), toRender.end(), PointerCompare()); // no need to sort triangles when zbuffer is enabled
 		const size_t max3 = toRender.size();
@@ -94,33 +85,31 @@ private:
 		thread3.join();*/
 		// signlethreaded version
 		for (int i = 0; i < max3; i++) {
-			toRender[i]->setScreenCoord(window, true);
+			toRender[i]->setScreenCoord(window, true, Point2D<int>(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2));
 			// render triangle
-			toRender[i]->render(window, globalTexture);
+			toRender[i]->render(window, globalTexture, Point2D<int>(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2));
 		}
 		//globalTexture.applySobel();
 		//globalTexture.applyBlackNWhite();
-		globalTexture.updateTexture(window);
-		globalTexture.renderTexture(window.getRenderer(), { 0,0 }, window.getRenderWidth(), window.getRenderHeight(), 0, 0);
+		globalTexture.updateTexture();
+		//globalTexture.renderTexture(window.getRenderer(), { 0,0 }, window.getRenderWidth(), window.getRenderHeight(), 0, 0);
+		globalTexture.renderTexture(window.getRenderer(), topLeft, width, height, 0, 0);
 		//toRenderOneFrame.clear();
 	}
 
 public:
 	// Rendering écran
-	void render(InputEvent& inputEvent, const Window& window, ShapeManager& manager, Bitmap* background = nullptr) {
+	void render(const Point2D<int>& topLeft, const int& width, const int& height, InputEvent& inputEvent, const Window& window, ShapeManager& manager, Bitmap* background = nullptr) {
 		if (Camera::currentExists()) {
 			Physics::move(inputEvent, manager);
 			Camera::getCurrent().update(inputEvent, window);
-			renderTriangles(window);
+			renderTriangles(window, topLeft, width, height);
 		}
 
 		//framerate.stabilizeCalculationAndRendering(60);
 		//Wait(10);
 
 		framerate.renderFrameRate(10, 10, window.getRenderer());
-		Draw::DrawLine({ 0,window.getRenderHeight() / 2 }, { window.getRenderWidth(),window.getRenderHeight() / 2 }, gray, window.getRenderer());
-		Draw::DrawLine({ window.getRenderWidth() / 2,0 }, { window.getRenderWidth() / 2,window.getRenderHeight() }, gray, window.getRenderer());
-		Draw::DrawCircle(window.getRenderWidth() / 2, window.getRenderHeight() / 2, 5, dark_gray, window.getRenderer());
 		//window.RenderScreen();
 		//window.FillScreen(teal);
 	}

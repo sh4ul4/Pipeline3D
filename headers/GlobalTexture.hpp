@@ -44,12 +44,12 @@ public:
 	  * - définir la variable pixelFormat avec la fonction SDL_AllocFormat()
 	  * - vérifier les erreurs SDL avec SDL_GetError()
       */
-	GlobalTexture(const Window& window) {
+	GlobalTexture(const Window& window, const int& w, const int& h) {
 		zbuffer = nullptr;
-		texture = SDL_CreateTexture(window.getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_STREAMING, window.getWidth(), window.getHeight());
+		texture = SDL_CreateTexture(window.getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_STREAMING, w, h);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-		width = window.getWidth();
-		height = window.getHeight();
+		width = w;
+		height = h;
 		// generate pixel-array
 		pixels.reserve(width * height);
 		for (int i = 0; i < width * height; i++) pixels.emplace_back(0);
@@ -94,7 +94,7 @@ public:
 	}
 
 	// mettre à jour la texture avec le vecteur de pixels
-	void updateTexture(const Window& w) {
+	void updateTexture() {
 		if (texture == nullptr || pixels.empty()) { std::cout << "Error occured in GlobalTexture::updateTexture()" << std::endl; exit(1); }
 		SDL_UpdateTexture(texture, NULL, pixels.data(), pitch);
 	}

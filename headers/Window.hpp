@@ -25,18 +25,6 @@ private:
 	
 	/**
 	 * Une variable privée.
-	 * Résolution de la fenêtre graphique selon l'axe x
-	 */
-	int renderWidth = NULL;
-	
-	/**
-	 * Une variable privée.
-	 * Résolution de la fenêtre graphique selon l'axe y
-	 */	
-	int renderHeight = NULL;
-	
-	/**
-	 * Une variable privée.
 	 * Booléen pour gérer l'activation du mode plein écran
 	 */	
 	bool fullScreen = false;
@@ -115,18 +103,6 @@ public:
 	
 	/**
 	 * Une fonction publique.
-	 * @return Retoune la résolution de la fenêtre graphique sur l'axe x
-	 */
-	int getRenderWidth() const { return renderWidth; }
-	
-	/**
-	 * Une fonction publique.
-	 * @return Retoune la résolution de la fenêtre graphique sur l'axe y
-	 */
-	int getRenderHeight() const { return renderHeight; }
-	
-	/**
-	 * Une fonction publique.
 	 * @return Retourne la coordonné x du centre de la fenêtre graphique
 	 */
 	int getWidthCenter() const { return width / 2; }
@@ -154,25 +130,6 @@ public:
 	 * @brief Suppression du constructeur par défaut
 	 */
 	Window() = delete;
-	
-	/**
-	 * Un constructeur 
-	 * @brief Instantier la fenêtre graphique avec une résolution et des dimensions
-	 * @param resolutionwidth Largeur de la résolution
-	 * @param resolutionHeight Longueur de la résolution
-	 * @param width Largeur de la fenetre 
-	 * @param height Longueur se la fenetre
-	 */
-	// Instantier la fenêtre graphique avec une résolution et des dimensions
-	Window(const int& resolutionWidth, const int& resolutionHeight, const int& width, const int& height)
-		: width(width), height(height), renderWidth(resolutionWidth), renderHeight(resolutionHeight) {
-		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-		SDL_Init(SDL_INIT_VIDEO);
-		SDL_Init(SDL_INIT_TIMER);
-		window = SDL_CreateWindow("Pipeline3D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, resolutionWidth, resolutionHeight, SDL_WINDOW_OPENGL);
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	}
 
 	/**
 	 * Un constructeur 
@@ -181,7 +138,7 @@ public:
 	 * @param height Longueur se la fenetre
 	 */
 	Window(const int& width, const int& height)
-		: width(width), height(height), renderWidth(width), renderHeight(height) {
+		: width(width), height(height) {
 		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 		SDL_Init(SDL_INIT_VIDEO);
 		SDL_Init(SDL_INIT_TIMER);
@@ -231,15 +188,15 @@ public:
 		if (!fullScreen) {
 			SDL_DisplayMode DM;
 			SDL_GetCurrentDisplayMode(0, &DM);
-			this->renderWidth = DM.w;
-			this->renderHeight = DM.h;
-			SDL_SetWindowSize(window, this->renderWidth, this->renderHeight);
+			this->width = DM.w;
+			this->height = DM.h;
+			SDL_SetWindowSize(window, this->width, this->height);
 			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		}
 		else if (fullScreen) {
-			this->renderWidth = width;
-			this->renderHeight = height;
-			SDL_SetWindowSize(window, this->renderWidth, this->renderHeight);
+			this->width = width;
+			this->height = height;
+			SDL_SetWindowSize(window, this->width, this->height);
 			SDL_SetWindowFullscreen(window, 0);
 		}
 		SDL_SetWindowResizable(window, SDL_FALSE);
