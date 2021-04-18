@@ -54,7 +54,7 @@ public:
 	}
 
 	// returns value of clicked without updating it
-	bool isClicked() const { return clicked; }
+	virtual bool isClicked() const { return clicked; }
 
 	// returns value of selected without updating it
 	bool isSelected() const { return selected; }
@@ -100,7 +100,7 @@ public:
 	}
 
 	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
-	void checkButton(const InputEvent& inputEvent) {
+	virtual void checkButton(const InputEvent& inputEvent) {
 		if (!clicked && mouseClickInside(inputEvent)) {
 			playAction();
 			if(signal) *signal = true;
@@ -119,44 +119,104 @@ protected:
 template <class paramType>
 class RectButton : public Button<paramType> {
 public:
-	Point2D pos;
+	Point2D<int> pos;
 	int width;
 	int height;
 
 	RectButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb,
-		const Point2D& pos, const int& width, const int& height) : Button<paramType>(name, bgTex, bgCol, contCol, tb),
+		const Point2D<int>& pos, const int& width, const int& height) : Button<paramType>(name, bgTex, bgCol, contCol, tb),
 		pos(pos), width(width), height(height) {}
 
 	RectButton() = delete;
 
 	void render(SDL_Renderer* renderer) const {
-		SDL_Rect rect{ pos.x, pos.y, width, height };
 		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);
 		else {
-			SDL_SetRenderDrawColor(renderer, ButtonBase::backgroundCol.r, ButtonBase::backgroundCol.g, ButtonBase::backgroundCol.b, ButtonBase::backgroundCol.a);
-			SDL_RenderFillRect(renderer, &rect);
+			Color bg = ButtonBase::backgroundCol;
+			if (ButtonBase::selected) {
+				bg.r = Maths::concat(20, bg.r);
+				bg.g = Maths::concat(20, bg.r);
+				bg.b = Maths::concat(20, bg.r);
+			}
+			Draw::DrawFillRoundedRectContoured(pos, width, height, 6, bg, ButtonBase::contourCol, renderer);
 		}
-		if (ButtonBase::textBox) ButtonBase::textBox->render(renderer, 0, 0);
-		SDL_SetRenderDrawColor(renderer, ButtonBase::contourCol.r, ButtonBase::contourCol.g, ButtonBase::contourCol.b, ButtonBase::contourCol.a);
-		SDL_RenderDrawRect(renderer, &rect);
+		if (ButtonBase::textBox) {
+			const Point2D<int> center(pos.x + width / 2, pos.y + height / 2);
+			const Point2D<int> textBoxPos(center.x - ButtonBase::textBox->width / 2, center.y - ButtonBase::textBox->height / 2);
+			ButtonBase::textBox->render(renderer, textBoxPos, 0, 0);
+		}
 	}
 
 	bool mouseInside(const InputEvent& ie) {
 		ie.updateMouse(ButtonBase::mouse);
-		const Point2D m(ButtonBase::mouse.x, ButtonBase::mouse.y);
+		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
 		ButtonBase::selected = m.x < pos.x + width && m.x > pos.x && m.y < pos.y + height && m.y > pos.y;
 		return ButtonBase::selected;
 	}
 };
 
 template <class paramType>
+class CheckBox : public Button<paramType> {
+public:
+	Point2D<int> pos;
+	int size;
+	bool checked = false;
+
+	CheckBox(const std::string& name, const Color& bgCol, const Color& contCol,
+		const Point2D<int>& pos, const int& size) : Button<paramType>(name, nullptr, bgCol, contCol, nullptr),
+		pos(pos), size(size) {}
+
+	CheckBox() = delete;
+
+	void render(SDL_Renderer* renderer) const {
+		Color bg = ButtonBase::backgroundCol;
+		if (ButtonBase::selected) {
+			bg.r = Maths::concat(20, bg.r);
+			bg.g = Maths::concat(20, bg.r);
+			bg.b = Maths::concat(20, bg.r);
+		}
+		if (checked) {
+			bg.r = Maths::concat(-40, bg.r);
+			bg.g = Maths::concat(-40, bg.r);
+			bg.b = Maths::concat(-40, bg.r);
+		}
+		Draw::DrawFillRoundedRectContoured(pos, size, size, 6, bg, ButtonBase::contourCol, renderer);
+	}
+
+	bool mouseInside(const InputEvent& ie) {
+		ie.updateMouse(ButtonBase::mouse);
+		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
+		ButtonBase::selected = m.x < pos.x + size && m.x > pos.x && m.y < pos.y + size && m.y > pos.y;
+		return ButtonBase::selected;
+	}
+
+	bool mouseClickInside(const InputEvent& ie) {
+		ie.updateMouse(ButtonBase::mouse);
+		ButtonBase::clicked = mouseInside(ie) && ButtonBase::mouse.leftClick;
+		return ButtonBase::clicked;
+	}
+
+	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
+	void checkButton(const InputEvent& inputEvent) {
+		if (!ButtonBase::clicked && mouseClickInside(inputEvent)) {
+			ButtonBase::playAction();
+			if (ButtonBase::signal) *ButtonBase::signal = true;
+			this->checked = !this->checked;
+		}
+		else mouseClickInside(inputEvent);
+	}
+
+	bool isClicked() const { return checked; }
+};
+
+template <class paramType>
 class RoundButton : public Button<paramType> {
 public:
-	Point2D pos;
+	Point2D<int> pos;
 	int radius;
 
 	RoundButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb,
-		const Point2D& pos, const int& radius)
+		const Point2D<int>& pos, const int& radius)
 		: Button<paramType>(name, bgTex, bgCol, contCol, tb),
 		pos(pos), radius(radius) {}
 
@@ -173,7 +233,7 @@ public:
 
 	bool mouseInside(const InputEvent& ie) {
 		ie.updateMouse(ButtonBase::mouse);
-		const Point2D mouse2(ButtonBase::mouse.x, ButtonBase::mouse.y);
+		const Point2D<int> mouse2(ButtonBase::mouse.x, ButtonBase::mouse.y);
 		ButtonBase::selected = mouse2.distance(pos) < radius;
 		return ButtonBase::selected;
 	}
@@ -195,13 +255,19 @@ private:
 	}
 public:
 	template <class paramType>
-	void addButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D<int>& pos, const int& width, const int& height) {
+	void addRectButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D<int>& pos, const int& width, const int& height) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new RectButton<paramType>(name, bgTex, bgCol, contCol, tb, pos, width, height));
 	}
 
 	template <class paramType>
-	void addButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D<int>& pos, const int& radius) {
+	void addCheckBox(const std::string& name, const Color& bgCol, const Color& contCol, const Point2D<int>& pos, const int& size) {
+		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
+		buttons.emplace_back(new CheckBox<paramType>(name, bgCol, contCol, pos, size));
+	}
+
+	template <class paramType>
+	void addRoundButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D<int>& pos, const int& radius) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new RoundButton<paramType>(name, bgTex, bgCol, contCol, tb, pos, radius));
 	}
@@ -222,8 +288,9 @@ public:
 
 	void checkButtons() const {
 		for (int i = 0; i < buttons.size(); i++) {
-			if (!buttons[i]->isClicked() && buttons[i]->mouseClickInside(inputEvent)) buttons[i]->playAction();
-			else buttons[i]->mouseClickInside(inputEvent);
+			buttons[i]->checkButton(inputEvent);
+			//if (!buttons[i]->isClicked() && buttons[i]->mouseClickInside(inputEvent)) buttons[i]->playAction();
+			//else buttons[i]->mouseClickInside(inputEvent);
 		}
 	}
 

@@ -7,21 +7,6 @@ class TextureManager {
 	// le constructeur de base est supprimé car la classe est un singleton
 	TextureManager() = delete;
 
-private:
-
-	// concaténer une valeur de pixel et un flottant
-	static inline Uint8 concat(const float& a, const Uint8& b) {
-		const double res = (double)a + (double)b;
-		if (res >= 255)return 255;
-		if (res <= 0)return 0;
-		return res;
-	}
-
-	// fonction de signe pour les coordonnées barycentriques
-	static inline const int sign(const Point2D<int>& p1, const Point2D<int>& p2, const Point2D<int>& p3) {
-		return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
-	}
-
 public:
 
 	// rasteriser et colorier un triangle avec une couleur unique tout en respectant la perspective
@@ -59,9 +44,9 @@ public:
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
 				const Point2D<int> p(x, y);
-				int bary0 = sign(triB, triC, p);
-				int bary1 = sign(triC, triA, p);
-				int bary2 = sign(triA, triB, p);
+				int bary0 = Maths::sign(triB, triC, p);
+				int bary1 = Maths::sign(triC, triA, p);
+				int bary2 = Maths::sign(triA, triB, p);
 				if (!(((bary0 < 0) || (bary1 < 0) || (bary2 < 0)) && ((bary0 > 0) || (bary1 > 0) || (bary2 > 0)))) {
 					// pre calculate some other values
 					const float pxmincx = x - triC.x;
@@ -79,7 +64,7 @@ public:
 					// check with z-buffer
 					const Uint8 Aprev = globalTexture[it];
 					if (!Aprev) {
-						globalTexture[it] = (concat(light, B) << 24) + (concat(light, G) << 16) + (concat(light, R) << 8) + (A);
+						globalTexture[it] = (Maths::concat(light, B) << 24) + (Maths::concat(light, G) << 16) + (Maths::concat(light, R) << 8) + (A);
 						continue;
 					}
 					if (globalTexture.zbuffer[it] < pixdepth/* && Aprev == 255*/) continue;
@@ -99,7 +84,7 @@ public:
 					Uint8 Bres = Bprev + An * (B - Bprev);
 					Uint8 Ares = Aprev + A - Aprev * A;
 
-					globalTexture[it] = (concat(light, Bres) << 24) + (concat(light, Gres) << 16) + (concat(light, Rres) << 8) + (Ares);
+					globalTexture[it] = (Maths::concat(light, Bres) << 24) + (Maths::concat(light, Gres) << 16) + (Maths::concat(light, Rres) << 8) + (Ares);
 				}
 			}
 		}
@@ -142,9 +127,9 @@ public:
 			const int offset = y * dstw;
 			for (int x = min.x; x < max.x; x++) {
 				const Point2D<int> p(x, y);
-				int bary0 = sign(triB, triC, p);
-				int bary1 = sign(triC, triA, p);
-				int bary2 = sign(triA, triB, p);
+				int bary0 = Maths::sign(triB, triC, p);
+				int bary1 = Maths::sign(triC, triA, p);
+				int bary2 = Maths::sign(triA, triB, p);
 				if (!(((bary0 < 0) || (bary1 < 0) || (bary2 < 0)) && ((bary0 > 0) || (bary1 > 0) || (bary2 > 0)))) {
 					// get new pixel depth
 					// pre calculate some other values
@@ -196,7 +181,7 @@ public:
 					const Uint8 Gres = Gprev + An * (G - Gprev);
 					const Uint8 Bres = Bprev + An * (B - Bprev);
 					const Uint8 Ares = Aprev + A - Aprev * A;
-					globalTexture[it] = (concat(light, Bres) << 24) + (concat(light, Gres) << 16) + (concat(light, Rres) << 8) + (Ares);
+					globalTexture[it] = (Maths::concat(light, Bres) << 24) + (Maths::concat(light, Gres) << 16) + (Maths::concat(light, Rres) << 8) + (Ares);
 					//globalTexture[it] = (concat(light, w_*50) << 24) + (concat(light, w_*50) << 16) + (concat(light, w_*50) << 8) + (255);
 				}
 			}

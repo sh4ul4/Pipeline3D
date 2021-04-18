@@ -298,6 +298,7 @@ public:
 	 * @return
 	 */
 	void moveCameraPreCalculated(const Vector& v) {
+		if (locked)return;
 		if (hasSubject) subject += v;
 		else pos += v;
 	}
@@ -307,7 +308,7 @@ public:
 	 * @param point Point où se deplace la caméra
 	 * @return
 	 */
-	void moveTo(const Vertex& point) { pos = point; }
+	void moveTo(const Vertex& point) { if(!locked) pos = point; }
 
 	/**
 	 * @brief Retourner la distance par rapport au point. Négatif si le point est derrière la caméra.
@@ -427,7 +428,7 @@ public:
 			angleY = clampAngleY(angleY);
 
 			if (path.size() > 0 && current == this) {
-				Vector direction = { path[0].x - subject.x,path[0].y - subject.y,path[0].z - subject.z }; // goal - start
+				Vector direction(path[0].x - subject.x, path[0].y - subject.y, path[0].z - subject.z); // goal - start
 				if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal
 					for (size_t i = 0; i < path.size() - 1; i++) {
 						path[i] = path[i + 1];

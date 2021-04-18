@@ -17,6 +17,9 @@ class TextInput : public TextBox {
     ===========================================================================================*/
 private:
 	// @brief copie locale de l'état des touches du clavier.
+	Mouse mouse;
+
+	// @brief copie locale de l'état des touches du clavier.
 	Keyboard keyboard;
 
 	// @brief Texte mis à jour avec l'input.
@@ -56,6 +59,8 @@ public:
 	 * @param angle Rotation de la texture lors de l'affichage
 	 */
 	void render(SDL_Renderer* renderer, const int& flip, const double& angle) const {
+		if (running) Draw::DrawFillRoundedRectContoured(pos, maxWidth, maxHeight, 3, white, black, renderer);
+		else Draw::DrawFillRoundedRectContoured(pos, maxWidth, maxHeight, 3, light_gray, black, renderer);
 		if (!text.empty()) TextBox::render(renderer, flip, angle);
 	}
 
@@ -85,6 +90,12 @@ public:
 	 * @param renderer Renderer SDL
 	 */
 	void checkForInput(InputEvent& ie, SDL_Renderer* renderer) {
+		ie.updateMouse(mouse);
+		ie.updateKeyBoard(keyboard);
+		if (!running && mouse.leftClick && mouse.x < pos.x + maxWidth && mouse.x > pos.x && mouse.y < pos.y + maxHeight && mouse.y > pos.y)
+			start(ie);
+		if (running && keyboard.enter.down) 
+			stop(ie);
 		if (!running)return;
 		const int size1 = text.length();
 		text = ie.getText();
@@ -92,5 +103,9 @@ public:
 		if (size1 != size2 && !text.empty()) {
 			update(text, renderer);
 		}
+	}
+
+	std::string getText()const {
+		return text;
 	}
 };

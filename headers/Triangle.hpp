@@ -80,7 +80,7 @@ public:
 	// set screen coordinates and handle clipping
 	void setScreenCoord(const Window& window, const bool& clip, const Point2D<int>& center) {
 		visible = false;
-		distanceToCamera = distanceToPoint(Camera::getCurrent().getCameraPosition());
+		distanceToCamera = Maths::distancePointTriangle(Camera::getCurrent().getCameraPosition(), a, b, c);
 		// near clip
 		Vertex a(this->a);
 		Vertex b(this->b);
@@ -248,25 +248,16 @@ public:
 			//clip here
 			return;
 		}
-		// render
 		for (Triangle t : tmp) {
 			t.setScreenCoord(window, false, center);
 			t.render(window, globalTexture, center);
 		}tmp.clear(); tmp.shrink_to_fit();
-		/*const Vertex sunLight = Camera::getCurrent().getSunLight();
-		float light = getPlaneNormal().dot(sunLight);
-		light /= 30;
-		light = abs(light);*/
 		float light = 1;
 		if (fill) {
 			if (bmp != nullptr) draw(*bmp, globalTexture, light);
 			else draw(color, globalTexture, light);
 		}
 		else if (contour) {
-			/*Vertex campos = Camera::getCurrent().getCameraPosition();
-			globalTexture.drawLine(globalTexture, a2, a.distance(campos), b2, b.distance(campos), color);
-			globalTexture.drawLine(globalTexture, b2, b.distance(campos), c2, c.distance(campos), color);
-			globalTexture.drawLine(globalTexture, a2, a.distance(campos), c2, c.distance(campos), color);*/
 			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, 0, Point2D<int>{ bScreen.x,bScreen.y }, 0, color);
 			globalTexture.drawLine(globalTexture, Point2D<int>{ bScreen.x,bScreen.y }, 0, Point2D<int>{ cScreen.x,cScreen.y }, 0, color);
 			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, 0, Point2D<int>{ cScreen.x,cScreen.y }, 0, color);
@@ -279,114 +270,11 @@ public:
 	// afficher les contours du triangle
 	inline void contourIt(const bool& b) { this->contour = b; }
 
-private:
-
-	// renvoie 1 si x positif, -1 si x negatif et sinon 0
-	inline int sign(const float& x) const { return (0.0 < x) - (x < 0.0); }
-
-	// renvoie x entre min et max
-	inline float clamp(const float& x, const float& min, const float& max) const {
-		if (x < min) return min;
-		else if (x > max) return max;
-		else return x;
-	}
-
 public:
-
-	// renvoie la distance point triangle
-	float distanceToPoint(const Vertex& p) const {
-		const Vector v21 = { b.x - a.x,b.y - a.y,b.z - a.z }; const Vector p1 = { p.x - a.x,p.y - a.y,p.z - a.z };
-		const Vector v32 = { c.x - b.x,c.y - b.y,c.z - b.z }; const Vector p2 = { p.x - b.x,p.y - b.y,p.z - b.z };
-		const Vector v13 = { a.x - c.x,a.y - c.y,a.z - c.z }; const Vector p3 = { p.x - c.x,p.y - c.y,p.z - c.z };
-		const Vector nor = v21.cross(v13);
-		if (sign(v21.cross(nor).dot(p1)) + sign((v32.cross(nor).dot(p2)) + sign(v13.cross(nor).dot(p3)) < 2)) {
-			const Vector vec1 = v21 * clamp(v21.dot(p1) / v21.dot(v21), 0.0, 1.0) - p1;
-			const Vector vec2 = v32 * clamp(v32.dot(p2) / v32.dot(v32), 0.0, 1.0) - p2;
-			const Vector vec3 = v13 * clamp(v13.dot(p3) / v13.dot(v13), 0.0, 1.0) - p3;
-			return sqrtf(std::min(std::min(vec1.dot(vec1), vec2.dot(vec2)), vec3.dot(vec3)));
-		}
-		else {
-			return sqrtf(nor.dot(p1) * nor.dot(p1) / nor.dot(nor));
-		}
-	}
-
-	// renvoie le point du plan le plus proche du point
-	static Vertex ClosestPointOnPlane(const Vertex& pl1, const Vertex& pl2, const Vertex& pl3, const Vertex& p) {
-		Vector plNormal = Vector(pl2.x - pl1.x, pl2.y - pl1.y, pl2.z - pl1.z).cross(Vector(pl3.x - pl1.x, pl3.y - pl1.y, pl3.z - pl1.z));
-		plNormal.normalize();
-		const float distance = plNormal.dot(p.getOriginVector()) - plNormal.dot(pl1.getOriginVector());
-		if (distance == 0)return p;
-		const Vertex result(p.x - distance * plNormal.x, p.y - distance * plNormal.y, p.z - distance * plNormal.z);
-		return result;
-	}
-
-	// renvoie true si le point est dans le triangle, false autrement
-	bool PointInTriangle(const Vertex& p) const {
-		const Vector ta = a - p;
-		const Vector tb = b - p;
-		const Vector tc = c - p;
-
-		const Vector u = tb.cross(tc);
-		const Vector v = tc.cross(ta);
-		const Vector w = ta.cross(tb);
-
-		if (u.dot(v) < 0.0) return false;
-		if (u.dot(w) < 0.0) return false;
-		return true;
-	}
-
-	// renvoie le point du segment le plus proche du point
-	Vertex ClosestPointOnLine(const Vertex& l1, const Vertex& l2, const Vertex& p) const {
-		const Vector line = l2 - l1;
-		float t = Vector(p - l1).dot(line) / line.dot(line);
-		t = clamp(t, 0.0, 1.0);
-		return Vertex(l1.x + t * line.x, l1.y + t * line.y, l1.z + t * line.z);
-	}
 
 	// renvoie le point du triangle le plus proche du point
 	Vertex ClosestPoint(const Vertex& point) const {
-		const Vertex p = ClosestPointOnPlane(a, b, c, point);
-
-		if (PointInTriangle(p)) {
-			return p;
-		}
-		const Vertex c1 = ClosestPointOnLine(a, b, p);
-		const Vertex c2 = ClosestPointOnLine(b, c, p);
-		const Vertex c3 = ClosestPointOnLine(c, a, p);
-
-		const float mag1 = p.distance(c1);
-		const float mag2 = p.distance(c2);
-		const float mag3 = p.distance(c3);
-
-		const float min = std::min(std::min(mag1, mag2),mag3);
-
-		if (min == mag1) {
-			return c1;
-		}
-		else if (min == mag2) {
-			return c2;
-		}
-		return c3;
-	}
-
-	// renvoie le point d'intersection entre un segment et un plan
-	static Vertex getIntersectionWithPlane(const Vertex& rayPoint, const Vector& rayVector, const Vector& planeNormal, const Vertex& planePoint) {
-		if (rayVector.x == 0 && rayVector.y == 0 && rayVector.z == 0) {
-			return Vertex();
-		}
-		if (planeNormal.x == 0 && planeNormal.y == 0 && planeNormal.z == 0) {
-			return Vertex();
-		}
-		const Vector diff = rayPoint - planePoint;
-		const double prod1 = diff.dot(planeNormal);
-		const double prod2 = rayVector.dot(planeNormal);
-		if (prod2 == 0) { return Vertex(); }
-		const double prod3 = prod1 / prod2;
-		if (abs(prod3) == INFINITY) {
-			return Vertex();
-		}
-		const Vertex res = rayPoint - (rayVector * prod3);
-		return res;
+		return Maths::ClosestPointOnTriangle(point, a, b, c);
 	}
 
 private:

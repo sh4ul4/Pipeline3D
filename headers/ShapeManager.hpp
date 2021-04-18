@@ -414,7 +414,7 @@ public:
 			if (!type.compare("usemtl")) {
 				caseUsemtl(iss, mtls);
 			}
-			if (!type.compare("g")) {
+			if (!type.compare("g") || !type.compare("o")) {
 				caseG(iss, mtls, trs, currentObject);
 			}
 			if (!type.compare("v")) {
@@ -775,10 +775,10 @@ public:
 					shapes[i]->triangles[j].c.distance(startingPos) > interactionDistance + 10)continue;*/
 				const Vector triangleNormal(Vector(shapes[i]->triangles[j].b - shapes[i]->triangles[j].a).cross(shapes[i]->triangles[j].c - shapes[i]->triangles[j].a));
 				const Vertex planePoint(shapes[i]->triangles[j].a);
-				const Vertex tmp(Triangle::getIntersectionWithPlane(startingPos, movement, triangleNormal, planePoint)); // check if there is an intersection between movement-ray and triangle-plane
+				const Vertex tmp(Maths::getIntersectionWithPlane(startingPos, movement, triangleNormal, planePoint)); // check if there is an intersection between movement-ray and triangle-plane
 				if (tmp.getDistanceToOrigin() != 0) {
 					intersectionPoint = tmp; // copy value (not address)
-					if (abs(shapes[i]->triangles[j].distanceToPoint(intersectionPoint)) > interactionDistance)
+					if (abs(Maths::distancePointTriangle(intersectionPoint, shapes[i]->triangles[j].a, shapes[i]->triangles[j].b, shapes[i]->triangles[j].c)) > interactionDistance)
 						continue; // check if point is on triangle
 					if (abs(intersectionPoint.distanceToLine(startingPos, goalPos)) > interactionDistance)
 						continue; // check if point is on segment

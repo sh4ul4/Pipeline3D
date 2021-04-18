@@ -10,7 +10,7 @@ class TextBox {
 	/*===========================================================================================
      *      ATTRIBUTS
     ===========================================================================================*/
-protected:
+public:
 	// Coordonnées 2D du point haut-gauche de la texture.
 	Point2D<int> pos;
 
@@ -21,10 +21,11 @@ protected:
 	int maxHeight = 999999;
 
 	// Largeur de la texture.
-	int width;
+	int width = 0;
 
 	// Hauteur de la texture.
-	int height;
+	int height = 0;
+protected:
 
 	// Texture dans laquelle on dessine le texte.
 	SDL_Texture* texture = nullptr;
@@ -55,6 +56,9 @@ public:
 		: pos(topLeft), maxWidth(width), maxHeight(height), fontColor(fontColor) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
+		TTF_SizeText(font, text.c_str(), &this->width, &this->height);
+		if (this->width > maxWidth)this->width = maxWidth;
+		if (this->height > maxHeight)this->height = maxHeight;
 		if (text.empty()) text = " ";
 		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
 		if (texture) SDL_DestroyTexture(texture);
@@ -163,6 +167,18 @@ public:
 		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
 		SDL_Rect srcrect{ 0, 0, width, height };
 		SDL_Rect dstrect{ pos.x, pos.y, width, height };
+		switch (flip) {
+		case 0: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_NONE); break;
+		case 1: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_HORIZONTAL); break;
+		case 2: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_VERTICAL); break;
+		default: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_NONE); break;
+		}
+	}
+
+	void render(SDL_Renderer* renderer, const Point2D<int>& position, const int& flip, const double& angle) const {
+		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
+		SDL_Rect srcrect{ 0, 0, width, height };
+		SDL_Rect dstrect{ position.x, position.y, width, height };
 		switch (flip) {
 		case 0: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_NONE); break;
 		case 1: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_HORIZONTAL); break;

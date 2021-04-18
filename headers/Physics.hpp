@@ -53,8 +53,8 @@ namespace Physics
 				Gravity::timeFalling = 0;
 				return; // too many recursive calls
 			}
-			const Vertex real(triangle.ClosestPointOnPlane(triangle.a, triangle.b, triangle.c, irreal)); // real is closest point to irreal from triangle
-			const Vertex tmp(triangle.ClosestPointOnPlane(triangle.a, triangle.b, triangle.c, pos));
+			const Vertex real(Maths::ClosestPointOnPlane(triangle.a, triangle.b, triangle.c, irreal)); // real is closest point to irreal from triangle
+			const Vertex tmp(Maths::ClosestPointOnPlane(triangle.a, triangle.b, triangle.c, pos));
 
 			Vector v1 = pos - tmp;
 			//v1.normalizeOnLength(interactionDistance + 0.01);
