@@ -36,7 +36,6 @@ public:
 		//window.ToggleWindow(window->getWidth(), window->getHeight());
 		//InitMixer(8);
 		TTF_Init();
-		SDL_ShowCursor(1);
 	}
 
 	// Change la taille d'un triangle pour que ça rentre 

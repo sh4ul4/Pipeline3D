@@ -411,6 +411,7 @@ public:
 		 */
 	void update(InputEvent& inputEvent, const Window& window) {
 		if (!locked) {
+			SDL_ShowCursor(false);
 			inputEvent.updateMouse(mouse);
 			inputEvent.updateKeyBoard(keyboard);
 			SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
@@ -447,6 +448,7 @@ public:
 				pos = subject - look;
 			}
 		}
+		else SDL_ShowCursor(true);
 		refresh2D();
 	}
 };

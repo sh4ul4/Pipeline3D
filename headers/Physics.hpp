@@ -12,22 +12,6 @@ namespace Physics
 	float slippiness = 0.1f;
 	bool intentionalMoving = false;
 
-	// Valeurs des différentes constantes gravitationnelles
-	namespace Gravity
-	{
-		float gravity = 9.8f;
-		bool applyGravity = false;
-		int timeFalling = 0;
-		float getGravityForce()
-		{
-			if (applyGravity == false)
-				return 0;
-			//timeFalling++;
-			//return gravity / 50;
-			return timeFalling * gravity / 1000;
-		}
-	}
-
 	/* ----- Méthodes ----- */
 
 	/**
@@ -48,11 +32,6 @@ namespace Physics
 		Triangle triangle;
 		Vertex irreal;
 		if (manager.getFirstInteraction(pos, step, triangle, irreal, interactionDistance)) {
-
-			if (depth > 0) {
-				Gravity::timeFalling = 0;
-				return; // too many recursive calls
-			}
 			const Vertex real(Maths::ClosestPointOnPlane(triangle.a, triangle.b, triangle.c, irreal)); // real is closest point to irreal from triangle
 			const Vertex tmp(Maths::ClosestPointOnPlane(triangle.a, triangle.b, triangle.c, pos));
 
@@ -67,13 +46,11 @@ namespace Physics
 			//v2.normalizeOnLength(v2.getLength() * slippiness);
 			//if (v2.getLength() > speed)v2.normalizeOnLength(speed);
 			//v2.normalizeOnLength(speed);
-			if (falling) Gravity::timeFalling = 0;
 			resolvePhysics(manager, pos, v2, speed, falling, depth + 1);
 
 		}
 		else {
 			Camera::getCurrent().moveCameraPreCalculated(step);
-			Gravity::timeFalling++;
 		}
 	}
 
@@ -93,7 +70,6 @@ namespace Physics
 		if (keyboard.right.pressed) step[1] -= speed;
 		intentionalMoving = abs(step[0]) > 0 || abs(step[1]) > 0 || abs(step[2]) > 0;
 		if (keyboard.space.pressed) {
-			Gravity::timeFalling = 0;
 			step[2] = speed;
 		}
 		if (keyboard.c.pressed) step[2] -= speed;
@@ -101,7 +77,6 @@ namespace Physics
 		if (step[1] < 0)falling = true;
 		else falling = false;
 		Vector stepWithGravity = Camera::getCurrent().getMovementVector(step[0], step[1], step[2], speed);
-		stepWithGravity.y -= Gravity::getGravityForce();
 		playerHB = { Camera::getCurrent().getSubjectPosition().x, Camera::getCurrent().getSubjectPosition().x /*- 5*/, Camera::getCurrent().getSubjectPosition().z };
 		//playerHB = Matrix::toVertex(Camera::getCurrent().pos) + Camera::getCurrent().getMovementVector(1, 0, 0, 10);// { Camera::getCurrent().pos[0], Camera::getCurrent().pos[1]/* - 20*/, Camera::getCurrent().pos[2] };
 		resolvePhysics(manager, playerHB, stepWithGravity, speed, falling, 0);
