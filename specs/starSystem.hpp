@@ -4,6 +4,7 @@
 #include <vector>
 
 #define PLANETMAX 15 // Nos systèmes stellaires comprendront au maximum 15 planètes
+#define DISTANCEMAX 6 * pow(10,9)
 
 /**
  * @class Cette classe représente un système stellaire, avec une étoile autour de laquelle tournent des planètes
@@ -16,7 +17,7 @@ private:
     ===========================================================================================*/
 
     // Liste de planètes présentées dans le système stellaire
-    std::vector<Planet&> planets;
+    std::vector<Planet> planets;
     // Représente l'étoile du système
     Star sun;
     // Détermine la vitesse de simulation du système (c'est un facteur)
@@ -42,7 +43,7 @@ public:
      *
      * @param star représente l'étoile autour de laquelle les planètes tournent
      */
-    starSystem(Star star);
+    starSystem(const Star &star);
 
     /**
      * @brief Constructeur avec planètes et étoile
@@ -50,7 +51,7 @@ public:
      * @param planets Listes des planètes du système stellaire
      * @param star l'étoile autour de laquelle tournent les planètes
      */
-    starSystem(std::vector<Planet> planets, Star star);
+    starSystem(const std::vector<Planet> &planets, const Star &star);
 
     /*===========================================================================================
      *      METHODES
@@ -63,14 +64,14 @@ public:
      * 
      * @param planet Planète à ajouter
      */
-    void addPlanet(Planet &planet);
+    void addPlanet(const Planet &planet);
 
     /**
      * @brief Ajoute une étoile seulement si le système n'en possède pas
      * 
      * @param star L'étoile que l'on souhaite ajouter au système 
      */
-    void addStar(Planet star);
+    void addStar(const Planet &star);
 
     /**
      * @brief Détermine la vitesse de simulation
@@ -84,21 +85,21 @@ public:
     /**
      * @brief Récupère la liste des planètes présentent dans le système stellaire courant
      * 
-     * @return objet du type std::vector<Planet> 
+     * @return Liste des planètes du système stellaire 
      */
-    std::vector<Planet&> getPlanets();
+    std::vector<Planet> getPlanets();
 
     /**
      * @brief Récupère l'étoile du système stellaire courant
      * 
-     * @return objet du type Star 
+     * @return L'étoile du système stellaire 
      */
     Star getStar();
 
     /**
      * @brief Récupère la vitesse de simulation du système stellaire courant
      * 
-     * @return float --> le facteur de vitesse
+     * @return Le facteur de vitesse
      */
     float getSimulationSpeed();
 

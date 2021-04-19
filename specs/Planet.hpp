@@ -12,13 +12,13 @@ private:
     ===========================================================================================*/
 
     // Vitesse sur l'axe x et y
-    std::pair<double, double> speed;
+    Point2D<double> speed;
     // Vitesse initial de la planète
-    std::pair<double, double> initialSpeed;
+    Point2D<double> initialSpeed;
     // Position initial de la planète
     Point2D initialPosition;
     // Acceleration de la planète
-    std::pair<double, double> acceleration;
+    Point2D<double> acceleration;
     // Détermine si la planète et visible ou non : 1 --> visible ; 0 --> pas visible
     bool visible;
 
@@ -33,14 +33,14 @@ public:
     /**
      * @brief Construit une planète
      * 
-     * @param rayon Rayon (en mètre) de la planète
+     * @param radius Rayon (en mètre) de la planète
      * @param mass Masse (en Kg) de la planète
      * @param initialPosition Position initiale de la planète
      * @param initialSpeed Vitesse initiale de la planète
      * @param name Nom de la planète
      * @param visible Détermine la visibilité de la planète
      */
-    Planet(float rayon, double mass, Point2D &initialPosition, std::pair<double, double> &initialSpeed, std::string name, bool visible = true) : Luminary(rayon, mass, initialPosition, name) {}
+    Planet(float radius, double mass, Point2D &initialPosition, Point2D<double> &initialSpeed, std::string name, bool visible = true) : Luminary(radius, mass, initialPosition, name) {}
 
     /*===========================================================================================
      *      METHODES
@@ -51,9 +51,32 @@ public:
     /**
      * @brief Affecte une nouvelle vitesse sur les deux axes (x,y)
      * 
-     * @param speed Nouvelle vitesse à affecter : speed.first --> axe x, speed.second --> axe y
+     * @param speed Nouvelle vitesse à affecter. 
+     *      speed.first --> axe x, speed.second --> axe y
      */
-    void setSpeed(const std::pair<double, double> &speed);
+    void setSpeed(const Point2D<double> &speed);
+
+    /**
+     * @brief Affecte une nouvelle vitesse sur les deux axes (x,y)
+     * 
+     * @param initialSpeed Nouvelle vitesse initiale à affecter.
+     *      initialSpeed.first --> axe x, initialSpeed.second --> axe y
+     */
+    void setInitialSpeed(const Point2D<double> &initialSpeed);
+
+    /**
+     * @brief Affecte une nouvelle position initiale à la planète
+     * 
+     * @param initialPosition Nouvelle position initiale
+     */
+    void setInitialPosition(const Point2D &initialPosition);
+
+    /**
+     * @brief Affecte une nouvelle acceleration à la planète
+     * 
+     * @param accelaration Nouvelle acceleration
+     */
+    void setAcceleration(const Point2D<double> &accelaration);
 
     // Change la visiblité de la planète
     void changeVisibility();
@@ -61,16 +84,37 @@ public:
     /* ----- GETTERS ----- */
 
     /**
-     * @brief Récupère la distance qui sépare le centre de la planète courante du centre de l'étoile
+     * @brief Récupère la vitesse sur l'axe x et  l'axe y
      * 
-     * @return Retourne la distance (float) 
+     * @return Vecteur vitesse 
      */
-    float getDistance();
+    Point2D<double> getSpeed();
 
     /**
-     * @brief Récupère la vitesse sur l'axe x et la vitesse sur l'axe y
+     * @brief Récupère la vitesse initiale sur l'axe x et  l'axe y
      * 
-     * @return Retourne un std::pair : first --> speedX, second --> speedY 
+     * @return Vecteur vitesse initiale 
      */
-    std::pair<float, float> getSpeed();
+    Point2D<double> getInitialSpeed();
+
+    /**
+     * @brief Récupère la position initiale
+     * 
+     * @return Point2D représentant la position initiale de la planète
+     */
+    Point2D getInitialPosition();
+
+    /**
+     * @brief Récupère l'acceleration de la planète
+     * 
+     * @return Vecteur acceleration
+     */
+    Point2D<double> getAcceleration();
+
+    /**
+     * @brief Récupère la visibilité de la planète
+     * 
+     * @return 'true' si la planète est visible et considéré, 'false' sinon 
+     */
+    bool getVisibility();
 };

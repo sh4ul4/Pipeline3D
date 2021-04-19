@@ -1,3 +1,5 @@
+#include "Luminary.hpp"
+
 namespace Cinematic
 {
 	float time = 0;						 // Représente le temps qui s'écoule dans le système stellaire
@@ -12,7 +14,7 @@ namespace Cinematic
 	 * @param p2 Le deuxième point
 	 * @return Vecteur p1p2 avec ses coordonnées x et y 
 	 */
-	std::pair<double, double> vectorPoints(const Point2D &p1, const Point2D &p2);
+	Point2D<double> vectorPoints(const Point2D &p1, const Point2D &p2);
 
 	/**
 	 * @brief Calcul le vecteur unitaire du vecteur en argument
@@ -20,7 +22,7 @@ namespace Cinematic
 	 * @param vector vecteur dont on veut le vecteur unitaire
 	 * @return Vecteur unitaire
 	 */
-	std::pair<float, float> getUnitVector(const std::pair<double, double> &vector);
+	Point2D<double> getUnitVector(const Point2D<double> &vector);
 
 	/* ----- FORMULES PHYSIQUES ----- */
 
@@ -31,7 +33,7 @@ namespace Cinematic
 	 * @param l2 Deuxième astre
 	 * @return Vecteur représentant le force exercé de l1 sur l2
 	 */
-	std::pair<double, double> attractionForce(Luminary *l1, luminary *l2);
+	Point2D<double> attractionForce(Luminary *l1, Luminary *l2);
 
 	/**
 	 * @brief Calcul l'accélération d'un astre en fonction des forces exercées sur celui-ci
@@ -39,7 +41,7 @@ namespace Cinematic
 	 * @param force La somme des forces exercées sur l'astre l
 	 * @param l L'astre sur lequel les forces sont exercées. L'attribut 'acceleration' est mis à jour
 	 */
-	void Newton2nd(const std::pair<double, double> &force, Luminary *l);
+	void Newton2nd(const Point2D<double> &force, Luminary *l);
 
 	/**
 	 * @brief Calcul le vecteur vitesse d'un astre à partir de son acceleration
