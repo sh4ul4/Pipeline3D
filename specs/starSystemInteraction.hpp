@@ -5,11 +5,9 @@ private:
     TextBox title;
     Keyboard keyboard; // Toutes les touches du clavier
     Mouse mouse; // Prend en charge la souris
-
+    ButtonManager buttons;
+    std::vector<TextInput> inputs;
     std::vector<TextBox> texts; // Tous les textes visibles sur l'interface utilisateur
-    std::vector<Button> buttons; // Tous les boutons de l'interface utilisateur
-    std::vector<CheckBox> checkBoxes; // Tous les switchs de l'interface utilisateur
-    // Ajouter l'écran où l'on verra le système stellaire
 
 public:
     // Constructeur
@@ -22,9 +20,9 @@ public:
     // Change la visibilité d'une planète
     void changeVisibility();
     // Sauvegarde les planètes dans un fichier .obj
-    void saveOBJ();
+    void save();
     // Charge un fichier .obj
-    void loadOBJ();
+    void load();
     // Réinitialise le système stellaire
     void reset();
     // Arrête ou reprend la simulation

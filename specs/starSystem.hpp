@@ -133,8 +133,7 @@ public:
     /**
      * @brief Calcule une vitesse initiale qui favorisera la stabilité du système, c'est-à-dire qui favorise l'orbite d'une planète autour de l'étoile
      * 
-     * @param initialPosition Point représentant la position initiale de la planète
-     * @return Vecteur vitesse initiale calculée
+     * @param p Planète dont on veut calculer le vecteur vitesse initiale. L'attribut 'initalSpeed' est modifié par cette méthode
      */
-    Point2D<double> calculateInitialSpeed(const Point2D &initialPosition);
+    void calculateInitialSpeed(Planet &p);
 };
