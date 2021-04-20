@@ -16,7 +16,7 @@ public:
     // En cliquant sur le bouton 'create', on créer un nouvel astre. On récupère d'abord les infos renseignées par l'utilisateur
     void addLuminary();
     // Supprime une planète
-    void deleteLuminary();
+    void deleteLuminary(int i);
     // Change la visibilité d'une planète
     void changeVisibility();
     // Sauvegarde les planètes dans un fichier .obj
