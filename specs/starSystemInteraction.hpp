@@ -1,9 +1,14 @@
 class starSystemInteraction
 {
 private:
+    Window window; // Fenêtre
+    TextBox title;
+    Keyboard keyboard; // Toutes les touches du clavier
+    Mouse mouse; // Prend en charge la souris
+
     std::vector<TextBox> texts; // Tous les textes visibles sur l'interface utilisateur
-    std::vector<Button> buttons; // Tous les boutons visibles sur l'interface utilisateur
-    // Ajouter des switchs dans un vector
+    std::vector<Button> buttons; // Tous les boutons de l'interface utilisateur
+    std::vector<CheckBox> checkBoxes; // Tous les switchs de l'interface utilisateur
     // Ajouter l'écran où l'on verra le système stellaire
 
 public:
@@ -20,4 +25,8 @@ public:
     void saveOBJ();
     // Charge un fichier .obj
     void loadOBJ();
+    // Réinitialise le système stellaire
+    void reset();
+    // Arrête ou reprend la simulation
+    void stopAndStart();
 };
