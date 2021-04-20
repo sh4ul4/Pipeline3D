@@ -17,9 +17,9 @@ private:
     ===========================================================================================*/
 
     // Liste de planètes présentées dans le système stellaire
-    std::vector<Planet> planets;
+    std::vector<Planet*> planets;
     // Représente l'étoile du système
-    Star sun;
+    Star *sun = nullptr;
     // Détermine la vitesse de simulation du système (c'est un facteur)
     float simulationSpeed = 1;
 
@@ -36,14 +36,14 @@ public:
      * 
      * @param planets Liste des planètes qui seront présentes dans le système stellaire
      */
-    starSystem(const std::vector<Planet> &planets);
+    starSystem(const std::vector<Planet*> &planets);
 
     /**
      * @brief Constructeur avec étoile
      *
      * @param star représente l'étoile autour de laquelle les planètes tournent
      */
-    starSystem(const Star &star);
+    starSystem(Star *star);
 
     /**
      * @brief Constructeur avec planètes et étoile
@@ -51,7 +51,10 @@ public:
      * @param planets Listes des planètes du système stellaire
      * @param star l'étoile autour de laquelle tournent les planètes
      */
-    starSystem(const std::vector<Planet> &planets, const Star &star);
+    starSystem(const std::vector<Planet*> &planets, Star *star);
+
+    // Destucteur de la classe
+    ~starSystem();
 
     /*===========================================================================================
      *      METHODES
@@ -64,14 +67,14 @@ public:
      * 
      * @param planet Planète à ajouter
      */
-    void addPlanet(const Planet &planet);
+    void addPlanet(Planet *planet);
 
     /**
      * @brief Ajoute une étoile seulement si le système n'en possède pas
      * 
      * @param star L'étoile que l'on souhaite ajouter au système 
      */
-    void addStar(const Planet &star);
+    void addStar(Star *star);
 
     /**
      * @brief Détermine la vitesse de simulation
@@ -87,14 +90,14 @@ public:
      * 
      * @return Liste des planètes du système stellaire 
      */
-    std::vector<Planet> getPlanets();
+    std::vector<Planet*> getPlanets();
 
     /**
      * @brief Récupère l'étoile du système stellaire courant
      * 
      * @return L'étoile du système stellaire 
      */
-    Star getStar();
+    Star *getStar();
 
     /**
      * @brief Récupère la vitesse de simulation du système stellaire courant
@@ -108,9 +111,30 @@ public:
     // Vérifie que les planètes sont dans les limites imposées (pas trop loin de l'étoile)
     void checkPlanets();
 
+    /**
+     * @brief Retire une planète du système stellaire
+     * 
+     * @param name Nom de la planète
+     */
+    void deletePlanet(const std::string &name);
+
+    // Retire l'étoile du système stellaire
+    void deleteStar();
+
+    // Retire tous les astres du système stellaire (appelle en boucle 'deletePlanet' et appelle 'deleteStar')
+    void reset();
+
     // Vérifie qu'aucune collision n'a lieu dans le système stellaire
     void checkCollision();
 
     // Appelle les fonctions dans cinématique sur les planètes du système stellaires. Calcule la nouvelle position de toutes les planètes du système stellaire.
     void simulation();
+
+    /**
+     * @brief Calcule une vitesse initiale qui favorisera la stabilité du système, c'est-à-dire qui favorise l'orbite d'une planète autour de l'étoile
+     * 
+     * @param initialPosition Point représentant la position initiale de la planète
+     * @return Vecteur vitesse initiale calculée
+     */
+    Point2D<double> calculateInitialSpeed(const Point2D &initialPosition);
 };
