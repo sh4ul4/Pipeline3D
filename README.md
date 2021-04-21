@@ -1,1 +1,53 @@
-# Pipeline3D
+# Welcome to Pipeline 3D - HomeDesign application 👋
+![Version](https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000)
+[![Twitter: vdNeil](https://img.shields.io/twitter/follow/vdNeil.svg?style=social)](https://twitter.com/vdNeil)
+
+> L’objectif de cette application externe est de proposer une interface interactive simplifiée permettant à l’utilisateur de créer, visualiser en 3D et modifier un modèle d’aménagement intérieur.
+
+## Install
+
+```sh
+cmake CMakeLists.txt
+```
+
+## Usage
+
+```sh
+make
+```
+
+## Run tests
+
+```sh
+Si le lancement segfault, assurez vous que les paths soient corrects (l'exécution doit se faire un dossier après la source du projet)
+```
+
+## Author
+
+👤 **Elyn**
+
+* Twitter: [@vdNeil](https://twitter.com/vdNeil)
+* Github: [@vdElyn](https://github.com/vdElyn)
+
+## Graphical user interface objective
+
+![Interface (1) - Initialisation](https://github.com/sh4ula/Pipeline3D/tree/HomeDesign/res/HomeDesign-Interface1.jpg?raw=true)
+![Interface (2) - Principale](https://github.com/sh4ula/Pipeline3D/tree/HomeDesign/res/HomeDesign-Interface3.jpg?raw=true)
+![Interface (3) - Insertion](https://github.com/sh4ula/Pipeline3D/tree/HomeDesign/res/HomeDesign-Interface3.jpg?raw=true)
+
+Give a ⭐️ if this project helped you!
+
+## TODO:
+
+- [ ] Initialisation
+- [ ] Views:
+    - [x] Vue du haut
+    - [ ] Vue de face 
+    - [ ] Vue 2
+    - [ ] Vue 3
+    - [ ] Vue 4
+    - [x] Mode de vue déplacement libre
+- [ ] Le mur doit passer en invisible quand sa vue est sélectionnée
+
+***
+_Coding time elapsed: 3h 💚 Last edit : 21.04.2021_
