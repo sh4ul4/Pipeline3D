@@ -33,49 +33,49 @@ std::string pth = "../";
 std::string pth = "./";
 #endif
 
-#include "ErrorsHandler.hpp"
+#include "userinteraction/ErrorsHandler.hpp"
 
-#include "Point.hpp"
+#include "geometry/Point.hpp"
 
-#include "Vertex.hpp"
-#include "Vector.hpp"
+#include "geometry/Vertex.hpp"
+#include "geometry/Vector.hpp"
 
-#include "Color.hpp"
+#include "display/Color.hpp"
 
-#include "Draw.hpp"
+#include "display/Draw.hpp"
 
-#include "Window.hpp"
+#include "display/Window.hpp"
 
-#include "Chrono.hpp"
-#include "FrameRate.hpp"
+#include "display/Chrono.hpp"
+#include "display/FrameRate.hpp"
 
-#include "Bitmap.hpp"
+#include "rasterization/Bitmap.hpp"
 
-#include "Matrix.hpp"
-#include "Maths.hpp"
+#include "geometry/Matrix.hpp"
+#include "geometry/Maths.hpp"
 
-#include "Texture.hpp"
-#include "GlobalTexture.hpp"
-#include "TextureManager.hpp"
+#include "display/Texture.hpp"
+#include "rasterization/GlobalTexture.hpp"
+#include "rasterization/TextureManager.hpp"
 
-#include "Mouse.hpp"
-#include "Keyboard.hpp"
-#include "InputEvent.hpp"
+#include "userinteraction/Mouse.hpp"
+#include "userinteraction/Keyboard.hpp"
+#include "userinteraction/InputEvent.hpp"
 
-#include "Camera.hpp"
+#include "geometry/Camera.hpp"
 
-#include "Triangle.hpp"
+#include "geometry/Triangle.hpp"
 
-#include "Shape.hpp"
+#include "geometry/Shape.hpp"
 
-#include "ShapeManager.hpp"
+#include "geometry/ShapeManager.hpp"
 
-#include "Physics.hpp"
+#include "geometry/Physics.hpp"
 
-#include "Render.hpp"
+#include "display/Render.hpp"
 
-#include "TextBox.hpp"
+#include "userinteraction/TextBox.hpp"
 
-#include "TextInput.hpp"
+#include "userinteraction/TextInput.hpp"
 
-#include "Button.hpp"
+#include "userinteraction/Button.hpp"
