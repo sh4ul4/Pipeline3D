@@ -28,19 +28,21 @@ make
 * Twitter: [@vdNeil](https://twitter.com/vdNeil)
 * Github: [@vdElyn](https://github.com/vdElyn)
 
-## Graphical user interface objective
+## Graphical user interface goal
 
-![Interface (1) - Initialisation](https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface1.jpg?raw=true)
+<img src="https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface1.jpg?raw=true" alt="Interface (1) - Initialisation" width="500"/>
 ![Interface (2) - Principale](https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface2.jpg?raw=true)
 
-Give a ⭐️ if this project helped you!
+## Actual progression
+
+![Actual GUI](https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/Interface-21-04-21.png?raw=true)
 
 ## TODO:
 
 - [ ] Initialisation
 - [ ] Views:
     - [x] Vue du haut
-    - [ ] Vue de face 
+    - [ ] Vue de face
     - [ ] Vue 2
     - [ ] Vue 3
     - [ ] Vue 4
