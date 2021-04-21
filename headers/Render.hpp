@@ -97,6 +97,10 @@ private:
 	}
 
 public:
+	void renderStatic(const Point2D<int>& topLeft, const int& width, const int& height, const Window& window) {
+		SDL_ShowCursor(true);
+		globalTexture.renderTexture(window.getRenderer(), topLeft, width, height, 0, 0);
+	}
 	// Rendering écran
 	void render(const Point2D<int>& topLeft, const int& width, const int& height, InputEvent& inputEvent, const Window& window, ShapeManager& manager, Bitmap* background = nullptr) {
 		if (Camera::currentExists()) {
