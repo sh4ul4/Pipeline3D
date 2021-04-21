@@ -31,8 +31,7 @@ make
 ## Graphical user interface objective
 
 ![Interface (1) - Initialisation](https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface1.jpg?raw=true)
-![Interface (2) - Principale](https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface3.jpg?raw=true)
-![Interface (3) - Insertion](https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface3.jpg?raw=true)
+![Interface (2) - Principale](https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface2.jpg?raw=true)
 
 Give a ⭐️ if this project helped you!
 
