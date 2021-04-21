@@ -79,8 +79,8 @@ public:
 	 * Multiplie les coordonnées du point courant avec la valeur en paramètre.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
-	template <class T>
-	Point2D operator*(const T& val) const {
+	template <class T1>
+	Point2D operator*(const T1& val) const {
 		return { x * val,y * val };
 	}
 
@@ -90,8 +90,8 @@ public:
 	 * Divise les coordonnées du point courant par la valeur en paramètre.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
-	template <class T>
-	Point2D operator/(const T& val) const {
+	template <class T1>
+	Point2D operator/(const T1& val) const {
 		return { x / val,y / val };
 	}
 
@@ -101,8 +101,8 @@ public:
 	 * Additionne la valeur en paramètre avec les coordonnées du point courant.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
-	template <class T>
-	Point2D operator+(const T& val) const {
+	template <class T1>
+	Point2D operator+(const T1& val) const {
 		return { x + val,y + val };
 	}
 
@@ -112,8 +112,8 @@ public:
 	 * Soustrait la valeur en paramètre des coordonnées du point courant.
 	 * Ne modifie pas le point courant mais en renvoie un nouveau.
 	 */
-	template <class T>
-	Point2D operator-(const T& val) const {
+	template <class T1>
+	Point2D operator-(const T1& val) const {
 		return { x - val,y - val };
 	}
 

@@ -27,9 +27,9 @@ private:
 			mtlpath += " " + tmp;
 		}
 
-		std::ifstream mtlfile("../OBJ/" + mtlpath);
+		std::ifstream mtlfile(pth + std::string("OBJ/") + mtlpath);
 		if (!mtlfile.is_open()) {
-			mtlfile = std::ifstream("../OBJ/" + mtlpath);
+			mtlfile = std::ifstream(pth + std::string("OBJ/") + mtlpath);
 		}
 		if (!mtlfile.is_open()) {
 			std::cout << "no such mtl file" << std::endl;
@@ -60,7 +60,7 @@ private:
 			if (!type.compare("map_Ka") && mtls.size() > 0) {
 				std::string imgpath;
 				iss >> imgpath;
-				Bitmap::newBitmap(imgpath, "../OBJ/" + imgpath);
+				Bitmap::newBitmap(imgpath, pth + std::string("OBJ/") + imgpath);
 				mtls.back().bmpDim.x = Bitmap::getBitmap(imgpath)->surface->w;
 				mtls.back().bmpDim.y = Bitmap::getBitmap(imgpath)->surface->h;
 				mtls.back().bmpPath = imgpath;
@@ -68,7 +68,7 @@ private:
 			if (!type.compare("map_Kd") && mtls.size() > 0) {
 				std::string imgpath;
 				iss >> imgpath;
-				Bitmap::newBitmap(imgpath, "../OBJ/" + imgpath);
+				Bitmap::newBitmap(imgpath, pth + std::string("OBJ/") + imgpath);
 				mtls.back().bmpDim.x = Bitmap::getBitmap(imgpath)->surface->w;
 				mtls.back().bmpDim.y = Bitmap::getBitmap(imgpath)->surface->h;
 				mtls.back().bmpPath = imgpath;
@@ -389,9 +389,9 @@ public:
 	 *===========================================================================================*/
 
 	void imprtShapeObj(const std::string& shape, const float& scale = 1) {
-		std::ifstream in("../OBJ/" + shape + ".obj");
+		std::ifstream in(pth + std::string("OBJ/") + shape + ".obj");
 		if (!in.is_open()) {
-			in = std::ifstream("../OBJ/" + shape + ".OBJ");
+			in = std::ifstream(pth + std::string("OBJ/") + shape + ".OBJ");
 		}
 		if (!in.is_open()) {
 			std::cout << "no such obj file" << std::endl;
@@ -444,14 +444,14 @@ public:
 	void exprtShapeObj(const std::string& shape) {
 		if (!nameTaken(shape))return; // no shape named that way
 
-		std::ofstream mtl("../OBJ/" + shape + ".mtl");
+		std::ofstream mtl(pth + std::string("OBJ/") + shape + ".mtl");
 		mtl << "newmtl " << shape << "_mtl " <<
 			"\n\tKd 0 0 0 " <<
 			"\n\tmap_Ka " << getShape(shape).bmp->name.c_str() << ".png\n\tmap_Kd " << getShape(shape).bmp->name.c_str() << ".png\n";
-		IMG_SavePNG(getShape(shape).bmp->surface, std::string("../OBJ/" + getShape(shape).bmp->name + ".png").c_str());
+		IMG_SavePNG(getShape(shape).bmp->surface, std::string(pth + std::string("OBJ/") + getShape(shape).bmp->name + ".png").c_str());
 
 
-		std::ofstream out("../OBJ/" + shape + ".obj");
+		std::ofstream out(pth + std::string("OBJ/") + shape + ".obj");
 		out << "# " + shape + ".obj\n";
 		out << "#\n\n";
 		out << "o " + shape + "\n";
