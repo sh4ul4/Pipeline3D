@@ -18,9 +18,8 @@ make
 
 ## Run tests
 
-```sh
-Si le lancement segfault, assurez vous que les paths soient corrects (l'exécution doit se faire un dossier après la source du projet)
-```
+> Si le lancement `segfault`, assurez vous que les paths soient corrects (l'exécution doit se faire un dossier après la source du projet).
+
 
 ## Author
 
@@ -31,9 +30,9 @@ Si le lancement segfault, assurez vous que les paths soient corrects (l'exécuti
 
 ## Graphical user interface objective
 
-![Interface (1) - Initialisation](https://github.com/sh4ula/Pipeline3D/tree/HomeDesign/res/HomeDesign-Interface1.jpg?raw=true)
-![Interface (2) - Principale](https://github.com/sh4ula/Pipeline3D/tree/HomeDesign/res/HomeDesign-Interface3.jpg?raw=true)
-![Interface (3) - Insertion](https://github.com/sh4ula/Pipeline3D/tree/HomeDesign/res/HomeDesign-Interface3.jpg?raw=true)
+![Interface (1) - Initialisation](https://github.com/sh4ula/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface1.jpg?raw=true)
+![Interface (2) - Principale](https://github.com/sh4ula/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface3.jpg?raw=true)
+![Interface (3) - Insertion](https://github.com/sh4ula/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface3.jpg?raw=true)
 
 Give a ⭐️ if this project helped you!
 
