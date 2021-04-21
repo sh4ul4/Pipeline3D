@@ -14,6 +14,6 @@
 
  /**
   * @brief Assert
-  * Si b est évalué à false, affiche un message d'erreur et met fin au programme
+  * Si b est Ã©valuÃ© Ã  false, affiche un message d'erreur et met fin au programme
   */
 #define ASSERT(b, s) { if(!b) {std::cout << "FATAL -- " << s << std::endl; exit(1);} }
