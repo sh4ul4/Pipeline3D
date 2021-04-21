@@ -170,7 +170,7 @@ public:
 
 	RectTextButton() = delete;
 
-	~RectTextButton() { delete tb; }
+	~RectTextButton() { delete textBox; }
 
 	void render(SDL_Renderer* renderer) const {
 		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);

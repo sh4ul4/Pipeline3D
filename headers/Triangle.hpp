@@ -252,7 +252,8 @@ public:
 			t.setScreenCoord(window, false, center);
 			t.render(window, globalTexture, center);
 		}tmp.clear(); tmp.shrink_to_fit();
-		float light = 1;
+		float light = 1;// normalVec.dot(Vector(0, 10, 10));
+		//light *= 10;
 		if (fill) {
 			if (bmp != nullptr) draw(*bmp, globalTexture, light);
 			else draw(color, globalTexture, light);
