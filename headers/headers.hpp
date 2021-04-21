@@ -26,6 +26,13 @@
 
 #include <assert.h>
 
+
+#if defined(_WIN32)
+std::string pth = "../";
+#else
+std::string pth = "./";
+#endif
+
 #include "ErrorsHandler.hpp"
 
 #include "Point.hpp"

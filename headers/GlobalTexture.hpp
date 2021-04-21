@@ -119,7 +119,7 @@ public:
 
 	// mettre tous les pixels du vecteur à une valeur arbitraire
 	void clearPixels() {
-		const Uint32 pixel = rgbaToUint32(170, 170, 255, 255);
+		const Uint32 pixel = rgbaToUint32(150, 150, 150, 255);
 		for (auto& p : pixels) p = pixel;
 	}
 

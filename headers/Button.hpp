@@ -1,4 +1,5 @@
 #pragma once
+
 // base-class of a button without the template parameters
 class ButtonBase {
 public:
@@ -135,8 +136,50 @@ public:
 			Color bg = ButtonBase::backgroundCol;
 			if (ButtonBase::selected) {
 				bg.r = Maths::concat(20, bg.r);
-				bg.g = Maths::concat(20, bg.r);
-				bg.b = Maths::concat(20, bg.r);
+				bg.g = Maths::concat(20, bg.g);
+				bg.b = Maths::concat(20, bg.b);
+			}
+			Draw::DrawFillRoundedRectContoured(pos, width, height, 6, bg, ButtonBase::contourCol, renderer);
+		}
+		if (ButtonBase::textBox) {
+			const Point2D<int> center(pos.x + width / 2, pos.y + height / 2);
+			const Point2D<int> textBoxPos(center.x - ButtonBase::textBox->width / 2, center.y - ButtonBase::textBox->height / 2);
+			ButtonBase::textBox->render(renderer, textBoxPos, 0, 0);
+		}
+	}
+
+	bool mouseInside(const InputEvent& ie) {
+		ie.updateMouse(ButtonBase::mouse);
+		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
+		ButtonBase::selected = m.x < pos.x + width && m.x > pos.x && m.y < pos.y + height && m.y > pos.y;
+		return ButtonBase::selected;
+	}
+};
+
+template <class paramType>
+class RectTextButton : public Button<paramType> {
+public:
+	Point2D<int> pos;
+	int width;
+	int height;
+
+	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, const Window& window)
+		: Button<paramType>(name, nullptr, dark_gray, black,
+			new TextBox(text, pth + std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(0, 0), window.getRenderer())),
+		pos(pos), width(width), height(height) {}
+
+	RectTextButton() = delete;
+
+	~RectTextButton() { delete tb; }
+
+	void render(SDL_Renderer* renderer) const {
+		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);
+		else {
+			Color bg = ButtonBase::backgroundCol;
+			if (ButtonBase::selected) {
+				bg.r = Maths::concat(20, bg.r);
+				bg.g = Maths::concat(20, bg.g);
+				bg.b = Maths::concat(20, bg.b);
 			}
 			Draw::DrawFillRoundedRectContoured(pos, width, height, 6, bg, ButtonBase::contourCol, renderer);
 		}
@@ -170,15 +213,15 @@ public:
 
 	void render(SDL_Renderer* renderer) const {
 		Color bg = ButtonBase::backgroundCol;
-		if (ButtonBase::selected) {
-			bg.r = Maths::concat(20, bg.r);
-			bg.g = Maths::concat(20, bg.r);
-			bg.b = Maths::concat(20, bg.r);
-		}
 		if (checked) {
 			bg.r = Maths::concat(-40, bg.r);
-			bg.g = Maths::concat(-40, bg.r);
-			bg.b = Maths::concat(-40, bg.r);
+			bg.g = Maths::concat(-40, bg.g);
+			bg.b = Maths::concat(-40, bg.b);
+		}
+		if (ButtonBase::selected) {
+			bg.r = Maths::concat(20, bg.r);
+			bg.g = Maths::concat(20, bg.g);
+			bg.b = Maths::concat(20, bg.b);
 		}
 		Draw::DrawFillRoundedRectContoured(pos, size, size, 6, bg, ButtonBase::contourCol, renderer);
 	}
@@ -242,10 +285,11 @@ public:
 class ButtonManager {
 private:
 	const InputEvent& inputEvent;
+	const Window& window;
 
 	std::vector<std::unique_ptr<ButtonBase>> buttons;
 public:
-	ButtonManager(const InputEvent& inputEvent) : inputEvent(inputEvent) {}
+	ButtonManager(const InputEvent& inputEvent, const Window& window) : inputEvent(inputEvent),window(window) {}
 	ButtonManager() = delete;
 private:
 	bool nameUsed(const std::string& name) const {
@@ -270,6 +314,12 @@ public:
 	void addRoundButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D<int>& pos, const int& radius) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new RoundButton<paramType>(name, bgTex, bgCol, contCol, tb, pos, radius));
+	}
+
+	template <class paramType>
+	void addRectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text) {
+		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
+		buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, text, window));
 	}
 
 	void removeButton(const std::string& name) {
