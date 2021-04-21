@@ -31,6 +31,7 @@ make
 ## Graphical user interface goal
 
 <img src="https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface1.jpg?raw=true" alt="Interface (1) - Initialisation" width="500"/>
+
 ![Interface (2) - Principale](https://github.com/sh4ul4/Pipeline3D/blob/HomeDesign/res/HomeDesign-Interface2.jpg?raw=true)
 
 ## Actual progression
