@@ -2,16 +2,21 @@
 
 
 const Color elynbeige(248, 237, 227);
-const Color elynvmarron(216, 172, 156);
+const Color elynmarron(216, 172, 156);
 const Color elynvfonce(121, 135, 119);
 
 void changeCam(Camera *cam) {
 	cam->setCurrent();
+	// if (shp) shp.visible = false;
 }
 
 void goFreeView(Camera *cam) {
 	cam->setCurrent();
 	cam->unlock();
+}
+
+void furnitureInsertion(int *type) {
+	std::cout << "Insertion de meuble de type " << *type << std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -35,7 +40,7 @@ int main(int argc, char* argv[]) {
 	manager.addRectangle("floor", { 0, 0, 0 }, { 0, 0, 100 }, { 100, 0, 0 }, { 100, 0, 100 }, &t0);
 	
 	// Mur de face
-	Bitmap t1(std::string("80s"), std::string("../textures/mur.jpg"));
+	Bitmap t1(std::string("80s"), std::string("../textures/face.jpg"));
 	Vertex hg = { 0, 100, 0 };
 	Vertex bg = { 0, 0, 0 };
 	Vertex hd = { 100, 100, 0 };
@@ -45,15 +50,21 @@ int main(int argc, char* argv[]) {
 	Bitmap t2(std::string("wall"), std::string("../textures/wall.jpg"));
 	// coté droit
 	manager.addRectangle("droit", hg, bg, { 0, 100, 100 }, { 0, 0, 100 }, &t2);
+	// coté gauche
+	manager.addRectangle("gauche", hd, bd, { 100, 100, 100 }, { 100, 0, 100 }, &t2);
 
 	std::cout<<(manager.getShape("floor")).center<<std::endl;
 	Camera topCam({manager.getShape("floor").center.x, 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	// {50,200,50}
-	// Camera topCam({50,200,50}, 60, -1.5708, 4.71239);
 	Camera freeCam({ 120,300,65 }, 60, 0, 4);
-	Camera cam2({50,200,50}, 60, -1.5708, 4.71239);
+	std::cout<<"[42.6126|43.0887|-7.44944] 0.0389948, 3.41587"<<std::endl;
+	std::cout<<manager.getShape("face").center<<std::endl;
+	Camera faceCam({manager.getShape("face").center.x, manager.getShape("face").center.y, manager.getShape("face").center.z - 100}, 60, 0, 3.1416);
+	topCam.lock();
 	freeCam.lock();
-	cam2.lock();
+	faceCam.lock();
+	Camera droitCam({manager.getShape("droit").center.x, manager.getShape("droit").center.y, manager.getShape("droit").center.z - 100}, 60, 0, 3.1416);
+	droitCam.lock();
 	
 	// manager.imprtShapeObj("Earth",0.01);
 	
@@ -69,14 +80,14 @@ int main(int argc, char* argv[]) {
 	int b_width = 270, b_height = 38;
 	int b_topleftx = 970, b_tly = 546;
 	TextBox tb3("Editer la surface de la scene", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<TextInput*>("b_editSurface", nullptr, elynvmarron, black, &tb3, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<TextInput*>("b_editSurface", nullptr, elynmarron, black, &tb3, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	// bm.getButton<TextInput*>("b_editSurface").setAction([](TextInput* t) { std::cout << t->getText() << std::endl; }, &ti);
 	b_tly += 58;
 	TextBox tb4("Enregistrer la scene", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<TextInput*>("b_saveScene", nullptr, elynvmarron, black, &tb4, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<TextInput*>("b_saveScene", nullptr, elynmarron, black, &tb4, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	b_tly += 58;
 	TextBox tb5("Exporter la vue actuelle", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<TextInput*>("b_exportView", nullptr, elynvmarron, black, &tb5, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<TextInput*>("b_exportView", nullptr, elynmarron, black, &tb5, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	
 	TextBox tb6("MaChambreCROUS.flanf", pth+std::string("fonts/calibri.ttf"), 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
 	
@@ -107,14 +118,14 @@ int main(int argc, char* argv[]) {
 	bm.getButton<Camera*>("b_mainView").setAction(changeCam, &topCam);
 	b_topleftx += 140;
 
-	TextBox tb8("Vue 1", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+	TextBox tb8("Vue Face", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Camera*>("b_View1", nullptr, dark_gray, black, &tb8, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<Camera*>("b_View1").setAction(changeCam, &cam2);
+	bm.getButton<Camera*>("b_View1").setAction(changeCam, &faceCam);
 	b_topleftx += 140;
 
 	TextBox tb9("Vue 2", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Camera*>("b_View2", nullptr, dark_gray, black, &tb9, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	// bm.getButton<Camera*>("b_View2").setAction(changeCam, &topCam3);
+	bm.getButton<Camera*>("b_View2").setAction(changeCam, &droitCam);
 	b_topleftx += 140;
 
 	TextBox tb10("Vue 3", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
@@ -129,20 +140,24 @@ int main(int argc, char* argv[]) {
 	bm.addRectButton<Camera*>("b_freeMotionView", nullptr, elynvfonce, black, &tb12, Point2D<int>(b_topleftx, b_tly), b_width+80, b_height);
 	bm.getButton<Camera*>("b_freeMotionView").setAction(goFreeView, &freeCam);
 
+
 	// 2. Boutons interaction Frame : insertion
+	int un = 1, deux = 2, trois = 3;
 	b_width = 286, b_height = 104;
 	b_topleftx = 30, b_tly = 596;
 	TextBox tb13("Inserer meuble type 1", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<void*>("b_insertDefault", nullptr, elynvmarron, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<int*>("b_insertDefault", nullptr, elynmarron, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<int*>("b_insertDefault").setAction(furnitureInsertion, &un);
 	b_topleftx += 306; 
-	TextBox tb14("Inserer meuble type 2", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<void*>("b_insertDefault2", nullptr, elynvmarron, black, &tb14, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	b_topleftx += 306; 
-	TextBox tb15("Inserer meuble type 3", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<void*>("b_insertDefault3", nullptr, elynvmarron, black, &tb15, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	
 
-	
+	TextBox tb14("Inserer meuble type 2", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+	bm.addRectButton<int*>("b_insertDefault2", nullptr, elynmarron, black, &tb14, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<int*>("b_insertDefault2").setAction(furnitureInsertion, &deux);
+	b_topleftx += 306; 
+
+	TextBox tb15("Inserer meuble type 3", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+	bm.addRectButton<int*>("b_insertDefault3", nullptr, elynmarron, black, &tb15, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<int*>("b_insertDefault3").setAction(furnitureInsertion, &trois);
 	
 
 	// struct Function {
@@ -164,7 +179,7 @@ int main(int argc, char* argv[]) {
 	r.updateTriangles(manager);
 	Mouse mouse;
 	Keyboard keyboard;
-	Camera::getCurrent().lock();
+	// Camera::getCurrent().lock();
 	while (!keyboard.escape.down) {
 		inputEvent.update();
 		// ti.checkForInput(inputEvent, window.getRenderer());

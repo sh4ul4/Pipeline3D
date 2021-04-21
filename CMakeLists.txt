@@ -25,34 +25,34 @@ set(SRCS	src/main.cpp)
 
 # add_compile_options(-Wall -g)
 
-set(HEADERS headers/Bitmap.hpp
-			headers/Camera.hpp
-			headers/Chrono.hpp
-			headers/Color.hpp
-			headers/Draw.hpp
-			headers/ErrorsHandler.hpp
-			headers/FrameRate.hpp
-			headers/GlobalTexture.hpp
+set(HEADERS headers/rasterization/Bitmap.hpp
+			headers/geometry/Camera.hpp
+			headers/display/Chrono.hpp
+			headers/display/Color.hpp
+			headers/display/Draw.hpp
+			headers/userinteraction/ErrorsHandler.hpp
+			headers/display/FrameRate.hpp
+			headers/rasterization/GlobalTexture.hpp
 			headers/headers.hpp
-			headers/InputEvent.hpp
-			headers/Keyboard.hpp
-			headers/Maths.hpp
-			headers/Matrix.hpp
-			headers/Mouse.hpp
-			headers/Physics.hpp
-			headers/Point.hpp
-			headers/Render.hpp
-			headers/Shape.hpp
-			headers/ShapeManager.hpp
-			headers/TextBox.hpp
-			headers/TextInput.hpp
-			headers/Texture.hpp
-			headers/TextureManager.hpp
-			headers/Triangle.hpp
-			headers/Vector.hpp
-			headers/Vertex.hpp
-			headers/Window.hpp
-			headers/Button.hpp
+			headers/userinteraction/InputEvent.hpp
+			headers/userinteraction/Keyboard.hpp
+			headers/geometry/Maths.hpp
+			headers/geometry/Matrix.hpp
+			headers/userinteraction/Mouse.hpp
+			headers/geometry/Physics.hpp
+			headers/geometry/Point.hpp
+			headers/display/Render.hpp
+			headers/geometry/Shape.hpp
+			headers/geometry/ShapeManager.hpp
+			headers/userinteraction/TextBox.hpp
+			headers/userinteraction/TextInput.hpp
+			headers/display/Texture.hpp
+			headers/rasterization/TextureManager.hpp
+			headers/geometry/Triangle.hpp
+			headers/geometry/Vector.hpp
+			headers/geometry/Vertex.hpp
+			headers/display/Window.hpp
+			headers/userinteraction/Button.hpp
 			)
 
 

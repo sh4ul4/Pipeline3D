@@ -30,7 +30,7 @@
 #if defined(_WIN32)
 std::string pth = "../";
 #else
-std::string pth = "./";
+std::string pth = "../";
 #endif
 
 #include "userinteraction/ErrorsHandler.hpp"

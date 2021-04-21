@@ -541,55 +541,55 @@ public:
 	}
 
 	// pas terminé
-	void imprt(const std::string& name) {
-		std::ifstream in(name + ".flanf");
-		std::string nxt;
-		while (in >> nxt) {
-			//std::cout << nxt << std::endl;
-			if (!nxt.compare("shape")) {
-				std::string name;
-				in >> name;
-				std::string tr;
-				std::vector<Triangle> trs;
-				while (in >> tr) {
-					if (!tr.compare("tr")) {
-						Vertex a, b, c;
-						Vector n{};
-						Color color = black;
-						bool fill = true;
-						std::string bmpName;
-						std::string bmpPath;
-						in >> (Uint8)color.r;
-						in >> (Uint8)color.g;
-						in >> (Uint8)color.b;
-						in >> (Uint8)color.a;
-						in >> (bool)fill;
-						in >> (std::string)bmpName; // handle "null"
-						in >> (std::string)bmpPath;
-						in >> a.x;
-						in >> a.y;
-						in >> a.z;
-						in >> b.x;
-						in >> b.y;
-						in >> b.z;
-						in >> c.x;
-						in >> c.y;
-						in >> c.z;
-						trs.push_back(Triangle(a, b, c, n, color, fill));
-					}
-					else if (!tr.compare("endtr")) continue;
-					else if (!tr.compare("endshape")) break;
-				}
-				std::cout << name << std::endl;
-				for (auto& tr : trs) {
-					std::cout << tr.fill << std::endl;
-					std::cout << (unsigned)tr.color.r << " " << (unsigned)tr.color.g << " " << (unsigned)tr.color.b << " " << (unsigned)tr.color.a << std::endl;
-				}
-				//Bitmap::newBitmap(bmpName)
-				addShape(name, trs, { 0,0,0 }, nullptr);
-			}
-		}
-	}
+	// void imprt(const std::string& name) {
+	// 	std::ifstream in(name + ".flanf");
+	// 	std::string nxt;
+	// 	while (in >> nxt) {
+	// 		//std::cout << nxt << std::endl;
+	// 		if (!nxt.compare("shape")) {
+	// 			std::string name;
+	// 			in >> name;
+	// 			std::string tr;
+	// 			std::vector<Triangle> trs;
+	// 			while (in >> tr) {
+	// 				if (!tr.compare("tr")) {
+	// 					Vertex a, b, c;
+	// 					Vector n{};
+	// 					Color color = black;
+	// 					bool fill = true;
+	// 					std::string bmpName;
+	// 					std::string bmpPath;
+	// 					in >> (Uint8)color.r;
+	// 					in >> (Uint8)color.g;
+	// 					in >> (Uint8)color.b;
+	// 					in >> (Uint8)color.a;
+	// 					in >> (bool)fill;
+	// 					in >> (std::string)bmpName; // handle "null"
+	// 					in >> (std::string)bmpPath;
+	// 					in >> a.x;
+	// 					in >> a.y;
+	// 					in >> a.z;
+	// 					in >> b.x;
+	// 					in >> b.y;
+	// 					in >> b.z;
+	// 					in >> c.x;
+	// 					in >> c.y;
+	// 					in >> c.z;
+	// 					trs.push_back(Triangle(a, b, c, n, color, fill));
+	// 				}
+	// 				else if (!tr.compare("endtr")) continue;
+	// 				else if (!tr.compare("endshape")) break;
+	// 			}
+	// 			std::cout << name << std::endl;
+	// 			for (auto& tr : trs) {
+	// 				std::cout << tr.fill << std::endl;
+	// 				std::cout << (unsigned)tr.color.r << " " << (unsigned)tr.color.g << " " << (unsigned)tr.color.b << " " << (unsigned)tr.color.a << std::endl;
+	// 			}
+	// 			//Bitmap::newBitmap(bmpName)
+	// 			addShape(name, trs, { 0,0,0 }, nullptr);
+	// 		}
+	// 	}
+	// }
 
 	/**
 	 * @brief Vérifie si une shape avec le nom donnée existe déjà
