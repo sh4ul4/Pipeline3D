@@ -243,7 +243,10 @@ public:
 
 class Rectangle : public Shape {
 public:
+	Vertex hg, bg, hd, bd; 
+
 	Rectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, Bitmap* bmp = nullptr): Shape(name) {
+		hd = a; bg = b; hd = c; bd = d;
 		if (bmp == nullptr) {
 			this->center = a;
 			this->center += b;
