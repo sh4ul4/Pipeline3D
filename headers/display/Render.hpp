@@ -22,10 +22,10 @@ class Render
 
 public:
 	// Texture globale
-	GlobalTexture globalTexture; 
+	GlobalTexture globalTexture;
 
 	// Interdiction d'utilisation d'un constructeur vide
-	Render() = delete; 
+	Render() = delete;
 
 	// Constructeur de la classe Render, appelant le constructeur de globalTexture
 	Render(const Window& window, int w, int h) :globalTexture(window, w, h) {
@@ -115,5 +115,32 @@ public:
 		framerate.renderFrameRate(10, 10, window.getRenderer());
 		//window.RenderScreen();
 		//window.FillScreen(teal);
+	}
+
+	void renderOrientation(const Point2D<int>& pos, float size, const Window& window)const {
+		const Vertex camera(0, 0, 0);
+		Matrix<4, 4> viewMatrix = Camera::makeFPviewMatrix(camera, Camera::getCurrent().angleY, Camera::getCurrent().angleX);
+		const Vertex x(size / 2 - 2, 0, 0);
+		const Vertex y(0, size / 2 - 2, 0);
+		const Vertex z(0, 0, size / 2 - 2);
+		const Vertex origin(0, 0, 0);
+		Matrix<4, 4> mo;
+		mo.m[0] = { origin.x,origin.y,origin.z,1 };
+		Matrix<4, 4> mx;
+		mx.m[0] = { x.x,x.y,x.z,1 };
+		Matrix<4, 4> my;
+		my.m[0] = { y.x,y.y,y.z,1 };
+		Matrix<4, 4> mz;
+		mz.m[0] = { z.x,z.y,z.z,1 };
+		bool clip{ false };
+		const Point2D<int> center(0, 0);
+		const Vertex oScreen = Camera::getCurrent().get2DWithoutPerspective(mo, clip, center, viewMatrix);
+		const Vertex xScreen = Camera::getCurrent().get2DWithoutPerspective(mx, clip, center, viewMatrix);
+		const Vertex yScreen = Camera::getCurrent().get2DWithoutPerspective(my, clip, center, viewMatrix);
+		const Vertex zScreen = Camera::getCurrent().get2DWithoutPerspective(mz, clip, center, viewMatrix);
+		Draw::DrawFillRoundedRectContoured(pos, size, size, 5, gray, black, window.getRenderer());
+		Draw::DrawLine(Point2D<int>(oScreen.x + pos.x + size / 2, oScreen.y + pos.y + size / 2), Point2D<int>(xScreen.x + pos.x + size / 2, xScreen.y + pos.y + size / 2), red, window.getRenderer());
+		Draw::DrawLine(Point2D<int>(oScreen.x + pos.x + size / 2, oScreen.y + pos.y + size / 2), Point2D<int>(yScreen.x + pos.x + size / 2, yScreen.y + pos.y + size / 2), green, window.getRenderer());
+		Draw::DrawLine(Point2D<int>(oScreen.x + pos.x + size / 2, oScreen.y + pos.y + size / 2), Point2D<int>(zScreen.x + pos.x + size / 2, zScreen.y + pos.y + size / 2), blue, window.getRenderer());
 	}
 };

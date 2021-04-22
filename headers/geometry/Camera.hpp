@@ -208,7 +208,7 @@ public:
 		viewMatrix.m[0] = { xaxis.x, yaxis.x, zaxis.x, 0 };
 		viewMatrix.m[1] = { xaxis.y, yaxis.y, zaxis.y, 0 };
 		viewMatrix.m[2] = { xaxis.z, yaxis.z, zaxis.z, 0 };
-		viewMatrix.m[3] = { - xaxis.dot(eyeVec), - yaxis.dot(eyeVec), - zaxis.dot(eyeVec), 1 };
+		viewMatrix.m[3] = { -xaxis.dot(eyeVec), -yaxis.dot(eyeVec), -zaxis.dot(eyeVec), 1 };
 		//std::cout << "eye" << std::endl;
 		//eye.print(); eyeVec.print();
 		//std::cout << "matrix" << std::endl;
@@ -308,7 +308,7 @@ public:
 	 * @param point Point où se deplace la caméra
 	 * @return
 	 */
-	void moveTo(const Vertex& point) { if(!locked) pos = point; }
+	void moveTo(const Vertex& point) { if (!locked) pos = point; }
 
 	/**
 	 * @brief Retourner la distance par rapport au point. Négatif si le point est derrière la caméra.
@@ -337,6 +337,26 @@ public:
 			return { (int)m.m[0][0],(int)m.m[0][1], 0 };
 		}
 		m = optimizedProduct(m, projectionMatrix);
+		//homogeneous clip space
+		int x = (int)(m.m[0][0] / m.m[0][3]);
+		int y = (int)(m.m[0][1] / m.m[0][3]);
+		//NDC space[-1,1]
+		x += center.x;
+		y += center.y;
+		//raster space
+		return { x, y, m.m[0][3] };
+	}
+
+	Vertex get2DWithoutPerspective(Matrix<4, 4> m, bool& clip, const Point2D<int>& center, Matrix<4, 4> viewMatrix) {
+		//world space
+		clip = false;
+		m.m[0][3] = 1;
+		m = optimizedProduct(m, viewMatrix);
+		// camera space
+		if (optimizedLength(m) > far) {
+			clip = true;
+			return { (int)m.m[0][0],(int)m.m[0][1], 0 };
+		}
 		//homogeneous clip space
 		int x = (int)(m.m[0][0] / m.m[0][3]);
 		int y = (int)(m.m[0][1] / m.m[0][3]);
