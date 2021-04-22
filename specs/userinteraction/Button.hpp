@@ -252,36 +252,6 @@ public:
 	bool isClicked() const { return checked; }
 };
 
-template <class paramType>
-class RoundButton : public Button<paramType> {
-public:
-	Point2D<int> pos;
-	int radius;
-
-	RoundButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb,
-		const Point2D<int>& pos, const int& radius)
-		: Button<paramType>(name, bgTex, bgCol, contCol, tb),
-		pos(pos), radius(radius) {}
-
-	RoundButton() = delete;
-
-	void render(SDL_Renderer* renderer) const {
-		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);
-		else {
-			Draw::DrawFillCircle(pos.x, pos.y, radius, ButtonBase::backgroundCol, renderer);
-		}
-		if (ButtonBase::textBox) ButtonBase::textBox->render(renderer, 0, 0);
-		Draw::DrawCircle(pos.x, pos.y, radius, ButtonBase::contourCol, renderer);
-	}
-
-	bool mouseInside(const InputEvent& ie) {
-		ie.updateMouse(ButtonBase::mouse);
-		const Point2D<int> mouse2(ButtonBase::mouse.x, ButtonBase::mouse.y);
-		ButtonBase::selected = mouse2.distance(pos) < radius;
-		return ButtonBase::selected;
-	}
-};
-
 class ButtonManager {
 private:
 	const InputEvent& inputEvent;
@@ -308,12 +278,6 @@ public:
 	void addCheckBox(const std::string& name, const Color& bgCol, const Color& contCol, const Point2D<int>& pos, const int& size) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new CheckBox<paramType>(name, bgCol, contCol, pos, size));
-	}
-
-	template <class paramType>
-	void addRoundButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D<int>& pos, const int& radius) {
-		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
-		buttons.emplace_back(new RoundButton<paramType>(name, bgTex, bgCol, contCol, tb, pos, radius));
 	}
 
 	template <class paramType>
