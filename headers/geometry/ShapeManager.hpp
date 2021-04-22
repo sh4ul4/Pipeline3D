@@ -559,13 +559,13 @@ public:
 						bool fill = true;
 						std::string bmpName;
 						std::string bmpPath;
-						in >> (Uint8)color.r;
-						in >> (Uint8)color.g;
-						in >> (Uint8)color.b;
-						in >> (Uint8)color.a;
-						in >> (bool)fill;
-						in >> (std::string)bmpName; // handle "null"
-						in >> (std::string)bmpPath;
+						in >> color.r;
+						in >> color.g;
+						in >> color.b;
+						in >> color.a;
+						in >> fill;
+						in >> bmpName; // handle "null"
+						in >> bmpPath;
 						in >> a.x;
 						in >> a.y;
 						in >> a.z;
