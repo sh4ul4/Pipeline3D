@@ -5,6 +5,11 @@ const Color elynbeige(248, 237, 227);
 const Color elynmarron(216, 172, 156);
 const Color elynvfonce(121, 135, 119);
 
+void startFunc(int *s) {
+	*s = 0;
+	std::cout<<"Maintenant s = "<<*s<<std::endl; 
+}
+
 void changeCam(Camera *cam) {
 	cam->setCurrent();
 	// if (shp) shp.visible = false;
@@ -19,22 +24,96 @@ void furnitureInsertion(int *type) {
 	std::cout << "Insertion de meuble de type " << *type << std::endl;
 }
 
-int main(int argc, char* argv[]) {
-	Window window(1280, 720);
-	InputEvent inputEvent;
-	ShapeManager manager;
-	
-	
-	TextBox::initLibrary();
-	ButtonManager bm(inputEvent, window);
-	Render r(window, 900, 506); // 16:9
-
+void createRoom(ShapeManager *manager) {
 	// hg 		     	  hd              
 	// { 0, 0, 0 },	 { 0, 0, 100 }, 
 	
 	// bg  			 bd
 	// { 100, 0, 0 },   { 100, 0, 100 }
 
+	// sol
+	Bitmap t0(std::string("defense"), std::string("../textures/img.png"));
+	manager->addRectangle("floor", { 0, 0, 0 }, { 0, 0, 100 }, { 100, 0, 0 }, { 100, 0, 100 }, &t0);
+	
+	// Mur de face
+	Bitmap t1(std::string("80s"), std::string("../textures/face.jpg"));
+	Vertex hg = { 0, 100, 0 };
+	Vertex bg = { 0, 0, 0 };
+	Vertex hd = { 100, 100, 0 };
+	Vertex bd = { 100, 0, 0 };
+	manager->addRectangle("face", hg, bg, hd, bd, &t1); // original
+
+	Bitmap t2(std::string("wall"), std::string("../textures/wall.jpg"));
+	// coté droit
+	manager->addRectangle("droit", hg, bg, { 0, 100, 100 }, { 0, 0, 100 }, &t2);
+	// coté gauche
+	manager->addRectangle("gauche", hd, bd, { 100, 100, 100 }, { 100, 0, 100 }, &t2);
+	std::cout<<"Room créée"<<std::endl;
+}
+
+
+int main(int argc, char* argv[]) {
+	Window window(1280, 720);
+	InputEvent inputEvent;
+	ShapeManager manager;
+	TextBox::initLibrary();
+	ButtonManager bm(inputEvent, window);
+	Render r(window, 900, 506); // 16:9
+
+	int start = 1;
+
+	TextBox t_intro("CROUS Simulator", pth+std::string("fonts/Comic_Sans_MS_Bold.ttf"), 30, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
+	int i_TLx = 440, i_TLy = 310;
+	TextBox t_mur1("Mur 1", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
+	TextInput i_mur1("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
+	TextBox t_mur2("Mur 2", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
+	TextInput i_mur2("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
+
+	i_TLx += 280;
+	TextBox t_mur3("Mur 3", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
+	TextInput i_mur3("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
+	TextBox t_mur4("Mur 4", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
+	TextInput i_mur4("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
+	
+
+	bm.addRectTextButton<int*>("b_initApp", Point2D<int>(440, 400), 400, 40, "Nouvelle scene a partir de la surface donnee");
+	bm.getButton<int*>("b_initApp").setAction(startFunc, &start);
+	bm.addRectTextButton<int*>("b_initImport", Point2D<int>(440, 460), 400, 40, "Importer une scene depuis un fichier");
+
+	Mouse mouse;
+	Keyboard keyboard;
+	// Camera::getCurrent().lock();
+	while (start) {
+		i_mur1.checkForInput(inputEvent, window.getRenderer());
+		i_mur2.checkForInput(inputEvent, window.getRenderer());
+		i_mur3.checkForInput(inputEvent, window.getRenderer());
+		i_mur4.checkForInput(inputEvent, window.getRenderer());
+		inputEvent.update();
+
+		inputEvent.updateMouse(mouse);
+		inputEvent.updateKeyBoard(keyboard);
+		
+		bm.checkButtons();
+		bm.renderButtons(window.getRenderer());
+		i_mur1.render(window.getRenderer(), 0, 0);
+		i_mur2.render(window.getRenderer(), 0, 0);
+		i_mur3.render(window.getRenderer(), 0, 0);
+		i_mur4.render(window.getRenderer(), 0, 0);
+
+		t_intro.render(window.getRenderer(), 0, 0);
+		t_mur1.render(window.getRenderer(), 0, 0);
+		t_mur2.render(window.getRenderer(), 0, 0);
+		t_mur3.render(window.getRenderer(), 0, 0);
+		t_mur4.render(window.getRenderer(), 0, 0);
+
+		window.RenderScreen();
+		window.FillScreen(elynbeige);	
+	}
+	bm.removeButton("b_initApp");
+	bm.removeButton("b_initImport");
+
+
+	// createRoom(&manager);
 	// sol
 	Bitmap t0(std::string("defense"), std::string("../textures/img.png"));
 	manager.addRectangle("floor", { 0, 0, 0 }, { 0, 0, 100 }, { 100, 0, 0 }, { 100, 0, 100 }, &t0);
@@ -52,6 +131,8 @@ int main(int argc, char* argv[]) {
 	manager.addRectangle("droit", hg, bg, { 0, 100, 100 }, { 0, 0, 100 }, &t2);
 	// coté gauche
 	manager.addRectangle("gauche", hd, bd, { 100, 100, 100 }, { 100, 0, 100 }, &t2);
+	std::cout<<"Room créée"<<std::endl;
+
 
 	std::cout<<(manager.getShape("floor")).center<<std::endl;
 	Camera topCam({manager.getShape("floor").center.x, 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
@@ -177,8 +258,8 @@ int main(int argc, char* argv[]) {
 	// bm.addCheckBox<void*>("cb1", white, dark_gray, Point2D<int>(1300, 200), 20);
 	
 	r.updateTriangles(manager);
-	Mouse mouse;
-	Keyboard keyboard;
+	// Mouse mouse;
+	// Keyboard keyboard;
 	// Camera::getCurrent().lock();
 	while (!keyboard.escape.down) {
 		inputEvent.update();
@@ -210,6 +291,7 @@ int main(int argc, char* argv[]) {
 		bm.renderButtons(window.getRenderer());
 
 		tb6.render(window.getRenderer(), 0, 0);
+
 		// ti.render(window.getRenderer(), 0, 0);
 		window.RenderScreen();
 		window.FillScreen(elynbeige);
