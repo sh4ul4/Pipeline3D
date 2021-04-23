@@ -165,7 +165,7 @@ public:
 
 	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, const Window& window)
 		: Button<paramType>(name, nullptr, dark_gray, black,
-			new TextBox(text, pth + std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(0, 0), window.getRenderer())),
+			new TextBox(text, pth + std::string("fonts/Segoe UI.ttf"), 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
 		pos(pos), width(width), height(height) {}
 
 	RectTextButton() = delete;

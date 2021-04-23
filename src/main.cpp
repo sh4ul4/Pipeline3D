@@ -12,10 +12,10 @@ int main(int argc, char* argv[]) {
 	Render r(window, 600, 400);
 	ButtonManager bm(inputEvent, window);
 
-	bm.addRectTextButton<Camera*>("b1", Point2D<int>(120, 480), 65, 30, "camera 1");
+	bm.addRectTextButton<Camera*>("b1", Point2D<int>(120, 480), 70, 25, "Camera 1");
 	bm.getButton<Camera*>("b1").setAction([](Camera* cam) {cam->setCurrent(); }, &cam1);
 
-	bm.addRectTextButton<Camera*>("b2", Point2D<int>(190, 480), 65, 30, "camera 2");
+	bm.addRectTextButton<Camera*>("b2", Point2D<int>(200, 480), 70, 25, "Camera 2");
 	bm.getButton<Camera*>("b2").setAction([](Camera* cam) {cam->setCurrent(); }, &cam2);
 
 	manager.imprtShapeObj("Earth", 0.001);
