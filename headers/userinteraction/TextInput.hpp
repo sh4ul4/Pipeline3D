@@ -94,7 +94,7 @@ public:
 		ie.updateKeyBoard(keyboard);
 		if (!running && mouse.leftClick && mouse.x < pos.x + maxWidth && mouse.x > pos.x && mouse.y < pos.y + maxHeight && mouse.y > pos.y)
 			start(ie);
-		if (running && keyboard.enter.down) 
+		if ((running && keyboard.enter.down) || (running && mouse.leftClick && (mouse.x > pos.x + maxWidth || mouse.x < pos.x || mouse.y > pos.y + maxHeight || mouse.y < pos.y))) 
 			stop(ie);
 		if (!running)return;
 		const int size1 = text.length();
