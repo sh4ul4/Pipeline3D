@@ -103,7 +103,6 @@ public:
 		const int srch = bmp.surface->h;
 		const int dstw = globalTexture.getWidth();
 		const int dsth = globalTexture.getHeight();
-		const SDL_PixelFormat* srcFormat = bmp.surface->format;
 		// bounding box + clipping
 		Point2D<int> min(std::min(triA.x, std::min(triB.x, triC.x)), std::min(triA.y, std::min(triB.y, triC.y)));
 		Point2D<int> max(std::max(triA.x, std::max(triB.x, triC.x)), std::max(triA.y, std::max(triB.y, triC.y)));

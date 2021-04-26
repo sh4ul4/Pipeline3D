@@ -7,8 +7,6 @@
  * @private `pos`			Position de la camera.
  * @private `subject`			Si il y a un sujet, la camera tourne et ce concentre sur celui ci.
  * @private `distanceToSubject`		Vecteur distance entre [pos] et [sujet].
- * @private `LastAngleX`		Angle d'observation horizontal.
- * @private `LastAngleY`		Angle d'observation vertical.
  *
  * @public `hasSubject`		Si la camera a un sujet ou non.
  * @public `angleView`		L'angle de vue, exprimé en degrées.
@@ -46,16 +44,6 @@ private:
 	 * Vecteur distance entre [pos] et [sujet].
 	 */
 	float distanceToSubject = 50;
-	/**
-	 * Une variable privée.
-	 * Angle d'observation horizontal.
-	 */
-	float LastAngleX = 0;
-	/**
-	 * Une variable privée.
-	 * Angle d'observation vertical.
-	 */
-	float LastAngleY = 0;
 
 	Mouse mouse;
 
