@@ -19,7 +19,7 @@ private:
 		MTL(const std::string& name) :name(name) {}
 	};
 
-	void caseMtllib(std::istringstream& iss, std::vector<MTL>& mtls) {
+	void caseMtllib(std::istringstream& iss, std::vector<MTL>& mtls, const std::string& path) {
 		std::string mtlpath;
 		iss >> mtlpath;
 		std::string tmp;
@@ -27,9 +27,9 @@ private:
 			mtlpath += " " + tmp;
 		}
 
-		std::ifstream mtlfile(pth + std::string("OBJ/") + mtlpath);
+		std::ifstream mtlfile(path + mtlpath);
 		if (!mtlfile.is_open()) {
-			mtlfile = std::ifstream(pth + std::string("OBJ/") + mtlpath);
+			mtlfile = std::ifstream(path + mtlpath);
 		}
 		if (!mtlfile.is_open()) {
 			std::cout << "no such mtl file" << std::endl;
@@ -60,7 +60,7 @@ private:
 			if (!type.compare("map_Ka") && mtls.size() > 0) {
 				std::string imgpath;
 				iss >> imgpath;
-				Bitmap::newBitmap(imgpath, pth + std::string("OBJ/") + imgpath);
+				Bitmap::newBitmap(imgpath, path + imgpath);
 				mtls.back().bmpDim.x = Bitmap::getBitmap(imgpath)->surface->w;
 				mtls.back().bmpDim.y = Bitmap::getBitmap(imgpath)->surface->h;
 				mtls.back().bmpPath = imgpath;
@@ -68,7 +68,7 @@ private:
 			if (!type.compare("map_Kd") && mtls.size() > 0) {
 				std::string imgpath;
 				iss >> imgpath;
-				Bitmap::newBitmap(imgpath, pth + std::string("OBJ/") + imgpath);
+				Bitmap::newBitmap(imgpath, path + imgpath);
 				mtls.back().bmpDim.x = Bitmap::getBitmap(imgpath)->surface->w;
 				mtls.back().bmpDim.y = Bitmap::getBitmap(imgpath)->surface->h;
 				mtls.back().bmpPath = imgpath;
@@ -90,13 +90,13 @@ private:
 		}
 	}
 
-	void caseG(std::istringstream& iss, std::vector<MTL>& mtls, std::vector<Triangle>& trs, std::string& currentObject) {
+	void caseO(std::istringstream& iss, std::vector<MTL>& mtls, std::vector<Triangle>& trs, std::string& currentObject, const std::string& shapeName) {
 		Bitmap* bmp = nullptr;
 		if (mtls.size() > 0) {
 			bmp = mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr;
 		}
 		if (currentObject.length() > 0 && trs.size() > 0)
-			addShape(currentObject, trs, { 0,0,0 }, bmp);
+			addShape(shapeName + currentObject, trs, { 0,0,0 }, bmp);
 		iss >> currentObject;
 		trs.clear();
 	}
@@ -221,7 +221,7 @@ private:
 					v[ind[1][0] - 1],
 					v[ind[2][0] - 1],
 					vn[ind[0][2] - 1],
-					col, 
+					col,
 					bmp,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D<float>(0, 0),
 					vt.size() > 0 ? vt[ind[1][1] - 1] : Point2D<float>(0, 0),
@@ -231,7 +231,7 @@ private:
 					v[ind[2][0] - 1],
 					v[ind[3][0] - 1],
 					vn[ind[0][2] - 1],
-					col, 
+					col,
 					bmp,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D<float>(0, 0),
 					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D<float>(0, 0),
@@ -381,21 +381,25 @@ public:
 	 *		Attributs
 	 *===========================================================================================*/
 
-	// Un vecteur de pointeurs vers les shapes
+	 // Un vecteur de pointeurs vers les shapes
 	std::vector<std::unique_ptr<Shape>> shapes;
 
 	/*=============================================================================================
 	 *		Méthodes
 	 *===========================================================================================*/
 
-	void imprtShapeObj(const std::string& shape, const float& scale = 1) {
-		std::ifstream in(pth + std::string("OBJ/") + shape + ".obj");
+	void imprtShapeObj(const std::string& path, const std::string& source, const std::string& shapeName, const float& scale = 1) {
+		if (nameTaken(shapeName)) {
+			PRINT_ON_ERR("Name for shape is already taken");
+			return;
+		}
+		std::ifstream in(path + source);
 		if (!in.is_open()) {
-			in = std::ifstream(pth + std::string("OBJ/") + shape + ".OBJ");
+			in = std::ifstream(path + source);
 		}
 		if (!in.is_open()) {
-			std::cout << "no such obj file" << std::endl;
-			return; // no such file
+			PRINT_ON_ERR(std::string("There's no file named ") + path + source);
+			return;
 		}
 		std::string currentObject;
 		std::vector<MTL> mtls;
@@ -409,13 +413,13 @@ public:
 			std::string type;
 			iss >> type;
 			if (!type.compare("mtllib")) {
-				caseMtllib(iss, mtls);
+				caseMtllib(iss, mtls, path);
 			}
 			if (!type.compare("usemtl")) {
 				caseUsemtl(iss, mtls);
 			}
-			if (!type.compare("g") || !type.compare("o")) {
-				caseG(iss, mtls, trs, currentObject);
+			if (/*!type.compare("g") || */!type.compare("o")) {
+				caseO(iss, mtls, trs, currentObject, shapeName);
 			}
 			if (!type.compare("v")) {
 				caseV(iss, v, scale);
@@ -437,8 +441,9 @@ public:
 		if (mtls.size() > 0) {
 			bmp = mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr;
 		}
-		if (currentObject.length() > 0 && trs.size() > 0)
-			addShape(currentObject, trs, { 0,0,0 }, bmp);
+		std::string lastShape(shapeName + currentObject);
+		if (lastShape.length() > 0 && trs.size() > 0)
+			addShape(lastShape, trs, { 0,0,0 }, bmp);
 	}
 
 	void exprtShapeObj(const std::string& shape) {
@@ -593,17 +598,17 @@ public:
 
 	/**
 	 * @brief Vérifie si une shape avec le nom donnée existe déjà
-	 * 
+	 *
 	 * @param name Nom à vérifier
 	 */
 	bool nameTaken(const std::string& name) const {
-		for(int i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return true;
+		for (int i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return true;
 		return false;
 	}
 
 	/**
 	 * @brief Donne le premier nom unique disponible
-	 * 
+	 *
 	 * @param name Nom à vérifier
 	 */
 	std::string giveUniqueName() const {
@@ -624,30 +629,30 @@ public:
 
 	/**
 	 * @brief Ajouter une nouvelle forme à partir de triangles, d'un centre et d'une texture
-	 * 
+	 *
 	 * @param Nom unique de la shape
 	 * @param triangles Vecteur de triangles qui composent la forme
 	 * @param center Le sommet centre de la forme
 	 * @param bmp La texture de la forme
 	 */
 	void addShape(const std::string& name, const std::vector<Triangle>& triangles, const Vertex& center, Bitmap* bmp = nullptr) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "Name taken" << std::endl; return; }
 		shapes.emplace_back(new Shape(name, triangles, center, bmp));
 	}
 
 	/**
 	 * @brief Ajouter une nouvelle forme à partir d'une forme existante
-	 * 
+	 *
 	 * @param shape Shape à copier
 	 */
 	void addShape(const Shape& shape) {
-		if (nameTaken(shape.name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(shape.name)) { std::cout << "Name taken" << std::endl; return; }
 		shapes.emplace_back(new Shape(shape));
 	}
 
 	/**
 	 * @brief Ajoute une nouvelle sphere
-	 * 
+	 *
 	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param radius Valeur numérique représentant l'angle de la sphère
@@ -661,7 +666,7 @@ public:
 
 	/**
 	 * @brief Ajoute une nouvelle sphère
-	 * 
+	 *
 	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param radius Valeur numérique représentant l'angle de la sphère
@@ -675,7 +680,7 @@ public:
 
 	/**
 	 * @brief Ajoute une sphère pré-existante
-	 * 
+	 *
 	 * @param sphere Sphère qui sera ajoutée
 	 */
 	void addSphere(const Sphere& sphere) {
@@ -685,7 +690,7 @@ public:
 
 	/**
 	 * @brief Ajoute un cube
-	 * 
+	 *
 	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param width indique la largeur du cube (Taille des arètes)
@@ -699,7 +704,7 @@ public:
 
 	/**
 	 * @brief Ajoute un cube pré-existant
-	 * 
+	 *
 	 * @param cube Cube qui sera ajouté
 	 */
 	void addCube(const Cube& cube) {
@@ -709,7 +714,7 @@ public:
 
 	/**
 	 * @brief Ajoute un rectangle
-	 * 
+	 *
 	 * @param Nom unique de la shape
 	 * @param a,b,c,d Sommets du rectangle, permettant de le dessiner
 	 * @param bmp Bitmap
@@ -721,7 +726,7 @@ public:
 
 	/**
 	 * @brief Ajoute un rectangle pré-existant
-	 * 
+	 *
 	 * @param rectangle Rectangle qui sera ajouté
 	 */
 	void addRectangle(const Rectangle& rectangle) {
@@ -746,7 +751,7 @@ public:
 
 	/**
 	 * @brief ???
-	 * 
+	 *
 	 * @param window Fenêtre avec laquelle on interagit
 	 */
 	void set2ds(const Window& window, const Point2D<int>& center) {
@@ -758,15 +763,15 @@ public:
 
 	/**
 	 * @brief ???
-	 * 
-	 * @param startingPos 
-	 * @param movement 
-	 * @param intersectionZone 
-	 * @param intersectionPoint 
-	 * @param interactionDistance 
+	 *
+	 * @param startingPos
+	 * @param movement
+	 * @param intersectionZone
+	 * @param intersectionPoint
+	 * @param interactionDistance
 	 * @return Retourne 'True' si... et 'False' si...
 	 */
-	bool getFirstInteraction(const Vertex &startingPos, const Vector &movement, Triangle &intersectionZone, Vertex &intersectionPoint, const float &interactionDistance) const {
+	bool getFirstInteraction(const Vertex& startingPos, const Vector& movement, Triangle& intersectionZone, Vertex& intersectionPoint, const float& interactionDistance) const {
 		const Vertex goalPos = startingPos + movement;
 		for (int i = 0; i < shapes.size(); i++) {
 			for (int j = 0; j < shapes[i]->triangles.size(); j++) {
