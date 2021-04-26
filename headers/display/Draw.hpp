@@ -241,7 +241,70 @@ public:
 				}
 			}
 		}
-	 }
+	}
+
+	static void DrawContouredRect(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& contour, SDL_Renderer* renderer) {
+		SDL_Rect cont1;
+		cont1.x = p.x;
+		cont1.y = p.y;
+		cont1.w = w - edgeSize;
+		cont1.h = edgeSize;
+		SDL_SetRenderDrawColor(renderer, contour.r, contour.g, contour.b, contour.a);
+		SDL_RenderFillRect(renderer, &cont1);
+		SDL_Rect cont2;
+		cont2.x = p.x + w - edgeSize;
+		cont2.y = p.y;
+		cont2.w = edgeSize;
+		cont2.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont2);
+		SDL_Rect cont3;
+		cont3.x = p.x + edgeSize;
+		cont3.y = p.y + h - edgeSize;
+		cont3.w = w - edgeSize;
+		cont3.h = edgeSize;
+		SDL_RenderFillRect(renderer, &cont3);
+		SDL_Rect cont4;
+		cont4.x = p.x;
+		cont4.y = p.y + edgeSize;
+		cont4.w = edgeSize;
+		cont4.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont4);
+	}
+
+	static void DrawFillContouredRect(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& middle, const Color& contour, SDL_Renderer* renderer) {
+		SDL_Rect middleRect;
+		middleRect.x = p.x + edgeSize;
+		middleRect.y = p.y + edgeSize;
+		middleRect.w = w - 2 * edgeSize;
+		middleRect.h = h - 2 * edgeSize;
+		SDL_SetRenderDrawColor(renderer, middle.r, middle.g, middle.b, middle.a);
+		SDL_RenderFillRect(renderer, &middleRect);
+		SDL_Rect cont1;
+		cont1.x = p.x;
+		cont1.y = p.y;
+		cont1.w = w - edgeSize;
+		cont1.h = edgeSize;
+		SDL_SetRenderDrawColor(renderer, contour.r, contour.g, contour.b, contour.a);
+		SDL_RenderFillRect(renderer, &cont1);
+		SDL_Rect cont2;
+		cont2.x = p.x + w - edgeSize;
+		cont2.y = p.y;
+		cont2.w = edgeSize;
+		cont2.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont2);
+		SDL_Rect cont3;
+		cont3.x = p.x + edgeSize;
+		cont3.y = p.y + h - edgeSize;
+		cont3.w = w - edgeSize;
+		cont3.h = edgeSize;
+		SDL_RenderFillRect(renderer, &cont3);
+		SDL_Rect cont4;
+		cont4.x = p.x;
+		cont4.y = p.y + edgeSize;
+		cont4.w = edgeSize;
+		cont4.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont4);
+	}
 
 	static void DrawFillRoundedRect(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& color, SDL_Renderer* renderer) {
 		Point2D<int> c1(p + edgeSize);
