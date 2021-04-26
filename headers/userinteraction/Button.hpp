@@ -23,9 +23,10 @@ public:
 	virtual bool isSelected()const { return selected; }
 	virtual void playAction() {}
 	virtual void render(SDL_Renderer* renderer) const {}
-	virtual bool mouseInside(const InputEvent& ie) { return false; }
-	virtual bool mouseClickInside(const InputEvent& ie) { return false; }
-	virtual void checkButton(const InputEvent& inputEvent) {}
+	virtual bool mouseInside(const InputEvent& ie, const Point2D<int>& pos) { return false; }
+	virtual bool mouseClickInside(const InputEvent& ie, const Point2D<int> pos) { return false; }
+	virtual void checkButton(const InputEvent& inputEvent, const Point2D<int> pos) {}
+	void unselect() { selected = false; }
 protected:
 	// constructor only accessible via derived button classes
 	ButtonBase(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb)
@@ -91,22 +92,22 @@ public:
 	virtual void render(SDL_Renderer* renderer) const {}
 
 	// check if the mouse is inside the button-zone
-	virtual bool mouseInside(const InputEvent& ie) { return false; }
+	virtual bool mouseInside(const InputEvent& ie, const Point2D<int>& pos) { return false; }
 
 	// check if the mouse clicked inside the button-zone
-	virtual bool mouseClickInside(const InputEvent& ie) {
+	virtual bool mouseClickInside(const InputEvent& ie, const Point2D<int>& pos) {
 		ie.updateMouse(mouse);
-		clicked = mouseInside(ie) && mouse.leftClick;
+		clicked = mouseInside(ie, pos) && mouse.leftClick;
 		return clicked;
 	}
 
 	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
-	virtual void checkButton(const InputEvent& inputEvent) {
-		if (!clicked && mouseClickInside(inputEvent)) {
+	virtual void checkButton(const InputEvent& inputEvent, const Point2D<int> p) {
+		if (!clicked && mouseClickInside(inputEvent, p)) {
 			playAction();
 			if(signal) *signal = true;
 		}
-		else mouseClickInside(inputEvent);
+		else mouseClickInside(inputEvent, p);
 	}
 
 protected:
@@ -148,10 +149,10 @@ public:
 		}
 	}
 
-	bool mouseInside(const InputEvent& ie) {
+	bool mouseInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
 		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
-		ButtonBase::selected = m.x < pos.x + width && m.x > pos.x && m.y < pos.y + height && m.y > pos.y;
+		ButtonBase::selected = m.x < pos.x + width + p.x && m.x > pos.x + p.x && m.y < pos.y + height + p.y&& m.y > pos.y + p.y;
 		return ButtonBase::selected;
 	}
 };
@@ -190,10 +191,10 @@ public:
 		}
 	}
 
-	bool mouseInside(const InputEvent& ie) {
+	bool mouseInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
 		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
-		ButtonBase::selected = m.x < pos.x + width && m.x > pos.x && m.y < pos.y + height && m.y > pos.y;
+		ButtonBase::selected = m.x < pos.x + width + p.x && m.x > pos.x + p.x && m.y < pos.y + height + p.y && m.y > pos.y + p.y;
 		return ButtonBase::selected;
 	}
 };
@@ -226,21 +227,21 @@ public:
 		Draw::DrawFillRoundedRectContoured(pos, size, size, 6, bg, ButtonBase::contourCol, renderer);
 	}
 
-	bool mouseInside(const InputEvent& ie) {
+	bool mouseInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
 		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
-		ButtonBase::selected = m.x < pos.x + size && m.x > pos.x && m.y < pos.y + size && m.y > pos.y;
+		ButtonBase::selected = m.x < pos.x + size + p.x && m.x > pos.x + p.x && m.y < pos.y + size + p.y && m.y > pos.y + p.y;
 		return ButtonBase::selected;
 	}
 
-	bool mouseClickInside(const InputEvent& ie) {
+	bool mouseClickInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
-		ButtonBase::clicked = mouseInside(ie) && ButtonBase::mouse.leftClick;
+		ButtonBase::clicked = mouseInside(ie, p) && ButtonBase::mouse.leftClick;
 		return ButtonBase::clicked;
 	}
 
 	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
-	void checkButton(const InputEvent& inputEvent) {
+	void checkButton(const InputEvent& inputEvent, const Point2D<int> pos) {
 		if (!ButtonBase::clicked && mouseClickInside(inputEvent)) {
 			ButtonBase::playAction();
 			if (ButtonBase::signal) *ButtonBase::signal = true;
@@ -252,7 +253,7 @@ public:
 	bool isClicked() const { return checked; }
 };
 
-template <class paramType>
+/*template <class paramType>
 class RoundButton : public Button<paramType> {
 public:
 	Point2D<int> pos;
@@ -274,13 +275,13 @@ public:
 		Draw::DrawCircle(pos.x, pos.y, radius, ButtonBase::contourCol, renderer);
 	}
 
-	bool mouseInside(const InputEvent& ie) {
+	bool mouseInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
 		const Point2D<int> mouse2(ButtonBase::mouse.x, ButtonBase::mouse.y);
 		ButtonBase::selected = mouse2.distance(pos) < radius;
 		return ButtonBase::selected;
 	}
-};
+};*/
 
 class ButtonManager {
 private:
@@ -336,11 +337,15 @@ public:
 		for (size_t i = 0; i < buttons.size(); i++) buttons[i]->render(renderer);
 	}
 
-	void checkButtons() const {
+	void checkButtons(const Point2D<int> pos = Point2D<int>(0, 0)) const {
 		for (size_t i = 0; i < buttons.size(); i++) {
-			buttons[i]->checkButton(inputEvent);
-			//if (!buttons[i]->isClicked() && buttons[i]->mouseClickInside(inputEvent)) buttons[i]->playAction();
-			//else buttons[i]->mouseClickInside(inputEvent);
+			buttons[i]->checkButton(inputEvent, pos);
+		}
+	}
+
+	void unselectButtons() {
+		for (size_t i = 0; i < buttons.size(); i++) {
+			buttons[i]->unselect();
 		}
 	}
 
@@ -349,6 +354,6 @@ public:
 		ASSERT(nameUsed(name), "There is no Button with this name.\n");
 		for (size_t i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) return dynamic_cast<Button<paramType>&>(*buttons[i]);
-		exit(1);
+		FATAL_ERR("no button with that name found");
 	}
 };
