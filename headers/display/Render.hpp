@@ -70,23 +70,24 @@ private:
 	void renderTriangles(const Window& window, const Point2D<int>& topLeft, const int& width, const int& height) {
 		if (Camera::currentExists() == false) { std::cout << "Error : current camera does not exist.\n"; exit(1); }
 		//std::sort(toRender.begin(), toRender.end(), PointerCompare()); // no need to sort triangles when zbuffer is enabled
-		const size_t max3 = toRender.size();
+		const size_t size = toRender.size();
 		globalTexture.refreshZbuffer();
 		// set all pixels of surface to NULL
 		globalTexture.clearPixels();
 		// render textures on surface
 		// multithreaded version
-		/*std::thread thread1(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), 0, (int)(max3 / 3));
-		std::thread thread2(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), (int)(max3 / 3), (int)(max3 / 3 * 2));
-		std::thread thread3(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), (int)(max3 / 3 * 2), max3);
+		/*std::thread thread1(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), 0, (int)(size / 3));
+		std::thread thread2(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), (int)(size / 3), (int)(size / 3 * 2));
+		std::thread thread3(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), (int)(size / 3 * 2), size);
 		thread1.join();
 		thread2.join();
 		thread3.join();*/
 		// signlethreaded version
-		for (int i = 0; i < max3; i++) {
-			toRender[i]->setScreenCoord(window, true, Point2D<int>(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2));
+		const Point2D<int> center(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2);
+		for (int i = 0; i < size; i++) {
+			toRender[i]->setScreenCoord(window, true, center);
 			// render triangle
-			toRender[i]->render(window, globalTexture, Point2D<int>(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2));
+			toRender[i]->render(window, globalTexture, center);
 		}
 		//globalTexture.applySobel();
 		//globalTexture.applyBlackNWhite();
