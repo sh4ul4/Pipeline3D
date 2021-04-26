@@ -78,9 +78,6 @@ private:
 		if (window) SDL_DestroyWindow(window);
 		std::cout << "Window destroyed.\n";
 		//---------------------------------------
-		int numclosed = fcloseall();
-		printf("Number of files closed by fcloseall() : %u\n", numclosed);
-		//---------------------------------------
 		std::cout << "Shutdown complete." << std::endl;
 	}
 
@@ -143,9 +140,11 @@ public:
 		SDL_Init(SDL_INIT_VIDEO);
 		SDL_Init(SDL_INIT_TIMER);
 		window = SDL_CreateWindow("Pipeline3D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
 		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 		SDL_ShowCursor(1);
+		SDL_SetWindowResizable(window, SDL_TRUE);
+		SDL_SetWindowMinimumSize(window, width, height);
 	}
 
 	/**
