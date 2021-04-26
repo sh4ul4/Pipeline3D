@@ -85,7 +85,6 @@ public:
 		frameCounter++;
 		if (timer.set(1 * CLOCKS_PER_SEC)) {
 			framerate = frameCounter; // return the framerate after 1 sec
-			std::cout<<"Framerate: "<< framerate <<std::endl;
 			frameCounter = 0;
 		}
 		Draw::RenderDigits(X, Y, 8, framerate, red, renderer);

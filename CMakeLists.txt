@@ -5,6 +5,12 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("Pipeline3d")
 
+# Utiliser C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+
 if (WIN32)
 	list(APPEND CMAKE_PREFIX_PATH ./SDL)
 	list(APPEND CMAKE_PREFIX_PATH ./SDL/Release)
