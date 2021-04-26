@@ -14,14 +14,14 @@ private:
 	 * Une variable privée.
 	 * Largeur de la fenêtre graphique
 	 */
-	int width = NULL;
+	int width = 1280;
 	
 	
 	/**
 	 * Une variable privée.
 	 * Hauteur de la fenêtre graphique
 	 */
-	int height = NULL;
+	int height = 720;
 	
 	/**
 	 * Une variable privée.
@@ -60,8 +60,8 @@ private:
 		std::cout << "Prepare to shut down.\n";
 		shuttingDown = true;
 		//---------------------------------------
-		SDLK_CLEAR;
-		std::cout << "Keys cleared.\n";
+		// SDLK_CLEAR;
+		// std::cout << "Keys cleared.\n";
 		//---------------------------------------
 		Mix_FreeMusic(0);
 		Mix_FreeChunk(0);

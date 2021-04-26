@@ -293,7 +293,7 @@ public:
 	ButtonManager() = delete;
 private:
 	bool nameUsed(const std::string& name) const {
-		for (int i = 0; i < buttons.size(); i++)
+		for (size_t i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) return true;
 		return false;
 	}
@@ -323,7 +323,7 @@ public:
 	}
 
 	void removeButton(const std::string& name) {
-		for (int i = 0; i < buttons.size(); i++)
+		for (size_t i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) {
 				buttons.erase(buttons.begin() + i);
 				buttons.shrink_to_fit();
@@ -333,11 +333,11 @@ public:
 	}
 
 	void renderButtons(SDL_Renderer* renderer) const {
-		for (int i = 0; i < buttons.size(); i++) buttons[i]->render(renderer);
+		for (size_t i = 0; i < buttons.size(); i++) buttons[i]->render(renderer);
 	}
 
 	void checkButtons() const {
-		for (int i = 0; i < buttons.size(); i++) {
+		for (size_t i = 0; i < buttons.size(); i++) {
 			buttons[i]->checkButton(inputEvent);
 			//if (!buttons[i]->isClicked() && buttons[i]->mouseClickInside(inputEvent)) buttons[i]->playAction();
 			//else buttons[i]->mouseClickInside(inputEvent);
@@ -347,7 +347,8 @@ public:
 	template <class paramType>
 	Button<paramType>& getButton(const std::string& name) const {
 		ASSERT(nameUsed(name), "There is no Button with this name.\n");
-		for (int i = 0; i < buttons.size(); i++)
+		for (size_t i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) return dynamic_cast<Button<paramType>&>(*buttons[i]);
+		exit(1);
 	}
 };

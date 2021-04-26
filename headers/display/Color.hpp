@@ -12,7 +12,7 @@ public:
 	Uint8 a; // transparence
 
 	// constructeur par défaut
-	Color(const Uint8 R = NULL, const Uint8 G = NULL, const Uint8 B = NULL, const Uint8 A = 255) : r(R), g(G), b(B), a(A) {}
+	Color(const Uint8 R = 0, const Uint8 G = 0, const Uint8 B = 0, const Uint8 A = 255) : r(R), g(G), b(B), a(A) {}
 
 	// conversion vers la classe SDL_Color
 	SDL_Color toSDL_Color() const {

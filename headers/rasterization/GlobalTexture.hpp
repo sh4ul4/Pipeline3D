@@ -52,7 +52,7 @@ public:
 		height = h;
 		// generate pixel-array
 		pixels.reserve(width * height);
-		for (int i = 0; i < width * height; i++) pixels.emplace_back(0);
+		for (size_t i = 0; i < width * height; i++) pixels.emplace_back(0);
 		pixels.shrink_to_fit();
 		pitch = width * 4;
 		//pixelsV.reserve(width * height * 4);
@@ -90,7 +90,7 @@ public:
 
 	// mettre à jour le zbuffer en mettant toutes les valeur à float-max
 	inline void refreshZbuffer() {
-		for (int i = 0; i < width * height; i++) zbuffer[i] = 9999999;
+		for (size_t i = 0; i < width * height; i++) zbuffer[i] = 9999999;
 	}
 
 	// mettre à jour la texture avec le vecteur de pixels

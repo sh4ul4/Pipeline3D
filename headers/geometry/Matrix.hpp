@@ -16,8 +16,8 @@ public:
 
     //Initialisation d'un matrice de taille T1*T2
     Matrix() {
-        for (int i = 0; i < T1; i++)
-            for (int j = 0; j < T2; j++)
+        for (size_t i = 0; i < T1; i++)
+            for (size_t j = 0; j < T2; j++)
                 m[i][j] = 0;
     }
 
@@ -28,14 +28,14 @@ public:
     }
 
     Matrix(const Matrix& other) {
-        for (int i = 0; i < T1; i++)
-            for (int j = 0; j < T2; j++)
+        for (size_t i = 0; i < T1; i++)
+            for (size_t j = 0; j < T2; j++)
                 m[i][j] = other.m[i][j];
     }
 
     Matrix& operator=(const Matrix& other) {
-        for (int i = 0; i < T1; i++)
-            for (int j = 0; j < T2; j++)
+        for (size_t i = 0; i < T1; i++)
+            for (size_t j = 0; j < T2; j++)
                 m[i][j] = other.m[i][j];
         return *this;
     }

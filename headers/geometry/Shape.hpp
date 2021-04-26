@@ -62,7 +62,7 @@ public:
 	 * @param angle Angle de rotation 
 	 */
 	void rotateX(const Vertex& p, const float& angle) {
-		for (int i = 0; i < triangles.size(); i++) {
+		for (size_t i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;
@@ -87,7 +87,7 @@ public:
 	 * @param angle Angle de rotation
 	 */
 	void rotateY(const Vertex& p, const float& angle) {
-		for (int i = 0; i < triangles.size(); i++) {
+		for (size_t i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;
@@ -112,7 +112,7 @@ public:
 	 * @param angle Angle de rotation
 	 */
 	void rotateZ(const Vertex& p, const float& angle) {
-		for (int i = 0; i < triangles.size(); i++) {
+		for (size_t i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;

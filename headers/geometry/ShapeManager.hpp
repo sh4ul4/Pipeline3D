@@ -80,7 +80,7 @@ private:
 		if (mtls.size() <= 0) { std::cout << "There is no loaded mtl file." << std::endl; return; }
 		std::string mtlname;
 		iss >> mtlname;
-		for (int i = 0; i < mtls.size(); i++) {
+		for (size_t i = 0; i < mtls.size(); i++) {
 			if (!mtls[i].name.compare(mtlname)) {
 				mtls.push_back(mtls[i]);
 				mtls.erase(mtls.begin() + i);
@@ -461,7 +461,7 @@ public:
 		out << "#\n\n";
 		out << "o " + shape + "\n";
 		out << "mtllib " << shape << ".mtl\n";
-		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+		for (size_t tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "v "
 				<< getShape(shape).triangles[tr].a.x << " "
@@ -479,7 +479,7 @@ public:
 				<< getShape(shape).triangles[tr].c.z << "\n";
 		}
 		out << "\n";
-		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+		for (size_t tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "vt "
 				<< (float)getShape(shape).triangles[tr].bmpA.x << " "
@@ -494,7 +494,7 @@ public:
 				<< (float)getShape(shape).triangles[tr].bmpC.y << "\n";
 		}
 		out << "\n";
-		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+		for (size_t tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "vn "
 				<< getShape(shape).triangles[tr].normalVec.x << " "
@@ -503,7 +503,7 @@ public:
 		}
 		out << "\ng " + shape + "\n";
 		out << "usemtl " << shape << "_mtl \n";
-		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+		for (size_t tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "f " << std::to_string((tr + 1) * 3 - 2) << "/" << std::to_string((tr + 1) * 3 - 2) << "/" << std::to_string(tr + 1) << " ";
 			out << std::to_string((tr + 1) * 3 - 1) << "/" << std::to_string((tr + 1) * 3 - 1) << "/" << std::to_string(tr + 1) << " ";
@@ -514,9 +514,9 @@ public:
 	// pas terminé
 	void exprt(const std::string& name)const {
 		std::ofstream out(name + ".flanf");
-		for (int s = 0; s < shapes.size(); s++) {
+		for (size_t s = 0; s < shapes.size(); s++) {
 			out << "shape " + shapes[s]->name + "\n";
-			for (int t = 0; t < shapes[s]->triangles.size(); t++) {
+			for (size_t t = 0; t < shapes[s]->triangles.size(); t++) {
 				out << "tr ";
 				out << (Uint8)shapes[s]->triangles[t].color.r << " "
 					<< (Uint8)shapes[s]->triangles[t].color.g << " "
@@ -602,7 +602,7 @@ public:
 	 * @param name Nom à vérifier
 	 */
 	bool nameTaken(const std::string& name) const {
-		for (int i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return true;
+		for (size_t i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return true;
 		return false;
 	}
 
@@ -622,7 +622,7 @@ public:
 	 * @param name Nom de la shape désirée
 	 */
 	Shape& getShape(const std::string& name) {
-		for (int i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return *shapes[i];
+		for (size_t i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return *shapes[i];
 		std::cout << "Error: there is no shape named " << name << std::endl;
 		exit(1);
 	}
@@ -740,7 +740,7 @@ public:
 	 * @param name Nom de la shape recherchée
 	 */
 	void removeShape(const std::string& name) {
-		for (int i = 0; i < shapes.size(); i++)
+		for (size_t i = 0; i < shapes.size(); i++)
 			if (!shapes[i]->name.compare(name)) {
 				shapes.erase(shapes.begin() + i);
 				shapes.shrink_to_fit();
@@ -773,8 +773,8 @@ public:
 	 */
 	bool getFirstInteraction(const Vertex& startingPos, const Vector& movement, Triangle& intersectionZone, Vertex& intersectionPoint, const float& interactionDistance) const {
 		const Vertex goalPos = startingPos + movement;
-		for (int i = 0; i < shapes.size(); i++) {
-			for (int j = 0; j < shapes[i]->triangles.size(); j++) {
+		for (size_t i = 0; i < shapes.size(); i++) {
+			for (size_t j = 0; j < shapes[i]->triangles.size(); j++) {
 				/*if (shapes[i]->triangles[j].a.distance(startingPos) > interactionDistance + 10 &&
 					shapes[i]->triangles[j].b.distance(startingPos) > interactionDistance + 10 &&
 					shapes[i]->triangles[j].c.distance(startingPos) > interactionDistance + 10)continue;*/

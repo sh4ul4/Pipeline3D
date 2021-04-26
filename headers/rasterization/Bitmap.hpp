@@ -37,7 +37,7 @@ public:
 	 * @param name Le nom unique de la bitmap dans le vecteur.
 	 */
 	static bool bitmapExists(const std::string& name) {
-		for (int i = 0; i < bitmaps.size(); i++)
+		for (size_t i = 0; i < bitmaps.size(); i++)
 			if (!name.compare(bitmaps[i]->name)) return true;
 		return false;
 	}
@@ -83,7 +83,7 @@ public:
 	 * @param name Le nom unique de la bitmap dans le vecteur.
 	 */
 	static void deleteBitmap(const std::string& name) {
-		for (int i = 0; i < bitmaps.size(); i++) {
+		for (size_t i = 0; i < bitmaps.size(); i++) {
 			if (!name.compare(bitmaps[i]->name)) {
 				delete bitmaps[i];
 				bitmaps[i] = nullptr;
@@ -99,7 +99,7 @@ public:
 	 * @param name Le nom unique de la bitmap dans le vecteur.
 	 */
 	static Bitmap* getBitmap(const std::string& name) {
-		for (int i = 0; i < bitmaps.size(); i++)
+		for (size_t i = 0; i < bitmaps.size(); i++)
 			if (!name.compare(bitmaps[i]->name)) return bitmaps[i];
 		return nullptr;
 	}

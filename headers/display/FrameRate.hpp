@@ -13,7 +13,7 @@ private:
 	 * Une variable privée.
 	 * Temps du prochain rendu de frame
 	 */
-	Uint32 nextTime = NULL; 
+	Uint32 nextTime = 0; 
 	
 	/**
 	 * Une variable privée.
@@ -25,22 +25,22 @@ private:
 	 * Une variable privée.
 	 * Compte le nombre de frames pour le framerate
 	 */
-	short int frameCounter = NULL; 
+	short int frameCounter = 0; 
 	
 	/**
 	 * Une variable privée.
 	 * Framerate actuel 
 	 */
-	short int framerate = NULL;
+	short int framerate = 0;
 	
 	/**
 	 * Une variable privée.
 	 * Temps actuel en SDL_GetTicks()
 	 */
-	Uint32 now = NULL; 
+	Uint32 now = 0; 
 public:
 
-	StableFramerate():timer(0) {}
+	StableFramerate():timer(1000) {}
 
 	/**
 	 * Une fonction publique.
@@ -76,15 +76,16 @@ public:
 	}
 
 	/**
-	 * Une fonction publique.
 	 * @brief Affiche a l'ecran les framerate actuels 
+	 * 
 	 * @param x,y Coordonnées du point où sera affiché le framerate
 	 * @param renderer Moteur de rendu SDL
 	 */
 	void renderFrameRate(const int& X, const int& Y, SDL_Renderer* renderer) {
 		frameCounter++;
-		if (timer.set(1000)) {
+		if (timer.set(1 * CLOCKS_PER_SEC)) {
 			framerate = frameCounter; // return the framerate after 1 sec
+			std::cout<<"Framerate: "<< framerate <<std::endl;
 			frameCounter = 0;
 		}
 		Draw::RenderDigits(X, Y, 8, framerate, red, renderer);

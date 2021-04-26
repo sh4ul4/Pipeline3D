@@ -48,9 +48,9 @@ public:
 
 		const size_t max1 = manager.shapes.size();
 		shapesNumber = max1;
-		for (int j = 0; j < max1; j++) {
+		for (size_t j = 0; j < max1; j++) {
 			const size_t max2 = manager.shapes[j]->triangles.size();
-			for (int i = 0; i < max2; i++) {
+			for (size_t i = 0; i < max2; i++) {
 				toRender.push_back(&manager.shapes[j]->triangles[i]);
 			}
 		}
@@ -75,6 +75,7 @@ private:
 		// set all pixels of surface to NULL
 		globalTexture.clearPixels();
 		// render textures on surface
+		
 		// multithreaded version
 		/*std::thread thread1(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), 0, (int)(size / 3));
 		std::thread thread2(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), (int)(size / 3), (int)(size / 3 * 2));
@@ -82,9 +83,10 @@ private:
 		thread1.join();
 		thread2.join();
 		thread3.join();*/
+		
 		// signlethreaded version
 		const Point2D<int> center(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2);
-		for (int i = 0; i < size; i++) {
+		for (size_t i = 0; i < size; i++) {
 			toRender[i]->setScreenCoord(window, true, center);
 			// render triangle
 			toRender[i]->render(window, globalTexture, center);
