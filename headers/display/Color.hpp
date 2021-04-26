@@ -50,3 +50,6 @@ const Color teal(0, 128, 128);
 const Color yellow(255, 255, 0);
 const Color magenta(255, 0, 255);
 const Color cyan(0, 255, 255);
+const Color elynbeige(248, 237, 227);
+const Color elynmarron(216, 172, 156);
+const Color elynvfonce(121, 135, 119);

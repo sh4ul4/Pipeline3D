@@ -79,3 +79,5 @@ std::string pth = "../";
 #include "userinteraction/TextInput.hpp"
 
 #include "userinteraction/Button.hpp"
+
+#include "HomeDesign.hpp"

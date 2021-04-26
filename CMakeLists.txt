@@ -23,7 +23,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
 
 set(SRCS	src/main.cpp)
 
-# add_compile_options(-Wall -g)
+add_compile_options(-Wall -g)
 
 set(HEADERS headers/rasterization/Bitmap.hpp
 			headers/geometry/Camera.hpp
@@ -53,6 +53,7 @@ set(HEADERS headers/rasterization/Bitmap.hpp
 			headers/geometry/Vertex.hpp
 			headers/display/Window.hpp
 			headers/userinteraction/Button.hpp
+			headers/HomeDesign.hpp
 			)
 
 

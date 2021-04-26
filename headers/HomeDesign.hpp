@@ -1,5 +1,4 @@
 #pragma once
-#include "headers.hpp"
 
 /**
  * @brief Meuble de base représentée naïvement par un parallélépipède rectangle.
@@ -29,10 +28,10 @@ private:
      * 
      * Chacun des boutons possède un attribut booléen pour indiquer sa visibilité / cliquabilité. 
      */
-    Button b_remove;
-    Button b_rotate;
-    Button b_rename;
-    TextInput t_rename;
+    // Button b_remove;
+    // Button b_rotate;
+    // Button b_rename;
+    // TextInput t_rename;
 
 public:
     /**
@@ -66,13 +65,13 @@ public:
      * - Une fois le clic lâché, si la place est disponible pour les dimensions du meuble, le meuble est placé
      * - Si la place n'est pas disponible, le meuble demeure en mode transparence 
      */ 
-    void dragSprite(Mouse mouse, HomeDesign hm);
+    // void dragSprite(Mouse mouse, HomeDesign hm);
 
     /**
      * @brief Supprime le meuble et la Shape géométrique correspondante suite au clic sur bouton remove
      */ 
     void remove();
-    ~Furniture();
+    // ~Furniture();
 };
 
 
@@ -80,7 +79,7 @@ public:
  * @brief Meuble par défaut issu de la classe Furniture : 
  *        Parallépipède simple surélevé d'une hauteur de pieds
  */ 
-class f_Foot: class Furniture {
+class f_Foot: public Furniture {
 private:
     /**
      * @brief Presets de types de meubles pris en charge par cette classe fille. 
@@ -113,14 +112,14 @@ public:
      * @param int Représente le numéro du preset choisi
      */
     void selectPreset(int preset);
-}
+};
 
 
 /**
  * @brief Meuble par défaut issu de la classe Furniture : 
  *        Chaise (parallélépipède rectangle surélevé d'une hauteur de pieds et dossier)
  */ 
-class f_Chair: class Furniture {
+class f_Chair: public Furniture {
 private:
     /**
      * @brief Presets de types de meubles pris en charge par cette classe fille. 
@@ -153,7 +152,7 @@ public:
      * @param int Représente le numéro du preset choisi
      */
     void selectPreset(int preset);
-}
+};
 
 
 /**
@@ -192,39 +191,39 @@ private:
     /*===========================================================================================
      *      INTERFACE GRAPHIQUE
     ===========================================================================================*/
-    Window interface;
-    Textbox title;
-    Keyboad keyboard;
-    Mouse mouse;
+    // Window interface;
+    // Textbox title;
+    // Keyboad keyboard;
+    // Mouse mouse;
 
-	ButtonManager bm(inputEvent);
+	// ButtonManager bm(inputEvent);
 
     /**
      * @brief Boutons relatifs au changement de Vue Caméra pour la scène 
      */
-    Button b_mainView;
-    Button b_view1;
-    Button b_view2;
-    Button b_view3;
-    Button b_view4;
-    Button b_freeMotionView;
+    // Button b_mainView;
+    // Button b_view1;
+    // Button b_view2;
+    // Button b_view3;
+    // Button b_view4;
+    // Button b_freeMotionView;
 
     /**
      * @brief Boutons relatifs à l'insertion de meuble
      * 
      * Chaque bouton est lié à la méthode insertFurniture() en spécifiant son numéro
      */
-    Button b_insertDefault;
-    Button b_insertDefault2;
-    Button b_insertDefault3;
+    // Button b_insertDefault;
+    // Button b_insertDefault2;
+    // Button b_insertDefault3;
     
     /**
      * @brief Boutons d'interaction globale avec l'application 
      */
-    Button b_editSurface;
-    Button b_save;
-    Button b_export;
-    Button b_quit;
+    // Button b_editSurface;
+    // Button b_save;
+    // Button b_export;
+    // Button b_quit;
 
 public:
     HomeDesign() = delete;
@@ -235,7 +234,56 @@ public:
      * @param InputEvent    Utile aux évènements d'interaction utilisateur
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
-    HomeDesign(ButtonManager& bm, float w1, float w2, float w3, float w4);
+    HomeDesign(ButtonManager& bm, ShapeManager& manager, Window& window, float w1, float w2, float w3, float w4) {
+        std::cout << " > Constructeur HomeDesign" << std::endl;
+        std::cout << "Mur 1: " << w1 << std::endl;
+        std::cout << "Mur 2: " << w2 << std::endl;
+        std::cout << "Mur 3: " << w3 << std::endl;
+        std::cout << "Mur 4: " << w4 << std::endl;
+
+        // sol
+        Bitmap::newBitmap(std::string("defense"), std::string("../textures/img.png"));
+        // Bitmap t0(std::string("defense"), std::string("../textures/img.png"));
+        manager.addRectangle("floor", { 0, 0, 0 }, { 0, 0, 100 }, { 100, 0, 0 }, { 100, 0, 100 }, Bitmap::getBitmap(std::string("defense")));
+        
+        // Mur de face
+        Bitmap::newBitmap(std::string("80s"), std::string("../textures/face.jpg"));
+        Vertex hg = { 0, 100, 0 };
+        Vertex bg = { 0, 0, 0 };
+        Vertex hd = { 100, 100, 0 };
+        Vertex bd = { 100, 0, 0 };
+        manager.addRectangle("face", hg, bg, hd, bd, Bitmap::getBitmap("80s")); // original
+
+        Bitmap::newBitmap(std::string("wall"), std::string("../textures/wall.jpg"));
+        // coté droit
+        manager.addRectangle("droit", hg, bg, { 0, 100, 100 }, { 0, 0, 100 }, Bitmap::getBitmap("wall"));
+        // coté gauche
+        manager.addRectangle("gauche", hd, bd, { 100, 100, 100 }, { 100, 0, 100 }, Bitmap::getBitmap("wall"));
+        std::cout<<"Room créée"<<std::endl;
+
+
+        // 2nd Segfault below
+        // 2. Boutons interaction Frame : insertion
+        int un = 1, deux = 2, trois = 3;
+        int b_width = 286, b_height = 104;
+        int b_topleftx = 30, b_tly = 596;
+        bm.addRectTextButtonDefault<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 1");
+        bm.getButton<int*>("b_insertDefault").setAction(insertFurniture, &un);
+        // TextBox tb13("Inserer meuble type 1", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+        // bm.addRectButton<int*>("b_insertDefault", nullptr, elynmarron, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+        b_topleftx += 306;
+
+        // TextBox tb14("Inserer meuble type 2", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+        // bm.addRectButton<int*>("b_insertDefault2", nullptr, elynmarron, black, &tb14, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+        bm.addRectTextButtonDefault<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 2");
+        bm.getButton<int*>("b_insertDefault2").setAction(insertFurniture, &deux);
+        b_topleftx += 306; 
+
+        // TextBox tb15("Inserer meuble type 3", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+        // bm.addRectButton<int*>("b_insertDefault3", nullptr, elynmarron, black, &tb15, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+        bm.addRectTextButtonDefault<int*>("b_insertDefault3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 3");
+        bm.getButton<int*>("b_insertDefault3").setAction(insertFurniture, &trois);
+    };
 
     /**
      * @brief Constructeur par défaut, appelé à la création d'une scène sur l'interface (1)
@@ -245,7 +293,7 @@ public:
      */ 
     HomeDesign(ButtonManager& bm, std::string path);
 
-    ~HomeDesign();
+    // ~HomeDesign();
 
 private:
 
@@ -254,7 +302,9 @@ private:
      * 
      * @param int   Représente le numéro du bouton (entre 1 et 3)
      */ 
-    void insertFurniture(int style);
+    static void insertFurniture(int *style) {
+	    std::cout << "Insertion de meuble de type " << *style << std::endl;
+    }
 
     /**
      * @brief Ajoute un meuble au vecteur des meubles de la scène
@@ -283,10 +333,9 @@ private:
      */
     bool checkSpace(std::string f_name);
 
-    void editSurface()
+    void editSurface();
 
     void saveScene();
 
     void exportImage();
-
-}
+};

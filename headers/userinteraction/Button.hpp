@@ -317,13 +317,19 @@ public:
 	}
 
 	template <class paramType>
-	void addRectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text) {
+	void addRectTextButtonDefault(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, text, window));
 	}
 
+	// template <class paramType>
+	// void addRectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, /* couleur, contour, police, */) {
+	// 	if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
+	// 	buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, text, window));
+	// }
+
 	void removeButton(const std::string& name) {
-		for (int i = 0; i < buttons.size(); i++)
+		for (size_t i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) {
 				buttons.erase(buttons.begin() + i);
 				buttons.shrink_to_fit();
@@ -333,11 +339,11 @@ public:
 	}
 
 	void renderButtons(SDL_Renderer* renderer) const {
-		for (int i = 0; i < buttons.size(); i++) buttons[i]->render(renderer);
+		for (size_t i = 0; i < buttons.size(); i++) buttons[i]->render(renderer);
 	}
 
 	void checkButtons() const {
-		for (int i = 0; i < buttons.size(); i++) {
+		for (size_t i = 0; i < buttons.size(); i++) {
 			buttons[i]->checkButton(inputEvent);
 			//if (!buttons[i]->isClicked() && buttons[i]->mouseClickInside(inputEvent)) buttons[i]->playAction();
 			//else buttons[i]->mouseClickInside(inputEvent);
@@ -347,7 +353,7 @@ public:
 	template <class paramType>
 	Button<paramType>& getButton(const std::string& name) const {
 		ASSERT(nameUsed(name), "There is no Button with this name.\n");
-		for (int i = 0; i < buttons.size(); i++)
+		for (size_t i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) return dynamic_cast<Button<paramType>&>(*buttons[i]);
 	}
 };
