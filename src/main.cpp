@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 	bm.addRectTextButton<Camera*>("b2", Point2D<int>(200, 480), 70, 25, "Camera 2");
 	bm.getButton<Camera*>("b2").setAction([](Camera* cam) {cam->setCurrent(); }, &cam2);
 
-	manager.imprtShapeObj("Earth", 0.001);
+	manager.imprtShapeObj(pth + std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
 	
 	r.updateTriangles(manager);
 	Mouse mouse;
