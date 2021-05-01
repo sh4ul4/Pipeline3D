@@ -88,3 +88,5 @@ std::string pth = checkLocalisation("fonts");
 #include "userinteraction/TextInput.hpp"
 
 #include "userinteraction/Button.hpp"
+
+#include "userinteraction/ScrollArea.hpp"
