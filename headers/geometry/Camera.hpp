@@ -114,6 +114,8 @@ public:
 	 * Vitesse de mouvement de la camera pendant qu'elle suit le chemin.
 	 */
 	int pathMoveSpeed = 1;
+
+	Vector look{ 0,0,0 };
 public:
 	/**
 	 * Un constructeur.
@@ -197,10 +199,6 @@ public:
 		viewMatrix.m[1] = { xaxis.y, yaxis.y, zaxis.y, 0 };
 		viewMatrix.m[2] = { xaxis.z, yaxis.z, zaxis.z, 0 };
 		viewMatrix.m[3] = { -xaxis.dot(eyeVec), -yaxis.dot(eyeVec), -zaxis.dot(eyeVec), 1 };
-		//std::cout << "eye" << std::endl;
-		//eye.print(); eyeVec.print();
-		//std::cout << "matrix" << std::endl;
-		//viewMatrix.print();
 		return viewMatrix;
 	}
 
@@ -219,7 +217,6 @@ public:
 
 	void makeWorldToCameraMatrix(Matrix<4, 4>& m) {
 		m = inverseMatrix(viewMatrix);
-		//m = viewMatrix.inverse();
 	}
 
 	/**
@@ -271,12 +268,11 @@ public:
 	Vector getMovementVector(const float& front, const float& side, const float& up, const float& speed) const {
 		Vector v(front, side, up);
 		v.normalizeOnLength(speed);
-		Matrix<4, 4> tmp;
-		tmp.m[0][0] = -v.y;
-		tmp.m[0][1] = -v.z;
-		tmp.m[0][2] = -v.x;
-		tmp = optimizedProduct(tmp, inverseViewMatrix);
-		const Vector res(tmp.m[0][0], tmp.m[0][1], tmp.m[0][2]);
+		const Vector res(
+			-v.y * inverseViewMatrix.m[0][0] - v.z * inverseViewMatrix.m[1][0] - v.x * inverseViewMatrix.m[2][0] + inverseViewMatrix.m[3][0],
+			-v.y * inverseViewMatrix.m[0][1] - v.z * inverseViewMatrix.m[1][1] - v.x * inverseViewMatrix.m[2][1] + inverseViewMatrix.m[3][1],
+			-v.y * inverseViewMatrix.m[0][2] - v.z * inverseViewMatrix.m[1][2] - v.x * inverseViewMatrix.m[2][2] + inverseViewMatrix.m[3][2]
+		);
 		return res;
 	}
 
@@ -304,8 +300,8 @@ public:
 	 * @return
 	 */
 	float relationToClipPlane(const Vertex& point) const {
-		const Vertex position = pos + getMovementVector(1, 0, 0, near);
-		const Vector n = getMovementVector(1, 0, 0, 10); // should be negative if going backwards !
+		const Vertex position = pos + look * near;
+		const Vector n = look * 10; // should be negative if going backwards !
 		return n.x * (point.x - position.x) + n.y * (point.y - position.y) + n.z * (point.z - position.z);
 	}
 
@@ -455,6 +451,7 @@ public:
 				const Vector look = getMovementVector(1, 0, 0, distanceToSubject);
 				pos = subject - look;
 			}
+			look = getMovementVector(1, 0, 0, 1);
 		}
 		else SDL_ShowCursor(true);
 		refresh2D();
