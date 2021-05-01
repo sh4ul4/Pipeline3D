@@ -67,6 +67,8 @@ public:
 	 * @brief Met à jour tout l'input localement en écrivant dans mouse, keyboard et text.
 	 */
 	void update() {
+		mouse.wheeldown = 0;
+		mouse.wheelup = 0;
 		//mouse.xmov = mouse.ymov = 0;
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) exit(0); // exit the window
@@ -78,6 +80,12 @@ public:
 				text.pop_back();
 			}
 			//mouse
+			if (event.type == SDL_MOUSEWHEEL && event.wheel.y > 0) {
+				mouse.wheelup++;
+			}
+			if (event.type == SDL_MOUSEWHEEL && event.wheel.y < 0) {
+				mouse.wheeldown++;
+			}
 			SDL_GetRelativeMouseState(&mouse.xmov, &mouse.ymov);
 			if (event.type == SDL_MOUSEMOTION) { // mouse motions
 				mouse.moving = true;
