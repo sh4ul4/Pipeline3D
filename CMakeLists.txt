@@ -59,6 +59,7 @@ set(HEADERS headers/rasterization/Bitmap.hpp
 			headers/geometry/Vertex.hpp
 			headers/display/Window.hpp
 			headers/userinteraction/Button.hpp
+			headers/userinteraction/ScrollArea.hpp
 			)
 
 
