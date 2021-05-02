@@ -33,7 +33,13 @@ public:
      * @param position Paire contenant la coordonnée x et y du centre du corps celeste
      * @param name Nom de l'astre
      */
-    Luminary(float radius, double mass, Point2D &position, std::string name);
+    Luminary(float radius, double mass, Point2D &position, std::string name)
+    {
+        this->radius = radius;
+        this->mass = mass;
+        this->position = position;
+        this->name = name;
+    }
 
     Luminary() = delete;
 
@@ -48,28 +54,40 @@ public:
      * 
      * @param rayon Nouveau rayon à affecter
      */
-    void setRadius(float radius);
+    void setRadius(float radius)
+    {
+        this->radius = radius;
+    }
 
     /**
      * @brief Affecte une nouvelle masse à la planète courante
      * 
      * @param masse Nouvelle masse à affectée
      */
-    void setMass(double mass);
+    void setMass(double mass)
+    {
+        this->mass = mass;
+    }
 
     /**
      * @brief Affecte une nouvelle position au corps celeste
      * 
      * @param position Un point 2D qui sera les nouvelles coordonnées de l'astre courant
      */
-    void setPosition(Point2D &position);
+    void setPosition(Point2D &position)
+    {
+        this->position = position;
+    }
 
     /**
      * @brief Change le nom de l'astre
      * 
      * @param name Nouveau nom donné à l'astre
      */
-    void setName(std::string name);
+    void setName(std::string name)
+    {
+        this->name = name;
+    }
 
     /* ----- GETTERS ----- */
 
@@ -78,26 +96,38 @@ public:
      * 
      * @return Retourne le rayon de la planète (float)
      */
-    float getRadius();
+    float getRadius()
+    {
+        return radius;
+    }
 
     /**
      * @brief Récupère la masse de la planète courante
      * 
      * @return Retourn la masse de la planète (double) 
      */
-    double getMass();
+    double getMass()
+    {
+        return mass;
+    }
 
     /**
      * @brief Récupère les coordonnées du centre du corps celeste
      * 
      * @return Objet du type Point2D 
      */
-    Point2D getPosition();
+    Point2D getPosition()
+    {
+        return position;
+    }
 
     /**
      * @brief Récupère lenom de l'astre
      * 
      * @return Nom de l'astre
      */
-    std::string getName();
+    std::string getName()
+    {
+        return name;
+    }
 };

@@ -54,7 +54,10 @@ public:
      * @param speed Nouvelle vitesse à affecter. 
      *      speed.first --> axe x, speed.second --> axe y
      */
-    void setSpeed(const Point2D<double> &speed);
+    void setSpeed(const Point2D<double> &speed)
+    {
+        this->speed = speed;
+    }
 
     /**
      * @brief Affecte une nouvelle vitesse sur les deux axes (x,y)
@@ -62,24 +65,36 @@ public:
      * @param initialSpeed Nouvelle vitesse initiale à affecter.
      *      initialSpeed.first --> axe x, initialSpeed.second --> axe y
      */
-    void setInitialSpeed(const Point2D<double> &initialSpeed);
+    void setInitialSpeed(const Point2D<double> &initialSpeed)
+    {
+        this->initialSpeed = initialSpeed;
+    }
 
     /**
      * @brief Affecte une nouvelle position initiale à la planète
      * 
      * @param initialPosition Nouvelle position initiale
      */
-    void setInitialPosition(const Point2D &initialPosition);
+    void setInitialPosition(const Point2D &initialPosition)
+    {
+        this->initialPosition = initialPosition;
+    }
 
     /**
      * @brief Affecte une nouvelle acceleration à la planète
      * 
      * @param accelaration Nouvelle acceleration
      */
-    void setAcceleration(const Point2D<double> &accelaration);
+    void setAcceleration(const Point2D<double> &acceleration)
+    {
+        this->acceleration = acceleration;
+    }
 
     // Change la visiblité de la planète
-    void changeVisibility();
+    void changeVisibility()
+    {
+        visible = ~visible;
+    }
 
     /* ----- GETTERS ----- */
 
@@ -88,33 +103,48 @@ public:
      * 
      * @return Vecteur vitesse 
      */
-    Point2D<double> getSpeed();
+    Point2D<double> getSpeed()
+    {
+        return speed;
+    }
 
     /**
      * @brief Récupère la vitesse initiale sur l'axe x et  l'axe y
      * 
      * @return Vecteur vitesse initiale 
      */
-    Point2D<double> getInitialSpeed();
+    Point2D<double> getInitialSpeed()
+    {
+        return initialSpeed;
+    }
 
     /**
      * @brief Récupère la position initiale
      * 
      * @return Point2D représentant la position initiale de la planète
      */
-    Point2D getInitialPosition();
+    Point2D getInitialPosition()
+    {
+        return initialPosition;
+    }
 
     /**
      * @brief Récupère l'acceleration de la planète
      * 
      * @return Vecteur acceleration
      */
-    Point2D<double> getAcceleration();
+    Point2D<double> getAcceleration()
+    {
+        return acceleration;
+    }
 
     /**
      * @brief Récupère la visibilité de la planète
      * 
      * @return 'true' si la planète est visible et considéré, 'false' sinon 
      */
-    bool getVisibility();
+    bool getVisibility()
+    {
+        return visible;
+    }
 };
