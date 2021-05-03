@@ -89,6 +89,8 @@ private:
 		for (size_t i = 0; i < size; i++) {
 			toRender[i]->setScreenCoord(window, true, center);
 			// render triangle
+			toRender[i]->fillIt(false);
+			toRender[i]->contourIt(true);
 			toRender[i]->render(window, globalTexture, center);
 		}
 		//globalTexture.applySobel();
