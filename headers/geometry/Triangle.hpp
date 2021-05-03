@@ -89,12 +89,12 @@ public:
 		const float rela = Camera::getCurrent().relationToClipPlane(a);
 		const float relb = Camera::getCurrent().relationToClipPlane(b);
 		const float relc = Camera::getCurrent().relationToClipPlane(c);
-		if (rela <= -100 || relb <= -100 || relc <= -100)return; // early exit if point is too far behind clip plane
+		//if (rela <= -100 || relb <= -100 || relc <= -100)return; // early exit if point is too far behind clip plane
 		if (rela <= 0)nearclipA = true;
 		if (relb <= 0)nearclipB = true;
 		if (relc <= 0)nearclipC = true;
 		const int pointsToClip = nearclipA + nearclipB + nearclipC;
-		if(pointsToClip == 0 || !clip)visible = true;
+		/*if(pointsToClip == 0 || !clip)*/visible = true;
 #ifdef CLIP
 		else if (pointsToClip == 2) {
 			// a inside clip-zone
@@ -215,10 +215,10 @@ public:
 			}
 		}
 #endif // CLIP
-		else {
+		/*else {
 			visible = false;
 			return;
-		}
+		}*/
 
 		// far-clipping + 2D points calculation
 		
@@ -233,10 +233,6 @@ public:
 			bScreen = Camera::getCurrent().get2D(mb, farclipB, center);
 			cScreen = Camera::getCurrent().get2D(mc, farclipC, center);
 		}
-		if (/*!nearclipA && !nearclipB && !nearclipC &&*/!farclipA && !farclipB && !farclipC && visible) { // no clip
-			visible = true;
-		}
-		else visible = false;
 	}
 
 	// dessiner le triangle dans la frame
