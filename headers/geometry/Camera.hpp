@@ -7,6 +7,8 @@
  * @private `pos`			Position de la camera.
  * @private `subject`			Si il y a un sujet, la camera tourne et ce concentre sur celui ci.
  * @private `distanceToSubject`		Vecteur distance entre [pos] et [sujet].
+ * @private `LastAngleX`		Angle d'observation horizontal.
+ * @private `LastAngleY`		Angle d'observation vertical.
  *
  * @public `hasSubject`		Si la camera a un sujet ou non.
  * @public `angleView`		L'angle de vue, exprimé en degrées.
@@ -44,6 +46,16 @@ private:
 	 * Vecteur distance entre [pos] et [sujet].
 	 */
 	float distanceToSubject = 50;
+	/**
+	 * Une variable privée.
+	 * Angle d'observation horizontal.
+	 */
+	float LastAngleX = 0;
+	/**
+	 * Une variable privée.
+	 * Angle d'observation vertical.
+	 */
+	float LastAngleY = 0;
 
 	Mouse mouse;
 
@@ -114,8 +126,6 @@ public:
 	 * Vitesse de mouvement de la camera pendant qu'elle suit le chemin.
 	 */
 	int pathMoveSpeed = 1;
-
-	Vector look{ 0,0,0 };
 public:
 	/**
 	 * Un constructeur.
@@ -198,7 +208,11 @@ public:
 		viewMatrix.m[0] = { xaxis.x, yaxis.x, zaxis.x, 0 };
 		viewMatrix.m[1] = { xaxis.y, yaxis.y, zaxis.y, 0 };
 		viewMatrix.m[2] = { xaxis.z, yaxis.z, zaxis.z, 0 };
-		viewMatrix.m[3] = { -xaxis.dot(eyeVec), -yaxis.dot(eyeVec), -zaxis.dot(eyeVec), 1 };
+		viewMatrix.m[3] = { - xaxis.dot(eyeVec), - yaxis.dot(eyeVec), - zaxis.dot(eyeVec), 1 };
+		//std::cout << "eye" << std::endl;
+		//eye.print(); eyeVec.print();
+		//std::cout << "matrix" << std::endl;
+		//viewMatrix.print();
 		return viewMatrix;
 	}
 
@@ -217,6 +231,7 @@ public:
 
 	void makeWorldToCameraMatrix(Matrix<4, 4>& m) {
 		m = inverseMatrix(viewMatrix);
+		//m = viewMatrix.inverse();
 	}
 
 	/**
@@ -268,11 +283,12 @@ public:
 	Vector getMovementVector(const float& front, const float& side, const float& up, const float& speed) const {
 		Vector v(front, side, up);
 		v.normalizeOnLength(speed);
-		const Vector res(
-			-v.y * inverseViewMatrix.m[0][0] - v.z * inverseViewMatrix.m[1][0] - v.x * inverseViewMatrix.m[2][0] + inverseViewMatrix.m[3][0],
-			-v.y * inverseViewMatrix.m[0][1] - v.z * inverseViewMatrix.m[1][1] - v.x * inverseViewMatrix.m[2][1] + inverseViewMatrix.m[3][1],
-			-v.y * inverseViewMatrix.m[0][2] - v.z * inverseViewMatrix.m[1][2] - v.x * inverseViewMatrix.m[2][2] + inverseViewMatrix.m[3][2]
-		);
+		Matrix<4, 4> tmp;
+		tmp.m[0][0] = -v.y;
+		tmp.m[0][1] = -v.z;
+		tmp.m[0][2] = -v.x;
+		tmp = optimizedProduct(tmp, inverseViewMatrix);
+		const Vector res(tmp.m[0][0], tmp.m[0][1], tmp.m[0][2]);
 		return res;
 	}
 
@@ -292,7 +308,7 @@ public:
 	 * @param point Point où se deplace la caméra
 	 * @return
 	 */
-	void moveTo(const Vertex& point) { if (!locked) pos = point; }
+	void moveTo(const Vertex& point) { if(!locked) pos = point; }
 
 	/**
 	 * @brief Retourner la distance par rapport au point. Négatif si le point est derrière la caméra.
@@ -300,8 +316,8 @@ public:
 	 * @return
 	 */
 	float relationToClipPlane(const Vertex& point) const {
-		const Vertex position = pos + look * near;
-		const Vector n = look * 10; // should be negative if going backwards !
+		const Vertex position = pos + getMovementVector(1, 0, 0, near);
+		const Vector n = getMovementVector(1, 0, 0, 10); // should be negative if going backwards !
 		return n.x * (point.x - position.x) + n.y * (point.y - position.y) + n.z * (point.z - position.z);
 	}
 
@@ -321,26 +337,6 @@ public:
 			return { (int)m.m[0][0],(int)m.m[0][1], 0 };
 		}
 		m = optimizedProduct(m, projectionMatrix);
-		//homogeneous clip space
-		int x = (int)(m.m[0][0] / m.m[0][3]);
-		int y = (int)(m.m[0][1] / m.m[0][3]);
-		//NDC space[-1,1]
-		x += center.x;
-		y += center.y;
-		//raster space
-		return { x, y, m.m[0][3] };
-	}
-
-	Vertex get2DWithoutPerspective(Matrix<4, 4> m, bool& clip, const Point2D<int>& center, Matrix<4, 4> viewMatrix) {
-		//world space
-		clip = false;
-		m.m[0][3] = 1;
-		m = optimizedProduct(m, viewMatrix);
-		// camera space
-		if (optimizedLength(m) > far) {
-			clip = true;
-			return { (int)m.m[0][0],(int)m.m[0][1], 0 };
-		}
 		//homogeneous clip space
 		int x = (int)(m.m[0][0] / m.m[0][3]);
 		int y = (int)(m.m[0][1] / m.m[0][3]);
@@ -451,7 +447,6 @@ public:
 				const Vector look = getMovementVector(1, 0, 0, distanceToSubject);
 				pos = subject - look;
 			}
-			look = getMovementVector(1, 0, 0, 1);
 		}
 		else SDL_ShowCursor(true);
 		refresh2D();

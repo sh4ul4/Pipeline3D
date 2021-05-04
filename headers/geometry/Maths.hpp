@@ -33,12 +33,6 @@ namespace Maths{
 		else return x;
 	}
 
-	inline int clamp(const int& x, const int& min, const int& max) {
-		if (x < min) return min;
-		else if (x > max) return max;
-		else return x;
-	}
-
 	// renvoie le point du segment le plus proche du point
 	Vertex ClosestPointOnLine(const Vertex& l1, const Vertex& l2, const Vertex& p) {
 		const Vector line = l2 - l1;

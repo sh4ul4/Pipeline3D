@@ -19,7 +19,7 @@ private:
 		MTL(const std::string& name) :name(name) {}
 	};
 
-	void caseMtllib(std::istringstream& iss, std::vector<MTL>& mtls, const std::string& path) {
+	void caseMtllib(std::istringstream& iss, std::vector<MTL>& mtls) {
 		std::string mtlpath;
 		iss >> mtlpath;
 		std::string tmp;
@@ -27,9 +27,9 @@ private:
 			mtlpath += " " + tmp;
 		}
 
-		std::ifstream mtlfile(path + mtlpath);
+		std::ifstream mtlfile(pth + std::string("OBJ/") + mtlpath);
 		if (!mtlfile.is_open()) {
-			mtlfile = std::ifstream(path + mtlpath);
+			mtlfile = std::ifstream(pth + std::string("OBJ/") + mtlpath);
 		}
 		if (!mtlfile.is_open()) {
 			std::cout << "no such mtl file" << std::endl;
@@ -60,7 +60,7 @@ private:
 			if (!type.compare("map_Ka") && mtls.size() > 0) {
 				std::string imgpath;
 				iss >> imgpath;
-				Bitmap::newBitmap(imgpath, path + imgpath);
+				Bitmap::newBitmap(imgpath, pth + std::string("OBJ/") + imgpath);
 				mtls.back().bmpDim.x = Bitmap::getBitmap(imgpath)->surface->w;
 				mtls.back().bmpDim.y = Bitmap::getBitmap(imgpath)->surface->h;
 				mtls.back().bmpPath = imgpath;
@@ -68,7 +68,7 @@ private:
 			if (!type.compare("map_Kd") && mtls.size() > 0) {
 				std::string imgpath;
 				iss >> imgpath;
-				Bitmap::newBitmap(imgpath, path + imgpath);
+				Bitmap::newBitmap(imgpath, pth + std::string("OBJ/") + imgpath);
 				mtls.back().bmpDim.x = Bitmap::getBitmap(imgpath)->surface->w;
 				mtls.back().bmpDim.y = Bitmap::getBitmap(imgpath)->surface->h;
 				mtls.back().bmpPath = imgpath;
@@ -80,7 +80,7 @@ private:
 		if (mtls.size() <= 0) { std::cout << "There is no loaded mtl file." << std::endl; return; }
 		std::string mtlname;
 		iss >> mtlname;
-		for (size_t i = 0; i < mtls.size(); i++) {
+		for (int i = 0; i < mtls.size(); i++) {
 			if (!mtls[i].name.compare(mtlname)) {
 				mtls.push_back(mtls[i]);
 				mtls.erase(mtls.begin() + i);
@@ -90,13 +90,13 @@ private:
 		}
 	}
 
-	void caseO(std::istringstream& iss, std::vector<MTL>& mtls, std::vector<Triangle>& trs, std::string& currentObject, const std::string& shapeName) {
+	void caseG(std::istringstream& iss, std::vector<MTL>& mtls, std::vector<Triangle>& trs, std::string& currentObject) {
 		Bitmap* bmp = nullptr;
 		if (mtls.size() > 0) {
 			bmp = mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr;
 		}
 		if (currentObject.length() > 0 && trs.size() > 0)
-			addShape(shapeName + currentObject, trs, { 0,0,0 }, bmp);
+			addShape(currentObject, trs, { 0,0,0 }, bmp);
 		iss >> currentObject;
 		trs.clear();
 	}
@@ -221,7 +221,7 @@ private:
 					v[ind[1][0] - 1],
 					v[ind[2][0] - 1],
 					vn[ind[0][2] - 1],
-					col,
+					col, 
 					bmp,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D<float>(0, 0),
 					vt.size() > 0 ? vt[ind[1][1] - 1] : Point2D<float>(0, 0),
@@ -231,7 +231,7 @@ private:
 					v[ind[2][0] - 1],
 					v[ind[3][0] - 1],
 					vn[ind[0][2] - 1],
-					col,
+					col, 
 					bmp,
 					vt.size() > 0 ? vt[ind[0][1] - 1] : Point2D<float>(0, 0),
 					vt.size() > 0 ? vt[ind[2][1] - 1] : Point2D<float>(0, 0),
@@ -381,25 +381,21 @@ public:
 	 *		Attributs
 	 *===========================================================================================*/
 
-	 // Un vecteur de pointeurs vers les shapes
+	// Un vecteur de pointeurs vers les shapes
 	std::vector<std::unique_ptr<Shape>> shapes;
 
 	/*=============================================================================================
 	 *		Méthodes
 	 *===========================================================================================*/
 
-	void imprtShapeObj(const std::string& path, const std::string& source, const std::string& shapeName, const float& scale = 1) {
-		if (nameTaken(shapeName)) {
-			PRINT_ON_ERR("Name for shape is already taken");
-			return;
-		}
-		std::ifstream in(path + source);
+	void imprtShapeObj(const std::string& shape, const float& scale = 1) {
+		std::ifstream in(pth + std::string("OBJ/") + shape + ".obj");
 		if (!in.is_open()) {
-			in = std::ifstream(path + source);
+			in = std::ifstream(pth + std::string("OBJ/") + shape + ".OBJ");
 		}
 		if (!in.is_open()) {
-			PRINT_ON_ERR(std::string("There's no file named ") + path + source);
-			return;
+			std::cout << "no such obj file" << std::endl;
+			return; // no such file
 		}
 		std::string currentObject;
 		std::vector<MTL> mtls;
@@ -413,13 +409,13 @@ public:
 			std::string type;
 			iss >> type;
 			if (!type.compare("mtllib")) {
-				caseMtllib(iss, mtls, path);
+				caseMtllib(iss, mtls);
 			}
 			if (!type.compare("usemtl")) {
 				caseUsemtl(iss, mtls);
 			}
-			if (/*!type.compare("g") || */!type.compare("o")) {
-				caseO(iss, mtls, trs, currentObject, shapeName);
+			if (!type.compare("g") || !type.compare("o")) {
+				caseG(iss, mtls, trs, currentObject);
 			}
 			if (!type.compare("v")) {
 				caseV(iss, v, scale);
@@ -441,9 +437,8 @@ public:
 		if (mtls.size() > 0) {
 			bmp = mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr;
 		}
-		std::string lastShape(shapeName + currentObject);
-		if (lastShape.length() > 0 && trs.size() > 0)
-			addShape(lastShape, trs, { 0,0,0 }, bmp);
+		if (currentObject.length() > 0 && trs.size() > 0)
+			addShape(currentObject, trs, { 0,0,0 }, bmp);
 	}
 
 	void exprtShapeObj(const std::string& shape) {
@@ -461,7 +456,7 @@ public:
 		out << "#\n\n";
 		out << "o " + shape + "\n";
 		out << "mtllib " << shape << ".mtl\n";
-		for (size_t tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "v "
 				<< getShape(shape).triangles[tr].a.x << " "
@@ -479,7 +474,7 @@ public:
 				<< getShape(shape).triangles[tr].c.z << "\n";
 		}
 		out << "\n";
-		for (size_t tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "vt "
 				<< (float)getShape(shape).triangles[tr].bmpA.x << " "
@@ -494,7 +489,7 @@ public:
 				<< (float)getShape(shape).triangles[tr].bmpC.y << "\n";
 		}
 		out << "\n";
-		for (size_t tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "vn "
 				<< getShape(shape).triangles[tr].normalVec.x << " "
@@ -503,7 +498,7 @@ public:
 		}
 		out << "\ng " + shape + "\n";
 		out << "usemtl " << shape << "_mtl \n";
-		for (size_t tr = 0; tr < getShape(shape).triangles.size(); tr++) {
+		for (int tr = 0; tr < getShape(shape).triangles.size(); tr++) {
 			out << std::fixed << std::setprecision(8);
 			out << "f " << std::to_string((tr + 1) * 3 - 2) << "/" << std::to_string((tr + 1) * 3 - 2) << "/" << std::to_string(tr + 1) << " ";
 			out << std::to_string((tr + 1) * 3 - 1) << "/" << std::to_string((tr + 1) * 3 - 1) << "/" << std::to_string(tr + 1) << " ";
@@ -514,9 +509,9 @@ public:
 	// pas terminé
 	void exprt(const std::string& name)const {
 		std::ofstream out(name + ".flanf");
-		for (size_t s = 0; s < shapes.size(); s++) {
+		for (int s = 0; s < shapes.size(); s++) {
 			out << "shape " + shapes[s]->name + "\n";
-			for (size_t t = 0; t < shapes[s]->triangles.size(); t++) {
+			for (int t = 0; t < shapes[s]->triangles.size(); t++) {
 				out << "tr ";
 				out << (Uint8)shapes[s]->triangles[t].color.r << " "
 					<< (Uint8)shapes[s]->triangles[t].color.g << " "
@@ -546,69 +541,69 @@ public:
 	}
 
 	// pas terminé
-	void imprt(const std::string& name) {
-		std::ifstream in(name + ".flanf");
-		std::string nxt;
-		while (in >> nxt) {
-			//std::cout << nxt << std::endl;
-			if (!nxt.compare("shape")) {
-				std::string name;
-				in >> name;
-				std::string tr;
-				std::vector<Triangle> trs;
-				while (in >> tr) {
-					if (!tr.compare("tr")) {
-						Vertex a, b, c;
-						Vector n{};
-						Color color = black;
-						bool fill = true;
-						std::string bmpName;
-						std::string bmpPath;
-						in >> color.r;
-						in >> color.g;
-						in >> color.b;
-						in >> color.a;
-						in >> fill;
-						in >> bmpName; // handle "null"
-						in >> bmpPath;
-						in >> a.x;
-						in >> a.y;
-						in >> a.z;
-						in >> b.x;
-						in >> b.y;
-						in >> b.z;
-						in >> c.x;
-						in >> c.y;
-						in >> c.z;
-						trs.push_back(Triangle(a, b, c, n, color, fill));
-					}
-					else if (!tr.compare("endtr")) continue;
-					else if (!tr.compare("endshape")) break;
-				}
-				std::cout << name << std::endl;
-				for (auto& tr : trs) {
-					std::cout << tr.fill << std::endl;
-					std::cout << (unsigned)tr.color.r << " " << (unsigned)tr.color.g << " " << (unsigned)tr.color.b << " " << (unsigned)tr.color.a << std::endl;
-				}
-				//Bitmap::newBitmap(bmpName)
-				addShape(name, trs, { 0,0,0 }, nullptr);
-			}
-		}
-	}
+	// void imprt(const std::string& name) {
+	// 	std::ifstream in(name + ".flanf");
+	// 	std::string nxt;
+	// 	while (in >> nxt) {
+	// 		//std::cout << nxt << std::endl;
+	// 		if (!nxt.compare("shape")) {
+	// 			std::string name;
+	// 			in >> name;
+	// 			std::string tr;
+	// 			std::vector<Triangle> trs;
+	// 			while (in >> tr) {
+	// 				if (!tr.compare("tr")) {
+	// 					Vertex a, b, c;
+	// 					Vector n{};
+	// 					Color color = black;
+	// 					bool fill = true;
+	// 					std::string bmpName;
+	// 					std::string bmpPath;
+	// 					in >> (Uint8)color.r;
+	// 					in >> (Uint8)color.g;
+	// 					in >> (Uint8)color.b;
+	// 					in >> (Uint8)color.a;
+	// 					in >> (bool)fill;
+	// 					in >> (std::string)bmpName; // handle "null"
+	// 					in >> (std::string)bmpPath;
+	// 					in >> a.x;
+	// 					in >> a.y;
+	// 					in >> a.z;
+	// 					in >> b.x;
+	// 					in >> b.y;
+	// 					in >> b.z;
+	// 					in >> c.x;
+	// 					in >> c.y;
+	// 					in >> c.z;
+	// 					trs.push_back(Triangle(a, b, c, n, color, fill));
+	// 				}
+	// 				else if (!tr.compare("endtr")) continue;
+	// 				else if (!tr.compare("endshape")) break;
+	// 			}
+	// 			std::cout << name << std::endl;
+	// 			for (auto& tr : trs) {
+	// 				std::cout << tr.fill << std::endl;
+	// 				std::cout << (unsigned)tr.color.r << " " << (unsigned)tr.color.g << " " << (unsigned)tr.color.b << " " << (unsigned)tr.color.a << std::endl;
+	// 			}
+	// 			//Bitmap::newBitmap(bmpName)
+	// 			addShape(name, trs, { 0,0,0 }, nullptr);
+	// 		}
+	// 	}
+	// }
 
 	/**
 	 * @brief Vérifie si une shape avec le nom donnée existe déjà
-	 *
+	 * 
 	 * @param name Nom à vérifier
 	 */
 	bool nameTaken(const std::string& name) const {
-		for (size_t i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return true;
+		for(int i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return true;
 		return false;
 	}
 
 	/**
 	 * @brief Donne le premier nom unique disponible
-	 *
+	 * 
 	 * @param name Nom à vérifier
 	 */
 	std::string giveUniqueName() const {
@@ -622,37 +617,37 @@ public:
 	 * @param name Nom de la shape désirée
 	 */
 	Shape& getShape(const std::string& name) {
-		for (size_t i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return *shapes[i];
+		for (int i = 0; i < shapes.size(); i++) if (!name.compare(shapes[i]->name)) return *shapes[i];
 		std::cout << "Error: there is no shape named " << name << std::endl;
 		exit(1);
 	}
 
 	/**
 	 * @brief Ajouter une nouvelle forme à partir de triangles, d'un centre et d'une texture
-	 *
+	 * 
 	 * @param Nom unique de la shape
 	 * @param triangles Vecteur de triangles qui composent la forme
 	 * @param center Le sommet centre de la forme
 	 * @param bmp La texture de la forme
 	 */
 	void addShape(const std::string& name, const std::vector<Triangle>& triangles, const Vertex& center, Bitmap* bmp = nullptr) {
-		if (nameTaken(name)) { std::cout << "Name taken" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
 		shapes.emplace_back(new Shape(name, triangles, center, bmp));
 	}
 
 	/**
 	 * @brief Ajouter une nouvelle forme à partir d'une forme existante
-	 *
+	 * 
 	 * @param shape Shape à copier
 	 */
 	void addShape(const Shape& shape) {
-		if (nameTaken(shape.name)) { std::cout << "Name taken" << std::endl; return; }
+		if (nameTaken(shape.name)) { std::cout << "error" << std::endl; return; }
 		shapes.emplace_back(new Shape(shape));
 	}
 
 	/**
 	 * @brief Ajoute une nouvelle sphere
-	 *
+	 * 
 	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param radius Valeur numérique représentant l'angle de la sphère
@@ -666,7 +661,7 @@ public:
 
 	/**
 	 * @brief Ajoute une nouvelle sphère
-	 *
+	 * 
 	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param radius Valeur numérique représentant l'angle de la sphère
@@ -680,7 +675,7 @@ public:
 
 	/**
 	 * @brief Ajoute une sphère pré-existante
-	 *
+	 * 
 	 * @param sphere Sphère qui sera ajoutée
 	 */
 	void addSphere(const Sphere& sphere) {
@@ -690,7 +685,7 @@ public:
 
 	/**
 	 * @brief Ajoute un cube
-	 *
+	 * 
 	 * @param Nom unique de la shape
 	 * @param center Sommet représentant le centre de la sphère
 	 * @param width indique la largeur du cube (Taille des arètes)
@@ -704,7 +699,7 @@ public:
 
 	/**
 	 * @brief Ajoute un cube pré-existant
-	 *
+	 * 
 	 * @param cube Cube qui sera ajouté
 	 */
 	void addCube(const Cube& cube) {
@@ -714,7 +709,7 @@ public:
 
 	/**
 	 * @brief Ajoute un rectangle
-	 *
+	 * 
 	 * @param Nom unique de la shape
 	 * @param a,b,c,d Sommets du rectangle, permettant de le dessiner
 	 * @param bmp Bitmap
@@ -726,7 +721,7 @@ public:
 
 	/**
 	 * @brief Ajoute un rectangle pré-existant
-	 *
+	 * 
 	 * @param rectangle Rectangle qui sera ajouté
 	 */
 	void addRectangle(const Rectangle& rectangle) {
@@ -740,7 +735,7 @@ public:
 	 * @param name Nom de la shape recherchée
 	 */
 	void removeShape(const std::string& name) {
-		for (size_t i = 0; i < shapes.size(); i++)
+		for (int i = 0; i < shapes.size(); i++)
 			if (!shapes[i]->name.compare(name)) {
 				shapes.erase(shapes.begin() + i);
 				shapes.shrink_to_fit();
@@ -751,7 +746,7 @@ public:
 
 	/**
 	 * @brief ???
-	 *
+	 * 
 	 * @param window Fenêtre avec laquelle on interagit
 	 */
 	void set2ds(const Window& window, const Point2D<int>& center) {
@@ -763,18 +758,18 @@ public:
 
 	/**
 	 * @brief ???
-	 *
-	 * @param startingPos
-	 * @param movement
-	 * @param intersectionZone
-	 * @param intersectionPoint
-	 * @param interactionDistance
+	 * 
+	 * @param startingPos 
+	 * @param movement 
+	 * @param intersectionZone 
+	 * @param intersectionPoint 
+	 * @param interactionDistance 
 	 * @return Retourne 'True' si... et 'False' si...
 	 */
-	bool getFirstInteraction(const Vertex& startingPos, const Vector& movement, Triangle& intersectionZone, Vertex& intersectionPoint, const float& interactionDistance) const {
+	bool getFirstInteraction(const Vertex &startingPos, const Vector &movement, Triangle &intersectionZone, Vertex &intersectionPoint, const float &interactionDistance) const {
 		const Vertex goalPos = startingPos + movement;
-		for (size_t i = 0; i < shapes.size(); i++) {
-			for (size_t j = 0; j < shapes[i]->triangles.size(); j++) {
+		for (int i = 0; i < shapes.size(); i++) {
+			for (int j = 0; j < shapes[i]->triangles.size(); j++) {
 				/*if (shapes[i]->triangles[j].a.distance(startingPos) > interactionDistance + 10 &&
 					shapes[i]->triangles[j].b.distance(startingPos) > interactionDistance + 10 &&
 					shapes[i]->triangles[j].c.distance(startingPos) > interactionDistance + 10)continue;*/

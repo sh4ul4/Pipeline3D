@@ -10,19 +10,19 @@ private:
 	 * Une variable privée.
 	 * Indique le temps de départ.
 	 */
-	Uint32 start = 0;
+	Uint32 start = NULL;
 
 	/**
 	 * Une variable privée.
 	 * Indique le temps actuel.
 	 */
-	Uint32 current = 0;
+	Uint32 current = NULL;
 
 	/**
 	 * Une variable privée.
 	 * Indique le temps maximal.
 	 */
-	Uint32 stop = 0;
+	Uint32 stop = NULL;
 
 public:
 	// suppression du constructeur de base
@@ -38,21 +38,19 @@ public:
 		stop = start + end;
 	}
 
-	/**
-	 * @brief Initialise le chrono à @param end après le tic actuel et renvoie vrai si le tic a été dépassé
-	 */ 
-	bool set(const Uint32& end)  {
+	bool set(const Uint32& end)
+	{
 		start = clock(); // gets current time
-
-		if (stop == 0)  
+		if (stop == NULL)
+		{
 			stop = start + end; // inits chrono
-
-		if (start > stop)  {
-			start = 0;
-			stop = 0;
+		}
+		if (start > stop)
+		{
+			start = NULL;
+			stop = NULL;
 			return true; // returns 1 if time is elapsed
 		}
-
 		return false; // returns 0 in case chrono is still runnning
 	}
 
@@ -62,9 +60,10 @@ public:
 	 */
 	bool checkTimer() {
 		start = clock(); // gets current time
-		if (start > stop)  {
-			start = 0;
-			stop = 0;
+		if (start > stop)
+		{
+			start = NULL;
+			stop = NULL;
 			return true; // returns 1 if time is elapsed
 		}
 		return false; // returns 0 in case chrono is still runnning

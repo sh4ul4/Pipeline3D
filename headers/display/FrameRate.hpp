@@ -13,7 +13,7 @@ private:
 	 * Une variable privée.
 	 * Temps du prochain rendu de frame
 	 */
-	Uint32 nextTime = 0; 
+	Uint32 nextTime = NULL; 
 	
 	/**
 	 * Une variable privée.
@@ -25,22 +25,22 @@ private:
 	 * Une variable privée.
 	 * Compte le nombre de frames pour le framerate
 	 */
-	short int frameCounter = 0; 
+	short int frameCounter = NULL; 
 	
 	/**
 	 * Une variable privée.
 	 * Framerate actuel 
 	 */
-	short int framerate = 0;
+	short int framerate = NULL;
 	
 	/**
 	 * Une variable privée.
 	 * Temps actuel en SDL_GetTicks()
 	 */
-	Uint32 now = 0; 
+	Uint32 now = NULL; 
 public:
 
-	StableFramerate():timer(1000) {}
+	StableFramerate():timer(0) {}
 
 	/**
 	 * Une fonction publique.
@@ -76,14 +76,14 @@ public:
 	}
 
 	/**
+	 * Une fonction publique.
 	 * @brief Affiche a l'ecran les framerate actuels 
-	 * 
 	 * @param x,y Coordonnées du point où sera affiché le framerate
 	 * @param renderer Moteur de rendu SDL
 	 */
 	void renderFrameRate(const int& X, const int& Y, SDL_Renderer* renderer) {
 		frameCounter++;
-		if (timer.set(1 * CLOCKS_PER_SEC)) {
+		if (timer.set(1000)) {
 			framerate = frameCounter; // return the framerate after 1 sec
 			frameCounter = 0;
 		}

@@ -157,9 +157,7 @@ public:
 	 * @param p Point affiché.
 	 * Redéfinition de l'opérateur <<, servant à l'affichage sur la sortie standard.
 	 */
-	// friend std::ostream &operator<<(std::ostream &os, const Point2D &p);
-	template <class T1>
-	friend std::ostream& operator<<(std::ostream& os, const Point2D<T1>& p);
+	friend std::ostream &operator<<(std::ostream &os, const Point2D &p);
 
 	/** @brief Calcule la distance entre 2 points passés en paramètres
 	* @param Point2D a

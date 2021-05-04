@@ -62,7 +62,7 @@ public:
 	 * @param angle Angle de rotation 
 	 */
 	void rotateX(const Vertex& p, const float& angle) {
-		for (size_t i = 0; i < triangles.size(); i++) {
+		for (int i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;
@@ -87,7 +87,7 @@ public:
 	 * @param angle Angle de rotation
 	 */
 	void rotateY(const Vertex& p, const float& angle) {
-		for (size_t i = 0; i < triangles.size(); i++) {
+		for (int i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;
@@ -112,7 +112,7 @@ public:
 	 * @param angle Angle de rotation
 	 */
 	void rotateZ(const Vertex& p, const float& angle) {
-		for (size_t i = 0; i < triangles.size(); i++) {
+		for (int i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;
@@ -197,7 +197,7 @@ public:
 			triangles[i].fillIt(true);
 		}
 	}
-	Cube(const std::string& name, const Vertex& center, const double& width) :Shape(name, {}, center, nullptr), width(width) {
+	Cube(const std::string& name, const Vertex& center, const double& width) :Shape(name, {}, center, bmp), width(width) {
 		const int half_width = static_cast<int>(width) / 2;
 		// set 8 points
 		const Vertex a(center.x + half_width, center.y - half_width, center.z - half_width);
