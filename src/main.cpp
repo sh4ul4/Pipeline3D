@@ -26,8 +26,6 @@ int main(int argc, char* argv[]) {
 	Mouse mouse;
 	Keyboard keyboard;
 
-	//starSystem Ssys(bm, manager, window);
-
 
 
 	//CHECK DANS DRAW.hpp
@@ -118,6 +116,14 @@ int main(int argc, char* argv[]) {
 	TextBox b_save("Save", pth + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<void*>("b_save", nullptr, green, black, &b_save, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 
+	
+
+	starSystem Ssys(bm, manager, window);
+
+	//5. Camera
+	Camera faceCam({ manager.getShape("fond").center.x, manager.getShape("fond").center.y, manager.getShape("fond").center.z - 100 }, 60, 0, 3.1416);
+	faceCam.lock();
+
 	while (!keyboard.escape.down) {
 		i_mass.checkForInput(inputEvent, window.getRenderer());
 		i_radius.checkForInput(inputEvent, window.getRenderer());
@@ -160,44 +166,7 @@ int main(int argc, char* argv[]) {
 		inputEvent.update();
 		r.updateTriangles(manager);
 
-		window.RenderScreen();
-		window.FillScreen(white);
-	}
-	
-	r.updateTriangles(manager);
-	while (!keyboard.escape.down) {
-		inputEvent.update();
-		r.updateTriangles(manager);
-
-		inputEvent.updateMouse(mouse);
-		inputEvent.updateKeyBoard(keyboard);
-		
-		// if (keyboard.one.down) {
-		// 	cam1.setCurrent();
-		// }
-		// if (keyboard.two.down) {
-		// 	//cam2.setCurrent();
-		// }
-		if (keyboard.l.down) {
-			if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
-			// if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
-			// else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
-		}
-		if (keyboard.F11.down) {
-			window.ToggleWindow(window.getWidth(), window.getHeight());
-		}
-
-		r.render({30,30},900,506, inputEvent, window, manager /*, &t0*/);
-		// std::cout<<"Problème résolu | "<<__LINE__<<std::endl;
-		// Print camera position and angle
-		// std::cout<<Camera::getCurrent().getCameraPosition()<< " "<<Camera::getCurrent().angleX<<" "<<Camera::getCurrent().angleY<<std::endl;
-
-		bm.checkButtons();
-		bm.renderButtons(window.getRenderer());
-
-		//tb6.render(window.getRenderer(), 0, 0);
-
-		// ti.render(window.getRenderer(), 0, 0);
+		r.render({ 30,30 }, 680, 430, inputEvent, window, manager);
 		window.RenderScreen();
 		window.FillScreen(white);
 	}

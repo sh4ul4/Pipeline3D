@@ -33,25 +33,14 @@ public:
     starSystem(ButtonManager& bm, ShapeManager& manager, Window& window) {
        std::cout << " > Constructeur starSystem" << std::endl;
 
-      /* int un = 1, deux = 2, trois = 3;
-       int b_width = 120, b_height = 30;
-       int b_topleftx = 800, b_tly = 420;
-       bm.addRectTextButtonDefault<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Start Simulation");
-       bm.getButton<int*>("b_insertDefault").setAction(simulation(), &un);
-       // TextBox tb13("Inserer meuble type 1", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-       // bm.addRectButton<int*>("b_insertDefault", nullptr, elynmarron, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-       b_topleftx += 306;
+       Bitmap::newBitmap(std::string("Space"), std::string("../textures/space2.jpg"));
+       Vertex hg = { 0, 100, 0 };
+       Vertex bg = { 0, 0, 0 };
+       Vertex hd = { 158, 100, 0 };
+       Vertex bd = { 158, 0, 0 };
+       manager.addRectangle("fond", hg, bg, hd, bd, Bitmap::getBitmap("Space"));
+       std::cout << "Espace créé" << std::endl;
 
-       // TextBox tb14("Inserer meuble type 2", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-       // bm.addRectButton<int*>("b_insertDefault2", nullptr, elynmarron, black, &tb14, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-       bm.addRectTextButtonDefault<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Stop Simulation");
-       bm.getButton<int*>("b_insertDefault2").setAction(setSimulationSpeed(0), &deux);
-       b_topleftx += 306;
-
-       // TextBox tb15("Inserer meuble type 3", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-       // bm.addRectButton<int*>("b_insertDefault3", nullptr, elynmarron, black, &tb15, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-       bm.addRectTextButtonDefault<int*>("b_insertDefault3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Reset");
-       bm.getButton<int*>("b_insertDefault3").setAction(reset(), &trois);*/
     }
 
     /**
