@@ -76,7 +76,7 @@ namespace Physics
 		bool falling;
 		if (step[1] < 0)falling = true;
 		else falling = false;
-		Vector stepWithGravity(step[0], step[1], step[2]);// = Camera::getCurrent().getMovementVector(step[0], step[1], step[2], speed);
+		Vector stepWithGravity = Camera::getCurrent().getMovementVector(step[0], step[1], step[2], speed);
 		playerHB = { Camera::getCurrent().getSubjectPosition().x, Camera::getCurrent().getSubjectPosition().x /*- 5*/, Camera::getCurrent().getSubjectPosition().z };
 		//playerHB = Matrix::toVertex(Camera::getCurrent().pos) + Camera::getCurrent().getMovementVector(1, 0, 0, 10);// { Camera::getCurrent().pos[0], Camera::getCurrent().pos[1]/* - 20*/, Camera::getCurrent().pos[2] };
 		resolvePhysics(manager, playerHB, stepWithGravity, speed, falling, 0);
