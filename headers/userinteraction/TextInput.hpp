@@ -48,6 +48,8 @@ public:
 	// suppression du constructeur par défaut
 	TextInput() = delete;
 
+	bool getRunning() {return running;};
+
 	/*===========================================================================================
      *      METHODES
     ===========================================================================================*/
@@ -99,6 +101,20 @@ public:
 		if (!running)return;
 		const int size1 = text.length();
 		text = ie.getText();
+		const int size2 = text.length();
+		if (size1 != size2 && !text.empty()) {
+			update(text, renderer);
+		}
+	}
+
+	void checkForInput(TextInput& other, SDL_Renderer* renderer)  {
+		if (other.running)
+			running = true;
+		else 
+			running = false;
+
+		const int size1 = text.length();
+		text = other.getText();
 		const int size2 = text.length();
 		if (size1 != size2 && !text.empty()) {
 			update(text, renderer);

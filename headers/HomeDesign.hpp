@@ -234,31 +234,40 @@ public:
      * @param InputEvent    Utile aux évènements d'interaction utilisateur
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
-    HomeDesign(ButtonManager& bm, ShapeManager& manager, Window& window, float w1, float w2, float w3, float w4) {
+    HomeDesign(ButtonManager& bm, ShapeManager& manager, Window& window, float w1, float w3) {
         std::cout << " > Constructeur HomeDesign" << std::endl;
-        std::cout << "Mur 1: " << w1 << std::endl;
-        std::cout << "Mur 2: " << w2 << std::endl;
-        std::cout << "Mur 3: " << w3 << std::endl;
-        std::cout << "Mur 4: " << w4 << std::endl;
+        surface = w1 * w3;
+        std::cout << "Mur 1: " << w1 << "m" << std::endl;
+        std::cout << "Mur 3: " << w3 << "m" << std::endl;
+        std::cout << "Surface: " << surface << "m²" <<std::endl;
+
+        w1 *= 10; w3 *= 10;
+        int h = 60; // Hauteur de chaque mur
+        // abcd : sol, a1b1c1d1 : plafond
+        Vertex a(-w1/2, 0, -w3/2); // Haut gauche      a           b
+        Vertex b(-w1/2, 0,  w3/2); // Haut droit     
+        Vertex c( w1/2, 0, -w3/2); // Bas gauche
+        Vertex d( w1/2, 0,  w3/2); // Bas droit        c           d
+ 
+        Vertex a1(-w1/2, h, -w3/2); 
+        Vertex b1(-w1/2, h,  w3/2); 
+        Vertex c1( w1/2, h, -w3/2);
+        Vertex d1( w1/2, h,  w3/2);
 
         // sol
         Bitmap::newBitmap(std::string("defense"), std::string("../textures/img.png"));
-        // Bitmap t0(std::string("defense"), std::string("../textures/img.png"));
-        manager.addRectangle("floor", { 0, 0, 0 }, { 0, 0, 100 }, { 100, 0, 0 }, { 100, 0, 100 }, Bitmap::getBitmap(std::string("defense")));
-        
-        // Mur de face
         Bitmap::newBitmap(std::string("80s"), std::string("../textures/face.jpg"));
-        Vertex hg = { 0, 100, 0 };
-        Vertex bg = { 0, 0, 0 };
-        Vertex hd = { 100, 100, 0 };
-        Vertex bd = { 100, 0, 0 };
-        manager.addRectangle("face", hg, bg, hd, bd, Bitmap::getBitmap("80s")); // original
-
         Bitmap::newBitmap(std::string("wall"), std::string("../textures/wall.jpg"));
-        // coté droit
-        manager.addRectangle("droit", hg, bg, { 0, 100, 100 }, { 0, 0, 100 }, Bitmap::getBitmap("wall"));
-        // coté gauche
-        manager.addRectangle("gauche", hd, bd, { 100, 100, 100 }, { 100, 0, 100 }, Bitmap::getBitmap("wall"));
+    
+        manager.addRectangle("floor", a, b, c, d, Bitmap::getBitmap(std::string("defense")));
+        // manager.addSphere("point_a", a, 5, blue);
+        // manager.addSphere("point_c", c, 5, yellow);
+        // manager.addSphere("point_d", d, 5, red);
+
+        manager.addRectangle("frontWall", c1, d1, c, d, Bitmap::getBitmap("80s"));
+        manager.addRectangle("backWall", a1, b1, a, b, Bitmap::getBitmap("80s"));
+        manager.addRectangle("leftWall", a1, c1, a, c, Bitmap::getBitmap("wall"));
+        manager.addRectangle("rightWall", b1, d1, b, d, Bitmap::getBitmap("wall"));
         std::cout<<"Room créée"<<std::endl;
 
 

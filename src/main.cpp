@@ -48,10 +48,14 @@ int main(int argc, char* argv[]) {
 
 
 	while (start && !keyboard.escape.down) {
+		// Ajouter un OR dans le checkForInput pour que l'input soit aussi lié de l'autre côté 
+		// en cliquant sur le 3 ça doit activer le 1 
 		i_mur1.checkForInput(inputEvent, window.getRenderer());
-		i_mur2.checkForInput(inputEvent, window.getRenderer());
 		i_mur3.checkForInput(inputEvent, window.getRenderer());
-		i_mur4.checkForInput(inputEvent, window.getRenderer());
+
+		// Mur 2 et 4 liés aux 1 et 3
+		i_mur2.checkForInput(i_mur1, window.getRenderer());
+		i_mur4.checkForInput(i_mur3, window.getRenderer());
 		inputEvent.update();
 
 		inputEvent.updateMouse(mouse);
@@ -76,27 +80,41 @@ int main(int argc, char* argv[]) {
 	bm.removeButton("b_initApp");
 	bm.removeButton("b_initImport");
 
-	// TODO: Check les valeurs entrées avec stof()
+	float w1, w3;
+	try  {
+		w1 = stof(i_mur1.getText());
+		w3 = stof(i_mur3.getText());
+	}  catch (const std::invalid_argument& ia)  {
+		std::cerr << "\033[31mERR - Merci d'entrer un nombre flottant valide pour vos dimensions: \033[0m" << ia.what() << '\n';
+		exit(1);
+  	}
 
-	HomeDesign hm(bm, manager, window, stof(i_mur1.getText())*10, stof(i_mur3.getText())*10, stof(i_mur3.getText())*10, stof(i_mur4.getText())*10);
+	HomeDesign hm( bm, manager, window, w1, w3 );
 
 
 	/** ==============================
 	 *  Initialisation caméras
 	 * ===============================
 	 */
-	std::cout<<(manager.getShape("floor")).center<<std::endl;
+	// Top / Gauche - OK
 	Camera topCam({manager.getShape("floor").center.x, 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	topCam.lock();
 
 	Camera freeCam({ 120,300,65 }, 60, 0, 4);
 	freeCam.lock();
 
-	std::cout<<manager.getShape("face").center<<std::endl;
-	Camera faceCam({manager.getShape("face").center.x, manager.getShape("face").center.y, manager.getShape("face").center.z - 100}, 60, 0, 3.1416);
+	Camera faceCam({manager.getShape("frontWall").center.x, manager.getShape("frontWall").center.y, manager.getShape("frontWall").center.z - 100}, 60, 0, 3.1416);
 	faceCam.lock();
-	Camera droitCam({manager.getShape("droit").center.x, manager.getShape("droit").center.y, manager.getShape("droit").center.z - 100}, 60, 0, 3.1416);
+
+	// Gauche OK
+	Camera gaucheCam({manager.getShape("leftWall").center.x, manager.getShape("leftWall").center.y, manager.getShape("leftWall").center.z - 100}, 60, 0, 3.1416);
+	gaucheCam.lock();
+	
+	Camera droitCam({manager.getShape("rightWall").center.x, manager.getShape("rightWall").center.y, manager.getShape("rightWall").center.z - 100}, 60, 0, 0.3183);
 	droitCam.lock();
+
+	Camera backCam({manager.getShape("backWall").center.x, manager.getShape("backWall").center.y, manager.getShape("backWall").center.z - 100}, 60, 0, 3.1416);
+	backCam.lock();
 	
 	// manager.imprtShapeObj("Earth",0.01);
 	
@@ -145,15 +163,17 @@ int main(int argc, char* argv[]) {
 
 	TextBox tb9("Vue 2", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Camera*>("b_View2", nullptr, dark_gray, black, &tb9, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<Camera*>("b_View2").setAction(changeCam, &droitCam);
+	bm.getButton<Camera*>("b_View2").setAction(changeCam, &gaucheCam);
 	b_topleftx += 140;
 
 	TextBox tb10("Vue 3", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<void*>("b_View3", nullptr, dark_gray, black, &tb10, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<Camera*>("b_View3", nullptr, dark_gray, black, &tb10, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<Camera*>("b_View3").setAction(changeCam, &droitCam);
 	b_topleftx += 140;
 
 	TextBox tb11("Vue 4", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<void*>("b_View4", nullptr, dark_gray, black, &tb11, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<Camera*>("b_View4", nullptr, dark_gray, black, &tb11, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<Camera*>("b_View4").setAction(changeCam, &backCam);
 	b_topleftx += 140;
 
 	TextBox tb12("Deplacement libre", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
