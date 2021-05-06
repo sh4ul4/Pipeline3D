@@ -2,8 +2,15 @@
 
 namespace Maths{
 	// concaténer une valeur de pixel et un flottant
-	inline Uint8 concat(const float& a, const Uint8& b) {
+	inline Uint8 concatF(const float& a, const Uint8& b) {
 		const double res = (double)a + (double)b;
+		if (res >= 255)return 255;
+		if (res <= 0)return 0;
+		return res;
+	}
+
+	inline Uint8 concat(const Uint8& a, const Uint8& b) {
+		const Uint16 res = (Uint16)a + (Uint16)b;
 		if (res >= 255)return 255;
 		if (res <= 0)return 0;
 		return res;
@@ -11,7 +18,8 @@ namespace Maths{
 
 	// fonction de signe pour les coordonnées barycentriques
 	inline const int sign(const Point2D<int>& p1, const Point2D<int>& p2, const Point2D<int>& p3) {
-		return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+		//return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+		return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
 	}
 
     /* @brief Renvoie le vecteur normale au plan du triangle
@@ -142,9 +150,22 @@ namespace Maths{
 		res.z = m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z;
 	}
 
+	void mult3x3_3x1(const Matrix<3, 3>& m, Vector v, Vector& res) {
+		res.x = m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z;
+		res.y = m.m[1][0] * v.x + m.m[1][1] * v.y + m.m[1][2] * v.z;
+		res.z = m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z;
+	}
+
 	// rotate around X-axis (world-axis)
 	// loss of precision due to int-float conversion
 	void rotateX(Vertex& p, const float& angle) {
+		Matrix<3, 3> a;
+		a.m[0] = { 1,0,0 };
+		a.m[1] = { 0,cos(angle),-sin(angle) };
+		a.m[2] = { 0,sin(angle),cos(angle) };
+		mult3x3_3x1(a, p, p);
+	}
+	void rotateX(Vector& p, const float& angle) {
 		Matrix<3, 3> a;
 		a.m[0] = { 1,0,0 };
 		a.m[1] = { 0,cos(angle),-sin(angle) };
@@ -161,10 +182,24 @@ namespace Maths{
 		a.m[2] = { -sin(angle),0,cos(angle) };
 		mult3x3_3x1(a, p, p);
 	}
+	void rotateY(Vector& p, const float& angle) {
+		Matrix<3, 3> a;
+		a.m[0] = { cos(angle),0,sin(angle) };
+		a.m[1] = { 0,1,0 };
+		a.m[2] = { -sin(angle),0,cos(angle) };
+		mult3x3_3x1(a, p, p);
+	}
 
 	// rotate around Z-axis (world-axis)
 	// loss of precision due to int-float conversion
 	void rotateZ(Vertex& p, const float& angle) {
+		Matrix<3, 3> a;
+		a.m[0] = { cos(angle),-sin(angle),0 };
+		a.m[1] = { sin(angle),cos(angle),0 };
+		a.m[2] = { 0,0,1 };
+		mult3x3_3x1(a, p, p);
+	}
+	void rotateZ(Vector& p, const float& angle) {
 		Matrix<3, 3> a;
 		a.m[0] = { cos(angle),-sin(angle),0 };
 		a.m[1] = { sin(angle),cos(angle),0 };

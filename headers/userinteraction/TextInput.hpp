@@ -61,15 +61,15 @@ public:
 	void render(SDL_Renderer* renderer, const size_t DRAWTYPE = DRAWFILLCONTOURRECT) const {
 		switch (DRAWTYPE) {
 		case DRAWRECT: if (running) Draw::DrawRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, dark_gray, renderer);
-					 else Draw::DrawRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, black, renderer); break;
+					 else Draw::DrawRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, Color(30, 30, 30), renderer); break;
 		case DRAWFILLRECT: if (running) Draw::DrawFillRect(pos - 2, maxWidth + 4, maxHeight + 4, light_gray, renderer);
 					 else Draw::DrawFillRect(pos - 2, maxWidth + 4, maxHeight + 4, gray, renderer); break;
-		case DRAWFILLCONTOURRECT: if (running) Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, light_gray, black, renderer);
-								else Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, gray, black, renderer); break;
-		case DRAWFILLROUNDEDCONTOURRECT: if (running) Draw::DrawFillRoundedRectContoured(pos - 2, maxWidth + 4, maxHeight + 4, 3, light_gray, black, renderer);
-									   else Draw::DrawFillRoundedRectContoured(pos - 2, maxWidth + 4, maxHeight + 4, 3, gray, black, renderer); break;
-		default : if (running) Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, light_gray, black, renderer);
-				else Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, gray, black, renderer); break;
+		case DRAWFILLCONTOURRECT: if (running) Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, light_gray, Color(30,30,30), renderer);
+								else Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, gray, Color(30, 30, 30), renderer); break;
+		case DRAWFILLROUNDEDCONTOURRECT: if (running) Draw::DrawFillRoundedRectContoured(pos - 2, maxWidth + 4, maxHeight + 4, 3, light_gray, Color(30, 30, 30), renderer);
+									   else Draw::DrawFillRoundedRectContoured(pos - 2, maxWidth + 4, maxHeight + 4, 3, gray, Color(30, 30, 30), renderer); break;
+		default : if (running) Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, light_gray, Color(30, 30, 30), renderer);
+				else Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, gray, Color(30, 30, 30), renderer); break;
 		}
 		if (!text.empty()) TextBox::render(renderer);
 	}
@@ -109,6 +109,20 @@ public:
 		if (!running)return;
 		const int size1 = text.length();
 		text = ie.getText();
+		const int size2 = text.length();
+		if (size1 != size2 && !text.empty()) {
+			update(text, renderer);
+		}
+	}
+
+	void checkForInput(TextInput& other, SDL_Renderer* renderer) {
+		if (other.running)
+			running = true;
+		else
+			running = false;
+
+		const int size1 = text.length();
+		text = other.getText();
 		const int size2 = text.length();
 		if (size1 != size2 && !text.empty()) {
 			update(text, renderer);

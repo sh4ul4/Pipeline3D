@@ -99,7 +99,7 @@ public:
 	 * @param flip Application de l'effet miroir (horizontal ou vertical)
 	 * @param angle Rotation de la texture lors de l'affichage
 	 */
-	void render(SDL_Renderer* renderer, const Point2D<int>& position, const int& w, const int& h) {
+	void render(SDL_Renderer* renderer, const Point2D<int>& position, const int& w, const int& h) const {
 		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
 		const SDL_Rect dstrect{ position.x, position.y, w, h };
 		SDL_RenderCopy(renderer, texture, NULL, &dstrect);
@@ -114,7 +114,7 @@ public:
 	 * @param flip Application de l'effet miroir (horizontal ou vertical)
 	 * @param angle Rotation de la texture lors de l'affichage
 	 */
-	void render(SDL_Renderer* renderer, const Point2D<int>& position, const int& w, const int& h, const int& flip, const double& angle) {
+	void render(SDL_Renderer* renderer, const Point2D<int>& position, const int& w, const int& h, const int& flip, const double& angle) const {
 		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
 		SDL_Rect dstrect{ position.x, position.y, w, h };
 		switch (flip) {

@@ -69,6 +69,7 @@ public:
 			Maths::rotateX(triangles[i].a, angle);
 			Maths::rotateX(triangles[i].b, angle);
 			Maths::rotateX(triangles[i].c, angle);
+			Maths::rotateX(triangles[i].normalVec, angle);
 			triangles[i].a += p;
 			triangles[i].b += p;
 			triangles[i].c += p;
@@ -94,6 +95,7 @@ public:
 			Maths::rotateY(triangles[i].a, angle);
 			Maths::rotateY(triangles[i].b, angle);
 			Maths::rotateY(triangles[i].c, angle);
+			Maths::rotateY(triangles[i].normalVec, angle);
 			triangles[i].a += p;
 			triangles[i].b += p;
 			triangles[i].c += p;
@@ -119,6 +121,7 @@ public:
 			Maths::rotateZ(triangles[i].a, angle);
 			Maths::rotateZ(triangles[i].b, angle);
 			Maths::rotateZ(triangles[i].c, angle);
+			Maths::rotateZ(triangles[i].normalVec, angle);
 			triangles[i].a += p;
 			triangles[i].b += p;
 			triangles[i].c += p;

@@ -58,45 +58,19 @@ public:
 	}
 
 private:
-	// Comparaison de triangles
-	struct PointerCompare {
-		// Opérateur : fonction de comparaison entre triangles
-		bool operator()(const Triangle* l, const Triangle* r) {
-			return (l->distanceToCamera > r->distanceToCamera);
-		}
-	};
-
 	// Rendering des triangles
-	void renderTriangles(const Window& window, const Point2D<int>& topLeft, const int& width, const int& height) {
-		if (Camera::currentExists() == false) { std::cout << "Error : current camera does not exist.\n"; exit(1); }
-		//std::sort(toRender.begin(), toRender.end(), PointerCompare()); // no need to sort triangles when zbuffer is enabled
-		const size_t size = toRender.size();
-		globalTexture.refreshZbuffer();
-		// set all pixels of surface to NULL
-		globalTexture.clearPixels();
+	void renderTriangles(const Window& window) {
 		// render textures on surface
-		
-		// multithreaded version
-		/*std::thread thread1(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), 0, (int)(size / 3));
-		std::thread thread2(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), (int)(size / 3), (int)(size / 3 * 2));
-		std::thread thread3(threadfunc1, std::cref(toRender), std::ref(globalTexture), std::cref(window), (int)(size / 3 * 2), size);
-		thread1.join();
-		thread2.join();
-		thread3.join();*/
-		
 		// signlethreaded version
+		const size_t size = toRender.size();
 		const Point2D<int> center(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2);
 		for (size_t i = 0; i < size; i++) {
-			toRender[i]->setScreenCoord(window, true, center);
+			toRender[i]->visible = false;
+			if (toRender[i]->normalVec.dot(Camera::getCurrent().look) > 0.2)continue;
+			toRender[i]->setScreenCoord(window, center, Camera::getCurrent());
 			// render triangle
 			toRender[i]->render(window, globalTexture, center);
 		}
-		//globalTexture.applySobel();
-		//globalTexture.applyBlackNWhite();
-		globalTexture.updateTexture();
-		//globalTexture.renderTexture(window.getRenderer(), { 0,0 }, window.getRenderWidth(), window.getRenderHeight(), 0, 0);
-		globalTexture.renderTexture(window.getRenderer(), topLeft, width, height, 0, 0);
-		//toRenderOneFrame.clear();
 	}
 
 public:
@@ -105,19 +79,23 @@ public:
 		globalTexture.renderTexture(window.getRenderer(), topLeft, width, height, 0, 0);
 	}
 	// Rendering écran
-	void render(const Point2D<int>& topLeft, const int& width, const int& height, InputEvent& inputEvent, const Window& window, ShapeManager& manager, Bitmap* background = nullptr) {
+	void render(const Point2D<int>& topLeft, const int& width, const int& height, InputEvent& inputEvent, const Window& window, ShapeManager& manager) {
 		if (Camera::currentExists()) {
 			Physics::move(inputEvent, manager);
-			Camera::getCurrent().update(inputEvent, window);
-			renderTriangles(window, topLeft, width, height);
+			Camera::getCurrent().update(inputEvent, window, globalTexture, topLeft);
+			if (Camera::currentExists() == false) { std::cout << "Error : current camera does not exist.\n"; exit(1); }
+			globalTexture.refreshZbuffer();
+			globalTexture.clearPixels();
+			renderTriangles(window);
+			//globalTexture.filterBnW();
+			globalTexture.updateTexture();
+			globalTexture.renderTexture(window.getRenderer(), topLeft, width, height, 0, 0);
 		}
 
 		//framerate.stabilizeCalculationAndRendering(60);
 		//Wait(10);
 
 		framerate.renderFrameRate(10, 10, window.getRenderer());
-		//window.RenderScreen();
-		//window.FillScreen(teal);
 	}
 
 	void renderOrientation(const Point2D<int>& pos, float size, const Window& window)const {

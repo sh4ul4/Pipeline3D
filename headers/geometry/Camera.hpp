@@ -53,6 +53,7 @@ public:
 	Matrix<4, 4> viewMatrix;
 	Matrix<4, 4> inverseViewMatrix;
 	Matrix<4, 4> projectionMatrix;
+	bool mouseMotion = false;
 
 	/**
 	 * Une variable publique.
@@ -116,6 +117,10 @@ public:
 	int pathMoveSpeed = 1;
 
 	Vector look{ 0,0,0 };
+
+	Color lightColor{ white };
+	Vector lightSource{ 0,0,0 };
+	float lightIntensity = 0.03;
 public:
 	/**
 	 * Un constructeur.
@@ -405,33 +410,43 @@ private:
 public:
 
 	/**
-		 * Fonction publique
-		 * @param inputEvent, window
-		 * @brief Mettre à jour tous les paramètre changeants de la caméra à chaques frame.
-		 * - angle de vue
-		 * - direction du regard (1ère personne ou 3ème personne)
-		 * - mouvements 3D (caméra et sujet de la caméra)
-		 * - matrice de vue et matrice de perspective
-		 */
-	void update(InputEvent& inputEvent, const Window& window) {
+	 * Fonction publique
+	 * @param inputEvent, window
+	 * @brief Mettre à jour tous les paramètre changeants de la caméra à chaques frame.
+	 * - angle de vue
+	 * - direction du regard (1ère personne ou 3ème personne)
+	 * - mouvements 3D (caméra et sujet de la caméra)
+	 * - matrice de vue et matrice de perspective
+	 */
+	void update(InputEvent& inputEvent, const Window& window, const GlobalTexture& frame, const Point2D<int> framePos) {
 		if (!locked) {
-			SDL_ShowCursor(false);
 			inputEvent.updateMouse(mouse);
 			inputEvent.updateKeyBoard(keyboard);
-			SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
 			if (keyboard.z.pressed && angleView > minAngleView) {
 				angleView -= 1;
 			}
 			if (keyboard.e.pressed && angleView < maxAngleView) {
 				angleView += 1;
 			}
-
 			// set angles
-			angleX += sensitivity * (float)(mouse.x - window.getWidthCenter());
+			if (mouseMotion) {
+				SDL_ShowCursor(true);
+				if (mouse.leftClick && mouse.moving
+					&& mouse.x < framePos.x + frame.getWidth() && mouse.x > framePos.x && mouse.y < framePos.y + frame.getHeight() && mouse.y > framePos.y) {
+					std::cout << angleX;
+					angleX += (float)(mouse.xmov) / 360.0f;
+					std::cout << " " << angleX << std::endl;;
+					angleY += (float)(mouse.ymov) / 360.0f;
+				}
+			}
+			else {
+				SDL_ShowCursor(false);
+				SDL_WarpMouseInWindow(window.getWindow(), frame.getWidth() * 0.5, frame.getHeight() * 0.5);
+				angleX += sensitivity * (float)(mouse.x - frame.getWidth() * 0.5);
+				angleY += sensitivity * (float)(mouse.y - frame.getHeight() * 0.5);
+			}
 			angleX = clampAngleX(angleX);
-			angleY += sensitivity * (float)(mouse.y - window.getHeightCenter());
 			angleY = clampAngleY(angleY);
-
 			if (path.size() > 0 && current == this) {
 				Vector direction(path[0].x - subject.x, path[0].y - subject.y, path[0].z - subject.z); // goal - start
 				if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal

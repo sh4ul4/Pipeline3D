@@ -67,6 +67,8 @@ public:
 	 * @brief Met à jour tout l'input localement en écrivant dans mouse, keyboard et text.
 	 */
 	void update() {
+		mouse.moving = false;
+		mouse.xmov = mouse.ymov = 0;
 		mouse.wheeldown = 0;
 		mouse.wheelup = 0;
 		//mouse.xmov = mouse.ymov = 0;
@@ -86,21 +88,17 @@ public:
 			if (event.type == SDL_MOUSEWHEEL && event.wheel.y < 0) {
 				mouse.wheeldown++;
 			}
-			SDL_GetRelativeMouseState(&mouse.xmov, &mouse.ymov);
 			if (event.type == SDL_MOUSEMOTION) { // mouse motions
+				SDL_GetRelativeMouseState(&mouse.xmov, &mouse.ymov);
 				mouse.moving = true;
 				//mouse.xmov = event.motion.x;
 				//mouse.ymov = event.motion.y;
 				SDL_GetMouseState(&mouse.x, &mouse.y);
 			}
-			else {
-				mouse.moving = false;
-				//mouse.xmov = mouse.ymov = 0;
-			}
 			if ((event.type == SDL_MOUSEBUTTONDOWN) && (event.button.button == SDL_BUTTON_LEFT)) { mouse.leftClick = true; }
-			else { mouse.leftClick = false; }
+			else if ((event.type == SDL_MOUSEBUTTONUP) && (event.button.button == SDL_BUTTON_LEFT)) { mouse.leftClick = false; }
 			if ((event.type == SDL_MOUSEBUTTONDOWN) && (event.button.button == SDL_BUTTON_RIGHT)) { mouse.rightClick = true; }
-			else { mouse.rightClick = false; }
+			else if ((event.type == SDL_MOUSEBUTTONUP) && (event.button.button == SDL_BUTTON_RIGHT)) { mouse.rightClick = false; }
 			//keyboard
 			if (event.type == SDL_KEYDOWN) { // if the user presses a key down
 				switch (event.key.keysym.sym) {

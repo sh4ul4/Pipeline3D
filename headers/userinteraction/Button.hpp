@@ -33,7 +33,7 @@ public:
 protected:
 	// constructor only accessible via derived button classes
 	ButtonBase(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb)
-		: name(name), backgroundTex(bgTex), backgroundCol(bgCol), contourCol(contCol), textBox(tb) {}
+		: name(name), backgroundTex(bgTex), textBox(tb), backgroundCol(bgCol), contourCol(contCol) {}
 	ButtonBase() = delete;
 };
 
@@ -178,7 +178,7 @@ public:
 
 	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, const Window& window,
 		const size_t DRAWTYPE = DRAWFILLCONTOURRECT)
-		: Button<paramType>(name, nullptr, dark_gray, black,
+		: Button<paramType>(name, nullptr, dark_gray, Color(30,30,30),
 			new TextBox(text, pth + std::string("fonts/Segoe UI.ttf"), 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
 		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
 
@@ -225,10 +225,12 @@ public:
 	Point2D<int> pos;
 	int size;
 	bool checked = false;
+	Texture2D* trueTex = nullptr;
+	Texture2D* falseTex = nullptr;
 
 	CheckBox(const std::string& name, const Color& bgCol, const Color& contCol,
-		const Point2D<int>& pos, const int& size) : Button<paramType>(name, nullptr, bgCol, contCol, nullptr),
-		pos(pos), size(size) {}
+		const Point2D<int>& pos, const int& size, Texture2D* trueTex = nullptr, Texture2D* falseTex = nullptr) : Button<paramType>(name, nullptr, bgCol, contCol, nullptr),
+		pos(pos), size(size), trueTex(trueTex), falseTex(falseTex) {}
 
 	CheckBox() = delete;
 
@@ -244,7 +246,13 @@ public:
 			bg.g = Maths::concat(20, bg.g);
 			bg.b = Maths::concat(20, bg.b);
 		}
-		Draw::DrawFillRoundedRectContoured(pos, size, size, 6, bg, ButtonBase::contourCol, renderer);
+		Draw::DrawFillContouredRect(pos, size, size, 1, bg, ButtonBase::contourCol, renderer);
+		if (checked && trueTex != nullptr) {
+			trueTex->render(renderer, pos + 1, size - 2, size - 2);
+		}
+		else if (!checked && falseTex != nullptr) {
+			falseTex->render(renderer, pos + 1, size - 2, size - 2);
+		}
 	}
 
 	bool mouseInside(const InputEvent& ie, const Point2D<int>& p) {
@@ -262,12 +270,12 @@ public:
 
 	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
 	void checkButton(const InputEvent& inputEvent, const Point2D<int> pos) {
-		if (!ButtonBase::clicked && mouseClickInside(inputEvent)) {
+		if (!ButtonBase::clicked && mouseClickInside(inputEvent, pos)) {
 			ButtonBase::playAction();
 			if (ButtonBase::signal) *ButtonBase::signal = true;
 			this->checked = !this->checked;
 		}
-		else mouseClickInside(inputEvent);
+		else mouseClickInside(inputEvent, pos);
 	}
 
 	bool isClicked() const { return checked; }
@@ -296,9 +304,9 @@ public:
 	}
 
 	template <class paramType>
-	void addCheckBox(const std::string& name, const Color& bgCol, const Color& contCol, const Point2D<int>& pos, const int& size) {
+	void addCheckBox(const std::string& name, const Color& bgCol, const Color& contCol, const Point2D<int>& pos, const int& size, Texture2D* trueTex = nullptr, Texture2D* falseTex = nullptr) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
-		buttons.emplace_back(new CheckBox<paramType>(name, bgCol, contCol, pos, size));
+		buttons.emplace_back(new CheckBox<paramType>(name, bgCol, contCol, pos, size, trueTex, falseTex));
 	}
 
 	template <class paramType>

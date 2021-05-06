@@ -68,7 +68,7 @@ namespace Physics
 		if (keyboard.down.pressed) step[0] -= speed;
 		if (keyboard.left.pressed) step[1] += speed;
 		if (keyboard.right.pressed) step[1] -= speed;
-		intentionalMoving = abs(step[0]) > 0 || abs(step[1]) > 0 || abs(step[2]) > 0;
+		intentionalMoving = step[0] != 0 || step[1] != 0 || step[2] != 0;
 		if (keyboard.space.pressed) {
 			step[2] = speed;
 		}
@@ -77,8 +77,8 @@ namespace Physics
 		if (step[1] < 0)falling = true;
 		else falling = false;
 		Vector stepWithGravity = Camera::getCurrent().getMovementVector(step[0], step[1], step[2], speed);
-		playerHB = { Camera::getCurrent().getSubjectPosition().x, Camera::getCurrent().getSubjectPosition().x /*- 5*/, Camera::getCurrent().getSubjectPosition().z };
-		//playerHB = Matrix::toVertex(Camera::getCurrent().pos) + Camera::getCurrent().getMovementVector(1, 0, 0, 10);// { Camera::getCurrent().pos[0], Camera::getCurrent().pos[1]/* - 20*/, Camera::getCurrent().pos[2] };
+		Vertex subject = Camera::getCurrent().getSubjectPosition();
+		playerHB = { subject.x, subject.y, subject.z };
 		resolvePhysics(manager, playerHB, stepWithGravity, speed, falling, 0);
 	}
 }

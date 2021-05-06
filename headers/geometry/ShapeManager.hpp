@@ -419,7 +419,7 @@ public:
 				caseUsemtl(iss, mtls);
 			}
 			if (/*!type.compare("g") || */!type.compare("o")) {
-				caseO(iss, mtls, trs, currentObject, shapeName);
+				//caseO(iss, mtls, trs, currentObject, shapeName);
 			}
 			if (!type.compare("v")) {
 				caseV(iss, v, scale);
@@ -441,7 +441,7 @@ public:
 		if (mtls.size() > 0) {
 			bmp = mtls.back().bmpPath.length() > 0 ? Bitmap::getBitmap(mtls.back().bmpPath) : nullptr;
 		}
-		std::string lastShape(shapeName + currentObject);
+		std::string lastShape(shapeName);// +currentObject);
 		if (lastShape.length() > 0 && trs.size() > 0)
 			addShape(lastShape, trs, { 0,0,0 }, bmp);
 	}
@@ -747,18 +747,6 @@ public:
 				return;
 			}
 		std::cout << "Warning : A Shape named " << name << " does not exist" << std::endl;
-	}
-
-	/**
-	 * @brief ???
-	 *
-	 * @param window Fenêtre avec laquelle on interagit
-	 */
-	void set2ds(const Window& window, const Point2D<int>& center) {
-		for (int i = 0; i < static_cast<int>(shapes.size()); i++) {
-			for (int j = 0; j < static_cast<int>(shapes[i]->triangles.size()); j++)
-				shapes[i]->triangles[j].setScreenCoord(window, true, center);
-		}
 	}
 
 	/**

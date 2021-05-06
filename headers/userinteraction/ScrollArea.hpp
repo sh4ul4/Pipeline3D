@@ -1,5 +1,56 @@
 #pragma once
 
+class DragBar {
+public:
+	Point2D<int> pos{ 0,0 };
+	int width{ 0 };
+	int height{ 0 };
+	bool dragging = false;
+	bool vertical = true;
+	int padPos{ 0 };
+	int padSize{ 0 };
+
+	double normalizedPadPos{ 0 };
+
+	Mouse mouse;
+	bool selected = false;
+
+	DragBar(const Point2D<int>& pos, int width, int height, int padSize, bool vertical = true)
+		:pos(pos), width(width), height(height), padSize(padSize), vertical(vertical) {}
+
+	void render(SDL_Renderer* renderer) const {
+		Draw::DrawFillContouredRect(pos, width, height, 1, gray, dark_gray, renderer);
+		if (vertical) Draw::DrawFillRoundedRectContoured(Point2D<int>(pos.x + 1, pos.y + padPos), width-2, padSize, 3, light_gray, black, renderer);
+		else Draw::DrawFillRoundedRectContoured(Point2D<int>(pos.x + padPos, pos.y + 1), padSize, height-2, 3, light_gray, black, renderer);
+	}
+
+	bool mouseInside(const InputEvent& ie, const Point2D<int>& p = { 0,0 }) {
+		ie.updateMouse(mouse);
+		const Point2D<int> m(mouse.x, mouse.y);
+		if (vertical) {
+			selected = m.x < pos.x + width + p.x && m.x > pos.x + p.x && m.y < pos.y + padPos + padSize + p.y && m.y > pos.y + padPos + p.y;
+		}
+		if (!vertical) {
+			selected = m.x < pos.x + padPos + padSize + p.x && m.x > pos.x + padPos + p.x && m.y < pos.y + height + p.y && m.y > pos.y + p.y;
+		}
+		return selected;
+	}
+
+	void check(const InputEvent& ie, const Point2D<int>& p = { 0,0 }) {
+		ie.updateMouse(mouse);
+		if (dragging) dragging = mouse.leftClick;
+		else dragging = mouseInside(ie, p) && mouse.leftClick;
+		if (dragging) {
+			if (vertical)padPos = mouse.y - pos.y - padSize / 2;
+			else padPos = mouse.x - pos.x - padSize / 2;
+		}
+		if (vertical)padPos = Maths::clamp(padPos, 1, height - padSize - 2);
+		else padPos = Maths::clamp(padPos, 1, width - padSize - 2);
+		if (vertical)normalizedPadPos = 1 - (double)padPos / (height - padSize);
+		else normalizedPadPos = 1 - (double)padPos / (width - padSize);
+	}
+};
+
 class ScrollZone {
 	const InputEvent& inputEvent;
 	Mouse mouse;
@@ -19,14 +70,19 @@ class ScrollZone {
 
 	std::vector<TextBox const*> textBoxes{};
 	ButtonManager zoneManager;
+
+	DragBar verticalDragBar;
+	DragBar horizontalDragBar;
 public:
 	ButtonManager buttonManager;
 
 	ScrollZone() = delete;
 	ScrollZone(const InputEvent& input, const Window& window, const Point2D<int>& pos,
 		int width, int height, int renderW, int renderH)
-		: buttonManager(input, window), zoneManager(input, window), inputEvent(input), pos(pos), width(width), height(height),
-		renderPos(0, 0), renderW(renderW), renderH(renderH)
+		: inputEvent(input), pos(pos), zoneManager(input, window), buttonManager(input, window), width(width), height(height),
+		renderPos(0, 0), renderW(renderW), renderH(renderH), 
+		verticalDragBar(Point2D<int>(pos.x + width - 13, pos.y + 1), 12,height- 13,20),
+		horizontalDragBar(Point2D<int>(pos.x + 1, pos.y + height - 13), width- 13, 12, 20, false)
 	{
 		texture = SDL_CreateTexture(window.getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, renderW, renderH);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
@@ -36,7 +92,6 @@ public:
 		zoneManager.addRectTextButton<Point2D<int>*>("down", pos + Point2D<int>(width - 11, height - 11), 10, 10, "");
 		zoneManager.getButton<Point2D<int>*>("down").setAction([](Point2D<int>* renderPosition) {renderPosition->y += 10; }, &renderPos);
 		zoneManager.getButton<Point2D<int>*>("down").contourCol = Color(120, 120, 120, 255);
-		zoneManager.getButton<Point2D<int>*>("down").setTexture(new Texture2D("../textures/32x32.gif", window.getRenderer()));
 		backgroundColor = Color(60, 60, 60, 255);
 		foregroundColor = Color(90, 90, 90, 255);
 		contourColor = Color(120, 120, 120, 255);
@@ -44,8 +99,10 @@ public:
 	ScrollZone(const InputEvent& input, const Window& window, const Point2D<int>& pos,
 		int width, int height, const Point2D<int>& renderPos, int renderW, int renderH,
 		const Color& bgcolor, const Color& fgcolor, const Color& contcolor)
-		: buttonManager(input, window), zoneManager(input, window), inputEvent(input), pos(pos), width(width), height(height),
-		renderPos(renderPos), renderW(renderW), renderH(renderH), backgroundColor(bgcolor), foregroundColor(fgcolor), contourColor(contcolor)
+		: inputEvent(input), pos(pos), zoneManager(input, window), buttonManager(input, window), width(width), height(height),
+		renderPos(renderPos), renderW(renderW), renderH(renderH), backgroundColor(bgcolor), foregroundColor(fgcolor), contourColor(contcolor),
+		verticalDragBar(Point2D<int>(pos.x + width - 13, pos.y + 1), 12, height - 13, 20),
+		horizontalDragBar(Point2D<int>(pos.x + 1, pos.y + height - 13), width - 13, 12, 20, false)
 	{
 		texture = SDL_CreateTexture(window.getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, renderW, renderH);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
@@ -63,7 +120,7 @@ public:
 	inline void startDrawInside(SDL_Renderer* renderer) { SDL_SetRenderTarget(renderer, texture); }
 	inline void stopDrawInside(SDL_Renderer* renderer) { SDL_SetRenderTarget(renderer, NULL); }
 
-	void addTextBox(const TextBox& tb) {
+	void linkTextBox(const TextBox& tb) {
 		textBoxes.push_back(&tb);
 	}
 
@@ -94,6 +151,10 @@ public:
 	}
 
 	void update() {
+		verticalDragBar.check(inputEvent);
+		horizontalDragBar.check(inputEvent);
+		if (verticalDragBar.dragging)renderPos.y = std::min(0, height - renderH) + (0 - std::min(0, height - renderH)) * verticalDragBar.normalizedPadPos;
+		if (horizontalDragBar.dragging)renderPos.x = std::min(0, width - renderW) + (0 - std::min(0, width - renderW)) * horizontalDragBar.normalizedPadPos;
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
 		if (mouseInside()) {
@@ -107,13 +168,12 @@ public:
 				renderPos.y += mouse.wheelup * 4;
 				renderPos.y -= mouse.wheeldown * 4;
 			}
-			renderPos.x = Maths::clamp(renderPos.x, -renderW, width);
-			renderPos.y = Maths::clamp(renderPos.y, -renderH, height);
 		}
 		else {
-			//zoneManager.unselectButtons();
 			buttonManager.unselectButtons();
 		}
+		renderPos.x = Maths::clamp(renderPos.x, std::min(0, width - renderW), 0);
+		renderPos.y = Maths::clamp(renderPos.y, std::min(0, height - renderH), 0);
 	}
 
 	void render(const Window& window) const {
@@ -172,6 +232,8 @@ public:
 		Draw::DrawFillRect(Point2D<int>(dstx,dsty), dstw, dsth, foregroundColor, window.getRenderer());
 		SDL_RenderCopy(window.getRenderer(), texture, &srcrect, &dstrect);
 		zoneManager.renderButtons(window.getRenderer());
+		verticalDragBar.render(window.getRenderer());
+		horizontalDragBar.render(window.getRenderer());
 		Draw::DrawRect(pos, width, height, 1, contourColor, window.getRenderer());
 	}
 };
