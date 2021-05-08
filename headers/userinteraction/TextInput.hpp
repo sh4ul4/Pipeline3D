@@ -86,6 +86,10 @@ public:
 		SDL_StopTextInput();
 	}
 
+	bool checkClick(Mouse mouse)  {
+		return mouse.x < pos.x + maxWidth && mouse.x > pos.x && mouse.y < pos.y + maxHeight && mouse.y > pos.y;
+	}
+
 	/**
 	 * @brief Mettre à jour le texte et son affichage en fonction de l'input utilisateur.
 	 * @param ie Event pour suivre l'input utilisateur.
@@ -94,9 +98,25 @@ public:
 	void checkForInput(InputEvent& ie, SDL_Renderer* renderer) {
 		ie.updateMouse(mouse);
 		ie.updateKeyBoard(keyboard);
-		if (!running && mouse.leftClick && mouse.x < pos.x + maxWidth && mouse.x > pos.x && mouse.y < pos.y + maxHeight && mouse.y > pos.y)
+		if (!running && mouse.leftClick && checkClick(mouse))
 			start(ie);
-		if ((running && keyboard.enter.down) || (running && mouse.leftClick && (mouse.x > pos.x + maxWidth || mouse.x < pos.x || mouse.y > pos.y + maxHeight || mouse.y < pos.y)))
+		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && not checkClick(mouse)) )
+			stop(ie);
+		if (!running)return;
+		const int size1 = text.length();
+		text = ie.getText();
+		const int size2 = text.length();
+		if (size1 != size2 && !text.empty()) {
+			update(text, renderer);
+		}
+	}
+
+	void checkForInput(InputEvent& ie, SDL_Renderer* renderer, TextInput& other) {
+		ie.updateMouse(mouse);
+		ie.updateKeyBoard(keyboard);
+		if (!running && mouse.leftClick && ( checkClick(mouse) || other.checkClick(mouse) ))
+			start(ie);
+		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && not checkClick(mouse) && not other.checkClick(mouse)) )
 			stop(ie);
 		if (!running)return;
 		const int size1 = text.length();
