@@ -187,7 +187,6 @@ private:
     std::vector<Furniture> furnitures;
 
 
-
     /*===========================================================================================
      *      INTERFACE GRAPHIQUE
     ===========================================================================================*/
@@ -282,16 +281,21 @@ public:
         // bm.addRectButton<int*>("b_insertDefault", nullptr, elynmarron, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
         b_topleftx += 306;
 
-        // TextBox tb14("Inserer meuble type 2", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-        // bm.addRectButton<int*>("b_insertDefault2", nullptr, elynmarron, black, &tb14, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
         bm.addRectTextButtonDefault<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 2");
         bm.getButton<int*>("b_insertDefault2").setAction(insertFurniture, &deux);
         b_topleftx += 306; 
 
-        // TextBox tb15("Inserer meuble type 3", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-        // bm.addRectButton<int*>("b_insertDefault3", nullptr, elynmarron, black, &tb15, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
         bm.addRectTextButtonDefault<int*>("b_insertDefault3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 3");
         bm.getButton<int*>("b_insertDefault3").setAction(insertFurniture, &trois);
+
+        // Espace interaction
+        // Point2D<int>(970, 30), 270, 506
+        // TextBox t_nom("Nom (référencement)", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 40), 60, 20, window.getRenderer());
+	    // TextInput i_nom("default", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 50), 260, 25, window.getRenderer());
+
+        
+        // bm.addRectTextButtonDefault<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 2");
+        // bm.getButton<int*>("b_insertDefault2").setAction(insertFurniture, &deux);
     };
 
     /**
@@ -309,10 +313,23 @@ private:
     /**
      * @brief Méthode appelée lorsque les boutons d'insertion de meuble sont pressés
      * 
-     * @param int   Représente le numéro du bouton (entre 1 et 3)
+     * @param style   Représente le numéro du bouton (entre 1 et 3)
      */ 
     static void insertFurniture(int *style) {
-	    std::cout << "Insertion de meuble de type " << *style << std::endl;
+	    std::cout << "Insertion de meuble de type " << style << std::endl;
+        if (*style == 2)  {
+            std::cout << "2 !\n"; 
+        }
+        else if (*style == 3) {
+            std::cout << "3 !\n"; 
+        } 
+        else  {
+            std::cout << "Default !\n"; 
+            // while (!keyboard.escape.down) {
+		    //     i_nom.checkForInput(inputEvent, window.getRenderer(),
+            // }
+            
+        }
     }
 
     /**

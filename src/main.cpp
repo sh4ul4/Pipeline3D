@@ -5,6 +5,7 @@ void startFunc(int *s) {
 	*s = 0; 
 }
 
+// Faire un Struct avec la caméra, le mur à retirer et une textbox à modifier pour écrire le nom de la cam
 void changeCam(Camera *cam) {
 	cam->setCurrent();
 	// if (shp) shp.visible = false;
@@ -28,7 +29,7 @@ int main(int argc, char* argv[]) {
 
 	int start = 1;
 
-	TextBox t_intro("CROUS Simulator", pth+std::string("fonts/Comic_Sans_MS_Bold.ttf"), 30, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
+	TextBox t_intro("CROUS Simulator", pth+std::string("fonts/calibri.ttf"), 40, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
 	int i_TLx = 440, i_TLy = 310;
 	TextBox t_mur1("Mur 1", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
 	TextInput i_mur1("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
@@ -48,10 +49,8 @@ int main(int argc, char* argv[]) {
 
 
 	while (start && !keyboard.escape.down) {
-		// Ajouter un OR dans le checkForInput pour que l'input soit aussi lié de l'autre côté 
-		// en cliquant sur le 3 ça doit activer le 1 
-		i_mur1.checkForInput(inputEvent, window.getRenderer());
-		i_mur3.checkForInput(inputEvent, window.getRenderer());
+		i_mur1.checkForInput(inputEvent, window.getRenderer(), i_mur2);
+		i_mur3.checkForInput(inputEvent, window.getRenderer(), i_mur4);
 
 		// Mur 2 et 4 liés aux 1 et 3
 		i_mur2.checkForInput(i_mur1, window.getRenderer());
@@ -216,6 +215,14 @@ int main(int argc, char* argv[]) {
 
 	// bm.addCheckBox<void*>("cb1", white, dark_gray, Point2D<int>(1300, 200), 20);
 	
+	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(30, 30), 400, 20, window.getRenderer());
+	
+	TextBox t_nom("Nom (referencement)", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 40), 260, 20, window.getRenderer());
+	TextInput i_nom("default", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(980, 65), 250, 25, window.getRenderer());
+
+	TextBox t_dimensions("Dimensions (Lxlxh)", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 90), 260, 20, window.getRenderer());
+	TextInput i_dimensions("default", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(980, 115), 250, 25, window.getRenderer());
+
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
 		inputEvent.update();
@@ -223,24 +230,31 @@ int main(int argc, char* argv[]) {
 
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
-		
-		// if (keyboard.one.down) {
-		// 	cam1.setCurrent();
-		// }
-		// if (keyboard.two.down) {
-		// 	//cam2.setCurrent();
-		// }
-		if (keyboard.l.down) {
+
+		i_nom.checkForInput(inputEvent, window.getRenderer());
+		i_dimensions.checkForInput(inputEvent, window.getRenderer());
+
+		if (keyboard.one.down) 
+			topCam.setCurrent();
+		else if (keyboard.two.down)
+			faceCam.setCurrent();
+		else if (keyboard.three.down)
+			gaucheCam.setCurrent();
+		else if (keyboard.four.down)
+			droitCam.setCurrent();
+		else if (keyboard.five.down)
+			backCam.setCurrent();
+		else if (keyboard.l.down) {
 			if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
 			// if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
 			// else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
 		}
-		if (keyboard.F11.down) {
+		else if (keyboard.F11.down) {
 			window.ToggleWindow(window.getWidth(), window.getHeight());
 		}
 
 		r.render({30,30},900,506, inputEvent, window, manager /*, &t0*/);
-		// std::cout<<"Problème résolu | "<<__LINE__<<std::endl;
+		
 		// Print camera position and angle
 		// std::cout<<Camera::getCurrent().getCameraPosition()<< " "<<Camera::getCurrent().angleX<<" "<<Camera::getCurrent().angleY<<std::endl;
 
@@ -248,6 +262,11 @@ int main(int argc, char* argv[]) {
 		bm.renderButtons(window.getRenderer());
 
 		tb6.render(window.getRenderer(), 0, 0);
+		i_nom.render(window.getRenderer(), 0, 0);
+		t_nom.render(window.getRenderer(), 0, 0);
+		i_dimensions.render(window.getRenderer(), 0, 0);
+		t_dimensions.render(window.getRenderer(), 0, 0);
+		current_cam.render(window.getRenderer(), 0, 0);
 
 		// ti.render(window.getRenderer(), 0, 0);
 		window.RenderScreen();
