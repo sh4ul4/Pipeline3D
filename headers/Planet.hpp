@@ -1,4 +1,5 @@
 #pragma once
+#include "Luminary.hpp"
 
 /**
  * @class Cette classe représente les planètes qui serviront à simuler un système stellaire.
@@ -16,7 +17,7 @@ private:
     // Vitesse initial de la planète
     Point2D<double> initialSpeed;
     // Position initial de la planète
-    Point2D<int> initialPosition;
+    Point2D<double> initialPosition;
     // Acceleration de la planète
     Point2D<double> acceleration;
     // Détermine si la planète et visible ou non : 1 --> visible ; 0 --> pas visible
@@ -40,7 +41,7 @@ public:
      * @param name Nom de la planète
      * @param visible Détermine la visibilité de la planète
      */
-    Planet(float radius, double mass, Point2D<int> &initialPosition, Point2D<double> &initialSpeed, std::string name, bool visible = true) : Luminary(radius, mass, initialPosition, name) {}
+    Planet(float radius, double mass, Point2D<double> &initialPosition, Point2D<double> &initialSpeed, std::string name, bool visible = true) : Luminary(radius, mass, initialPosition, name) {}
 
     /*===========================================================================================
      *      METHODES
@@ -75,7 +76,7 @@ public:
      * 
      * @param initialPosition Nouvelle position initiale
      */
-    void setInitialPosition(const Point2D<int> &initialPosition)
+    void setInitialPosition(const Point2D<double> &initialPosition)
     {
         this->initialPosition = initialPosition;
     }
@@ -123,7 +124,7 @@ public:
      * 
      * @return Point2D représentant la position initiale de la planète
      */
-    Point2D<int> getInitialPosition()
+    Point2D<double> getInitialPosition()
     {
         return initialPosition;
     }
