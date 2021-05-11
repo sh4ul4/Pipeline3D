@@ -59,6 +59,7 @@ public:
 		: pos(topLeft), maxWidth(maxw), maxHeight(maxh), fontColor(fontColor), text(text) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
+		if (!font)FATAL_ERR("could not load font");
 		if (text.empty()) text = " ";
 		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
 		width = surface->w;
@@ -83,6 +84,7 @@ public:
 		: pos(topLeft), fontColor(fontColor), text(text) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
+		if (!font)FATAL_ERR("could not load font");
 		if (TTF_SizeText(font, text.c_str(), &width, &height)) FATAL_ERR("Failed assigning text dimensions in TextBox.");
 		if (width > maxWidth)width = maxWidth;
 		if (height > maxHeight)height = maxHeight;
@@ -113,6 +115,7 @@ public:
 		SDL_Renderer* renderer) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
+		if (!font)FATAL_ERR("could not load font");
 		if (text.empty()) text = " ";
 		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
 		width = surface->w;
