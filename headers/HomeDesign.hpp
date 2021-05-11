@@ -256,8 +256,8 @@ public:
 
         // sol
         Bitmap::newBitmap(std::string("defense"), std::string("../textures/img.png"));
-        Bitmap::newBitmap(std::string("80s"), std::string("../textures/space.jpg"));
-        Bitmap::newBitmap(std::string("wall"), std::string("../textures/80s_1.jpg"));
+        Bitmap::newBitmap(std::string("80s"), std::string("../textures/face.jpg"));
+        Bitmap::newBitmap(std::string("wall"), std::string("../textures/wall.jpg"));
     
         manager.addRectangle("floor", a, b, c, d, Bitmap::getBitmap(std::string("defense")));
         // manager.addSphere("point_a", a, 5, blue);
