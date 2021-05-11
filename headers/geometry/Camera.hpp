@@ -48,12 +48,15 @@ private:
 	Mouse mouse;
 
 	Keyboard keyboard;
+
+	bool dragAndDropControl = false;
+	bool continuousControl = true;
 public:
 
 	Matrix<4, 4> viewMatrix;
 	Matrix<4, 4> inverseViewMatrix;
 	Matrix<4, 4> projectionMatrix;
-	bool mouseMotion = false;
+	
 
 	/**
 	 * Une variable publique.
@@ -409,6 +412,16 @@ private:
 	}
 public:
 
+	void setControlDragAndDrop() {
+		dragAndDropControl = true;
+		continuousControl = false;
+	}
+
+	void setControlContinuous() {
+		dragAndDropControl = false;
+		continuousControl = true;
+	}
+
 	/**
 	 * Fonction publique
 	 * @param inputEvent, window
@@ -429,13 +442,11 @@ public:
 				angleView += 1;
 			}
 			// set angles
-			if (mouseMotion) {
+			if (dragAndDropControl) {
 				SDL_ShowCursor(true);
 				if (mouse.leftClick && mouse.moving
 					&& mouse.x < framePos.x + frame.getWidth() && mouse.x > framePos.x && mouse.y < framePos.y + frame.getHeight() && mouse.y > framePos.y) {
-					std::cout << angleX;
 					angleX += (float)(mouse.xmov) / 360.0f;
-					std::cout << " " << angleX << std::endl;;
 					angleY += (float)(mouse.ymov) / 360.0f;
 				}
 			}
@@ -445,8 +456,7 @@ public:
 				angleX += sensitivity * (float)(mouse.x - frame.getWidth() * 0.5);
 				angleY += sensitivity * (float)(mouse.y - frame.getHeight() * 0.5);
 			}
-			angleX = clampAngleX(angleX);
-			angleY = clampAngleY(angleY);
+			
 			if (path.size() > 0 && current == this) {
 				Vector direction(path[0].x - subject.x, path[0].y - subject.y, path[0].z - subject.z); // goal - start
 				if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal
@@ -460,15 +470,16 @@ public:
 					subject += direction;
 				}
 			}
-
 			refresh2D();
 			if (hasSubject) {
 				const Vector look = getMovementVector(1, 0, 0, distanceToSubject);
 				pos = subject - look;
 			}
-			look = getMovementVector(1, 0, 0, 1);
 		}
 		else SDL_ShowCursor(true);
+		look = getMovementVector(1, 0, 0, 1);
+		angleX = clampAngleX(angleX);
+		angleY = clampAngleY(angleY);
 		refresh2D();
 	}
 };
