@@ -20,7 +20,7 @@ public:
      * @param centre Centre de l'étoile. La position est initialisée à (0,0) car nous considérons ce point comme étant le centre du système stellaire
      * @param name Nom de l'étoile
      */
-    Star(float radius, double mass, Point2D<int> centre, std::string name) : Luminary(radius, mass, centre, name) {}
+    Star(float radius, double mass, Point2D<double> centre, std::string name) : Luminary(radius, mass, centre, name) {}
 
     Star() = delete;
 };

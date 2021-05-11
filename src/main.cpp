@@ -25,10 +25,6 @@ int main(int argc, char* argv[]) {
 	Render r(window, 900, 506); // 16:9
 	Mouse mouse;
 	Keyboard keyboard;
-
-
-
-	//CHECK DANS DRAW.hpp
 	
 	// 1. Contour
 	bm.addRectButton<TextInput*>("b_contour", nullptr, white, black, nullptr, Point2D<int>(10, 10), 1260, 690);
@@ -66,15 +62,14 @@ int main(int argc, char* argv[]) {
 	i_TLx = 750;
 	i_TLy = 190;
 	TextBox t_planet("Planet", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
-	//ADD Button switch entre les 2 mots checkBox se déclare comme le sautres boutons
+	bm.addCheckBox<void*>("switchstar", black, gray, Point2D<int>(818, 190), 20);
 	TextBox t_star("Star", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx + 110, i_TLy), 40, 20, window.getRenderer());
 
 	int b_width = 60, b_height = 25;
 	int b_topleftx = 1120, b_tly = 187;
 	TextBox b_add("Add", pth + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<void*>("b_add", nullptr, green, black, &b_add, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	
-	//ADD tableau
+
 	i_TLy = 450;
 	TextBox t_simuspeed("Simulation Speed", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx, i_TLy), 140, 25, window.getRenderer());
 	TextInput i_simuspeed(" x1", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx + 130, i_TLy - 3), 195, 25, window.getRenderer());
@@ -85,7 +80,6 @@ int main(int argc, char* argv[]) {
 	bm.addRectButton<void*>("b_change", nullptr, green, black, &b_change, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 
 	// 4. Global Settings
-
 	TextBox t_globset("Global Settings", pth + std::string("fonts/calibri.ttf"), 28, black, Point2D<int>(i_TLx, i_TLy + 50), 220, 50, window.getRenderer());
 
 	b_width = 130, b_height = 30;
@@ -116,14 +110,37 @@ int main(int argc, char* argv[]) {
 	TextBox b_save("Save", pth + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<void*>("b_save", nullptr, green, black, &b_save, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 
-	
-
 	starSystem Ssys(bm, manager, window);
 
 	//5. Camera
-	Camera faceCam({ manager.getShape("fond").center.x, manager.getShape("fond").center.y, manager.getShape("fond").center.z - 100 }, 60, 0, 3.1416);
+	Camera faceCam({ manager.getShape("fond").center.x, manager.getShape("fond").center.y, manager.getShape("fond").center.z - 100 }, 60, 0, 3.14519);
 	faceCam.lock();
+	
+	b_topleftx = 720;
 
+	//6. ScrollZone
+	ScrollZone zone(inputEvent, window, Point2D<int>(750, 230), 430, 200, 520, 410);
+	zone.startDrawInside(window.getRenderer());
+		Draw::DrawTable(Point2D<int>(5, 5), 450, 400, 17, 5, white, black, window.getRenderer());
+	zone.stopDrawInside(window.getRenderer());
+
+	//zone.buttonManager.addRectTextButton<Camera*>("b1", Point2D<int>(5, 105), 70, 25, "Camera 1");
+	TextBox zone_name("NAME", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(30, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_name);
+
+	TextBox zone_mass("MASS", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(120, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_mass);
+
+	TextBox zone_radius("RADIUS", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(200, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_radius);
+
+	TextBox zone_position("POSITION", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(285, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_position);
+
+	TextBox zone_speed("SPEED", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(390, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_speed);
+	
+	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
 		i_mass.checkForInput(inputEvent, window.getRenderer());
 		i_radius.checkForInput(inputEvent, window.getRenderer());
@@ -134,21 +151,21 @@ int main(int argc, char* argv[]) {
 		i_simuspeed.checkForInput(inputEvent, window.getRenderer());
 		i_loadsave.checkForInput(inputEvent, window.getRenderer());
 
-		inputEvent.update();
-
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
 
+		inputEvent.update();
+
 		bm.checkButtons();
 		bm.renderButtons(window.getRenderer());
-		i_mass.render(window.getRenderer(), 0, 0);
-		i_radius.render(window.getRenderer(), 0, 0);
-		i_name.render(window.getRenderer(), 0, 0);
-		i_posx.render(window.getRenderer(), 0, 0);
-		i_posy.render(window.getRenderer(), 0, 0);
-		i_speed.render(window.getRenderer(), 0, 0);
-		i_simuspeed.render(window.getRenderer(), 0, 0);
-		i_loadsave.render(window.getRenderer(), 0, 0);
+		i_mass.render(window.getRenderer(), 0);
+		i_radius.render(window.getRenderer(), 0);
+		i_name.render(window.getRenderer(), 0);
+		i_posx.render(window.getRenderer(), 0);
+		i_posy.render(window.getRenderer(), 0);
+		i_speed.render(window.getRenderer(), 0);
+		i_simuspeed.render(window.getRenderer(), 0);
+		i_loadsave.render(window.getRenderer(), 0);
 
 		t_input.render(window.getRenderer(), 0, 0);
 		t_mass.render(window.getRenderer(), 0, 0);
@@ -162,11 +179,13 @@ int main(int argc, char* argv[]) {
 		t_simuspeed.render(window.getRenderer(), 0, 0);
 		t_globset.render(window.getRenderer(), 0, 0);
 		t_loadsave.render(window.getRenderer(), 0, 0);
-
-		inputEvent.update();
 		r.updateTriangles(manager);
 
+		zone.update();
+		zone.render(window);
+
 		r.render({ 30,30 }, 680, 430, inputEvent, window, manager);
+
 		window.RenderScreen();
 		window.FillScreen(white);
 	}

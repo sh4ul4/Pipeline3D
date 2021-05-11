@@ -6,9 +6,6 @@ class GlobalTexture {
 
 private:
 
-	// variable SDL qui permet de contenir une texture accelérée pour l'affichage
-	SDL_Texture* texture;
-
 	// largeur de la bitmap
 	size_t width;
 
@@ -22,6 +19,8 @@ private:
 	int pitch = 0;
 
 public:
+	// variable SDL qui permet de contenir une texture accelérée pour l'affichage
+	SDL_Texture* texture;
 
 	// buffer qui contient les distances caméra-pixel de chaque pixel dessiné
 	float* zbuffer;
@@ -52,7 +51,7 @@ public:
 		height = h;
 		// generate pixel-array
 		pixels.reserve(width * height);
-		for (int i = 0; i < width * height; i++) pixels.emplace_back(0);
+		for (size_t i = 0; i < width * height; i++) pixels.emplace_back(0);
 		pixels.shrink_to_fit();
 		pitch = width * 4;
 		//pixelsV.reserve(width * height * 4);
@@ -90,7 +89,7 @@ public:
 
 	// mettre à jour le zbuffer en mettant toutes les valeur à float-max
 	inline void refreshZbuffer() {
-		for (int i = 0; i < width * height; i++) zbuffer[i] = 9999999;
+		for (size_t i = 0; i < width * height; i++) zbuffer[i] = 9999999;
 	}
 
 	// mettre à jour la texture avec le vecteur de pixels
@@ -119,7 +118,7 @@ public:
 
 	// mettre tous les pixels du vecteur à une valeur arbitraire
 	void clearPixels() {
-		const Uint32 pixel = rgbaToUint32(150, 150, 150, 255);
+		const Uint32 pixel = 0;
 		for (auto& p : pixels) p = pixel;
 	}
 
@@ -203,18 +202,15 @@ public:
 	void drawLine(const GlobalTexture& globalTexture, const Point2D<int>& a, const float& adepth, const Point2D<int>& b, const float& bdepth, const Color& color) {
 		std::vector<Point2D<int>> line;
 		ScanLine(a.x, a.y, b.x, b.y, line, height, width);
-		//float rela = bdepth - adepth;
 		for (auto& p : line) {
-			/*int l1 = p.distance(a);
-			int l2 = p.distance(b);
-			float depth = adepth + (rela) / (l1 + l2) * l1;
-			if (globalTexture.zbuffer[p.x + width * p.y] < depth) continue;
-			globalTexture.zbuffer[p.x + width * p.y] = depth;*/
 			pixels[p.x + width * p.y] = (color.b << 24) + (color.g << 16) + (color.r << 8) + (color.a);
-			/*pixelsV[width * 4 * p.y + p.x * 4 + 0] = color.a;
-			pixelsV[width * 4 * p.y + p.x * 4 + 1] = color.b;
-			pixelsV[width * 4 * p.y + p.x * 4 + 2] = color.g;
-			pixelsV[width * 4 * p.y + p.x * 4 + 3] = color.r;*/
+		}
+	}
+
+	void filterBnW() {
+		for (Uint32& p : pixels) {
+			const Uint8 grayscale = ((Uint8)(p >> 8) + (Uint8)(p >> 16) + (Uint8)(p >> 24)) / 3;
+			p = (grayscale << 24) + (grayscale << 16) + (grayscale << 8) + (Uint8)p;
 		}
 	}
 };

@@ -16,33 +16,33 @@ public:
 
     //Initialisation d'un matrice de taille T1*T2
     Matrix() {
-        for (int i = 0; i < T1; i++)
-            for (int j = 0; j < T2; j++)
+        for (size_t i = 0; i < T1; i++)
+            for (size_t j = 0; j < T2; j++)
                 m[i][j] = 0;
     }
 
     Matrix(const std::array<std::array<float, T1>, T2>& src) {
-        for (int i = 0; i < T1; i++)
-            for (int j = 0; j < T2; j++)
+        for (size_t i = 0; i < T1; i++)
+            for (size_t j = 0; j < T2; j++)
                 m[i][j] = src[i][j];
     }
 
     Matrix(const Matrix& other) {
-        for (int i = 0; i < T1; i++)
-            for (int j = 0; j < T2; j++)
+        for (size_t i = 0; i < T1; i++)
+            for (size_t j = 0; j < T2; j++)
                 m[i][j] = other.m[i][j];
     }
 
     Matrix& operator=(const Matrix& other) {
-        for (int i = 0; i < T1; i++)
-            for (int j = 0; j < T2; j++)
+        for (size_t i = 0; i < T1; i++)
+            for (size_t j = 0; j < T2; j++)
                 m[i][j] = other.m[i][j];
         return *this;
     }
 
     Matrix& operator=(const std::array<std::array<float,T1>,T2>& other) {
-        for (int i = 0; i < T1; i++)
-            for (int j = 0; j < T2; j++)
+        for (size_t i = 0; i < T1; i++)
+            for (size_t j = 0; j < T2; j++)
                 m[i][j] = other[i][j];
         return *this;
     }
@@ -53,7 +53,11 @@ public:
      * @param this la première matrice additionée
      * @param m2 la deuxième matrice additionée
     */
-    //Matrix& operator+=(const Matrix& m2);
+    Matrix& operator+=(const Matrix& m2){
+        (*this)=(*this)+m2;
+
+        return *this;
+        }
 
     /*
      * @brief renvoie la soustraction de 2 matrices
@@ -61,7 +65,10 @@ public:
      * @param this la première matrice additionée
      * @param m2 la deuxième matrice additionée
     */
-    //Matrix& operator-=(const Matrix& m2);
+    Matrix& operator-=(const Matrix& m2){
+        (*this)=(*this)-m2;
+        return *this;
+        }
 
     /*
      *@brief renvoie la multiplication de 2 matrices
@@ -69,55 +76,186 @@ public:
      * @param this la première matrice additionée
      * @param m2 la deuxième matrice multiplié
     */
-    //Matrix& operator*=(const Matrix& m2);
+    Matrix& operator*=(const Matrix& m2){
+        (*this)=(*this)*m2;
+        return *this;
+    }
 
     /*
      * @brief renvoie la matrice inverse
      */
-    //Matrix inverse() const;
+    Matrix inverse(){
+        Matrix <T1,T2> inv;
+        float det=determinantM4d();
+        if(T1==2){
+            inv.m[0][0]=m[1][1]/det;
+            inv.m[0][1]=-m[0][1]/det;
+            inv.m[1][0]=-m[1][0]/det;
+            inv.m[1][1]=m[0][0]/det;
+            }
+        if(T1>=3){
+            for(size_t i=0;i<T1;i++){
+                for(size_t j=0;j<T1;j++){
+                    std::array<std::array<float,T1-1>,T2-1> st1;
+                    size_t l=0,k=0,a=0,b=0; //l l'indice de la ligne de la matrice, a le saut de ligne
+                    while(l<T1){      
+                        if(l==i){
+                            a=1;
+                            }      //k l'indice de la colonne de la matrice, b le saut de colonne
+                        else{
+                            while(k<T2){    
+                                if(j==k){
+                                    b=1;
+                                    }
+                                else{
+                                    st1[l-a][k-b]=m[l][k];
+                                    }
+                                k++;
+                                }
+                            k=0;
+                            b=0;
+                            }
+                        l++;
+                        }
+                    Matrix <T1-1,T2-1> comat(st1);
+                    if(((i+j)%2)==0){
+                        inv.m[j][i]=comat.determinantM4d()/det;
+                        }
+                    else{
+                        inv.m[j][i]=-comat.determinantM4d()/det;
+                        }
+                    //comat.print();
+                    }
+                }
+                }
+        return inv;
+        }
     /*
      * @brief renvoie la transposée de la matrice
     */
-    //Matrix transpose(const Matrix& m);
+    Matrix transpose(const Matrix& m){
+        Matrix <T2,T1> t;
+        for (size_t i = 0; i <T1; i++){
+            for(size_t j = 0; j<T2;j++){
+                t.m[i][j]=m.m[j][i];
+                }
+            }
+        return t;
+        }
     /*
      * @brief  multiplie la matrice par un scalaire
      *
      * @param f le scalaire
      */
-
-    //void scalarMult(const float f);
+    void scalarMult(const float f){
+        for (size_t i = 0; i < T1; i++) {
+            for (size_t j = 0; j < T2; j++) {
+                m[i][j]=m[i][j]*f;
+            }
+        }
+        }
     /*
      * @brief renvoie le déterminant de la matrice
     */
-    //float determinantM4d();
+    float determinantM4d(){
+        if(T1==1){
+            return m[0][0];
+            }
+        if(T1==2){
+            return m[0][0]*m[1][1]-m[1][0]*m[0][1];
+            }
+        if(T1==3){
+            float val1=m[0][0]*m[1][1]*m[2][2];
+            float val2=m[1][0]*m[2][1]*m[0][2];
+            float val3=m[0][1]*m[1][2]*m[2][0];
+            float val4=m[2][0]*m[1][1]*m[0][2];
+            float val5=m[1][0]*m[0][1]*m[2][2];
+            float val6=m[0][0]*m[2][1]*m[1][2];
+
+            return val1+val2+val3-val4-val5-val6;
+            }
+        //calcul de déterminant dévellopement par ligne
+        if(T1==4){
+            //vecteur de floatant où on stock l'ensemble des déterminants
+            std::array<float,T1> determinants;
+            std::array<Matrix <3,3>,T1> matrixs;
+            for(size_t i=0;i<T1;i++){
+                std::array<std::array<float,3>,3> st1;
+                size_t j=0;
+                int a=0;
+                while(j<T1){
+                    if(j==i){
+                        a=1;
+                        }
+                    else{
+                        for(size_t l=1;l<T1;l++){
+                            st1[j-a][l-1]=m[j][l];
+                            }
+                        }
+                    j++; 
+                   }
+                Matrix <3,3> m1(st1);
+                matrixs[i]=m1;
+            }
+        for(size_t i=0;i<T1;i++){
+            determinants[i]=matrixs[i].determinantM4d();
+            }
+        return m[0][0]*determinants[0]-m[1][0]*determinants[1]+m[2][0]*determinants[2]-m[3][0]*determinants[3];
+        }
+    }
 
     /*
      * @brief affiche la matrice
     */
     void print() {
-        for (int i = 0; i < m.size(); i++) {
+        for (size_t i = 0; i < m.size(); i++) {
             std::cout << "{ ";
-            for (int j = 0; j < m[i].size(); j++) {
+            for (size_t j = 0; j < m[i].size(); j++) {
                 std::cout << m[i][j] << " ";
             }
             std::cout << " }" << std::endl;
         }
+        std::cout<<std::endl;
     }
 };
 
 template <size_t T1, size_t T2>
 inline const Matrix<T1,T2> operator+(const Matrix<T1, T2>& v1, const Matrix<T1, T2>& v2) {
-    return Matrix<T1,T2>();
+    Matrix <T1,T2> m3;
+    for (size_t i = 0; i < T1; i++) {
+            for (size_t j = 0; j < T2; j++) {
+                m3.m[i][j]=v1.m[i][j]+v2.m[i][j];
+            }
+        }
+    return m3;
 }
 
 template <size_t T1, size_t T2>
 inline const Matrix<T1, T2> operator-(const Matrix<T1, T2>& v1, const Matrix<T1, T2>& v2) {
-    return Matrix<T1,T2>();
+    Matrix <T1,T2> m3;
+    for (size_t i = 0; i < T1; i++) {
+            for (size_t j = 0; j < T2; j++) {
+                m3.m[i][j]=v1.m[i][j]-v2.m[i][j];
+            }
+        }
+    return m3;
 }
 
 template <size_t T1, size_t T2>
 inline const Matrix<T1, T2> operator*(const Matrix<T1, T2>& v1, const Matrix<T1, T2>& v2) {
-    return Matrix<T1,T2>();
+    //if pour vérifier que les tailles de matrices correspondent pour une multiplication de matrices
+    //pour l'instant on suppose quelle sont carrés.
+    //if(T1!=T2){} gérer l'erreur pour ce if
+    Matrix <T1,T2> mult;
+    
+    for(size_t i=0;i<T1;i++){
+        for(size_t j=0;j<T2;j++){
+            for(size_t l=0;l<T1;l++){
+            mult.m[i][j]=mult.m[i][j]+v1.m[i][l]*v2.m[l][j];
+            }
+        }
+    }
+    return mult;
 }
 
 inline Matrix<4, 4> optimizedProduct(const Matrix<4, 4>& m1, const Matrix<4, 4>& m2) {

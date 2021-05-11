@@ -241,7 +241,104 @@ public:
 				}
 			}
 		}
-	 }
+	}
+
+	static void DrawRect(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& color, SDL_Renderer* renderer) {
+		SDL_Rect cont1;
+		cont1.x = p.x;
+		cont1.y = p.y;
+		cont1.w = w - edgeSize;
+		cont1.h = edgeSize;
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+		SDL_RenderFillRect(renderer, &cont1);
+		SDL_Rect cont2;
+		cont2.x = p.x + w - edgeSize;
+		cont2.y = p.y;
+		cont2.w = edgeSize;
+		cont2.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont2);
+		SDL_Rect cont3;
+		cont3.x = p.x + edgeSize;
+		cont3.y = p.y + h - edgeSize;
+		cont3.w = w - edgeSize;
+		cont3.h = edgeSize;
+		SDL_RenderFillRect(renderer, &cont3);
+		SDL_Rect cont4;
+		cont4.x = p.x;
+		cont4.y = p.y + edgeSize;
+		cont4.w = edgeSize;
+		cont4.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont4);
+	}
+
+	static void DrawFillRect(const Point2D<int>& p, const int& w, const int& h, const Color& color, SDL_Renderer* renderer) {
+		SDL_Rect rect{ p.x,p.y,w,h };
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+		SDL_RenderFillRect(renderer, &rect);
+	}
+
+	static void DrawContouredRect(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& contour, SDL_Renderer* renderer) {
+		SDL_Rect cont1;
+		cont1.x = p.x;
+		cont1.y = p.y;
+		cont1.w = w - edgeSize;
+		cont1.h = edgeSize;
+		SDL_SetRenderDrawColor(renderer, contour.r, contour.g, contour.b, contour.a);
+		SDL_RenderFillRect(renderer, &cont1);
+		SDL_Rect cont2;
+		cont2.x = p.x + w - edgeSize;
+		cont2.y = p.y;
+		cont2.w = edgeSize;
+		cont2.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont2);
+		SDL_Rect cont3;
+		cont3.x = p.x + edgeSize;
+		cont3.y = p.y + h - edgeSize;
+		cont3.w = w - edgeSize;
+		cont3.h = edgeSize;
+		SDL_RenderFillRect(renderer, &cont3);
+		SDL_Rect cont4;
+		cont4.x = p.x;
+		cont4.y = p.y + edgeSize;
+		cont4.w = edgeSize;
+		cont4.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont4);
+	}
+
+	static void DrawFillContouredRect(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& middle, const Color& contour, SDL_Renderer* renderer) {
+		SDL_Rect middleRect;
+		middleRect.x = p.x + edgeSize;
+		middleRect.y = p.y + edgeSize;
+		middleRect.w = w - 2 * edgeSize;
+		middleRect.h = h - 2 * edgeSize;
+		SDL_SetRenderDrawColor(renderer, middle.r, middle.g, middle.b, middle.a);
+		SDL_RenderFillRect(renderer, &middleRect);
+		SDL_Rect cont1;
+		cont1.x = p.x;
+		cont1.y = p.y;
+		cont1.w = w - edgeSize;
+		cont1.h = edgeSize;
+		SDL_SetRenderDrawColor(renderer, contour.r, contour.g, contour.b, contour.a);
+		SDL_RenderFillRect(renderer, &cont1);
+		SDL_Rect cont2;
+		cont2.x = p.x + w - edgeSize;
+		cont2.y = p.y;
+		cont2.w = edgeSize;
+		cont2.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont2);
+		SDL_Rect cont3;
+		cont3.x = p.x + edgeSize;
+		cont3.y = p.y + h - edgeSize;
+		cont3.w = w - edgeSize;
+		cont3.h = edgeSize;
+		SDL_RenderFillRect(renderer, &cont3);
+		SDL_Rect cont4;
+		cont4.x = p.x;
+		cont4.y = p.y + edgeSize;
+		cont4.w = edgeSize;
+		cont4.h = h - edgeSize;
+		SDL_RenderFillRect(renderer, &cont4);
+	}
 
 	static void DrawFillRoundedRect(const Point2D<int>& p, const int& w, const int& h, const int& edgeSize, const Color& color, SDL_Renderer* renderer) {
 		Point2D<int> c1(p + edgeSize);
@@ -311,300 +408,29 @@ public:
 		SDL_RenderDrawLine(renderer, c1.x, p.y + h, c2.x, p.y + h);
 		SDL_RenderDrawLine(renderer, p.x, c2.y, p.x, c4.y);
 	}
-	 
-	 /**
-	 * Une fonction publique.
-	 * @brief Affiche un texte 2D 
-	 * @param x,y Coordonnées de la zone de texte 
-	 * @param size Taille des caracteres
-	 * @param string Texte à afficher
-	 * @param color Couleur du texte à afficher
-	 * @param renderer Moteur de rendu SDL
-	 */	
-	bool RenderString(const int& x, const int& y, const int& size, const std::string& string, const Color& color, SDL_Renderer* renderer) {
-		std::vector< AnalogChar> chars_f;
-		for (int i = static_cast<int>(string.size()) - 1; i >= 0; i--)
-		{
-			switch (string[i]) {
-			case 'a':chars_f.push_back({ 0,0,0,1,1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'b':chars_f.push_back({ 1,0,1,1,1,1,1,0,0,0,0,0,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'c':chars_f.push_back({ 0,1,0,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'd':chars_f.push_back({ 1,0,1,1,1,1,0,0,0,1,1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'e':chars_f.push_back({ 1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'f':chars_f.push_back({ 1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'g':chars_f.push_back({ 0,1,0,1,1,0,0,1,0,0,1,1,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'h':chars_f.push_back({ 0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'i':chars_f.push_back({ 1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1 }); break;
-			case 'j':chars_f.push_back({ 1,1,1,0,0,1,0,0,1,1,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'k':chars_f.push_back({ 0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,1,0,0,0,0 }); break;
-			case 'l':chars_f.push_back({ 0,0,1,1,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'm':chars_f.push_back({ 0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'n':chars_f.push_back({ 0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0 }); break;
-			case 'o':chars_f.push_back({ 0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'p':chars_f.push_back({ 1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'q':chars_f.push_back({ 0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0 }); break;
-			case 'r':chars_f.push_back({ 1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0 }); break;
-			case 's':chars_f.push_back({ 0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 't':chars_f.push_back({ 1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1 }); break;
-			case 'u':chars_f.push_back({ 0,0,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'v':chars_f.push_back({ 0,0,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0 }); break;
-			case 'w':chars_f.push_back({ 0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0 }); break;
-			case 'x':chars_f.push_back({ 0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case 'y':chars_f.push_back({ 0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1 }); break;
-			case 'z':chars_f.push_back({ 1,1,0,0,0,1,0,0,1,0,0,0,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case '#':chars_f.push_back({ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 }); break;
-			case '*':chars_f.push_back({ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case '+':chars_f.push_back({ 0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 }); break;
-			case '-':chars_f.push_back({ 0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-			case ' ':chars_f.push_back({ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }); break;
-				//case ''':chars_f.push_back({ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0 }); break;
-			default:chars_f.push_back({ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 }); break;
-			}
+
+#define DRAWRECT 1
+#define DRAWFILLRECT 2
+#define DRAWCONTOURRECT 3
+#define DRAWFILLCONTOURRECT 4
+#define DRAWFILLROUNDEDRECT 5
+#define DRAWFILLROUNDEDCONTOURRECT 6
+
+	static void DrawTable(const Point2D<int>& p, int w, int h, int rows, int columns, const Color& bg, const Color& cont, SDL_Renderer* renderer) {
+		SDL_Rect rect1{ p.x,p.y,w,h };
+		SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, bg.a);
+		SDL_RenderFillRect(renderer, &rect1);
+		SDL_SetRenderDrawColor(renderer, cont.r, cont.g, cont.b, cont.a);
+		int deltax = w / columns;
+		for (int x = 0; x <= columns; x++) {
+			SDL_RenderDrawLine(renderer, p.x + deltax * x, p.y, p.x + deltax * x, p.y + h);
 		}
-		for (int i = static_cast<int>(chars_f.size()) - 1; i >= 0; i--)
-		{
-			Point2D<int> a, b;
-			if (chars_f[i]._1) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = y;
-				b.x = a.x + size / 4;
-				b.y = a.y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._2) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y;
-				b.x = a.x + size / 4;
-				b.y = a.y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._3) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = y;
-				b.x = a.x;
-				b.y = size / 4 + y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._4) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = size / 4 + y;
-				b.x = a.x;
-				b.y = a.y + size / 4;;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._5) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = size / 2 + y;
-				b.x = a.x;
-				b.y = size / 4 + size / 2 + y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._6) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = size / 2 + size / 4 + y;
-				b.x = a.x;
-				b.y = size + y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._7) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = size / 2 + y;
-				b.x = a.x + size / 4;
-				b.y = a.y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._8) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = size / 2 + y;
-				b.x = a.x + size / 4;
-				b.y = a.y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._9) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 2;
-				a.y = y;
-				b.x = a.x;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._10) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 2;
-				a.y = y + size / 4;
-				b.x = a.x;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._11) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 2;
-				a.y = y + size / 2;
-				b.x = a.x;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._12) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 2;
-				a.y = size / 4 + size / 2 + y;
-				b.x = a.x;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._13) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = size + y;
-				b.x = a.x + size / 4;
-				b.y = a.y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._14) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = size + y;
-				b.x = a.x + size / 4;
-				b.y = a.y;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._15) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y;
-				b.x = a.x - size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._16) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y;
-				b.x = a.x + size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._17) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 2;
-				a.y = y + size / 4;
-				b.x = a.x - size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._18) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = y + size / 4;
-				b.x = a.x + size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._19) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 2;
-				b.x = a.x - size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._20) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 2;
-				b.x = a.x + size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._21) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 2;
-				a.y = y + size / 4 + size / 2;
-				b.x = a.x - size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._22) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = y + size / 4 + size / 2;
-				b.x = a.x + size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			} // ---
-			if (chars_f[i]._23) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 2;
-				a.y = y;
-				b.x = a.x - size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._24) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = y;
-				b.x = a.x + size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._25) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 4;
-				b.x = a.x - size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._26) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 4;
-				b.x = a.x + size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._27) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 2;
-				a.y = y + size / 2;
-				b.x = a.x - size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._28) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x;
-				a.y = y + size / 2;
-				b.x = a.x + size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._29) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 4 + size / 2;
-				b.x = a.x - size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._30) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 4 + size / 2;
-				b.x = a.x + size / 4;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._31) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y;
-				b.x = a.x;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._32) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 4;
-				b.x = a.x;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._33) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 2;
-				b.x = a.x;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
-			if (chars_f[i]._34) {
-				a.x = (static_cast<int>(chars_f.size()) - i - 1) * size + x + size / 4;
-				a.y = y + size / 2 + size / 4;
-				b.x = a.x;
-				b.y = a.y + size / 4;
-				DrawLine(a, b, color, renderer);
-			}
+		int deltay = h / rows;
+		for (int y = 0; y <= rows; y++) {
+			SDL_RenderDrawLine(renderer, p.x, p.y + deltay * y, p.x + w, p.y + deltay * y);
 		}
-		return 0;
 	}
+	
 
 	/**
 	 * Une fonction publique.

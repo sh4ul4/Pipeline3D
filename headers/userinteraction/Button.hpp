@@ -11,10 +11,11 @@ protected:
 	bool selected = false; // la souris se trouve dans la zone selectionnable
 	bool visible = false;
 	Texture2D* backgroundTex = nullptr;
-	Color backgroundCol;
-	Color contourCol;
 	TextBox* textBox = nullptr;
 	bool* signal = nullptr;
+public:
+	Color backgroundCol;
+	Color contourCol;
 public:
 	// virtual functions declarations
 	virtual void setSignal(bool& signal) {}
@@ -23,13 +24,16 @@ public:
 	virtual bool isSelected()const { return selected; }
 	virtual void playAction() {}
 	virtual void render(SDL_Renderer* renderer) const {}
-	virtual bool mouseInside(const InputEvent& ie) { return false; }
-	virtual bool mouseClickInside(const InputEvent& ie) { return false; }
-	virtual void checkButton(const InputEvent& inputEvent) {}
+	virtual bool mouseInside(const InputEvent& ie, const Point2D<int>& pos) { return false; }
+	virtual bool mouseClickInside(const InputEvent& ie, const Point2D<int> pos) { return false; }
+	virtual void checkButton(const InputEvent& inputEvent, const Point2D<int> pos) {}
+	void unselect() { selected = false; }
+	void setTexture(Texture2D* texture) { backgroundTex = texture; }
+	void deleteTexture() { delete backgroundTex; backgroundTex = nullptr; }
 protected:
 	// constructor only accessible via derived button classes
 	ButtonBase(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb)
-		: name(name), backgroundTex(bgTex), backgroundCol(bgCol), contourCol(contCol), textBox(tb) {}
+		: name(name), backgroundTex(bgTex), textBox(tb), backgroundCol(bgCol), contourCol(contCol) {}
 	ButtonBase() = delete;
 };
 
@@ -91,22 +95,22 @@ public:
 	virtual void render(SDL_Renderer* renderer) const {}
 
 	// check if the mouse is inside the button-zone
-	virtual bool mouseInside(const InputEvent& ie) { return false; }
+	virtual bool mouseInside(const InputEvent& ie, const Point2D<int>& pos) { return false; }
 
 	// check if the mouse clicked inside the button-zone
-	virtual bool mouseClickInside(const InputEvent& ie) {
+	virtual bool mouseClickInside(const InputEvent& ie, const Point2D<int>& pos) {
 		ie.updateMouse(mouse);
-		clicked = mouseInside(ie) && mouse.leftClick;
+		clicked = mouseInside(ie, pos) && mouse.leftClick;
 		return clicked;
 	}
 
 	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
-	virtual void checkButton(const InputEvent& inputEvent) {
-		if (!clicked && mouseClickInside(inputEvent)) {
+	virtual void checkButton(const InputEvent& inputEvent, const Point2D<int> p) {
+		if (!clicked && mouseClickInside(inputEvent, p)) {
 			playAction();
 			if(signal) *signal = true;
 		}
-		else mouseClickInside(inputEvent);
+		else mouseClickInside(inputEvent, p);
 	}
 
 protected:
@@ -123,15 +127,20 @@ public:
 	Point2D<int> pos;
 	int width;
 	int height;
+	const size_t DRAWTYPE;
 
 	RectButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb,
-		const Point2D<int>& pos, const int& width, const int& height) : Button<paramType>(name, bgTex, bgCol, contCol, tb),
-		pos(pos), width(width), height(height) {}
+		const Point2D<int>& pos, const int& width, const int& height, const size_t DRAWTYPE = DRAWFILLCONTOURRECT) : Button<paramType>(name, bgTex, bgCol, contCol, tb),
+		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
 
 	RectButton() = delete;
 
 	void render(SDL_Renderer* renderer) const {
-		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);
+		if (ButtonBase::backgroundTex) {
+			ButtonBase::backgroundTex->render(renderer, pos + 1, width - 2, height - 2);
+			if (!ButtonBase::selected) Draw::DrawFillRect(pos + 1, width - 2, height - 2, Color(20, 20, 20, 80), renderer);
+			Draw::DrawRect(pos, width, height, 1, ButtonBase::contourCol, renderer);
+		}
 		else {
 			Color bg = ButtonBase::backgroundCol;
 			if (ButtonBase::selected) {
@@ -139,19 +148,22 @@ public:
 				bg.g = Maths::concat(20, bg.g);
 				bg.b = Maths::concat(20, bg.b);
 			}
-			Draw::DrawFillRoundedRectContoured(pos, width, height, 6, bg, ButtonBase::contourCol, renderer);
+			if (DRAWTYPE == DRAWFILLROUNDEDCONTOURRECT)
+				Draw::DrawFillRoundedRectContoured(pos, width, height, 6, bg, ButtonBase::contourCol, renderer);
+			else Draw::DrawFillContouredRect(pos, width, height, 1, bg, ButtonBase::contourCol, renderer);
 		}
 		if (ButtonBase::textBox) {
 			const Point2D<int> center(pos.x + width / 2, pos.y + height / 2);
 			const Point2D<int> textBoxPos(center.x - ButtonBase::textBox->width / 2, center.y - ButtonBase::textBox->height / 2);
-			ButtonBase::textBox->render(renderer, textBoxPos, 0, 0);
+			ButtonBase::textBox->setPosition(textBoxPos);
+			ButtonBase::textBox->render(renderer);
 		}
 	}
 
-	bool mouseInside(const InputEvent& ie) {
+	bool mouseInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
 		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
-		ButtonBase::selected = m.x < pos.x + width && m.x > pos.x && m.y < pos.y + height && m.y > pos.y;
+		ButtonBase::selected = m.x < pos.x + width + p.x && m.x > pos.x + p.x && m.y < pos.y + height + p.y&& m.y > pos.y + p.y;
 		return ButtonBase::selected;
 	}
 };
@@ -162,18 +174,24 @@ public:
 	Point2D<int> pos;
 	int width;
 	int height;
+	const size_t DRAWTYPE;
 
-	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, const Window& window)
-		: Button<paramType>(name, nullptr, dark_gray, black,
-			new TextBox(text, pth + std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(0, 0), window.getRenderer())),
-		pos(pos), width(width), height(height) {}
+	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, const Window& window,
+		const size_t DRAWTYPE = DRAWFILLCONTOURRECT)
+		: Button<paramType>(name, nullptr, dark_gray, Color(30,30,30),
+			new TextBox(text, pth + std::string("fonts/calibri.ttf"), 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
+		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
 
 	RectTextButton() = delete;
 
 	~RectTextButton() { delete ButtonBase::textBox; }
 
 	void render(SDL_Renderer* renderer) const {
-		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);
+		if (ButtonBase::backgroundTex) {
+			ButtonBase::backgroundTex->render(renderer, pos + 1, width - 2, height - 2);
+			if (!ButtonBase::selected) Draw::DrawFillRect(pos + 1, width - 2, height - 2, Color(20, 20, 20, 80), renderer);
+			Draw::DrawRect(pos, width, height, 1, ButtonBase::contourCol, renderer);
+		}
 		else {
 			Color bg = ButtonBase::backgroundCol;
 			if (ButtonBase::selected) {
@@ -181,19 +199,22 @@ public:
 				bg.g = Maths::concat(20, bg.g);
 				bg.b = Maths::concat(20, bg.b);
 			}
-			Draw::DrawFillRoundedRectContoured(pos, width, height, 6, bg, ButtonBase::contourCol, renderer);
+			if (DRAWTYPE == DRAWFILLROUNDEDCONTOURRECT)
+				Draw::DrawFillRoundedRectContoured(pos, width, height, 6, bg, ButtonBase::contourCol, renderer);
+			else Draw::DrawFillContouredRect(pos, width, height, 1, bg, ButtonBase::contourCol, renderer);
 		}
 		if (ButtonBase::textBox) {
 			const Point2D<int> center(pos.x + width / 2, pos.y + height / 2);
 			const Point2D<int> textBoxPos(center.x - ButtonBase::textBox->width / 2, center.y - ButtonBase::textBox->height / 2);
-			ButtonBase::textBox->render(renderer, textBoxPos, 0, 0);
+			ButtonBase::textBox->setPosition(textBoxPos);
+			ButtonBase::textBox->render(renderer);
 		}
 	}
 
-	bool mouseInside(const InputEvent& ie) {
+	bool mouseInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
 		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
-		ButtonBase::selected = m.x < pos.x + width && m.x > pos.x && m.y < pos.y + height && m.y > pos.y;
+		ButtonBase::selected = m.x < pos.x + width + p.x && m.x > pos.x + p.x && m.y < pos.y + height + p.y && m.y > pos.y + p.y;
 		return ButtonBase::selected;
 	}
 };
@@ -204,10 +225,12 @@ public:
 	Point2D<int> pos;
 	int size;
 	bool checked = false;
+	Texture2D* trueTex = nullptr;
+	Texture2D* falseTex = nullptr;
 
 	CheckBox(const std::string& name, const Color& bgCol, const Color& contCol,
-		const Point2D<int>& pos, const int& size) : Button<paramType>(name, nullptr, bgCol, contCol, nullptr),
-		pos(pos), size(size) {}
+		const Point2D<int>& pos, const int& size, Texture2D* trueTex = nullptr, Texture2D* falseTex = nullptr) : Button<paramType>(name, nullptr, bgCol, contCol, nullptr),
+		pos(pos), size(size), trueTex(trueTex), falseTex(falseTex) {}
 
 	CheckBox() = delete;
 
@@ -223,63 +246,39 @@ public:
 			bg.g = Maths::concat(20, bg.g);
 			bg.b = Maths::concat(20, bg.b);
 		}
-		Draw::DrawFillRoundedRectContoured(pos, size, size, 6, bg, ButtonBase::contourCol, renderer);
+		Draw::DrawFillContouredRect(pos, size, size, 1, bg, ButtonBase::contourCol, renderer);
+		if (checked && trueTex != nullptr) {
+			trueTex->render(renderer, pos + 1, size - 2, size - 2);
+		}
+		else if (!checked && falseTex != nullptr) {
+			falseTex->render(renderer, pos + 1, size - 2, size - 2);
+		}
 	}
 
-	bool mouseInside(const InputEvent& ie) {
+	bool mouseInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
 		const Point2D<int> m(ButtonBase::mouse.x, ButtonBase::mouse.y);
-		ButtonBase::selected = m.x < pos.x + size && m.x > pos.x && m.y < pos.y + size && m.y > pos.y;
+		ButtonBase::selected = m.x < pos.x + size + p.x && m.x > pos.x + p.x && m.y < pos.y + size + p.y && m.y > pos.y + p.y;
 		return ButtonBase::selected;
 	}
 
-	bool mouseClickInside(const InputEvent& ie) {
+	bool mouseClickInside(const InputEvent& ie, const Point2D<int>& p) {
 		ie.updateMouse(ButtonBase::mouse);
-		ButtonBase::clicked = mouseInside(ie) && ButtonBase::mouse.leftClick;
+		ButtonBase::clicked = mouseInside(ie, p) && ButtonBase::mouse.leftClick;
 		return ButtonBase::clicked;
 	}
 
 	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
-	void checkButton(const InputEvent& inputEvent) {
-		if (!ButtonBase::clicked && mouseClickInside(inputEvent)) {
+	void checkButton(const InputEvent& inputEvent, const Point2D<int> pos) {
+		if (!ButtonBase::clicked && mouseClickInside(inputEvent, pos)) {
 			ButtonBase::playAction();
 			if (ButtonBase::signal) *ButtonBase::signal = true;
 			this->checked = !this->checked;
 		}
-		else mouseClickInside(inputEvent);
+		else mouseClickInside(inputEvent, pos);
 	}
 
 	bool isClicked() const { return checked; }
-};
-
-template <class paramType>
-class RoundButton : public Button<paramType> {
-public:
-	Point2D<int> pos;
-	int radius;
-
-	RoundButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb,
-		const Point2D<int>& pos, const int& radius)
-		: Button<paramType>(name, bgTex, bgCol, contCol, tb),
-		pos(pos), radius(radius) {}
-
-	RoundButton() = delete;
-
-	void render(SDL_Renderer* renderer) const {
-		if (ButtonBase::backgroundTex) ButtonBase::backgroundTex->render(renderer, 0, 0);
-		else {
-			Draw::DrawFillCircle(pos.x, pos.y, radius, ButtonBase::backgroundCol, renderer);
-		}
-		if (ButtonBase::textBox) ButtonBase::textBox->render(renderer, 0, 0);
-		Draw::DrawCircle(pos.x, pos.y, radius, ButtonBase::contourCol, renderer);
-	}
-
-	bool mouseInside(const InputEvent& ie) {
-		ie.updateMouse(ButtonBase::mouse);
-		const Point2D<int> mouse2(ButtonBase::mouse.x, ButtonBase::mouse.y);
-		ButtonBase::selected = mouse2.distance(pos) < radius;
-		return ButtonBase::selected;
-	}
 };
 
 class ButtonManager {
@@ -293,7 +292,7 @@ public:
 	ButtonManager() = delete;
 private:
 	bool nameUsed(const std::string& name) const {
-		for (int i = 0; i < buttons.size(); i++)
+		for (size_t i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) return true;
 		return false;
 	}
@@ -305,28 +304,16 @@ public:
 	}
 
 	template <class paramType>
-	void addCheckBox(const std::string& name, const Color& bgCol, const Color& contCol, const Point2D<int>& pos, const int& size) {
+	void addCheckBox(const std::string& name, const Color& bgCol, const Color& contCol, const Point2D<int>& pos, const int& size, Texture2D* trueTex = nullptr, Texture2D* falseTex = nullptr) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
-		buttons.emplace_back(new CheckBox<paramType>(name, bgCol, contCol, pos, size));
+		buttons.emplace_back(new CheckBox<paramType>(name, bgCol, contCol, pos, size, trueTex, falseTex));
 	}
 
 	template <class paramType>
-	void addRoundButton(const std::string& name, Texture2D* bgTex, const Color& bgCol, const Color& contCol, TextBox* tb, const Point2D<int>& pos, const int& radius) {
-		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
-		buttons.emplace_back(new RoundButton<paramType>(name, bgTex, bgCol, contCol, tb, pos, radius));
-	}
-
-	template <class paramType>
-	void addRectTextButtonDefault(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text) {
+	void addRectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, text, window));
 	}
-
-	// template <class paramType>
-	// void addRectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, /* couleur, contour, police, */) {
-	// 	if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
-	// 	buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, text, window));
-	// }
 
 	void removeButton(const std::string& name) {
 		for (size_t i = 0; i < buttons.size(); i++)
@@ -342,11 +329,15 @@ public:
 		for (size_t i = 0; i < buttons.size(); i++) buttons[i]->render(renderer);
 	}
 
-	void checkButtons() const {
+	void checkButtons(const Point2D<int> pos = Point2D<int>(0, 0)) const {
 		for (size_t i = 0; i < buttons.size(); i++) {
-			buttons[i]->checkButton(inputEvent);
-			//if (!buttons[i]->isClicked() && buttons[i]->mouseClickInside(inputEvent)) buttons[i]->playAction();
-			//else buttons[i]->mouseClickInside(inputEvent);
+			buttons[i]->checkButton(inputEvent, pos);
+		}
+	}
+
+	void unselectButtons() {
+		for (size_t i = 0; i < buttons.size(); i++) {
+			buttons[i]->unselect();
 		}
 	}
 
@@ -355,5 +346,6 @@ public:
 		ASSERT(nameUsed(name), "There is no Button with this name.\n");
 		for (size_t i = 0; i < buttons.size(); i++)
 			if (!buttons[i]->name.compare(name)) return dynamic_cast<Button<paramType>&>(*buttons[i]);
+		FATAL_ERR("no button with that name found");
 	}
 };

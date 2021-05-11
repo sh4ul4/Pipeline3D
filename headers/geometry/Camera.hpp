@@ -7,8 +7,6 @@
  * @private `pos`			Position de la camera.
  * @private `subject`			Si il y a un sujet, la camera tourne et ce concentre sur celui ci.
  * @private `distanceToSubject`		Vecteur distance entre [pos] et [sujet].
- * @private `LastAngleX`		Angle d'observation horizontal.
- * @private `LastAngleY`		Angle d'observation vertical.
  *
  * @public `hasSubject`		Si la camera a un sujet ou non.
  * @public `angleView`		L'angle de vue, exprimé en degrées.
@@ -46,25 +44,19 @@ private:
 	 * Vecteur distance entre [pos] et [sujet].
 	 */
 	float distanceToSubject = 50;
-	/**
-	 * Une variable privée.
-	 * Angle d'observation horizontal.
-	 */
-	float LastAngleX = 0;
-	/**
-	 * Une variable privée.
-	 * Angle d'observation vertical.
-	 */
-	float LastAngleY = 0;
 
 	Mouse mouse;
 
 	Keyboard keyboard;
+
+	bool dragAndDropControl = false;
+	bool continuousControl = true;
 public:
 
 	Matrix<4, 4> viewMatrix;
 	Matrix<4, 4> inverseViewMatrix;
 	Matrix<4, 4> projectionMatrix;
+	
 
 	/**
 	 * Une variable publique.
@@ -126,6 +118,12 @@ public:
 	 * Vitesse de mouvement de la camera pendant qu'elle suit le chemin.
 	 */
 	int pathMoveSpeed = 1;
+
+	Vector look{ 0,0,0 };
+
+	Color lightColor{ white };
+	Vector lightSource{ 0,0,0 };
+	float lightIntensity = 0.03;
 public:
 	/**
 	 * Un constructeur.
@@ -208,11 +206,7 @@ public:
 		viewMatrix.m[0] = { xaxis.x, yaxis.x, zaxis.x, 0 };
 		viewMatrix.m[1] = { xaxis.y, yaxis.y, zaxis.y, 0 };
 		viewMatrix.m[2] = { xaxis.z, yaxis.z, zaxis.z, 0 };
-		viewMatrix.m[3] = { - xaxis.dot(eyeVec), - yaxis.dot(eyeVec), - zaxis.dot(eyeVec), 1 };
-		//std::cout << "eye" << std::endl;
-		//eye.print(); eyeVec.print();
-		//std::cout << "matrix" << std::endl;
-		//viewMatrix.print();
+		viewMatrix.m[3] = { -xaxis.dot(eyeVec), -yaxis.dot(eyeVec), -zaxis.dot(eyeVec), 1 };
 		return viewMatrix;
 	}
 
@@ -231,7 +225,6 @@ public:
 
 	void makeWorldToCameraMatrix(Matrix<4, 4>& m) {
 		m = inverseMatrix(viewMatrix);
-		//m = viewMatrix.inverse();
 	}
 
 	/**
@@ -283,12 +276,11 @@ public:
 	Vector getMovementVector(const float& front, const float& side, const float& up, const float& speed) const {
 		Vector v(front, side, up);
 		v.normalizeOnLength(speed);
-		Matrix<4, 4> tmp;
-		tmp.m[0][0] = -v.y;
-		tmp.m[0][1] = -v.z;
-		tmp.m[0][2] = -v.x;
-		tmp = optimizedProduct(tmp, inverseViewMatrix);
-		const Vector res(tmp.m[0][0], tmp.m[0][1], tmp.m[0][2]);
+		const Vector res(
+			-v.y * inverseViewMatrix.m[0][0] - v.z * inverseViewMatrix.m[1][0] - v.x * inverseViewMatrix.m[2][0] + inverseViewMatrix.m[3][0],
+			-v.y * inverseViewMatrix.m[0][1] - v.z * inverseViewMatrix.m[1][1] - v.x * inverseViewMatrix.m[2][1] + inverseViewMatrix.m[3][1],
+			-v.y * inverseViewMatrix.m[0][2] - v.z * inverseViewMatrix.m[1][2] - v.x * inverseViewMatrix.m[2][2] + inverseViewMatrix.m[3][2]
+		);
 		return res;
 	}
 
@@ -308,7 +300,7 @@ public:
 	 * @param point Point où se deplace la caméra
 	 * @return
 	 */
-	void moveTo(const Vertex& point) { if(!locked) pos = point; }
+	void moveTo(const Vertex& point) { if (!locked) pos = point; }
 
 	/**
 	 * @brief Retourner la distance par rapport au point. Négatif si le point est derrière la caméra.
@@ -316,8 +308,8 @@ public:
 	 * @return
 	 */
 	float relationToClipPlane(const Vertex& point) const {
-		const Vertex position = pos + getMovementVector(1, 0, 0, near);
-		const Vector n = getMovementVector(1, 0, 0, 10); // should be negative if going backwards !
+		const Vertex position = pos + look * near;
+		const Vector n = look * 10; // should be negative if going backwards !
 		return n.x * (point.x - position.x) + n.y * (point.y - position.y) + n.z * (point.z - position.z);
 	}
 
@@ -337,6 +329,26 @@ public:
 			return { (int)m.m[0][0],(int)m.m[0][1], 0 };
 		}
 		m = optimizedProduct(m, projectionMatrix);
+		//homogeneous clip space
+		int x = (int)(m.m[0][0] / m.m[0][3]);
+		int y = (int)(m.m[0][1] / m.m[0][3]);
+		//NDC space[-1,1]
+		x += center.x;
+		y += center.y;
+		//raster space
+		return { x, y, m.m[0][3] };
+	}
+
+	Vertex get2DWithoutPerspective(Matrix<4, 4> m, bool& clip, const Point2D<int>& center, Matrix<4, 4> viewMatrix) {
+		//world space
+		clip = false;
+		m.m[0][3] = 1;
+		m = optimizedProduct(m, viewMatrix);
+		// camera space
+		if (optimizedLength(m) > far) {
+			clip = true;
+			return { (int)m.m[0][0],(int)m.m[0][1], 0 };
+		}
 		//homogeneous clip space
 		int x = (int)(m.m[0][0] / m.m[0][3]);
 		int y = (int)(m.m[0][1] / m.m[0][3]);
@@ -400,34 +412,51 @@ private:
 	}
 public:
 
+	void setControlDragAndDrop() {
+		dragAndDropControl = true;
+		continuousControl = false;
+	}
+
+	void setControlContinuous() {
+		dragAndDropControl = false;
+		continuousControl = true;
+	}
+
 	/**
-		 * Fonction publique
-		 * @param inputEvent, window
-		 * @brief Mettre à jour tous les paramètre changeants de la caméra à chaques frame.
-		 * - angle de vue
-		 * - direction du regard (1ère personne ou 3ème personne)
-		 * - mouvements 3D (caméra et sujet de la caméra)
-		 * - matrice de vue et matrice de perspective
-		 */
-	void update(InputEvent& inputEvent, const Window& window) {
+	 * Fonction publique
+	 * @param inputEvent, window
+	 * @brief Mettre à jour tous les paramètre changeants de la caméra à chaques frame.
+	 * - angle de vue
+	 * - direction du regard (1ère personne ou 3ème personne)
+	 * - mouvements 3D (caméra et sujet de la caméra)
+	 * - matrice de vue et matrice de perspective
+	 */
+	void update(InputEvent& inputEvent, const Window& window, const GlobalTexture& frame, const Point2D<int> framePos) {
 		if (!locked) {
-			SDL_ShowCursor(false);
 			inputEvent.updateMouse(mouse);
 			inputEvent.updateKeyBoard(keyboard);
-			SDL_WarpMouseInWindow(window.getWindow(), window.getWidthCenter(), window.getHeightCenter());
 			if (keyboard.z.pressed && angleView > minAngleView) {
 				angleView -= 1;
 			}
 			if (keyboard.e.pressed && angleView < maxAngleView) {
 				angleView += 1;
 			}
-
 			// set angles
-			angleX += sensitivity * (float)(mouse.x - window.getWidthCenter());
-			angleX = clampAngleX(angleX);
-			angleY += sensitivity * (float)(mouse.y - window.getHeightCenter());
-			angleY = clampAngleY(angleY);
-
+			if (dragAndDropControl) {
+				SDL_ShowCursor(true);
+				if (mouse.leftClick && mouse.moving
+					&& mouse.x < framePos.x + frame.getWidth() && mouse.x > framePos.x && mouse.y < framePos.y + frame.getHeight() && mouse.y > framePos.y) {
+					angleX += (float)(mouse.xmov) / 360.0f;
+					angleY += (float)(mouse.ymov) / 360.0f;
+				}
+			}
+			else {
+				SDL_ShowCursor(false);
+				SDL_WarpMouseInWindow(window.getWindow(), frame.getWidth() * 0.5, frame.getHeight() * 0.5);
+				angleX += sensitivity * (float)(mouse.x - frame.getWidth() * 0.5);
+				angleY += sensitivity * (float)(mouse.y - frame.getHeight() * 0.5);
+			}
+			
 			if (path.size() > 0 && current == this) {
 				Vector direction(path[0].x - subject.x, path[0].y - subject.y, path[0].z - subject.z); // goal - start
 				if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal
@@ -441,7 +470,6 @@ public:
 					subject += direction;
 				}
 			}
-
 			refresh2D();
 			if (hasSubject) {
 				const Vector look = getMovementVector(1, 0, 0, distanceToSubject);
@@ -449,6 +477,9 @@ public:
 			}
 		}
 		else SDL_ShowCursor(true);
+		look = getMovementVector(1, 0, 0, 1);
+		angleX = clampAngleX(angleX);
+		angleY = clampAngleY(angleY);
 		refresh2D();
 	}
 };

@@ -62,13 +62,14 @@ public:
 	 * @param angle Angle de rotation 
 	 */
 	void rotateX(const Vertex& p, const float& angle) {
-		for (int i = 0; i < triangles.size(); i++) {
+		for (size_t i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;
 			Maths::rotateX(triangles[i].a, angle);
 			Maths::rotateX(triangles[i].b, angle);
 			Maths::rotateX(triangles[i].c, angle);
+			Maths::rotateX(triangles[i].normalVec, angle);
 			triangles[i].a += p;
 			triangles[i].b += p;
 			triangles[i].c += p;
@@ -87,13 +88,14 @@ public:
 	 * @param angle Angle de rotation
 	 */
 	void rotateY(const Vertex& p, const float& angle) {
-		for (int i = 0; i < triangles.size(); i++) {
+		for (size_t i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;
 			Maths::rotateY(triangles[i].a, angle);
 			Maths::rotateY(triangles[i].b, angle);
 			Maths::rotateY(triangles[i].c, angle);
+			Maths::rotateY(triangles[i].normalVec, angle);
 			triangles[i].a += p;
 			triangles[i].b += p;
 			triangles[i].c += p;
@@ -112,13 +114,14 @@ public:
 	 * @param angle Angle de rotation
 	 */
 	void rotateZ(const Vertex& p, const float& angle) {
-		for (int i = 0; i < triangles.size(); i++) {
+		for (size_t i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= p;
 			triangles[i].b -= p;
 			triangles[i].c -= p;
 			Maths::rotateZ(triangles[i].a, angle);
 			Maths::rotateZ(triangles[i].b, angle);
 			Maths::rotateZ(triangles[i].c, angle);
+			Maths::rotateZ(triangles[i].normalVec, angle);
 			triangles[i].a += p;
 			triangles[i].b += p;
 			triangles[i].c += p;
@@ -197,7 +200,7 @@ public:
 			triangles[i].fillIt(true);
 		}
 	}
-	Cube(const std::string& name, const Vertex& center, const double& width) :Shape(name, {}, center, bmp), width(width) {
+	Cube(const std::string& name, const Vertex& center, const double& width) :Shape(name, {}, center, nullptr), width(width) {
 		const int half_width = static_cast<int>(width) / 2;
 		// set 8 points
 		const Vertex a(center.x + half_width, center.y - half_width, center.z - half_width);
