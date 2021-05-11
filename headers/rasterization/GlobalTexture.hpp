@@ -213,4 +213,28 @@ public:
 			p = (grayscale << 24) + (grayscale << 16) + (grayscale << 8) + (Uint8)p;
 		}
 	}
+
+	void linearTextureFilter() {
+		Uint32 lastPixel = 0;
+		for (size_t y = 0; y < height; y++) {
+			for (size_t x = 0; x < width; x++) {
+				Uint32 currentPixel = pixels[y * width + x];
+				const Uint8 currentGrayscale = ((Uint8)(currentPixel >> 8) + (Uint8)(currentPixel >> 16) + (Uint8)(currentPixel >> 24)) / 3;
+				const Uint8 lastGrayscale = ((Uint8)(lastPixel >> 8) + (Uint8)(lastPixel >> 16) + (Uint8)(lastPixel >> 24)) / 3;
+				if (std::abs(currentGrayscale - lastGrayscale) > 5)
+					pixels[y * width + x] = lastPixel;// (() << 24) + (0 << 16) + (0 << 8) + 255;
+				lastPixel = currentPixel;
+			}
+		}
+		for (size_t x = 0; x < width; x++) {
+			for (size_t y = 0; y < height; y++) {
+				Uint32 currentPixel = pixels[x * height + y];
+				const Uint8 currentGrayscale = ((Uint8)(currentPixel >> 8) + (Uint8)(currentPixel >> 16) + (Uint8)(currentPixel >> 24)) / 3;
+				const Uint8 lastGrayscale = ((Uint8)(lastPixel >> 8) + (Uint8)(lastPixel >> 16) + (Uint8)(lastPixel >> 24)) / 3;
+				if (std::abs(currentGrayscale - lastGrayscale) > 5)
+					pixels[x * height + y] = lastPixel;// (() << 24) + (0 << 16) + (0 << 8) + 255;
+				lastPixel = currentPixel;
+			}
+		}
+	}
 };
