@@ -188,6 +188,12 @@ private:
 
     int un = 1, deux = 2, trois = 3;
 
+    std::vector<TextBox*> text_insertion1;
+    std::vector<TextInput*> input_insertion1;
+    
+    // std::vector<RectTextButton<int*>> button_insertion1;
+    ButtonManager bmInsertion1;
+
     /*===========================================================================================
      *      INTERFACE GRAPHIQUE
     ===========================================================================================*/
@@ -196,37 +202,37 @@ private:
     // Keyboad keyboard;
     // Mouse mouse;
 
-	// ButtonManager bm(inputEvent);
 
     /**
      * @brief Boutons relatifs au changement de Vue Caméra pour la scène 
      */
-    // Button b_mainView;
-    // Button b_view1;
-    // Button b_view2;
-    // Button b_view3;
-    // Button b_view4;
-    // Button b_freeMotionView;
-
-    /**
-     * @brief Boutons relatifs à l'insertion de meuble
-     * 
-     * Chaque bouton est lié à la méthode insertFurniture() en spécifiant son numéro
-     */
-    // Button b_insertDefault;
-    // Button b_insertDefault2;
-    // Button b_insertDefault3;
     
     /**
      * @brief Boutons d'interaction globale avec l'application 
      */
-    // Button b_editSurface;
-    // Button b_save;
-    // Button b_export;
-    // Button b_quit;
+    
 
 public:
+    static int interactSpace;
+
     HomeDesign() = delete;
+    
+    void renderInsertion1(InputEvent& inputEvent, Window& window)  {
+        for (size_t i = 0; i < text_insertion1.size(); i++)  
+            text_insertion1[i]->render(window.getRenderer(), 0, 0);
+
+        for (size_t i = 0; i < input_insertion1.size(); i++)  {
+            input_insertion1[i]->checkForInput(inputEvent, window.getRenderer());
+            input_insertion1[i]->render(window.getRenderer(), 0);
+        }
+
+        // for (size_t i = 0; i < button_insertion1.size(); i++)  {
+        //     button_insertion1[i]->checkButton(inputEvent, Point2D<int>(0, 0));
+        //     button_insertion1[i]->render(window.getRenderer());
+        // }
+        bmInsertion1.checkButtons();
+		bmInsertion1.renderButtons(window.getRenderer());
+    }
 
     /**
      * @brief Constructeur par défaut, appelé à la création d'une scène sur l'interface (1)
@@ -234,12 +240,15 @@ public:
      * @param InputEvent    Utile aux évènements d'interaction utilisateur
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
-    HomeDesign(ButtonManager& bm, ShapeManager& manager, Window& window, float w1, float w3) {
+    HomeDesign(ButtonManager& bm, ShapeManager& manager, Window& window, InputEvent& inputEvent, float w1, float w3)
+                : bmInsertion1(inputEvent, window) {
         std::cout << " > Constructeur HomeDesign" << std::endl;
         surface = w1 * w3;
         std::cout << "Mur 1: " << w1 << "m" << std::endl;
         std::cout << "Mur 3: " << w3 << "m" << std::endl;
         std::cout << "Surface: " << surface << "m²" <<std::endl;
+
+        // bmInsertion1(inputEvent, window);
 
         w1 *= 10; w3 *= 10;
         int h = 60; // Hauteur de chaque mur
@@ -255,9 +264,9 @@ public:
         Vertex d1( w1/2, h,  w3/2);
 
         // sol
-        Bitmap::newBitmap(std::string("defense"), std::string("../textures/img.png"));
-        Bitmap::newBitmap(std::string("80s"), std::string("../textures/face.jpg"));
-        Bitmap::newBitmap(std::string("wall"), std::string("../textures/wall.jpg"));
+        Bitmap::newBitmap(std::string("defense"), std::string(pth+"/textures/img.png"));
+        Bitmap::newBitmap(std::string("80s"), std::string(pth+"/textures/face.jpg"));
+        Bitmap::newBitmap(std::string("wall"), std::string(pth+"/textures/wall.jpg"));
     
         manager.addRectangle("floor", a, b, c, d, Bitmap::getBitmap(std::string("defense")));
         // manager.addSphere("point_a", a, 5, blue);
@@ -272,6 +281,11 @@ public:
 
 
         // 2. Boutons interaction Frame : insertion
+        /**
+         * @brief Boutons relatifs à l'insertion de meuble
+         * 
+         * Chaque bouton est lié à la méthode insertFurniture() en spécifiant son numéro
+         */
         int b_width = 286, b_height = 104;
         int b_topleftx = 30, b_tly = 596;
         bm.addRectTextButton<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 1");
@@ -287,14 +301,36 @@ public:
         bm.addRectTextButton<int*>("b_insertDefault3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 3");
         bm.getButton<int*>("b_insertDefault3").setAction(insertFurniture, &trois);
 
-        // Espace interaction
-        // Point2D<int>(970, 30), 270, 506
-        // TextBox t_nom("Nom (référencement)", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 40), 60, 20, window.getRenderer());
-	    // TextInput i_nom("default", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 50), 260, 25, window.getRenderer());
+        // Espace interaction : Point2D<int>(970, 30), 270, 506
+        b_topleftx = 975; b_tly = 40;
+        b_width = 260;
+        text_insertion1.emplace_back(new TextBox("Insertion type 1", pth+std::string("fonts/Segoe UI Bold.ttf"), 30, black, 
+                                    Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
+        text_insertion1.back()->center(Point2D<int>(970, 30), 270);
+        b_tly += 60;
 
-        
-        // bm.addRectTextButtonDefault<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 2");
-        // bm.getButton<int*>("b_insertDefault2").setAction(insertFurniture, &deux);
+            // y = 100
+        text_insertion1.emplace_back(new TextBox("Nom (referencement)", pth+std::string("fonts/calibri.ttf"), 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
+        b_tly += 25;
+        input_insertion1.emplace_back(new TextInput("default", pth+std::string("fonts/calibri.ttf"), 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly),  250, 25, window.getRenderer()));
+        b_tly += 40;
+
+        text_insertion1.emplace_back(new TextBox("Dimensions (Lxlxh)",  pth+std::string("fonts/calibri.ttf"), 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
+        b_tly += 25;
+        input_insertion1.emplace_back(new TextInput("10", pth+std::string("fonts/calibri.ttf"), 20, black, 
+                                    Point2D<int>(975, b_tly), 80, 25, window.getRenderer()));
+        input_insertion1.emplace_back(new TextInput("10", pth+std::string("fonts/calibri.ttf"), 20, black, 
+                                    Point2D<int>(1065, b_tly), 80, 25, window.getRenderer()));
+        input_insertion1.emplace_back(new TextInput("10", pth+std::string("fonts/calibri.ttf"), 20, black, 
+                                    Point2D<int>(1155, b_tly), 80, 25, window.getRenderer()));
+        b_tly += 40;
+
+
+        bmInsertion1.addRectTextButton<void*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Inserer sur la scene");
+        bmInsertion1.getButton<void*>("b_insertFinal1").setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
     };
 
     /**
@@ -305,7 +341,15 @@ public:
      */ 
     HomeDesign(ButtonManager& bm, std::string path);
 
-    // ~HomeDesign();
+    int getInteractInt() { return interactSpace; };
+    void setInteractSpace(int n) { interactSpace = n; };
+
+    ~HomeDesign()  {
+        for (size_t i = 0; i < text_insertion1.size(); i++)  
+            delete text_insertion1[i];
+        for (size_t i = 0; i < input_insertion1.size(); i++)  
+            delete input_insertion1[i];
+    }
 
 private:
 
@@ -315,19 +359,16 @@ private:
      * @param style   Représente le numéro du bouton (entre 1 et 3)
      */ 
     static void insertFurniture(int *style) {
-	    std::cout << "Insertion de meuble de type " << *style << std::endl;
         if (*style == 2)  {
             std::cout << "2 !\n"; 
+            HomeDesign::interactSpace = 2;
         }
         else if (*style == 3) {
             std::cout << "3 !\n"; 
+            HomeDesign::interactSpace = 3;
         }
         else  {
-            std::cout << "Default !\n"; 
-            // while (!keyboard.escape.down) {
-		    //     i_nom.checkForInput(inputEvent, window.getRenderer(),
-            // }
-            
+            HomeDesign::interactSpace = 1;
         }
     }
 
@@ -364,3 +405,5 @@ private:
 
     void exportImage();
 };
+
+int HomeDesign::interactSpace = 0;

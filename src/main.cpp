@@ -5,9 +5,19 @@ void startFunc(int *s) {
 	*s = 0; 
 }
 
+
+struct camPack {
+	Camera *cam;
+	std::string viewName;
+	TextBox *current_cam_t;
+	Window *window;
+};
+
+
 // Faire un Struct avec la caméra, le mur à retirer et une textbox à modifier pour écrire le nom de la cam
-void changeCam(Camera *cam) {
-	cam->setCurrent();
+void changeCamTest(camPack *p) {
+	p->cam->setCurrent();
+	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
 	// if (shp) shp.visible = false;
 }
 
@@ -26,6 +36,9 @@ int main(int argc, char* argv[]) {
 	Render r(window, 900, 506); // 16:9
 	Mouse mouse;
 	Keyboard keyboard;
+
+	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
+
 
 	int start = 1;
 
@@ -88,7 +101,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
   	}
 
-	HomeDesign hm( bm, manager, window, w1, w3 );
+	HomeDesign hm( bm, manager, window, inputEvent, w1, w3 );
 
 
 	/** ==============================
@@ -115,8 +128,6 @@ int main(int argc, char* argv[]) {
 	Camera backCam({manager.getShape("backWall").center.x, manager.getShape("backWall").center.y, manager.getShape("backWall").center.z - 100}, 60, 0, 3.1416);
 	backCam.lock();
 	
-	// manager.imprtShapeObj("Earth",0.01);
-	
 
 	// TextInput ti("Hello world!", pth+std::string("fonts/calibri.ttf"), 30, black, Point2D<int>(450, 50), 200, 25, window.getRenderer());
 	// TextBox tb1("OK!", pth + std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(1300, 100), 100, 25, window.getRenderer());
@@ -138,66 +149,50 @@ int main(int argc, char* argv[]) {
 	TextBox tb5("Exporter la vue actuelle", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<TextInput*>("b_exportView", nullptr, hd_brownButtons, black, &tb5, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	
-	TextBox tb6("MaChambreCROUS.flanf", pth+std::string("fonts/calibri.ttf"), 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
-	
+	TextBox sceneTitle("MaChambreCROUS.flanf", pth+std::string("fonts/calibri.ttf"), 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
 
 
 	TextBox tb1(" ", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(970, 30), 270, 506, window.getRenderer());
 	bm.addRectButton<TextInput*>("b_espInter", nullptr, white, black, &tb1, Point2D<int>(970, 30), 270, 506);
 	
 
-	
+	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window };
+	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window };
+	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window };
+	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window };
+	camPack p4 = { &backCam, "Vue de l'arrière", &current_cam, &window };
 	// 2. Boutons interaction Frame : vues
 	b_width = 120, b_height = 30;
 	b_topleftx = 30, b_tly = 546;
 	TextBox tb7("Vue Haut", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<Camera*>("b_mainView", nullptr, dark_gray, black, &tb7, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<Camera*>("b_mainView").setAction(changeCam, &topCam);
+	bm.addRectButton<camPack*>("b_mainView", nullptr, dark_gray, black, &tb7, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<camPack*>("b_mainView").setAction(changeCamTest, &p0);
 	b_topleftx += 140;
 
 	TextBox tb8("Vue Face", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<Camera*>("b_View1", nullptr, dark_gray, black, &tb8, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<Camera*>("b_View1").setAction(changeCam, &faceCam);
+	bm.addRectButton<camPack*>("b_View1", nullptr, dark_gray, black, &tb8, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<camPack*>("b_View1").setAction(changeCamTest, &p1);
 	b_topleftx += 140;
 
 	TextBox tb9("Vue 2", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<Camera*>("b_View2", nullptr, dark_gray, black, &tb9, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<Camera*>("b_View2").setAction(changeCam, &gaucheCam);
+	bm.addRectButton<camPack*>("b_View2", nullptr, dark_gray, black, &tb9, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<camPack*>("b_View2").setAction(changeCamTest, &p2);
 	b_topleftx += 140;
 
 	TextBox tb10("Vue 3", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<Camera*>("b_View3", nullptr, dark_gray, black, &tb10, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<Camera*>("b_View3").setAction(changeCam, &droitCam);
+	bm.addRectButton<camPack*>("b_View3", nullptr, dark_gray, black, &tb10, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<camPack*>("b_View3").setAction(changeCamTest, &p3);
 	b_topleftx += 140;
 
 	TextBox tb11("Vue 4", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<Camera*>("b_View4", nullptr, dark_gray, black, &tb11, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<Camera*>("b_View4").setAction(changeCam, &backCam);
+	bm.addRectButton<camPack*>("b_View4", nullptr, dark_gray, black, &tb11, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<camPack*>("b_View4").setAction(changeCamTest, &p4);
 	b_topleftx += 140;
 
 	TextBox tb12("Deplacement libre", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Camera*>("b_freeMotionView", nullptr, hd_greenButtons, black, &tb12, Point2D<int>(b_topleftx, b_tly), b_width+80, b_height);
 	bm.getButton<Camera*>("b_freeMotionView").setAction(goFreeView, &freeCam);
 
-
-	// // 2. Boutons interaction Frame : insertion
-	// int un = 1, deux = 2, trois = 3;
-	// b_width = 286, b_height = 104;
-	// b_topleftx = 30, b_tly = 596;
-	// TextBox tb13("Inserer meuble type 1", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	// bm.addRectButton<int*>("b_insertDefault", nullptr, hd_brownButtons, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	// bm.getButton<int*>("b_insertDefault").setAction(furnitureInsertion, &un);
-	// b_topleftx += 306; 
-
-	// TextBox tb14("Inserer meuble type 2", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	// bm.addRectButton<int*>("b_insertDefault2", nullptr, hd_brownButtons, black, &tb14, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	// bm.getButton<int*>("b_insertDefault2").setAction(furnitureInsertion, &deux);
-	// b_topleftx += 306; 
-
-	// TextBox tb15("Inserer meuble type 3", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	// bm.addRectButton<int*>("b_insertDefault3", nullptr, hd_brownButtons, black, &tb15, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	// bm.getButton<int*>("b_insertDefault3").setAction(furnitureInsertion, &trois);
-	
 
 	// struct Function {
 	// 	Bitmap* bmp;
@@ -215,14 +210,7 @@ int main(int argc, char* argv[]) {
 
 	// bm.addCheckBox<void*>("cb1", white, dark_gray, Point2D<int>(1300, 200), 20);
 	
-	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
 	
-	TextBox t_nom("Nom (referencement)", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 40), 260, 20, window.getRenderer());
-	TextInput i_nom("default", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(980, 65), 250, 25, window.getRenderer());
-
-	TextBox t_dimensions("Dimensions (Lxlxh)", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 90), 260, 20, window.getRenderer());
-	TextInput i_dimensions("default", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(980, 115), 250, 25, window.getRenderer());
-
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
 		inputEvent.update();
@@ -231,19 +219,16 @@ int main(int argc, char* argv[]) {
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
 
-		i_nom.checkForInput(inputEvent, window.getRenderer());
-		i_dimensions.checkForInput(inputEvent, window.getRenderer());
-
 		if (keyboard.one.down) 
-			topCam.setCurrent();
+			changeCamTest(&p0);
 		else if (keyboard.two.down)
-			faceCam.setCurrent();
+			changeCamTest(&p1);
 		else if (keyboard.three.down)
-			gaucheCam.setCurrent();
+			changeCamTest(&p2);
 		else if (keyboard.four.down)
-			droitCam.setCurrent();
+			changeCamTest(&p3);
 		else if (keyboard.five.down)
-			backCam.setCurrent();
+			changeCamTest(&p4);
 		else if (keyboard.l.down) {
 			if (!Camera::getCurrent().locked)	Camera::getCurrent().lock();
 			// if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
@@ -264,11 +249,12 @@ int main(int argc, char* argv[]) {
 		bm.renderButtons(window.getRenderer());
 		r.renderOrientation(Point2D<int>(50, 470), 50, window);
 
-		tb6.render(window.getRenderer(), 0, 0);
-		i_nom.render(window.getRenderer(), 0);
-		t_nom.render(window.getRenderer(), 0, 0);
-		i_dimensions.render(window.getRenderer(), 0);
-		t_dimensions.render(window.getRenderer(), 0, 0);
+		sceneTitle.render(window.getRenderer(), 0, 0);
+		
+		if (HomeDesign::interactSpace == 1)  {
+			hm.renderInsertion1(inputEvent, window);
+		}
+
 		current_cam.render(window.getRenderer(), 0, 0);
 
 		window.RenderScreen();
