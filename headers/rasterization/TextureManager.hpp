@@ -152,10 +152,8 @@ public:
 					const Point2D<int> res = { u_ * pixdepth,v_ * pixdepth };
 					// define pos in bitmap
 					const int it = x + offset;
-					// clipping check
-					if (res.y < 0 || res.y >= srch || res.x < 0 || res.x >= srcw
-						// get previous pixel depth
-						|| globalTexture.zbuffer[it] <= pixdepth) continue;
+					// clipping check & pixel depth check
+					if (globalTexture.zbuffer[it] <= pixdepth || res.y < 0 || res.y >= srch || res.x < 0 || res.x >= srcw)continue;
 					globalTexture.zbuffer[it] = pixdepth;
 					// src pixel position
 					const size_t indexsrc = (size_t)res.y * (size_t)srcw + (size_t)res.x;
@@ -170,7 +168,7 @@ public:
 						+ (Maths::concatF(lightIntensity * lightColor.g, G) << 16)
 						+ (Maths::concatF(lightIntensity * lightColor.r, R) << 8)
 						+ (A);
-					//globalTexture[it] = (concat(light, w_*50) << 24) + (concat(light, w_*50) << 16) + (concat(light, w_*50) << 8) + (255);
+					//globalTexture[it] = (Maths::clamp0_255(255-pixdepth*800) << 24) + (Maths::clamp0_255(255 - pixdepth * 800) << 16) + (Maths::clamp0_255(255 - pixdepth * 800) << 8) + (255);
 				}
 			}
 		}
