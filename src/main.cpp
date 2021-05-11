@@ -43,9 +43,9 @@ int main(int argc, char* argv[]) {
 	TextInput i_mur4("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
 	
 
-	bm.addRectTextButtonDefault<int*>("b_initApp", Point2D<int>(440, 400), 400, 40, "Nouvelle scene a partir de la surface donnee");
+	bm.addRectTextButton<int*>("b_initApp", Point2D<int>(440, 400), 400, 40, "Nouvelle scene a partir de la surface donnee");
 	bm.getButton<int*>("b_initApp").setAction(startFunc, &start);
-	bm.addRectTextButtonDefault<int*>("b_initImport", Point2D<int>(440, 460), 400, 40, "Importer une scene depuis un fichier");
+	bm.addRectTextButton<int*>("b_initImport", Point2D<int>(440, 460), 400, 40, "Importer une scene depuis un fichier");
 
 
 	while (start && !keyboard.escape.down) {
@@ -62,10 +62,10 @@ int main(int argc, char* argv[]) {
 		
 		bm.checkButtons();
 		bm.renderButtons(window.getRenderer());
-		i_mur1.render(window.getRenderer(), 0, 0);
-		i_mur2.render(window.getRenderer(), 0, 0);
-		i_mur3.render(window.getRenderer(), 0, 0);
-		i_mur4.render(window.getRenderer(), 0, 0);
+		i_mur1.render(window.getRenderer(), 0);
+		i_mur2.render(window.getRenderer(), 0);
+		i_mur3.render(window.getRenderer(), 0);
+		i_mur4.render(window.getRenderer(), 0);
 
 		t_intro.render(window.getRenderer(), 0, 0);
 		t_mur1.render(window.getRenderer(), 0, 0);
@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 		t_mur4.render(window.getRenderer(), 0, 0);
 
 		window.RenderScreen();
-		window.FillScreen(elynbeige);	
+		window.FillScreen(hd_beigeBackground);	
 	}
 	bm.removeButton("b_initApp");
 	bm.removeButton("b_initImport");
@@ -129,14 +129,14 @@ int main(int argc, char* argv[]) {
 	int b_width = 270, b_height = 38;
 	int b_topleftx = 970, b_tly = 546;
 	TextBox tb3("Editer la surface de la scene", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<TextInput*>("b_editSurface", nullptr, elynmarron, black, &tb3, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<TextInput*>("b_editSurface", nullptr, hd_brownButtons, black, &tb3, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	// bm.getButton<TextInput*>("b_editSurface").setAction([](TextInput* t) { std::cout << t->getText() << std::endl; }, &ti);
 	b_tly += 58;
 	TextBox tb4("Enregistrer la scene", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<TextInput*>("b_saveScene", nullptr, elynmarron, black, &tb4, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<TextInput*>("b_saveScene", nullptr, hd_brownButtons, black, &tb4, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	b_tly += 58;
 	TextBox tb5("Exporter la vue actuelle", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<TextInput*>("b_exportView", nullptr, elynmarron, black, &tb5, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<TextInput*>("b_exportView", nullptr, hd_brownButtons, black, &tb5, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	
 	TextBox tb6("MaChambreCROUS.flanf", pth+std::string("fonts/calibri.ttf"), 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
 	
@@ -176,7 +176,7 @@ int main(int argc, char* argv[]) {
 	b_topleftx += 140;
 
 	TextBox tb12("Deplacement libre", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<Camera*>("b_freeMotionView", nullptr, elynvfonce, black, &tb12, Point2D<int>(b_topleftx, b_tly), b_width+80, b_height);
+	bm.addRectButton<Camera*>("b_freeMotionView", nullptr, hd_greenButtons, black, &tb12, Point2D<int>(b_topleftx, b_tly), b_width+80, b_height);
 	bm.getButton<Camera*>("b_freeMotionView").setAction(goFreeView, &freeCam);
 
 
@@ -185,17 +185,17 @@ int main(int argc, char* argv[]) {
 	// b_width = 286, b_height = 104;
 	// b_topleftx = 30, b_tly = 596;
 	// TextBox tb13("Inserer meuble type 1", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	// bm.addRectButton<int*>("b_insertDefault", nullptr, elynmarron, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	// bm.addRectButton<int*>("b_insertDefault", nullptr, hd_brownButtons, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	// bm.getButton<int*>("b_insertDefault").setAction(furnitureInsertion, &un);
 	// b_topleftx += 306; 
 
 	// TextBox tb14("Inserer meuble type 2", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	// bm.addRectButton<int*>("b_insertDefault2", nullptr, elynmarron, black, &tb14, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	// bm.addRectButton<int*>("b_insertDefault2", nullptr, hd_brownButtons, black, &tb14, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	// bm.getButton<int*>("b_insertDefault2").setAction(furnitureInsertion, &deux);
 	// b_topleftx += 306; 
 
 	// TextBox tb15("Inserer meuble type 3", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	// bm.addRectButton<int*>("b_insertDefault3", nullptr, elynmarron, black, &tb15, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	// bm.addRectButton<int*>("b_insertDefault3", nullptr, hd_brownButtons, black, &tb15, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	// bm.getButton<int*>("b_insertDefault3").setAction(furnitureInsertion, &trois);
 	
 
@@ -215,7 +215,7 @@ int main(int argc, char* argv[]) {
 
 	// bm.addCheckBox<void*>("cb1", white, dark_gray, Point2D<int>(1300, 200), 20);
 	
-	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(30, 30), 400, 20, window.getRenderer());
+	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
 	
 	TextBox t_nom("Nom (referencement)", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(975, 40), 260, 20, window.getRenderer());
 	TextInput i_nom("default", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(980, 65), 250, 25, window.getRenderer());
@@ -245,7 +245,7 @@ int main(int argc, char* argv[]) {
 		else if (keyboard.five.down)
 			backCam.setCurrent();
 		else if (keyboard.l.down) {
-			if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
+			if (!Camera::getCurrent().locked)	Camera::getCurrent().lock();
 			// if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
 			// else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
 		}
@@ -253,24 +253,26 @@ int main(int argc, char* argv[]) {
 			window.ToggleWindow(window.getWidth(), window.getHeight());
 		}
 
-		r.render({30,30},900,506, inputEvent, window, manager /*, &t0*/);
-		
+		// if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(30,30),900,506, window);
+		// else r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager);
+
+		r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager);
 		// Print camera position and angle
 		// std::cout<<Camera::getCurrent().getCameraPosition()<< " "<<Camera::getCurrent().angleX<<" "<<Camera::getCurrent().angleY<<std::endl;
 
 		bm.checkButtons();
 		bm.renderButtons(window.getRenderer());
+		r.renderOrientation(Point2D<int>(50, 470), 50, window);
 
 		tb6.render(window.getRenderer(), 0, 0);
-		i_nom.render(window.getRenderer(), 0, 0);
+		i_nom.render(window.getRenderer(), 0);
 		t_nom.render(window.getRenderer(), 0, 0);
-		i_dimensions.render(window.getRenderer(), 0, 0);
+		i_dimensions.render(window.getRenderer(), 0);
 		t_dimensions.render(window.getRenderer(), 0, 0);
 		current_cam.render(window.getRenderer(), 0, 0);
 
-		// ti.render(window.getRenderer(), 0, 0);
 		window.RenderScreen();
-		window.FillScreen(elynbeige);
+		window.FillScreen(hd_beigeBackground);
 	}
 
 	return 0;

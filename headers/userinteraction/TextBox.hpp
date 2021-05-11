@@ -36,6 +36,9 @@ protected:
 	// Police du texte.
 	TTF_Font* font = nullptr;
 
+	// texte affiché
+	std::string text;
+
 	/*===========================================================================================
      *      CONSTRUCTEURS / DESTRUCTEURS
     ===========================================================================================*/
@@ -52,15 +55,15 @@ public:
 	 * @param renderer Renderer SDL
 	 */
 	TextBox(std::string text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
-		const Point2D<int>& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
-		: pos(topLeft), maxWidth(width), maxHeight(height), fontColor(fontColor) {
+		const Point2D<int>& topLeft, const Uint32& maxw, const Uint32& maxh, SDL_Renderer* renderer)
+		: pos(topLeft), maxWidth(maxw), maxHeight(maxh), fontColor(fontColor), text(text) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
-		TTF_SizeText(font, text.c_str(), &this->width, &this->height);
-		if (this->width > maxWidth)this->width = maxWidth;
-		if (this->height > maxHeight)this->height = maxHeight;
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
+		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		width = surface->w;
+		height = surface->h;
+		if (height > maxHeight) height = maxHeight;
 		if (texture) SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_FreeSurface(surface);
@@ -77,10 +80,10 @@ public:
 	 */
 	TextBox(std::string text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
 		const Point2D<int>& topLeft, SDL_Renderer* renderer)
-		: pos(topLeft), fontColor(fontColor) {
+		: pos(topLeft), fontColor(fontColor), text(text) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
-		TTF_SizeText(font, text.c_str(), &width, &height);
+		if (TTF_SizeText(font, text.c_str(), &width, &height)) FATAL_ERR("Failed assigning text dimensions in TextBox.");
 		if (width > maxWidth)width = maxWidth;
 		if (height > maxHeight)height = maxHeight;
 		if (text.empty()) text = " ";
@@ -98,28 +101,6 @@ public:
     ===========================================================================================*/
 public:
 	/**
-	 * @brief Mettre à jour les valeurs et la texture avec une taille donnée en argument.
-	 * @param text Texte à transformer en texture.
-	 * @param fontPath Chemin d'accès vers la police dans la mémoire
-	 * @param fontSize Taille de la police
-	 * @param fontColor Couleur de la police
-	 * @param topLeft Point haut-gauche de la texture résultante
-	 * @param width Largeur imposée de la texture
-	 * @param height Hauteur imposée de la texture
-	 * @param renderer Renderer SDL
-	 */
-	void update(const std::string& text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
-		const Point2D<int>& topLeft, const int& width, const int& height, SDL_Renderer* renderer) {
-		pos = topLeft;
-		if (font) TTF_CloseFont(font);
-		font = TTF_OpenFont(fontPath.c_str(), fontSize);
-		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
-		if (texture) SDL_DestroyTexture(texture);
-		texture = SDL_CreateTextureFromSurface(renderer, surface);
-		SDL_FreeSurface(surface);
-	}
-
-	/**
 	 * @brief Mettre à jour les valeurs et la texture. La taille de la texture s'adapte au texte.
 	 * @param text Texte à transformer en texture.
 	 * @param fontPath Chemin d'accès vers la police dans la mémoire
@@ -128,18 +109,19 @@ public:
 	 * @param topLeft Point haut-gauche de la texture résultante
 	 * @param renderer Renderer SDL
 	 */
-	void update(const std::string& text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
-		const Point2D<int>& topLeft, SDL_Renderer* renderer) {
-		pos = topLeft;
+	void update(std::string text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
+		SDL_Renderer* renderer) {
 		if (font) TTF_CloseFont(font);
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
-		TTF_SizeText(font, text.c_str(), &width, &height);
-		if (width > maxWidth)width = maxWidth;
-		if (height > maxHeight)height = maxHeight;
-		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
+		if (text.empty()) text = " ";
+		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		width = surface->w;
+		height = surface->h;
+		if (height > maxHeight) height = maxHeight;
 		if (texture) SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_FreeSurface(surface);
+		this->text = text;
 	}
 
 	/**
@@ -147,14 +129,29 @@ public:
 	 * @param text Texte à transformer en texture.
 	 * @param renderer Renderer SDL
 	 */
-	void update(const std::string& text, SDL_Renderer* renderer) {
-		TTF_SizeText(font, text.c_str(), &width, &height);
-		if (width > maxWidth)width = maxWidth;
-		if (height > maxHeight)height = maxHeight;
-		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
+	void update(std::string text, SDL_Renderer* renderer) {
+		if (text.empty()) text = " ";
+		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		width = surface->w;
+		height = surface->h;
+		if (height > maxHeight) height = maxHeight;
 		if (texture) SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_FreeSurface(surface);
+		this->text = text;
+	}
+
+	/**
+	 * @brief Afficher la texture du texte.
+	 * @param renderer Renderer SDL
+	 * @param flip Application de l'effet miroir (horizontal ou vertical)
+	 * @param angle Rotation de la texture lors de l'affichage
+	 */
+	void render(SDL_Renderer* renderer) const {
+		if (renderer == nullptr || texture == nullptr) { PRINT_ON_ERR("Error occured in renderTexture()"); return; }
+		const SDL_Rect srcrect{ 0, 0, width, height };
+		const SDL_Rect dstrect{ pos.x, pos.y, width, height };
+		SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
 	}
 
 	/**
@@ -164,21 +161,9 @@ public:
 	 * @param angle Rotation de la texture lors de l'affichage
 	 */
 	void render(SDL_Renderer* renderer, const int& flip, const double& angle) const {
-		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
-		SDL_Rect srcrect{ 0, 0, width, height };
-		SDL_Rect dstrect{ pos.x, pos.y, width, height };
-		switch (flip) {
-		case 0: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_NONE); break;
-		case 1: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_HORIZONTAL); break;
-		case 2: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_VERTICAL); break;
-		default: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_NONE); break;
-		}
-	}
-
-	void render(SDL_Renderer* renderer, const Point2D<int>& position, const int& flip, const double& angle) const {
-		if (renderer == nullptr || texture == nullptr) { std::cout << "Error occured in renderTexture()" << std::endl; return; }
-		SDL_Rect srcrect{ 0, 0, width, height };
-		SDL_Rect dstrect{ position.x, position.y, width, height };
+		if (renderer == nullptr || texture == nullptr) { PRINT_ON_ERR("Error occured in renderTexture()"); return; }
+		const SDL_Rect srcrect{ 0, 0, width, height };
+		const SDL_Rect dstrect{ pos.x, pos.y, width, height };
 		switch (flip) {
 		case 0: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_NONE); break;
 		case 1: SDL_RenderCopyEx(renderer, texture, &srcrect, &dstrect, angle, NULL, SDL_FLIP_HORIZONTAL); break;
@@ -199,9 +184,21 @@ public:
 	 * @param h Hauteur imposée de la texture
 	 */
 	void setSize(const int& w, const int& h) {
-		width = w;
-		height = h;
+		if (w <= maxWidth)width = w;
+		if (h <= maxHeight)height = h;
 	}
+
+	/**
+	 * @brief Changer les dimensions de la texture du texte en fonction de la police et la taille.
+	 */
+	void setSize() {
+		TTF_SizeText(font, text.c_str(), &width, &height);
+	}
+
+	/**
+	 * @brief Renvoie le texte affiché
+	 */
+	std::string getText() const { return text; }
 
 	/**
 	 * @brief Libérer la mémoire allouée dans le destructeur.

@@ -7,6 +7,7 @@ public:
 	int ymov = 0;
 	bool rightClick = false; // 1 if clic else 0
 	bool leftClick = false; // 1 if clic else 0
+	int wheelup = 0, wheeldown = 0;
 	
 	// Indique si la souris est en mouvement ou non
 	bool moving = false; 

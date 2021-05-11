@@ -12,7 +12,7 @@ public:
 	Uint8 a; // transparence
 
 	// constructeur par défaut
-	Color(const Uint8 R = NULL, const Uint8 G = NULL, const Uint8 B = NULL, const Uint8 A = 255) : r(R), g(G), b(B), a(A) {}
+	Color(const Uint8 R = 0, const Uint8 G = 0, const Uint8 B = 0, const Uint8 A = 255) : r(R), g(G), b(B), a(A) {}
 
 	// conversion vers la classe SDL_Color
 	SDL_Color toSDL_Color() const {
@@ -50,6 +50,8 @@ const Color teal(0, 128, 128);
 const Color yellow(255, 255, 0);
 const Color magenta(255, 0, 255);
 const Color cyan(0, 255, 255);
-const Color elynbeige(248, 237, 227);
-const Color elynmarron(216, 172, 156);
-const Color elynvfonce(121, 135, 119);
+
+// Palette de couleur HomeDesign
+const Color hd_beigeBackground(248, 237, 227);
+const Color hd_brownButtons(216, 172, 156);
+const Color hd_greenButtons(121, 135, 119);

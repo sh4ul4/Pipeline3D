@@ -43,12 +43,10 @@ public:
 	 */
 	TextInput(const std::string& text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
 		const Point2D<int>& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
-		: TextBox(text,fontPath,fontSize,fontColor,topLeft,width,height,renderer), text(text) {}
+		: TextBox(text,fontPath,fontSize,fontColor,Point2D<int>(topLeft + 2),width - 4,height - 4,renderer), text(text) {}
 
 	// suppression du constructeur par défaut
 	TextInput() = delete;
-
-	bool getRunning() {return running;};
 
 	/*===========================================================================================
      *      METHODES
@@ -60,10 +58,20 @@ public:
 	 * @param flip Application de l'effet miroir (horizontal ou vertical)
 	 * @param angle Rotation de la texture lors de l'affichage
 	 */
-	void render(SDL_Renderer* renderer, const int& flip, const double& angle) const {
-		if (running) Draw::DrawFillRoundedRectContoured(pos, maxWidth, maxHeight, 3, white, black, renderer);
-		else Draw::DrawFillRoundedRectContoured(pos, maxWidth, maxHeight, 3, light_gray, black, renderer);
-		if (!text.empty()) TextBox::render(renderer, flip, angle);
+	void render(SDL_Renderer* renderer, const size_t DRAWTYPE = DRAWFILLCONTOURRECT) const {
+		switch (DRAWTYPE) {
+		case DRAWRECT: if (running) Draw::DrawRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, dark_gray, renderer);
+					 else Draw::DrawRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, Color(30, 30, 30), renderer); break;
+		case DRAWFILLRECT: if (running) Draw::DrawFillRect(pos - 2, maxWidth + 4, maxHeight + 4, light_gray, renderer);
+					 else Draw::DrawFillRect(pos - 2, maxWidth + 4, maxHeight + 4, gray, renderer); break;
+		case DRAWFILLCONTOURRECT: if (running) Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, light_gray, Color(30,30,30), renderer);
+								else Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, gray, Color(30, 30, 30), renderer); break;
+		case DRAWFILLROUNDEDCONTOURRECT: if (running) Draw::DrawFillRoundedRectContoured(pos - 2, maxWidth + 4, maxHeight + 4, 3, light_gray, Color(30, 30, 30), renderer);
+									   else Draw::DrawFillRoundedRectContoured(pos - 2, maxWidth + 4, maxHeight + 4, 3, gray, Color(30, 30, 30), renderer); break;
+		default : if (running) Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, light_gray, Color(30, 30, 30), renderer);
+				else Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, gray, Color(30, 30, 30), renderer); break;
+		}
+		if (!text.empty()) TextBox::render(renderer);
 	}
 
 	/**
@@ -111,6 +119,11 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Cas textInput liée à une autre
+	 * 
+	 * @param other textInput fille liée à la courante
+	 */
 	void checkForInput(InputEvent& ie, SDL_Renderer* renderer, TextInput& other) {
 		ie.updateMouse(mouse);
 		ie.updateKeyBoard(keyboard);
@@ -127,14 +140,19 @@ public:
 		}
 	}
 
-	void checkForInput(TextInput& other, SDL_Renderer* renderer)  {
-		if (other.running)
+	/**
+	 * @brief TextInput fille dépendante d'une autre
+	 * 
+	 * @param master TextInput maitre de référence
+	 */
+	void checkForInput(TextInput& master, SDL_Renderer* renderer) {
+		if (master.running)
 			running = true;
-		else 
+		else
 			running = false;
 
 		const int size1 = text.length();
-		text = other.getText();
+		text = master.getText();
 		const int size2 = text.length();
 		if (size1 != size2 && !text.empty()) {
 			update(text, renderer);

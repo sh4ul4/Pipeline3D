@@ -186,6 +186,7 @@ private:
      */ 
     std::vector<Furniture> furnitures;
 
+    int un = 1, deux = 2, trois = 3;
 
     /*===========================================================================================
      *      INTERFACE GRAPHIQUE
@@ -255,8 +256,8 @@ public:
 
         // sol
         Bitmap::newBitmap(std::string("defense"), std::string("../textures/img.png"));
-        Bitmap::newBitmap(std::string("80s"), std::string("../textures/face.jpg"));
-        Bitmap::newBitmap(std::string("wall"), std::string("../textures/wall.jpg"));
+        Bitmap::newBitmap(std::string("80s"), std::string("../textures/space.jpg"));
+        Bitmap::newBitmap(std::string("wall"), std::string("../textures/80s_1.jpg"));
     
         manager.addRectangle("floor", a, b, c, d, Bitmap::getBitmap(std::string("defense")));
         // manager.addSphere("point_a", a, 5, blue);
@@ -270,22 +271,20 @@ public:
         std::cout<<"Room créée"<<std::endl;
 
 
-        // 2nd Segfault below
         // 2. Boutons interaction Frame : insertion
-        int un = 1, deux = 2, trois = 3;
         int b_width = 286, b_height = 104;
         int b_topleftx = 30, b_tly = 596;
-        bm.addRectTextButtonDefault<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 1");
+        bm.addRectTextButton<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 1");
         bm.getButton<int*>("b_insertDefault").setAction(insertFurniture, &un);
         // TextBox tb13("Inserer meuble type 1", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-        // bm.addRectButton<int*>("b_insertDefault", nullptr, elynmarron, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+        // bm.addRectButton<int*>("b_insertDefault", nullptr, hd_brownButtons, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
         b_topleftx += 306;
 
-        bm.addRectTextButtonDefault<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 2");
+        bm.addRectTextButton<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 2");
         bm.getButton<int*>("b_insertDefault2").setAction(insertFurniture, &deux);
         b_topleftx += 306; 
 
-        bm.addRectTextButtonDefault<int*>("b_insertDefault3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 3");
+        bm.addRectTextButton<int*>("b_insertDefault3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 3");
         bm.getButton<int*>("b_insertDefault3").setAction(insertFurniture, &trois);
 
         // Espace interaction
@@ -316,13 +315,13 @@ private:
      * @param style   Représente le numéro du bouton (entre 1 et 3)
      */ 
     static void insertFurniture(int *style) {
-	    std::cout << "Insertion de meuble de type " << style << std::endl;
+	    std::cout << "Insertion de meuble de type " << *style << std::endl;
         if (*style == 2)  {
             std::cout << "2 !\n"; 
         }
         else if (*style == 3) {
             std::cout << "3 !\n"; 
-        } 
+        }
         else  {
             std::cout << "Default !\n"; 
             // while (!keyboard.escape.down) {
