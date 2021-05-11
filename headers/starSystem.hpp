@@ -1,4 +1,13 @@
 #pragma once
+#include <vector>
+#include "Planet.hpp"
+#include "Star.hpp"
+#include "./display/Window.hpp"
+#include "./geometry/ShapeManager.hpp"
+#include "./userinteraction/Button.hpp"
+#include "./geometry/Vertex.hpp"
+#include "./rasterization/Bitmap.hpp"
+#include "Cinematic.hpp"
 
 #define PLANETMAX 15               // Nos systèmes stellaires comprendront au maximum 15 planètes
 #define DISTANCEMAX 6 * pow(10, 9) // En m
@@ -26,17 +35,17 @@ public:
     ===========================================================================================*/
 
     // Constructeur par défaut
-    starSystem(ButtonManager& bm, ShapeManager& manager, Window& window) {
-       std::cout << " > Constructeur starSystem" << std::endl;
+    starSystem(ButtonManager &bm, ShapeManager &manager, Window &window)
+    {
+        std::cout << " > Constructeur starSystem" << std::endl;
 
-       Bitmap::newBitmap(std::string("Space"), std::string("../textures/space2.jpg"));
-       Vertex hg = { 0, 100, 0 };
-       Vertex bg = { 0, 0, 0 };
-       Vertex hd = { 158, 100, 0 };
-       Vertex bd = { 158, 0, 0 };
-       manager.addRectangle("fond", hg, bg, hd, bd, Bitmap::getBitmap("Space"));
-       std::cout << "Espace créé" << std::endl;
-
+        Bitmap::newBitmap(std::string("Space"), std::string("../textures/space2.jpg"));
+        Vertex hg = {0, 100, 0};
+        Vertex bg = {0, 0, 0};
+        Vertex hd = {158, 100, 0};
+        Vertex bd = {158, 0, 0};
+        manager.addRectangle("fond", hg, bg, hd, bd, Bitmap::getBitmap("Space"));
+        std::cout << "Espace créé" << std::endl;
     }
 
     /**
@@ -160,9 +169,9 @@ public:
     // Vérifie que les planètes sont dans les limites imposées (pas trop loin de l'étoile)
     void checkPlanets()
     {
-        Point2D<int> positionS = sun->getPosition();
+        Point2D<double> positionS = sun->getPosition();
         int distance;
-        Point2D<int> positionP;
+        Point2D<double> positionP;
         for (std::vector<Planet *>::iterator it = planets.begin(); it != planets.end();)
         {
             positionP = (*it)->getPosition();
@@ -219,8 +228,8 @@ public:
     // Vérifie qu'aucune collision n'a lieu dans le système stellaire
     void checkCollision()
     {
-        int distance;
-        Point2D<int> posA, posB;
+        double distance;
+        Point2D<double> posA, posB;
         for (std::vector<Planet *>::iterator i = planets.begin(); i != planets.end() - 1; i++)
         {
             posA = (*i)->getPosition();
@@ -244,6 +253,37 @@ public:
     // Appelle les fonctions dans cinématique sur les planètes du système stellaires. Calcule la nouvelle position de toutes les planètes du système stellaire.
     void simulation()
     {
+        // Si il n'y a aucune planète, alors il n'y a rien à simuler
+        if (planets.empty())
+            return;
+
+        // Somme de toutes les forces qui s'exercent sur les astres
+        Point2D<double> force, tmp;
+        // Force exercée par toutes les autres planètes
+        for (std::vector<Planet *>::iterator i = planets.begin(); i != planets.end() - 1; i++)
+        {
+            force.x = force.y = 0;
+            for (std::vector<Planet *>::iterator j = planets.begin() + 1; j != planets.end(); j++)
+            {
+                tmp = Cinematic::attractionForce(*i, *j);
+                force = force + tmp;
+            }
+            // Force exercée par l'étoile du système si il y en a une
+            if (sun)
+            {
+                tmp = Cinematic::attractionForce(*i, sun);
+                force = force + tmp;
+            }
+
+            // On détermine le vecteur accélération de l'astre 'i' grâce à la somme des forces qui s'exercent sur elle
+            Cinematic::Newton2nd(force, *i);
+
+            // On détermine le vecteur vitesse de 'i' à partir du vecteur accélération
+            Cinematic::getSpeedFromAcceleration(*i);
+
+            // On détermine le vecteur position de 'i' à partir du vecteur vitesse
+            Cinematic::getPositionFromSpeed(*i);
+        }
     }
 
     /**
