@@ -1,4 +1,4 @@
-#include "Planet.hpp"
+#pragma once
 
 namespace Cinematic
 {
