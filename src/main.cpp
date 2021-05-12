@@ -26,6 +26,8 @@ int main(int argc, char* argv[]) {
 	Mouse mouse;
 	Keyboard keyboard;
 	
+	starSystem Ssys(bm, manager, window);
+
 	// 1. Contour
 	bm.addRectButton<TextInput*>("b_contour", nullptr, white, black, nullptr, Point2D<int>(10, 10), 1260, 690);
 
@@ -69,6 +71,11 @@ int main(int argc, char* argv[]) {
 	int b_topleftx = 1120, b_tly = 187;
 	TextBox b_add("Add", pth + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<void*>("b_add", nullptr, green, black, &b_add, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	//TEST
+	Star testStar(5000, 1000000, { 0,0 }, "testStar");
+	//bm.getButton<void*>("b_add").setAction(Ssys.addStar, &testStar);
+
+
 
 	i_TLy = 450;
 	TextBox t_simuspeed("Simulation Speed", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx, i_TLy), 140, 25, window.getRenderer());
@@ -96,6 +103,7 @@ int main(int argc, char* argv[]) {
 
 	TextBox b_reset("Reset", pth + std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<void*>("b_reset", nullptr, red, black, &b_reset, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	//bm.getButton<void*>("b_reset").setAction(Ssys.reset);
 
 	i_TLy = 620;
 	TextBox t_loadsave("Load / Save", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx, i_TLy), 90, 25, window.getRenderer());
@@ -110,7 +118,7 @@ int main(int argc, char* argv[]) {
 	TextBox b_save("Save", pth + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<void*>("b_save", nullptr, green, black, &b_save, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 
-	starSystem Ssys(bm, manager, window);
+
 
 	//5. Camera
 	Camera faceCam({ manager.getShape("fond").center.x, manager.getShape("fond").center.y, manager.getShape("fond").center.z - 100 }, 60, 0, 3.14519);

@@ -110,6 +110,7 @@ public:
      */
     void addStar(Star* star)
     {
+        std::cout << "Ajout star" << std::endl;
         if (this->sun == nullptr && star != nullptr)
             this->sun = star;
     }
@@ -159,22 +160,24 @@ public:
     /* ----- METHODES ----- */
 
     // Vérifie que les planètes sont dans les limites imposées (pas trop loin de l'étoile)
-    /*void checkPlanets()
+    void checkPlanets()
     {
         Point2D<double> positionS = sun->getPosition();
         int distance;
         Point2D<double> positionP;
         for (std::vector<Planet*>::iterator it = planets.begin(); it != planets.end();)
+        {
             positionP = (*it)->getPosition();
             distance = positionP.distance(positionS);
             if (distance > DISTANCEMAX)
             {
-                delete (it);
+                delete (*it);
                 it = planets.erase(it);
             }
             else
                 it++;
-        }*/
+        }
+    }
 
     /**
      * @brief Retire une planète du système stellaire
