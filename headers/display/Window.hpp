@@ -48,31 +48,6 @@ private:
 	 * Variable pour gérer la fermeture de la fenêtre
 	 */	
 	bool shuttingDown = false;
-	bool pause = false;
-	std::thread* pauseScreen = nullptr;
-	static bool stop;
-	static std::mutex stopM;
-	static void pauseScreenFunc(std::string message, Window* window) {
-		SDL_Window* w = SDL_CreateWindow("Loading Screen", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window->getWidth()/2, window->getHeight()/2, SDL_WINDOW_OPENGL);
-		SDL_Renderer* renderer = SDL_CreateRenderer(w, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
-		TextBox msg(message, "../fonts/calibri.ttf", 20, black, Point2D<int>(10, 10), renderer);
-	loop:
-		stopM.lock();
-		if (!stop) {
-			stopM.unlock();
-			msg.render(renderer);
-			
-			SDL_RenderPresent(renderer);
-			SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-			SDL_RenderClear(renderer);
-			
-			SDL_Delay(50);
-			goto loop;
-		}
-		stopM.unlock();
-		if (renderer) SDL_DestroyRenderer(renderer);
-		if (w) SDL_DestroyWindow(w);
-	}
 
 public:
 	/**
@@ -224,28 +199,4 @@ public:
 		}
 		SDL_SetWindowResizable(window, SDL_FALSE);
 	}
-
-	void startPause(std::string message) {
-		if (pause)return;
-		pause = true;
-		stopM.lock();
-		stop = false;
-		stopM.unlock();
-		pauseScreen = new std::thread(Window::pauseScreenFunc, message, this);
-		//SDL_Delay(1000);
-	}
-
-	void stopPause() {
-		if (!pause)return;
-		pause = false;
-		stopM.lock();
-		stop = true;
-		stopM.unlock();
-		pauseScreen->join();
-		delete pauseScreen;
-		pauseScreen = nullptr;
-	}
 };
-
-std::mutex Window::stopM{};
-bool Window::stop{ false };

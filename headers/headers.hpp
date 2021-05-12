@@ -22,9 +22,6 @@
 #include <math.h>
 #include <climits>
 
-#include <thread>
-#include <mutex>
-
 #include <assert.h>
 
 #include <filesystem>
