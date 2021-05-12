@@ -45,5 +45,3 @@ cmake_install.cmake
 Makefile
 CMakeFiles
 RelWithDebInfo
-
-OBJ/
