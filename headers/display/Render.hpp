@@ -39,22 +39,29 @@ public:
 	}
 
 	// Change la taille d'un triangle pour que ça rentre 
-	void updateTriangles(const ShapeManager& manager) {
+	void updateTriangles(ShapeManager& manager) {
+
 		const size_t size = toRender.size();
-		if (shapesNumber == manager.shapes.size()) return;
+		
+		// Quitter la fonction s'il n'y a pas eu de changement depuis la précédente update
+		if (manager.rendered) 	return;
+		
 		toRender.clear();
 		toRender.shrink_to_fit();
 		toRender.reserve(size);
 
-		const size_t max1 = manager.shapes.size();
-		shapesNumber = max1;
-		for (size_t j = 0; j < max1; j++) {
+		for (size_t j = 0; j < manager.shapes.size(); j++) {
+			// Ne pas render les shapes marquées non visibles
+			if (!manager.shapes[j]->visible)  
+				continue;
+
 			const size_t max2 = manager.shapes[j]->triangles.size();
 			for (size_t i = 0; i < max2; i++) {
 				toRender.push_back(&manager.shapes[j]->triangles[i]);
 			}
 		}
 		toRender.shrink_to_fit();
+		manager.rendered = true;
 	}
 
 private:
