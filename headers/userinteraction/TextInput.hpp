@@ -43,7 +43,7 @@ public:
 	 */
 	TextInput(const std::string& text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
 		const Point2D<int>& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
-		: TextBox(text,fontPath,fontSize,fontColor,Point2D<int>(topLeft + 2),width - 4,height - 4,renderer), text(text) {}
+		: TextBox(text, FIND_FILE(fontPath),fontSize,fontColor,Point2D<int>(topLeft + 2),width - 4,height - 4,renderer), text(text) {}
 
 	// suppression du constructeur par défaut
 	TextInput() = delete;
