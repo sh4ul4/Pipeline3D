@@ -11,19 +11,34 @@ struct camPack {
 	std::string viewName;
 	TextBox *current_cam_t;
 	Window *window;
+	ShapeManager *manager;
+	std::string referencedWall;
 };
 
 
-// Faire un Struct avec la caméra, le mur à retirer et une textbox à modifier pour écrire le nom de la cam
-void changeCamTest(camPack *p) {
-	p->cam->setCurrent();
-	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
-	// if (shp) shp.visible = false;
+void makeWallsVisible(ShapeManager& manager)  {
+	manager.getShape("frontWall").visible = true;
+	manager.getShape("backWall").visible = true;
+	manager.getShape("leftWall").visible = true;
+	manager.getShape("rightWall").visible = true;
 }
 
-void goFreeView(Camera *cam) {
-	cam->setCurrent();
-	cam->unlock();
+// Faire un Struct avec la caméra, le mur à retirer et une textbox à modifier pour écrire le nom de la cam
+void switchCam(camPack *p) {
+	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
+	makeWallsVisible(*p->manager);
+	if (p->referencedWall.compare("none"))
+		(*p->manager).getShape(p->referencedWall).visible = false;
+	(*p->manager).pushShapesEditing();
+	p->cam->setCurrent();
+}
+
+void goFreeView(camPack *p) {
+	p->cam->setCurrent();
+	p->cam->unlock();
+	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
+	makeWallsVisible(*p->manager);
+	(*p->manager).pushShapesEditing();
 }
 
 
@@ -109,23 +124,35 @@ int main(int argc, char* argv[]) {
 	 * ===============================
 	 */
 	// Top / Gauche - OK
-	Camera topCam({manager.getShape("floor").center.x, 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
+	Camera topCam({manager.getShape("floor").center.x, manager.getShape("floor").center.y + 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	topCam.lock();
 
 	Camera freeCam({ 120,300,65 }, 60, 0, 4);
 	freeCam.lock();
 
-	Camera faceCam({manager.getShape("frontWall").center.x, manager.getShape("frontWall").center.y, manager.getShape("frontWall").center.z - 100}, 60, 0, 3.1416);
+	// -90°, PI (180°)
+	Camera faceCam({manager.getShape("frontWall").center.x + 100, manager.getShape("frontWall").center.y, manager.getShape("frontWall").center.z}, 60, -1.5708, 3.14159);
+	// [153.726|31.1633|0.134504] -1.5632 3.12059 
+	// [60|30|0]
+	// BLEU : Z
 	faceCam.lock();
 
 	// Gauche OK
 	Camera gaucheCam({manager.getShape("leftWall").center.x, manager.getShape("leftWall").center.y, manager.getShape("leftWall").center.z - 100}, 60, 0, 3.1416);
 	gaucheCam.lock();
 	
-	Camera droitCam({manager.getShape("rightWall").center.x, manager.getShape("rightWall").center.y, manager.getShape("rightWall").center.z - 100}, 60, 0, 0.3183);
+	Camera droitCam({manager.getShape("rightWall").center.x, manager.getShape("rightWall").center.y, manager.getShape("rightWall").center.z + 100}, 60, 3.14159, 3.14159);
+	std::cout << manager.getShape("rightWall").center << "\n";
+	// [0.83829|39.5742|-163.122] 0.00299992 3.1626
+	// [0|30|-140] 0 3.14159
+	// [0|30|60]
 	droitCam.lock();
 
-	Camera backCam({manager.getShape("backWall").center.x, manager.getShape("backWall").center.y, manager.getShape("backWall").center.z - 100}, 60, 0, 3.1416);
+	// 90°, PI (180°)
+	Camera backCam({manager.getShape("backWall").center.x - 100, manager.getShape("backWall").center.y, manager.getShape("backWall").center.z}, 60, 1.5708, 3.14159);
+	std::cout << manager.getShape("backWall").center << "\n";
+	// [-146.734|31.2324|1.26319] 1.581 3.1356
+	// BackCentre : [-60|30|0]
 	backCam.lock();
 	
 
@@ -156,42 +183,44 @@ int main(int argc, char* argv[]) {
 	bm.addRectButton<TextInput*>("b_espInter", nullptr, white, black, &tb1, Point2D<int>(970, 30), 270, 506);
 	
 
-	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window };
-	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window };
-	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window };
-	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window };
-	camPack p4 = { &backCam, "Vue de l'arrière", &current_cam, &window };
+	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window, &manager, "none" };
+	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall" };
+	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall" };
+	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall" };
+	camPack p4 = { &backCam, "Vue de l'arriere", &current_cam, &window, &manager, "backWall" };
+	camPack p5 = { &freeCam, "Deplacement libre", &current_cam, &window, &manager, "none" };
+
 	// 2. Boutons interaction Frame : vues
 	b_width = 120, b_height = 30;
 	b_topleftx = 30, b_tly = 546;
 	TextBox tb7("Vue Haut", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<camPack*>("b_mainView", nullptr, dark_gray, black, &tb7, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<camPack*>("b_mainView").setAction(changeCamTest, &p0);
+	bm.getButton<camPack*>("b_mainView").setAction(switchCam, &p0);
 	b_topleftx += 140;
 
 	TextBox tb8("Vue Face", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<camPack*>("b_View1", nullptr, dark_gray, black, &tb8, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<camPack*>("b_View1").setAction(changeCamTest, &p1);
+	bm.getButton<camPack*>("b_View1").setAction(switchCam, &p1);
 	b_topleftx += 140;
 
-	TextBox tb9("Vue 2", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+	TextBox tb9("Vue Gauche", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<camPack*>("b_View2", nullptr, dark_gray, black, &tb9, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<camPack*>("b_View2").setAction(changeCamTest, &p2);
+	bm.getButton<camPack*>("b_View2").setAction(switchCam, &p2);
 	b_topleftx += 140;
 
-	TextBox tb10("Vue 3", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+	TextBox tb10("Vue Droite", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<camPack*>("b_View3", nullptr, dark_gray, black, &tb10, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<camPack*>("b_View3").setAction(changeCamTest, &p3);
+	bm.getButton<camPack*>("b_View3").setAction(switchCam, &p3);
 	b_topleftx += 140;
 
-	TextBox tb11("Vue 4", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+	TextBox tb11("Vue Arriere", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<camPack*>("b_View4", nullptr, dark_gray, black, &tb11, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<camPack*>("b_View4").setAction(changeCamTest, &p4);
+	bm.getButton<camPack*>("b_View4").setAction(switchCam, &p4);
 	b_topleftx += 140;
 
 	TextBox tb12("Deplacement libre", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<Camera*>("b_freeMotionView", nullptr, hd_greenButtons, black, &tb12, Point2D<int>(b_topleftx, b_tly), b_width+80, b_height);
-	bm.getButton<Camera*>("b_freeMotionView").setAction(goFreeView, &freeCam);
+	bm.addRectButton<camPack*>("b_freeMotionView", nullptr, hd_greenButtons, black, &tb12, Point2D<int>(b_topleftx, b_tly), b_width+80, b_height);
+	bm.getButton<camPack*>("b_freeMotionView").setAction(goFreeView, &p5);
 
 
 	// struct Function {
@@ -220,15 +249,15 @@ int main(int argc, char* argv[]) {
 		inputEvent.updateKeyBoard(keyboard);
 
 		if (keyboard.one.down) 
-			changeCamTest(&p0);
+			switchCam(&p0);
 		else if (keyboard.two.down)
-			changeCamTest(&p1);
+			switchCam(&p1);
 		else if (keyboard.three.down)
-			changeCamTest(&p2);
+			switchCam(&p2);
 		else if (keyboard.four.down)
-			changeCamTest(&p3);
+			switchCam(&p3);
 		else if (keyboard.five.down)
-			changeCamTest(&p4);
+			switchCam(&p4);
 		else if (keyboard.l.down) {
 			if (!Camera::getCurrent().locked)	Camera::getCurrent().lock();
 			// if (Camera::getCurrent().locked)Camera::getCurrent().unlock();

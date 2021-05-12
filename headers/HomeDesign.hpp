@@ -265,18 +265,20 @@ public:
 
         // sol
         Bitmap::newBitmap(std::string("defense"), std::string(pth+"/textures/img.png"));
-        Bitmap::newBitmap(std::string("80s"), std::string(pth+"/textures/face.jpg"));
+        Bitmap::newBitmap(std::string("BACKBLUE"), std::string(pth+"/textures/blue.png"));
+        Bitmap::newBitmap(std::string("FACE"), std::string(pth+"/textures/face.jpg"));
         Bitmap::newBitmap(std::string("wall"), std::string(pth+"/textures/wall.jpg"));
-    
+        Bitmap::newBitmap(std::string("RIGHT"), std::string(pth+"/textures/80s_1.jpg"));
+
         manager.addRectangle("floor", a, b, c, d, Bitmap::getBitmap(std::string("defense")));
         // manager.addSphere("point_a", a, 5, blue);
         // manager.addSphere("point_c", c, 5, yellow);
         // manager.addSphere("point_d", d, 5, red);
 
-        manager.addRectangle("frontWall", c1, d1, c, d, Bitmap::getBitmap("80s"));
-        manager.addRectangle("backWall", a1, b1, a, b, Bitmap::getBitmap("80s"));
+        manager.addRectangle("frontWall", c1, d1, c, d, Bitmap::getBitmap("FACE"));
+        manager.addRectangle("backWall", a1, b1, a, b, Bitmap::getBitmap("BACKBLUE"));
         manager.addRectangle("leftWall", a1, c1, a, c, Bitmap::getBitmap("wall"));
-        manager.addRectangle("rightWall", b1, d1, b, d, Bitmap::getBitmap("wall"));
+        manager.addRectangle("rightWall", b1, d1, b, d, Bitmap::getBitmap("RIGHT"));
         std::cout<<"Room créée"<<std::endl;
 
 
