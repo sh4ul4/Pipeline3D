@@ -5,6 +5,20 @@ void startFunc(int *s) {
 	*s = 0; 
 }
 
+// TODO:
+struct zoomPack {
+	Camera *cam;
+	Vertex zoom;
+	Vertex dezoom;
+};
+
+void zoomCam(zoomPack *z)  {
+
+}
+
+void dezoomCam(zoomPack *z)  {
+	
+}
 
 struct camPack {
 	Camera *cam;
@@ -14,7 +28,6 @@ struct camPack {
 	ShapeManager *manager;
 	std::string referencedWall;
 };
-
 
 void makeWallsVisible(ShapeManager& manager)  {
 	manager.getShape("frontWall").visible = true;
@@ -112,49 +125,41 @@ int main(int argc, char* argv[]) {
 		w1 = stof(i_mur1.getText());
 		w3 = stof(i_mur3.getText());
 	}  catch (const std::invalid_argument& ia)  {
+		// TODO: Passer cette vérification dans la startFunc pour afficher un message d'erreur si les flottants sont pas bons
 		std::cerr << "\033[31mERR - Merci d'entrer un nombre flottant valide pour vos dimensions: \033[0m" << ia.what() << '\n';
 		exit(1);
   	}
-
+	
+	if(w3 < w1) std::swap(w1, w3);
 	HomeDesign hm( bm, manager, window, inputEvent, w1, w3 );
-
+	
 
 	/** ==============================
 	 *  Initialisation caméras
-	 * ===============================
-	 */
-	// Top / Gauche - OK
+	 * ==============================*/
+	// Top: -90° / 230° (?) / y -= 5 pour zoomer
 	Camera topCam({manager.getShape("floor").center.x, manager.getShape("floor").center.y + 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	topCam.lock();
 
 	Camera freeCam({ 120,300,65 }, 60, 0, 4);
 	freeCam.lock();
 
-	// -90°, PI (180°)
+	// -90°, PI (180°) / x -= 5 pour zoomer
 	Camera faceCam({manager.getShape("frontWall").center.x + 100, manager.getShape("frontWall").center.y, manager.getShape("frontWall").center.z}, 60, -1.5708, 3.14159);
-	// [153.726|31.1633|0.134504] -1.5632 3.12059 
-	// [60|30|0]
-	// BLEU : Z
 	faceCam.lock();
 
-	// Gauche OK
+	// Back: 90°, PI (180°) / x += 5 pour zoomer
+	Camera backCam({manager.getShape("backWall").center.x - 100, manager.getShape("backWall").center.y, manager.getShape("backWall").center.z}, 60, 1.5708, 3.14159);
+	backCam.lock();
+
+	// Gauche: 0, PI / z += 5 pour zoomer
 	Camera gaucheCam({manager.getShape("leftWall").center.x, manager.getShape("leftWall").center.y, manager.getShape("leftWall").center.z - 100}, 60, 0, 3.1416);
 	gaucheCam.lock();
 	
+	// Droit: PI, PI / z -= 5 pour zoomer
 	Camera droitCam({manager.getShape("rightWall").center.x, manager.getShape("rightWall").center.y, manager.getShape("rightWall").center.z + 100}, 60, 3.14159, 3.14159);
-	std::cout << manager.getShape("rightWall").center << "\n";
-	// [0.83829|39.5742|-163.122] 0.00299992 3.1626
-	// [0|30|-140] 0 3.14159
-	// [0|30|60]
 	droitCam.lock();
 
-	// 90°, PI (180°)
-	Camera backCam({manager.getShape("backWall").center.x - 100, manager.getShape("backWall").center.y, manager.getShape("backWall").center.z}, 60, 1.5708, 3.14159);
-	std::cout << manager.getShape("backWall").center << "\n";
-	// [-146.734|31.2324|1.26319] 1.581 3.1356
-	// BackCentre : [-60|30|0]
-	backCam.lock();
-	
 
 	// TextInput ti("Hello world!", pth+std::string("fonts/calibri.ttf"), 30, black, Point2D<int>(450, 50), 200, 25, window.getRenderer());
 	// TextBox tb1("OK!", pth + std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(1300, 100), 100, 25, window.getRenderer());
