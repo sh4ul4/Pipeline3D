@@ -398,7 +398,7 @@ private:
 	 * @return
 	 */
 	float clampAngleY(const float& angle) {
-		return angle > 4.53786f ? 4.53786f : (angle < 1.74533f ? 1.74533f : angle);
+		return angle > 4.71239f ? 4.71239f : (angle < 1.5708f ? 1.5708f : angle);
 	}
 
 	/**
