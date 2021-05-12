@@ -24,6 +24,10 @@ public:
 	// Texture globale
 	GlobalTexture globalTexture;
 
+	void savePNG(const std::string& file) {
+		globalTexture.savePNG(file);
+	}
+
 	// Interdiction d'utilisation d'un constructeur vide
 	Render() = delete;
 
