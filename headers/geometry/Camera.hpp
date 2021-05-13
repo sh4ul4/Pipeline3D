@@ -470,16 +470,16 @@ public:
 					subject += direction;
 				}
 			}
-			refresh2D();
-			if (hasSubject) {
-				const Vector look = getMovementVector(1, 0, 0, distanceToSubject);
-				pos = subject - look;
-			}
 		}
 		else SDL_ShowCursor(true);
-		look = getMovementVector(1, 0, 0, 1);
 		angleX = clampAngleX(angleX);
 		angleY = clampAngleY(angleY);
+		if (hasSubject && !locked) {
+			refresh2D();
+			const Vector look = getMovementVector(1, 0, 0, distanceToSubject);
+			pos = subject - look;
+		}
+		look = getMovementVector(1, 0, 0, 1);
 		refresh2D();
 	}
 };
