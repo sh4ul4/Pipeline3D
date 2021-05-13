@@ -388,7 +388,8 @@ public:
 	 *		Méthodes
 	 *===========================================================================================*/
 
-	void imprtShapeObj(const std::string& path, const std::string& source, const std::string& shapeName, const float& scale = 1) {
+	void imprtShapeObj(std::string path, const std::string& source, const std::string& shapeName, const float& scale = 1) {
+		path = FIND_FILE(path);
 		if (nameTaken(shapeName)) {
 			PRINT_ON_ERR("Name for shape is already taken");
 			return;
@@ -449,14 +450,14 @@ public:
 	void exprtShapeObj(const std::string& shape) {
 		if (!nameTaken(shape))return; // no shape named that way
 
-		std::ofstream mtl(pth + std::string("OBJ/") + shape + ".mtl");
+		std::ofstream mtl(FIND_FILE(std::string("OBJ/")) + shape + ".mtl");
 		mtl << "newmtl " << shape << "_mtl " <<
 			"\n\tKd 0 0 0 " <<
 			"\n\tmap_Ka " << getShape(shape).bmp->name.c_str() << ".png\n\tmap_Kd " << getShape(shape).bmp->name.c_str() << ".png\n";
-		IMG_SavePNG(getShape(shape).bmp->surface, std::string(pth + std::string("OBJ/") + getShape(shape).bmp->name + ".png").c_str());
+		IMG_SavePNG(getShape(shape).bmp->surface, std::string(FIND_FILE(std::string("OBJ/")) + getShape(shape).bmp->name + ".png").c_str());
 
 
-		std::ofstream out(pth + std::string("OBJ/") + shape + ".obj");
+		std::ofstream out(FIND_FILE(std::string("OBJ/")) + shape + ".obj");
 		out << "# " + shape + ".obj\n";
 		out << "#\n\n";
 		out << "o " + shape + "\n";

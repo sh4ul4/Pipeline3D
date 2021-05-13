@@ -28,14 +28,6 @@
 
 #include "userinteraction/ErrorsHandler.hpp"
 
-std::string setPath(const std::filesystem::path& p) {
-    if (FILE_EXISTS(p))
-        return "./";
-    else
-        return "../";
-}
-std::string pth{ setPath("fonts") };
-
 #include "geometry/Point.hpp"
 
 #include "geometry/Vertex.hpp"

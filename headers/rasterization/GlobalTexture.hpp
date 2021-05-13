@@ -198,6 +198,16 @@ private:
 
 public:
 
+	void savePNG(std::string file, const Color& background = Color(0,0,0,0)) {
+		if (!(file.size() >= 4) ||
+			!(file.compare(file.size() - 4, 4, ".png") == 0 || file.compare(file.size() - 4, 4, ".PNG") == 0)) {
+			file += ".png";
+		}
+		SDL_Surface* pngSurface = SDL_CreateRGBSurfaceFrom(pixels.data(), width, height, 32, pitch, 0x0000ff00, 0x00ff0000, 0xff000000, 0x000000ff);
+		if (IMG_SavePNG(pngSurface, file.c_str())) PRINT_ON_ERR("PNG-file could not be saved.");
+		SDL_FreeSurface(pngSurface);
+	}
+
 	// dessiner une ligne à lintérieur de la bitmap de pixels
 	void drawLine(const GlobalTexture& globalTexture, const Point2D<int>& a, const float& adepth, const Point2D<int>& b, const float& bdepth, const Color& color) {
 		std::vector<Point2D<int>> line;
