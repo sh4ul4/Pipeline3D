@@ -108,7 +108,7 @@ public:
 		ie.updateKeyBoard(keyboard);
 		if (!running && mouse.leftClick && checkClick(mouse))
 			start(ie);
-		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && not checkClick(mouse)) )
+		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && !checkClick(mouse)) )
 			stop(ie);
 		if (!running)return;
 		const int size1 = text.length();
@@ -129,7 +129,7 @@ public:
 		ie.updateKeyBoard(keyboard);
 		if (!running && mouse.leftClick && ( checkClick(mouse) || other.checkClick(mouse) ))
 			start(ie);
-		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && not checkClick(mouse) && not other.checkClick(mouse)) )
+		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && !checkClick(mouse) && !other.checkClick(mouse)) )
 			stop(ie);
 		if (!running)return;
 		const int size1 = text.length();
