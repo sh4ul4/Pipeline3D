@@ -1,23 +1,29 @@
 #include "headers.hpp"
 
-
-void startFunc(int *s) {
-	*s = 0; 
+Vector getZoomValue(std::string camId)  {
+	if      (!camId.compare("topCam"))    return Vector( 0, -5,  0);
+	else if (!camId.compare("faceCam"))   return Vector(-5,  0,  0);
+	else if (!camId.compare("backCam"))   return Vector( 5,  0,  0);
+	else if (!camId.compare("gaucheCam")) return Vector( 0,  0,  5);
+	else if (!camId.compare("droitCam"))  return Vector( 0,  0, -5);
+	else								 return Vector( 0,  0,  0);
 }
 
-// TODO:
-struct zoomPack {
-	Camera *cam;
-	Vertex zoom;
-	Vertex dezoom;
-};
-
-void zoomCam(zoomPack *z)  {
-
+Vector getDezoomValue(std::string camId)  {
+	if      (!camId.compare("topCam"))    return Vector( 0,  5,  0);
+	else if (!camId.compare("faceCam"))   return Vector( 5,  0,  0);
+	else if (!camId.compare("backCam"))   return Vector(-5,  0,  0);
+	else if (!camId.compare("gaucheCam")) return Vector( 0,  0, -5);
+	else if (!camId.compare("droitCam"))  return Vector( 0,  0,  5);
+	else								 return Vector( 0,  0,  0);
 }
 
-void dezoomCam(zoomPack *z)  {
-	
+void zoomCam(void *p)  {
+	Camera::getCurrent().moveLockedCam(getZoomValue(Camera::getCurrent().getCamId()));
+}
+
+void dezoomCam(void *p)  {
+	Camera::getCurrent().moveLockedCam(getDezoomValue(Camera::getCurrent().getCamId()));
 }
 
 struct camPack {
@@ -52,8 +58,14 @@ void goFreeView(camPack *p) {
 	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
 	makeWallsVisible(*p->manager);
 	(*p->manager).pushShapesEditing();
+	// Make Zoom buttons invisible ?
 }
 
+// Ajouter message d'erreur pour replay
+// Ajouter input pour nom de scène et si vide mettre nom par défaut
+void startFunc(int *s) {
+	*s = 0; 
+}
 
 int main(int argc, char* argv[]) {
 	Window window(1280, 720);
@@ -62,8 +74,10 @@ int main(int argc, char* argv[]) {
 	TextBox::initLibrary();
 	ButtonManager bm(inputEvent, window);
 	Render r(window, 900, 506); // 16:9
+	Draw drawer;
 	Mouse mouse;
 	Keyboard keyboard;
+	
 
 	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
 
@@ -131,33 +145,33 @@ int main(int argc, char* argv[]) {
   	}
 	
 	if(w3 < w1) std::swap(w1, w3);
-	HomeDesign hm( bm, manager, window, inputEvent, w1, w3 );
+	HomeDesign hm( "MaChambreCROUS", bm, manager, window, inputEvent, w1, w3 );
 	
 
 	/** ==============================
 	 *  Initialisation caméras
 	 * ==============================*/
 	// Top: -90° / 230° (?) / y -= 5 pour zoomer
-	Camera topCam({manager.getShape("floor").center.x, manager.getShape("floor").center.y + 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
+	Camera topCam("topCam", {manager.getShape("floor").center.x, manager.getShape("floor").center.y + 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	topCam.lock();
 
-	Camera freeCam({ 120,300,65 }, 60, 0, 4);
+	Camera freeCam("freeCam", { 120,300,65 }, 60, 0, 4);
 	freeCam.lock();
 
 	// -90°, PI (180°) / x -= 5 pour zoomer
-	Camera faceCam({manager.getShape("frontWall").center.x + 100, manager.getShape("frontWall").center.y, manager.getShape("frontWall").center.z}, 60, -1.5708, 3.14159);
+	Camera faceCam("faceCam", {manager.getShape("frontWall").center.x + 100, manager.getShape("frontWall").center.y, manager.getShape("frontWall").center.z}, 60, -1.5708, 3.14159);
 	faceCam.lock();
 
 	// Back: 90°, PI (180°) / x += 5 pour zoomer
-	Camera backCam({manager.getShape("backWall").center.x - 100, manager.getShape("backWall").center.y, manager.getShape("backWall").center.z}, 60, 1.5708, 3.14159);
+	Camera backCam("backCam", {manager.getShape("backWall").center.x - 100, manager.getShape("backWall").center.y, manager.getShape("backWall").center.z}, 60, 1.5708, 3.14159);
 	backCam.lock();
 
 	// Gauche: 0, PI / z += 5 pour zoomer
-	Camera gaucheCam({manager.getShape("leftWall").center.x, manager.getShape("leftWall").center.y, manager.getShape("leftWall").center.z - 100}, 60, 0, 3.1416);
+	Camera gaucheCam("gaucheCam", {manager.getShape("leftWall").center.x, manager.getShape("leftWall").center.y, manager.getShape("leftWall").center.z - 100}, 60, 0, 3.1416);
 	gaucheCam.lock();
 	
 	// Droit: PI, PI / z -= 5 pour zoomer
-	Camera droitCam({manager.getShape("rightWall").center.x, manager.getShape("rightWall").center.y, manager.getShape("rightWall").center.z + 100}, 60, 3.14159, 3.14159);
+	Camera droitCam("droitCam", {manager.getShape("rightWall").center.x, manager.getShape("rightWall").center.y, manager.getShape("rightWall").center.z + 100}, 60, 3.14159, 3.14159);
 	droitCam.lock();
 
 
@@ -181,12 +195,7 @@ int main(int argc, char* argv[]) {
 	TextBox tb5("Exporter la vue actuelle", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<TextInput*>("b_exportView", nullptr, hd_brownButtons, black, &tb5, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 	
-	TextBox sceneTitle("MaChambreCROUS.flanf", pth+std::string("fonts/calibri.ttf"), 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
-
-
-	TextBox tb1(" ", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(970, 30), 270, 506, window.getRenderer());
-	bm.addRectButton<TextInput*>("b_espInter", nullptr, white, black, &tb1, Point2D<int>(970, 30), 270, 506);
-	
+	TextBox sceneTitle(hm.getSceneName(), pth+std::string("fonts/calibri.ttf"), 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
 
 	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window, &manager, "none" };
 	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall" };
@@ -227,6 +236,11 @@ int main(int argc, char* argv[]) {
 	bm.addRectButton<camPack*>("b_freeMotionView", nullptr, hd_greenButtons, black, &tb12, Point2D<int>(b_topleftx, b_tly), b_width+80, b_height);
 	bm.getButton<camPack*>("b_freeMotionView").setAction(goFreeView, &p5);
 
+
+	bm.addRectTextButton<void*>("b_zoom", Point2D<int>(850, 496), 30, b_height, "+"); 
+	bm.getButton<void*>("b_zoom").setAction(zoomCam, nullptr);
+	bm.addRectTextButton<void*>("b_dezoom", Point2D<int>(890, 496), 30, b_height, "-"); 
+	bm.getButton<void*>("b_dezoom").setAction(dezoomCam, nullptr);
 
 	// struct Function {
 	// 	Bitmap* bmp;
@@ -272,9 +286,14 @@ int main(int argc, char* argv[]) {
 			window.ToggleWindow(window.getWidth(), window.getHeight());
 		}
 
+		// Fond de pipeline
+		drawer.DrawFillRoundedRectContoured(Point2D<int>(30,30), 900, 506, 3, light_gray, black, window.getRenderer());
+
+		// Espace interactions
+		drawer.DrawFillRoundedRectContoured(Point2D<int>(970, 30), 270, 506, 3, white, black, window.getRenderer());
+
 		// if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(30,30),900,506, window);
 		// else r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager);
-
 		r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager);
 		// Print camera position and angle
 		// std::cout<<Camera::getCurrent().getCameraPosition()<< " "<<Camera::getCurrent().angleX<<" "<<Camera::getCurrent().angleY<<std::endl;

@@ -240,8 +240,8 @@ public:
      * @param InputEvent    Utile aux évènements d'interaction utilisateur
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
-    HomeDesign(ButtonManager& bm, ShapeManager& manager, Window& window, InputEvent& inputEvent, float w1, float w3)
-                : bmInsertion1(inputEvent, window) {
+    HomeDesign(std::string scene, ButtonManager& bm, ShapeManager& manager, Window& window, InputEvent& inputEvent, float w1, float w3)
+                : scene_name(scene), bmInsertion1(inputEvent, window) {
         std::cout << " > Constructeur HomeDesign" << std::endl;
         surface = w1 * w3;
         std::cout << "Mur 1: " << w1 << "m" << std::endl;
@@ -343,6 +343,7 @@ public:
      */ 
     HomeDesign(ButtonManager& bm, std::string path);
 
+    std::string getSceneName()  { return scene_name; };
     int getInteractInt() { return interactSpace; };
     void setInteractSpace(int n) { interactSpace = n; };
 
