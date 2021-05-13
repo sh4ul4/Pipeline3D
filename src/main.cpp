@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 	bm.addRectTextButton<Camera*>("b2", Point2D<int>(200, 480), 70, 25, "Camera 2");
 	bm.getButton<Camera*>("b2").setAction([](Camera* cam) {cam->setCurrent(); }, &cam2);
 
-	manager.imprtShapeObj(pth + std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
+	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
 	
 	r.updateTriangles(manager);
 	Mouse mouse;
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 		bm.renderButtons(window.getRenderer());
 		r.renderOrientation(Point2D<int>(50, 470), 50, window);
 		window.RenderScreen();
-		window.FillScreen(teal);
+		window.FillScreen(gray);
 	}
 	return 0;
 }
