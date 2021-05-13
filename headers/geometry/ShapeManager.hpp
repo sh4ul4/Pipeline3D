@@ -719,9 +719,9 @@ public:
 	 * @param a,b,c,d Sommets du rectangle, permettant de le dessiner
 	 * @param bmp Bitmap
 	 */
-	void addRectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, Bitmap* bmp = nullptr) {
+	void addRectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, Bitmap* bmp = nullptr) {
 		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
-		shapes.emplace_back(new Rectangle(name, a, b, c, d, bmp));
+		shapes.emplace_back(new Rectangle(name, a, b, c, d, division, bmp));
 	}
 
 	/**

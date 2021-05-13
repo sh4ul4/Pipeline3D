@@ -248,8 +248,8 @@ class Rectangle : public Shape {
 public:
 	Vertex hg, bg, hd, bd; 
 
-	Rectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, Bitmap* bmp = nullptr): Shape(name) {
-		hd = a; bg = b; hd = c; bd = d;
+	Rectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, Bitmap* bmp = nullptr): Shape(name) {
+		hg = a; bg = b; hd = c; bd = d;
 		if (bmp == nullptr) {
 			this->center = a;
 			this->center += b;
@@ -259,12 +259,25 @@ public:
 			this->center.y /= 4;
 			this->center.z /= 4;
 			// set 2 triangles
-			triangles.push_back(Triangle(a, b, c, { 0,0,0 }));
-			triangles.push_back(Triangle(c, b, d, { 0,0,0 }));
-			triangles[0].fillIt(0);
-			triangles[0].contourIt(1);
-			triangles[1].fillIt(0);
-			triangles[1].contourIt(1);
+			//triangles.push_back(Triangle(a, b, c, { 0,0,0 }));
+			//triangles.push_back(Triangle(b, c, d, { 0,0,0 }));
+			division += 1;
+			int subdiv = pow(division, 2); // div = 0 -> 1, 1 -> 4, 2 -> 9
+			for (int i = 0; i < subdiv	; i++) {
+				int x = i % division;
+				int y = i / division;
+				Vertex tmpHG(hg.x + (x / (float)division * (hg.x - hd.x)) + (y / (float)division * (hg.x - bg.x)), hg.y + (x / (float)division * (hg.y - hd.y)) + (y / (float)division * (hg.y - bg.y)), hg.z + (x / (float)division * (hg.z - hd.z)) + (y / (float)division * (hg.z - bg.z)));
+				Vertex tmpBG(hg.x + ((x + 1) / (float)division * (hg.x - hd.x)) + (y / (float)division * (hg.x - bg.x)), hg.y + ((x + 1) / (float)division * (hg.y - hd.y)) + (y / (float)division * (hg.y - bg.y)), hg.z + ((x + 1) / (float)division * (hg.z - hd.z)) + (y / (float)division * (hg.z - bg.z)));
+				Vertex tmpHD(hg.x + (x / (float)division * (hg.x - hd.x)) + ((y + 1) / (float)division * (hg.x - bg.x)), hg.y + (x / (float)division * (hg.y - hd.y)) + ((y + 1) / (float)division * (hg.y - bg.y)), hg.z + (x / (float)division * (hg.z - hd.z)) + ((y + 1) / (float)division * (hg.z - bg.z)));
+				Vertex tmpBD(hg.x + ((x + 1) / (float)division * (hg.x - hd.x)) + ((y + 1) / (float)division * (hg.x - bg.x)), hg.y + ((x + 1) / (float)division * (hg.y - hd.y)) + ((y + 1) / (float)division * (hg.y - bg.y)), hg.z + ((x + 1) / (float)division * (hg.z - hd.z)) + ((y + 1) / (float)division * (hg.z - bg.z)));
+				printf("%d, %d || %f, %f, %f\n", x, y, tmpHG.x, tmpHG.y, tmpHG.z );
+				triangles.push_back(Triangle(tmpHG, tmpBG, tmpHD, { 0,0,0 }));
+				triangles.push_back(Triangle(tmpBG, tmpHD, tmpBD, { 0,0,0 }));
+				triangles[i*2].fillIt(0);
+				triangles[i*2].contourIt(1);
+				triangles[i*2 + 1].fillIt(0);
+				triangles[i*2 + 1].contourIt(1);
+			}
 		}
 		else {
 			this->center = a;
