@@ -270,7 +270,6 @@ public:
 				Vertex tmpBG(hg.x + ((x + 1) / (float)division * (hg.x - hd.x)) + (y / (float)division * (hg.x - bg.x)), hg.y + ((x + 1) / (float)division * (hg.y - hd.y)) + (y / (float)division * (hg.y - bg.y)), hg.z + ((x + 1) / (float)division * (hg.z - hd.z)) + (y / (float)division * (hg.z - bg.z)));
 				Vertex tmpHD(hg.x + (x / (float)division * (hg.x - hd.x)) + ((y + 1) / (float)division * (hg.x - bg.x)), hg.y + (x / (float)division * (hg.y - hd.y)) + ((y + 1) / (float)division * (hg.y - bg.y)), hg.z + (x / (float)division * (hg.z - hd.z)) + ((y + 1) / (float)division * (hg.z - bg.z)));
 				Vertex tmpBD(hg.x + ((x + 1) / (float)division * (hg.x - hd.x)) + ((y + 1) / (float)division * (hg.x - bg.x)), hg.y + ((x + 1) / (float)division * (hg.y - hd.y)) + ((y + 1) / (float)division * (hg.y - bg.y)), hg.z + ((x + 1) / (float)division * (hg.z - hd.z)) + ((y + 1) / (float)division * (hg.z - bg.z)));
-				printf("%d, %d || %f, %f, %f\n", x, y, tmpHG.x, tmpHG.y, tmpHG.z );
 				triangles.push_back(Triangle(tmpHG, tmpBG, tmpHD, { 0,0,0 }));
 				triangles.push_back(Triangle(tmpBG, tmpHD, tmpBD, { 0,0,0 }));
 				triangles[i*2].fillIt(0);
