@@ -699,7 +699,7 @@ public:
 	 */
 	void addCube(const std::string& name, const Vertex& center, const double& width, Bitmap* bmp = nullptr) {
 		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
-		if (bmp == nullptr) shapes.emplace_back(new Cube(name, center, width));
+		if (bmp == nullptr) shapes.emplace_back(new Cube(name, center, width, black));
 		else shapes.emplace_back(new Cube(name, center, width, bmp));
 	}
 
@@ -718,11 +718,14 @@ public:
 	 *
 	 * @param Nom unique de la shape
 	 * @param a,b,c,d Sommets du rectangle, permettant de le dessiner
+	 * @param division Nombres de divisions à appliquer au rectangle
+	 * @param color Couleur du rectangle
+	 * @param fill rectangle remplis ou non
 	 * @param bmp Bitmap
 	 */
-	void addRectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, Bitmap* bmp = nullptr) {
+	void addRectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, const Color& color, const bool& fill = true, Bitmap* bmp = nullptr) {
 		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
-		shapes.emplace_back(new Rectangle(name, a, b, c, d, division, bmp));
+		shapes.emplace_back(new Rectangle(name, a, b, c, d, division, color, fill ,bmp));
 	}
 
 	/**

@@ -141,6 +141,8 @@ public:
 };
 
 
+
+
 class Sphere : public Shape {
 
 public:
@@ -160,6 +162,8 @@ public:
 
 class Cube : public Shape {
 public:
+
+	//créer un cube avec bitmap
 	Cube(const std::string& name, const Vertex& center, const double& width, Bitmap* bmp) :Shape(name, {}, center, bmp), width(width) {
 		const int half_width = static_cast<int>(width) / 2;
 		// set 8 points
@@ -200,7 +204,9 @@ public:
 			triangles[i].fillIt(true);
 		}
 	}
-	Cube(const std::string& name, const Vertex& center, const double& width) :Shape(name, {}, center, nullptr), width(width) {
+	
+	// créer un cube sans bitmap
+	Cube(const std::string& name, const Vertex& center, const double& width, const Color& color) :Shape(name, {}, center, nullptr), width(width) {
 		const int half_width = static_cast<int>(width) / 2;
 		// set 8 points
 		const Vertex a(center.x + half_width, center.y - half_width, center.z - half_width);
@@ -212,34 +218,39 @@ public:
 		const Vertex g(center.x - half_width, center.y + half_width, center.z + half_width);
 		const Vertex h(center.x - half_width, center.y - half_width, center.z + half_width);
 		// set 12 triangles
-		triangles.push_back(Triangle(a, b, d, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(a, b, d, { 0,0,0 }, color));
 		triangles.back().color = blue; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(c, b, d, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(c, b, d, { 0,0,0 }, color));
 		triangles.back().color = red; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(b, g, c, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(b, g, c, { 0,0,0 }, color));
 		triangles.back().color = green; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(b, g, f, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(b, g, f, { 0,0,0 }, color));
 		triangles.back().color = white; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(d, g, c, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(d, g, c, { 0,0,0 }, color));
 		triangles.back().color = black; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(d, g, h, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(d, g, h, { 0,0,0 }, color));
 		triangles.back().color = yellow; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(e, g, h, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(e, g, h, { 0,0,0 }, color));
 		triangles.back().color = cyan; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(e, g, f, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(e, g, f, { 0,0,0 }, color));
 		triangles.back().color = gray; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(a, h, d, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(a, h, d, { 0,0,0 }, color));
 		triangles.back().color = dark_gray; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(a, h, e, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(a, h, e, { 0,0,0 }, color));
 		triangles.back().color = lime; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(a, f, e, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(a, f, e, { 0,0,0 }, color));
 		triangles.back().color = maroon; triangles.back().fillIt(true);
-		triangles.push_back(Triangle(a, f, b, { 0,0,0 }, blue));
+		triangles.push_back(Triangle(a, f, b, { 0,0,0 }, color));
 		triangles.back().color = olive; triangles.back().fillIt(true);
+		// set 6 faces
+
+
 		for (int i = 0; i < static_cast<int>(triangles.size()); i++) {
 			triangles[i].fillIt(true);
 		}
 	}
+	
+	// créer un cube prédéfini
 	Cube(const Cube& cube) :Shape(cube), width(cube.width) {}
 	int width;
 };
@@ -248,7 +259,7 @@ class Rectangle : public Shape {
 public:
 	Vertex hg, bg, hd, bd; 
 
-	Rectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, Bitmap* bmp = nullptr): Shape(name) {
+	Rectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, const Color& color, const bool& fill = true, Bitmap* bmp = nullptr): Shape(name) {
 		hg = a; bg = b; hd = c; bd = d;
 		if (bmp == nullptr) {
 			this->center = a;
@@ -270,12 +281,8 @@ public:
 				Vertex tmpBG(hg.x + ((x + 1) / (float)division * (hg.x - hd.x)) + (y / (float)division * (hg.x - bg.x)), hg.y + ((x + 1) / (float)division * (hg.y - hd.y)) + (y / (float)division * (hg.y - bg.y)), hg.z + ((x + 1) / (float)division * (hg.z - hd.z)) + (y / (float)division * (hg.z - bg.z)));
 				Vertex tmpHD(hg.x + (x / (float)division * (hg.x - hd.x)) + ((y + 1) / (float)division * (hg.x - bg.x)), hg.y + (x / (float)division * (hg.y - hd.y)) + ((y + 1) / (float)division * (hg.y - bg.y)), hg.z + (x / (float)division * (hg.z - hd.z)) + ((y + 1) / (float)division * (hg.z - bg.z)));
 				Vertex tmpBD(hg.x + ((x + 1) / (float)division * (hg.x - hd.x)) + ((y + 1) / (float)division * (hg.x - bg.x)), hg.y + ((x + 1) / (float)division * (hg.y - hd.y)) + ((y + 1) / (float)division * (hg.y - bg.y)), hg.z + ((x + 1) / (float)division * (hg.z - hd.z)) + ((y + 1) / (float)division * (hg.z - bg.z)));
-				triangles.push_back(Triangle(tmpHG, tmpBG, tmpHD, { 0,0,0 }));
-				triangles.push_back(Triangle(tmpBG, tmpHD, tmpBD, { 0,0,0 }));
-				triangles[i*2].fillIt(0);
-				triangles[i*2].contourIt(1);
-				triangles[i*2 + 1].fillIt(0);
-				triangles[i*2 + 1].contourIt(1);
+				triangles.push_back(Triangle(tmpHG, tmpBG, tmpHD, { 0,0,0 }, color, fill));
+				triangles.push_back(Triangle(tmpBG, tmpHD, tmpBD, { 0,0,0 }, color, fill));
 			}
 		}
 		else {
