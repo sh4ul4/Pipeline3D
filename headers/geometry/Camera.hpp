@@ -29,6 +29,9 @@ private:
 	 * Pointeur vers la camera utilisée.
 	 */
 	static Camera* current;
+
+	std::string id;
+
 	/**
 	 * Une variable privée.
 	 * Position de la camera.
@@ -130,8 +133,8 @@ public:
 	 * @param pos Position actuelle de la camera, angleOfView Angle actuel de la camera, nearClipping Distance de clipping proche, farClipping Distance de clipping loin, angleX Angle d'observation horizontal, angleY Angle d'observation vertical
 	 * Construit la camera et si aucune n'est utilisée, la fait devenir celle utilisée.
 	 */
-	Camera(const Vertex& pos, const float& angleOfView, const float& nearClipping, const float& farClipping, const float& angleX, const float& angleY)
-		:pos(pos), angleView(angleOfView), near(nearClipping), far(farClipping), angleX(angleX), angleY(angleY) {
+	Camera(std::string id, const Vertex& pos, const float& angleOfView, const float& nearClipping, const float& farClipping, const float& angleX, const float& angleY)
+		:id(id), pos(pos), angleView(angleOfView), near(nearClipping), far(farClipping), angleX(angleX), angleY(angleY) {
 		if (current == nullptr) setCurrent();
 	}
 
@@ -140,8 +143,8 @@ public:
 	 * @param pos Position actuelle de la camera, angleOfView Angle actuel de la camera, angleX Angle d'observation horizontal, angleY Angle d'observation vertical
 	 * Construit la camera et si aucune n'est utilisée, la fait devenir celle utilisée.
 	 */
-	Camera(const Vertex& pos, const float& angleView, const float& angleX, const float& angleY)
-		:pos(pos), angleView(angleView), angleX(angleX), angleY(angleY) {
+	Camera(std::string id, const Vertex& pos, const float& angleView, const float& angleX, const float& angleY)
+		:id(id), pos(pos), angleView(angleView), angleX(angleX), angleY(angleY) {
 		if (current == nullptr) setCurrent();
 	}
 
@@ -167,6 +170,8 @@ public:
 	}
 
 	void removeSubject() { hasSubject = false; }
+
+	std::string getCamId() { return id; }
 
 	/**
 	 * Un getter.
@@ -291,6 +296,11 @@ public:
 	 */
 	void moveCameraPreCalculated(const Vector& v) {
 		if (locked)return;
+		if (hasSubject) subject += v;
+		else pos += v;
+	}
+
+	void moveLockedCam(const Vector& v)  {
 		if (hasSubject) subject += v;
 		else pos += v;
 	}
