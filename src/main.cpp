@@ -35,6 +35,9 @@ struct camPack {
 	std::string referencedWall;
 };
 
+/**
+ * @brief Rend l'ensemble des murs de la pièce visibles
+ */
 void makeWallsVisible(ShapeManager& manager)  {
 	manager.getShape("frontWall").visible = true;
 	manager.getShape("backWall").visible = true;
@@ -42,7 +45,9 @@ void makeWallsVisible(ShapeManager& manager)  {
 	manager.getShape("rightWall").visible = true;
 }
 
-// Faire un Struct avec la caméra, le mur à retirer et une textbox à modifier pour écrire le nom de la cam
+/**
+ * @brief Changement de vue Caméra, actualise le nom de vue, le mur à cacher et la caméra courante.
+ */
 void switchCam(camPack *p) {
 	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
 	makeWallsVisible(*p->manager);
@@ -61,10 +66,30 @@ void goFreeView(camPack *p) {
 	// Make Zoom buttons invisible ?
 }
 
-// Ajouter message d'erreur pour replay
+
+struct initPack {
+	bool *start;
+	int *checkForError;
+	std::string w1;
+	std::string w3;
+};
+
 // Ajouter input pour nom de scène et si vide mettre nom par défaut
-void startFunc(int *s) {
-	*s = 0; 
+void checkInitialization(initPack *i) {
+	if (i->w1.empty() || i->w3.empty()) {
+		*i->checkForError = 2;
+		return;
+	}
+
+	try  {
+		stof(i->w1);
+		stof(i->w3);
+	}  catch (const std::invalid_argument& ia)  {
+		*i->checkForError = 1; // Flottant invalide
+		// Ajouter un if pour gérer les valeurs max.
+		return;
+  	}
+	*i->start = true;
 }
 
 int main(int argc, char* argv[]) {
@@ -77,12 +102,9 @@ int main(int argc, char* argv[]) {
 	Draw drawer;
 	Mouse mouse;
 	Keyboard keyboard;
-	
 
-	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
-
-
-	int start = 1;
+	bool start = false;
+	int checkForError = 0;
 
 	TextBox t_intro("CROUS Simulator", pth+std::string("fonts/calibri.ttf"), 40, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
 	int i_TLx = 440, i_TLy = 310;
@@ -97,13 +119,13 @@ int main(int argc, char* argv[]) {
 	TextBox t_mur4("Mur 4", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
 	TextInput i_mur4("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
 	
+	TextBox t_error("", pth+std::string("fonts/calibri.ttf"), 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, window.getRenderer());
 
-	bm.addRectTextButton<int*>("b_initApp", Point2D<int>(440, 400), 400, 40, "Nouvelle scene a partir de la surface donnee");
-	bm.getButton<int*>("b_initApp").setAction(startFunc, &start);
-	bm.addRectTextButton<int*>("b_initImport", Point2D<int>(440, 460), 400, 40, "Importer une scene depuis un fichier");
+	bm.addRectTextButton<initPack*>("b_initApp", Point2D<int>(440, 415), 400, 40, "Nouvelle scene a partir de la surface donnee");
+	bm.addRectTextButton<int*>("b_initImport", Point2D<int>(440, 475), 400, 40, "Importer une scene depuis un fichier");
+	initPack i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText() };
 
-
-	while (start && !keyboard.escape.down) {
+	while (!start && !keyboard.escape.down) {
 		i_mur1.checkForInput(inputEvent, window.getRenderer(), i_mur2);
 		i_mur3.checkForInput(inputEvent, window.getRenderer(), i_mur4);
 
@@ -115,8 +137,11 @@ int main(int argc, char* argv[]) {
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
 		
+		i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText() };
+		bm.getButton<initPack*>("b_initApp").setAction(checkInitialization, &i0);
 		bm.checkButtons();
 		bm.renderButtons(window.getRenderer());
+
 		i_mur1.render(window.getRenderer(), 0);
 		i_mur2.render(window.getRenderer(), 0);
 		i_mur3.render(window.getRenderer(), 0);
@@ -127,23 +152,31 @@ int main(int argc, char* argv[]) {
 		t_mur2.render(window.getRenderer(), 0, 0);
 		t_mur3.render(window.getRenderer(), 0, 0);
 		t_mur4.render(window.getRenderer(), 0, 0);
+		if (checkForError)  {
+			switch (checkForError)  {
+			case 1:
+				t_error.update("Merci d'entrer un nombre flottant valide pour vos dimensions !", window.getRenderer());
+				break;
+			case 2:
+				t_error.update("Merci d'entrer des dimensions valides en cliquant sur les barres de saisie !", window.getRenderer());
+				break;
+			default:
+				t_error.update("Erreur innatendue !", window.getRenderer());
+				break;
+			}
+			t_error.center(Point2D<int>(0, i_TLy+90), 1280);
+			t_error.render(window.getRenderer(), 0, 0);
+		}
 
 		window.RenderScreen();
-		window.FillScreen(hd_beigeBackground);	
+		window.FillScreen(hd_beigeBackground);
 	}
 	bm.removeButton("b_initApp");
 	bm.removeButton("b_initImport");
 
 	float w1, w3;
-	try  {
-		w1 = stof(i_mur1.getText());
-		w3 = stof(i_mur3.getText());
-	}  catch (const std::invalid_argument& ia)  {
-		// TODO: Passer cette vérification dans la startFunc pour afficher un message d'erreur si les flottants sont pas bons
-		std::cerr << "\033[31mERR - Merci d'entrer un nombre flottant valide pour vos dimensions: \033[0m" << ia.what() << '\n';
-		exit(1);
-  	}
-	
+	w1 = stof(i_mur1.getText());
+	w3 = stof(i_mur3.getText());
 	if(w3 < w1) std::swap(w1, w3);
 	HomeDesign hm( "MaChambreCROUS", bm, manager, window, inputEvent, w1, w3 );
 	
@@ -151,6 +184,7 @@ int main(int argc, char* argv[]) {
 	/** ==============================
 	 *  Initialisation caméras
 	 * ==============================*/
+	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
 	// Top: -90° / 230° (?) / y -= 5 pour zoomer
 	Camera topCam("topCam", {manager.getShape("floor").center.x, manager.getShape("floor").center.y + 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	topCam.lock();
