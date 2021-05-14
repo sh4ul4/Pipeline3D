@@ -155,6 +155,46 @@ public:
 };
 
 
+struct camPack {
+	Camera *cam;
+	std::string viewName;
+	TextBox *current_cam_t;
+	Window *window;
+	ShapeManager *manager;
+	std::string referencedWall;
+};
+
+/**
+ * @brief Rend l'ensemble des murs de la pièce visibles
+ */
+void makeWallsVisible(ShapeManager& manager)  {
+	manager.getShape("frontWall").visible = true;
+	manager.getShape("backWall").visible = true;
+	manager.getShape("leftWall").visible = true;
+	manager.getShape("rightWall").visible = true;
+}
+
+/**
+ * @brief Changement de vue Caméra, actualise le nom de vue, le mur à cacher et la caméra courante.
+ */
+void switchCam(camPack *p) {
+	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
+	makeWallsVisible(*p->manager);
+	if (p->referencedWall.compare("none"))
+		(*p->manager).getShape(p->referencedWall).visible = false;
+	(*p->manager).pushShapesEditing();
+	p->cam->setCurrent();
+}
+
+void goFreeView(camPack *p) {
+	p->cam->setCurrent();
+	p->cam->unlock();
+	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
+	makeWallsVisible(*p->manager);
+	(*p->manager).pushShapesEditing();
+	// Make Zoom buttons invisible ?
+}
+
 /**
  * @brief Classe principale représentant l'application externe "Modélisation d'Aménagement Intérieur"
  * 
@@ -185,14 +225,16 @@ private:
      * @brief Vector des meubles (classe Furniture) existants sur l'instance courante
      */ 
     std::vector<Furniture> furnitures;
+    ShapeManager furnitureManager;
 
     int un = 1, deux = 2, trois = 3;
 
     std::vector<TextBox*> text_insertion1;
     std::vector<TextInput*> input_insertion1;
     
-    // std::vector<RectTextButton<int*>> button_insertion1;
     ButtonManager bmInsertion1;
+
+    ButtonManager bmCameras;
 
     /*===========================================================================================
      *      INTERFACE GRAPHIQUE
@@ -203,9 +245,7 @@ private:
     // Mouse mouse;
 
 
-    /**
-     * @brief Boutons relatifs au changement de Vue Caméra pour la scène 
-     */
+    
     
     /**
      * @brief Boutons d'interaction globale avec l'application 
@@ -241,7 +281,7 @@ public:
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
     HomeDesign(std::string scene, ButtonManager& bm, ShapeManager& manager, Window& window, InputEvent& inputEvent, float w1, float w3)
-                : scene_name(scene), bmInsertion1(inputEvent, window) {
+                : scene_name(scene), bmInsertion1(inputEvent, window), bmCameras(inputEvent, window) {
         std::cout << " > Constructeur HomeDesign" << std::endl;
         surface = w1 * w3;
         std::cout << "Mur 1: " << w1 << "m" << std::endl;
@@ -281,6 +321,8 @@ public:
         manager.addRectangle("rightWall", b1, d1, b, d, Bitmap::getBitmap("RIGHT"));
         std::cout<<"Room créée"<<std::endl;
 
+        // Boutons de vues
+        initViewsButtons(manager, window);
 
         // 2. Boutons interaction Frame : insertion
         /**
@@ -347,6 +389,20 @@ public:
     int getInteractInt() { return interactSpace; };
     void setInteractSpace(int n) { interactSpace = n; };
 
+    void setViewsButtonsAction(camPack& p0, camPack& p1, camPack& p2, camPack& p3, camPack& p4, camPack& p5) {
+        bmCameras.getButton<camPack*>("b_mainView").setAction(switchCam, &p0);
+        bmCameras.getButton<camPack*>("b_View1").setAction(switchCam, &p1);
+        bmCameras.getButton<camPack*>("b_View2").setAction(switchCam, &p2);
+        bmCameras.getButton<camPack*>("b_View3").setAction(switchCam, &p3);
+        bmCameras.getButton<camPack*>("b_View4").setAction(switchCam, &p4);
+        bmCameras.getButton<camPack*>("b_freeMotionView").setAction(goFreeView, &p5);
+    }
+
+    void renderViewsButtons(SDL_Renderer *renderer) {
+        bmCameras.checkButtons();
+		bmCameras.renderButtons(renderer);
+    }
+
     ~HomeDesign()  {
         for (size_t i = 0; i < text_insertion1.size(); i++)  
             delete text_insertion1[i];
@@ -374,6 +430,32 @@ private:
             HomeDesign::interactSpace = 1;
         }
     }
+
+    /**
+     * @brief Boutons relatifs au changement de Vue Caméra pour la scène 
+     */
+    void initViewsButtons(ShapeManager& manager, Window& window)  {
+        int b_width = 120, b_height = 30;
+        int b_topleftx = 30, b_tly = 546;
+        bmCameras.addRectTextButtonCustom<camPack*>("b_mainView", Point2D<int>(b_topleftx, b_tly), b_width, b_height, dark_gray, black, "Vue Haut", 14, light_gray);
+        b_topleftx += 140;
+
+        bmCameras.addRectTextButtonCustom<camPack*>("b_View1", Point2D<int>(b_topleftx, b_tly), b_width, b_height, dark_gray, black, "Vue Face", 14, light_gray);
+        b_topleftx += 140;
+
+        bmCameras.addRectTextButtonCustom<camPack*>("b_View2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, dark_gray, black, "Vue Gauche", 14, light_gray);
+        b_topleftx += 140;
+
+        bmCameras.addRectTextButtonCustom<camPack*>("b_View3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, dark_gray, black, "Vue Droite", 14, light_gray);
+        b_topleftx += 140;
+
+        bmCameras.addRectTextButtonCustom<camPack*>("b_View4", Point2D<int>(b_topleftx, b_tly), b_width, b_height, dark_gray, black, "Vue Arriere", 14, light_gray);
+        b_topleftx += 140;
+
+        bmCameras.addRectTextButtonCustom<camPack*>("b_freeMotionView", Point2D<int>(b_topleftx, b_tly), b_width+80, b_height, hd_greenButtons, black, "Deplacement libre", 14, light_gray);
+    }
+
+   
 
     /**
      * @brief Ajoute un meuble au vecteur des meubles de la scène
