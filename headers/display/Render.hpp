@@ -43,7 +43,7 @@ public:
 	}
 
 	// Change la taille d'un triangle pour que ça rentre 
-	void updateTriangles(const ShapeManager& manager) {
+	void updateTriangles(ShapeManager& manager) {
 		const size_t size = toRender.size();
 		
 		// Quitter la fonction s'il n'y a pas eu de changement depuis la précédente update
