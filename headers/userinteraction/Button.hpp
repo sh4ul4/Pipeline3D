@@ -182,6 +182,12 @@ public:
 			new TextBox(text, pth + std::string("fonts/Segoe UI.ttf"), 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
 		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
 
+	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const Color& bgCol, const Color& contCol, const std::string& text, const int fontsize, const Color& textCol, const Window& window,
+		const size_t DRAWTYPE = DRAWFILLCONTOURRECT)
+		: Button<paramType>(name, nullptr, bgCol, contCol,
+			new TextBox(text, pth + std::string("fonts/Segoe UI.ttf"), fontsize, textCol, Point2D<int>(0, 0), window.getRenderer())),
+		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
+
 	RectTextButton() = delete;
 
 	~RectTextButton() { delete ButtonBase::textBox; }
@@ -313,6 +319,12 @@ public:
 	void addRectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, text, window));
+	}
+
+	template <class paramType>
+	void addRectTextButtonCustom(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const Color& bgCol, const Color& contCol, const std::string& text, const int fontsize, const Color& textCol) {
+		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
+		buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, bgCol, contCol, text, fontsize, textCol, window));
 	}
 
 	void removeButton(const std::string& name) {
