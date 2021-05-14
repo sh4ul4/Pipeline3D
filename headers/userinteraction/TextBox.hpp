@@ -181,6 +181,11 @@ public:
 	 */
 	void setPosition(const Point2D<int>& pos) { this->pos = pos; }
 
+	void center(const Point2D<int>& tl, int max_width)  {
+		int perfect = ((max_width - this->width) / 2) + tl.x;
+		setPosition(Point2D<int>(perfect, pos.y));
+	}
+
 	/**
 	 * @brief Changer les dimensions de la texture du texte.
 	 * @param w Largeur imposée de la texture
