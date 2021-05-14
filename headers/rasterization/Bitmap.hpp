@@ -55,7 +55,7 @@ public:
 	 * Bloquer les pixels de la surface avec SDL_LockSurface().
 	 * V�rifier les erreurs avec SDL_GetError() et supprimer les variables temporaires.
 	 */
-	Bitmap(const std::string& name, const std::string& path) :name(name), path(path) {
+	Bitmap(const std::string& name, const std::string& path) :name(name), path(FIND_FILE(path)) {
 		SDL_Surface* newsurface = nullptr;
 		newsurface = IMG_Load(path.c_str());
 		if (newsurface == nullptr) { std::cout << "ERROR : [" << path << "] could not be loaded.\n"; exit(1); }
@@ -75,7 +75,7 @@ public:
 	 * @param name Le nom unique de la bitmap dans le vecteur.
 	 */
 	static void newBitmap(const std::string& name, const std::string& path) {
-		if (!bitmapExists(name)) bitmaps.emplace_back(new Bitmap(name, path));
+		if (!bitmapExists(name)) bitmaps.emplace_back(new Bitmap(name, FIND_FILE(path)));
 	}
 
 	/**

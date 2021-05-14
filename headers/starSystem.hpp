@@ -30,13 +30,14 @@ public:
     {
         std::cout << " > Constructeur starSystem" << std::endl;
 
-        Bitmap::newBitmap(std::string("Space"), std::string("../textures/space2.jpg"));
+        Bitmap::newBitmap(std::string("Space"), std::string(PATH + "textures/space2.jpg"));
 
         Vertex hg = { 0, 100, 0 };
         Vertex bg = { 0, 0, 0 };
         Vertex hd = { 158, 100, 0 };
         Vertex bd = { 158, 0, 0 };
-        manager.addRectangle("fond", hg, bg, hd, bd, Bitmap::getBitmap("Space"));
+        const Rectangle rect("fond", hg, bg, hd, bd, 1, blue, true, Bitmap::getBitmap("Space"));
+        manager.addRectangle(rect);
         std::cout << "Espace créé" << std::endl;
     }
 
@@ -99,6 +100,10 @@ public:
      */
     void addPlanet(Planet* planet)
     {
+        if (planets.size() >= PLANETMAX) {
+            std::cout << "Taille maximale de planetes atteintes" << std::endl;
+            return;
+        }
         if (planet)
             planets.push_back(planet);
     }
@@ -110,9 +115,12 @@ public:
      */
     void addStar(Star* star)
     {
-        std::cout << "Ajout star" << std::endl;
-        if (this->sun == nullptr && star != nullptr)
+        if (this->sun == nullptr && star != nullptr) {
             this->sun = star;
+            std::cout << "Star ajoutee au systeme stellaire" << std::endl;
+        }
+        else
+            std::cout << "Star non ajoutee car il y a deja une etoile presente dans votre systeme stellaire" << std::endl;
     }
 
     /**
@@ -200,22 +208,28 @@ public:
     // Retire l'étoile du système stellaire
     void deleteStar()
     {
+        std::cout << "delete1" << std::endl;
         if (sun)
         {
             delete sun;
             sun = nullptr;
         }
+        std::cout << "delete2" << std::endl;
     }
 
     // Retire tous les astres du système stellaire
     void reset()
     {
+        std::cout << "Reinitialisationtest1" << std::endl;
         deleteStar();
+        std::cout << "Reinitialisationtest2" << std::endl;
         for (std::vector<Planet*>::iterator it = planets.begin(); it != planets.end();)
         {
             delete (*it);
             it = planets.erase(it);
+            std::cout << "Reinitialisationtestfor" << std::endl;
         }
+        std::cout << "Reinitialisation du systeme stellaire terminee" << std::endl;
     }
 
     // Vérifie qu'aucune collision n'a lieu dans le système stellaire
@@ -247,9 +261,11 @@ public:
     void simulation()
     {
         // Si il n'y a aucune planète, alors il n'y a rien à simuler
-        if (planets.empty())
+        if (planets.empty()) {
+            std::cout << "Aucune planetes dans le systeme stellaire !" << std::endl << "Simulation abordee" << std::endl;
             return;
-
+        }
+        std::cout << "Debut de l'initialisation" << std::endl;
         // Somme de toutes les forces qui s'exercent sur les astres
         Point2D<double> force, tmp;
         // Force exercée par toutes les autres planètes

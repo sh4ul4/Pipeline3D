@@ -26,7 +26,7 @@
 
 #include <assert.h>
 
-#include <filesystem>
+#include <filesystem>/*
 namespace fs = std::filesystem;
 std::string checkLocalisation(const fs::path& p, fs::file_status s = fs::file_status{}) {
     if (fs::status_known(s) ? fs::exists(s) : fs::exists(p))
@@ -35,7 +35,7 @@ std::string checkLocalisation(const fs::path& p, fs::file_status s = fs::file_st
         return "../";
 }
 std::string pth = checkLocalisation("fonts");
-
+*/
 /*#if defined(_WIN32)
 std::string pth = "../";
 #else

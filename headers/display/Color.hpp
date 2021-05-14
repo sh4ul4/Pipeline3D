@@ -50,3 +50,8 @@ const Color teal(0, 128, 128);
 const Color yellow(255, 255, 0);
 const Color magenta(255, 0, 255);
 const Color cyan(0, 255, 255);
+
+// Palette de couleur HomeDesign
+const Color hd_beigeBackground(248, 237, 227);
+const Color hd_brownButtons(216, 172, 156);
+const Color hd_greenButtons(121, 135, 119);

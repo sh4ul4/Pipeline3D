@@ -1,17 +1,16 @@
 #pragma once
-
 /**
- * @file Issu du module de Géométrie, sous-module (?)
+ * @file Issu du module de Géométrie, sous-module (?) 
  * Regroupe les classes Point2D et Point 3D
  */
 
- /*===========================================================================================
-	 Point2D
- ===========================================================================================*/
+/*===========================================================================================
+	Point2D
+===========================================================================================*/
 
- /**
-  * @class Point à deux coordonnées entières
-  */
+/**
+ * @class Point à deux coordonnées entières
+ */
 template<class T>
 class Point2D
 {
@@ -38,21 +37,21 @@ public:
 	 * Un constructeur.
 	 * Assigne les coordonnées.
 	 */
-	Point2D(const T& x, const T& y) : x(x), y(y) {}
+	Point2D(const T &x, const T &y) : x(x), y(y) {}
 
 	/**
 	 * Un constructeur.
 	 * Prend des templates en entrée et cast vers int.
 	 */
 	template <class T1, class T2>
-	Point2D(const T1& x, const T2& y) : x((T)x), y((T)y) {}
+	Point2D(const T1 &x, const T2 &y) : x((T)x), y((T)y) {}
 
 	/**
 	 * Un constructeur.
 	 * @param p Point copié.
 	 * Copie les coordonnées du point.
 	 */
-	Point2D(const Point2D& p) : x(p.x), y(p.y) {}
+	Point2D(const Point2D &p) : x(p.x), y(p.y) {}
 
 	/**
 	 * Un opérateur public.
@@ -158,7 +157,9 @@ public:
 	 * @param p Point affiché.
 	 * Redéfinition de l'opérateur <<, servant à l'affichage sur la sortie standard.
 	 */
-	friend std::ostream& operator<<(std::ostream& os, const Point2D& p);
+	// friend std::ostream &operator<<(std::ostream &os, const Point2D &p);
+	template <class T1>
+	friend std::ostream& operator<<(std::ostream& os, const Point2D<T1>& p);
 
 	/** @brief Calcule la distance entre 2 points passés en paramètres
 	* @param Point2D a
@@ -202,8 +203,8 @@ public:
 	// Constructeurs: par défaut et normal via Template
 	Point3D(void) : x(0), y(0), z(0) {}
 	template <class T1, class T2, class T3>
-	Point3D(const T1& x, const T2& y, const T3& z) : x((int)x), y((int)y), z((int)z) {}
-	Point3D(const Point3D& p) : x(p.x), y(p.y), z(p.z) {}
+	Point3D(const T1 &x, const T2 &y, const T3 &z) : x((int)x), y((int)y), z((int)z) {}
+	Point3D(const Point3D &p) : x(p.x), y(p.y), z(p.z) {}
 
 	// Surcharge des opérateurs (Opérations basiques)
 	Point3D& operator+(const Point3D& point) {
@@ -271,7 +272,7 @@ public:
 	}
 
 	// Redéfinition de l'opérateur <<
-	friend std::ostream& operator<<(std::ostream& os, const Point3D& p);
+	friend std::ostream &operator<<(std::ostream &os, const Point3D &p);
 };
 
 std::ostream& operator<<(std::ostream& os, const Point3D& p)

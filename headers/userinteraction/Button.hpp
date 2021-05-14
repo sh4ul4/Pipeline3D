@@ -179,7 +179,7 @@ public:
 	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, const Window& window,
 		const size_t DRAWTYPE = DRAWFILLCONTOURRECT)
 		: Button<paramType>(name, nullptr, dark_gray, Color(30,30,30),
-			new TextBox(text, pth + std::string("fonts/calibri.ttf"), 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
+			new TextBox(text, FIND_FILE(std::string("fonts/Segoe UI.ttf")), 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
 		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
 
 	RectTextButton() = delete;

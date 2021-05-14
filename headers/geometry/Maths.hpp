@@ -1,12 +1,21 @@
 #pragma once
 
 namespace Maths{
+
+	inline Uint8 clamp0_255(int n) {
+		int tmp = 255;
+		tmp -= n;
+		tmp >>= 31;
+		tmp |= n;
+		n >>= 31;
+		n = ~n;
+		n &= tmp;
+		return n;
+	}
+
 	// concaténer une valeur de pixel et un flottant
-	inline Uint8 concatF(const float& a, const Uint8& b) {
-		const double res = (double)a + (double)b;
-		if (res >= 255)return 255;
-		if (res <= 0)return 0;
-		return res;
+	inline Uint8 concatF(const Uint8& a, const Uint8& b) {
+		return clamp0_255(a + b);
 	}
 
 	inline Uint8 concat(const Uint8& a, const Uint8& b) {

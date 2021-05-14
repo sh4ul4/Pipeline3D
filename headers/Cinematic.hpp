@@ -109,6 +109,5 @@ namespace Cinematic
 		double y = ((speed.y / 2) * pow(time, 2)) + (initialSpeed.y * time) + initialPosition.y;
 		Point2D<double> p_set(x, y);
 		p->setPosition(p_set);	//Erreur : non - const lvalue reference to type 'Point2D<double>' cannot bind to an initializer list temporary
-
 	}
 }

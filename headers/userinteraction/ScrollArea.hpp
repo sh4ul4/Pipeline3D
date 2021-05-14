@@ -79,9 +79,9 @@ public:
 	ScrollZone(const InputEvent& input, const Window& window, const Point2D<int>& pos,
 		int width, int height, int renderW, int renderH)
 		: inputEvent(input), pos(pos), buttonManager(input, window), width(width), height(height),
-		renderPos(0, 0), renderW(renderW), renderH(renderH),
-		verticalDragBar(Point2D<int>(pos.x + width - 13, pos.y + 1), 12, height - 13, 20),
-		horizontalDragBar(Point2D<int>(pos.x + 1, pos.y + height - 13), width - 13, 12, 20, false)
+		renderPos(0, 0), renderW(renderW), renderH(renderH), 
+		verticalDragBar(Point2D<int>(pos.x + width - 13, pos.y + 1), 12,height- 13,20),
+		horizontalDragBar(Point2D<int>(pos.x + 1, pos.y + height - 13), width- 13, 12, 20, false)
 	{
 		texture = SDL_CreateTexture(window.getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, renderW, renderH);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);

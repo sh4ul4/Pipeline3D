@@ -198,6 +198,16 @@ private:
 
 public:
 
+	void savePNG(std::string file, const Color& background = Color(0,0,0,0)) {
+		if (!(file.size() >= 4) ||
+			!(file.compare(file.size() - 4, 4, ".png") == 0 || file.compare(file.size() - 4, 4, ".PNG") == 0)) {
+			file += ".png";
+		}
+		SDL_Surface* pngSurface = SDL_CreateRGBSurfaceFrom(pixels.data(), width, height, 32, pitch, 0x0000ff00, 0x00ff0000, 0xff000000, 0x000000ff);
+		if (IMG_SavePNG(pngSurface, file.c_str())) PRINT_ON_ERR("PNG-file could not be saved.");
+		SDL_FreeSurface(pngSurface);
+	}
+
 	// dessiner une ligne à lintérieur de la bitmap de pixels
 	void drawLine(const GlobalTexture& globalTexture, const Point2D<int>& a, const float& adepth, const Point2D<int>& b, const float& bdepth, const Color& color) {
 		std::vector<Point2D<int>> line;
@@ -211,6 +221,30 @@ public:
 		for (Uint32& p : pixels) {
 			const Uint8 grayscale = ((Uint8)(p >> 8) + (Uint8)(p >> 16) + (Uint8)(p >> 24)) / 3;
 			p = (grayscale << 24) + (grayscale << 16) + (grayscale << 8) + (Uint8)p;
+		}
+	}
+
+	void linearTextureFilter() {
+		Uint32 lastPixel = 0;
+		for (size_t y = 0; y < height; y++) {
+			for (size_t x = 0; x < width; x++) {
+				Uint32 currentPixel = pixels[y * width + x];
+				const Uint8 currentGrayscale = ((Uint8)(currentPixel >> 8) + (Uint8)(currentPixel >> 16) + (Uint8)(currentPixel >> 24)) / 3;
+				const Uint8 lastGrayscale = ((Uint8)(lastPixel >> 8) + (Uint8)(lastPixel >> 16) + (Uint8)(lastPixel >> 24)) / 3;
+				if (std::abs(currentGrayscale - lastGrayscale) > 5)
+					pixels[y * width + x] = lastPixel;// (() << 24) + (0 << 16) + (0 << 8) + 255;
+				lastPixel = currentPixel;
+			}
+		}
+		for (size_t x = 0; x < width; x++) {
+			for (size_t y = 0; y < height; y++) {
+				Uint32 currentPixel = pixels[x * height + y];
+				const Uint8 currentGrayscale = ((Uint8)(currentPixel >> 8) + (Uint8)(currentPixel >> 16) + (Uint8)(currentPixel >> 24)) / 3;
+				const Uint8 lastGrayscale = ((Uint8)(lastPixel >> 8) + (Uint8)(lastPixel >> 16) + (Uint8)(lastPixel >> 24)) / 3;
+				if (std::abs(currentGrayscale - lastGrayscale) > 5)
+					pixels[x * height + y] = lastPixel;// (() << 24) + (0 << 16) + (0 << 8) + 255;
+				lastPixel = currentPixel;
+			}
 		}
 	}
 };

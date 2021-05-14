@@ -2,6 +2,8 @@
 /**
  * @class Window pour permet d'encapsuler les informations nécessaires à la fenêtre graphique générée avec SDL
  */
+
+
 class Window
 {
 
@@ -47,11 +49,7 @@ private:
 	 */	
 	bool shuttingDown = false;
 
-	/**********************************************************************************************
-	 * 		Méthode privée
-	 * *******************************************************************************************/
-	 
-	 
+public:
 	/**
 	 * Une fonction privée.
 	 * @brief Fermeture des différentes composantes de l'environnement graphique
@@ -165,7 +163,7 @@ public:
 	 * @brief Remplis la fenêtre avec une couleur donnée
 	 * @param color Couleur de remplissage
 	 */
-	void FillScreen(const Color& color) const {
+	void FillScreen(const Color& color) {
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); // set the requested color
 		SDL_RenderClear(renderer);
 	}
@@ -174,7 +172,7 @@ public:
 	 * Une fonction publique.
 	 * @brief Mets à jour l'affichage de la fenêtre
 	 */
-	void RenderScreen() const { SDL_RenderPresent(renderer); }
+	void RenderScreen() { SDL_RenderPresent(renderer); }
 	
 	/**
 	 * Une fonction publique.
