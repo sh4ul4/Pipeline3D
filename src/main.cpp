@@ -148,6 +148,7 @@ int main(int argc, char* argv[]) {
 	TextBox zone_speed("SPEED", pth + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(390, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(zone_speed);
 	
+	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
 		i_mass.checkForInput(inputEvent, window.getRenderer());
@@ -192,7 +193,13 @@ int main(int argc, char* argv[]) {
 		zone.update();
 		zone.render(window);
 
-		r.render({ 30,30 }, 680, 430, inputEvent, window, manager);
+		//r.render({ 30,30 }, 680, 430, inputEvent, window, manager);
+		if (keyboard.l.down) {
+			if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
+			else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
+		}
+		if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(50, 50), 600, 400, window);
+		else r.render(Point2D<int>(50, 50), 600, 400, inputEvent, window, manager);
 
 		window.RenderScreen();
 		window.FillScreen(white);

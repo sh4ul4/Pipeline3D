@@ -30,7 +30,7 @@ public:
     {
         std::cout << " > Constructeur starSystem" << std::endl;
 
-        Bitmap::newBitmap(std::string("Space"), std::string("../textures/space2.jpg"));
+        //Bitmap::newBitmap(std::string("Space"), std::string(pth + "textures/space2.jpg"));
 
         Vertex hg = { 0, 100, 0 };
         Vertex bg = { 0, 0, 0 };
