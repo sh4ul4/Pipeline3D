@@ -384,9 +384,17 @@ public:
 	 // Un vecteur de pointeurs vers les shapes
 	std::vector<std::unique_ptr<Shape>> shapes;
 
+	// Booléen indiquant si les shapes ont déjà été rendered ou pas (via Render::updateTriangles) 
+	bool rendered = false;
+
 	/*=============================================================================================
 	 *		Méthodes
 	 *===========================================================================================*/
+
+	// Marquer les modifications portées sur les shapes comme *à actualiser* 
+	void pushShapesEditing()  {
+		rendered = false;
+	}
 
 	void imprtShapeObj(std::string path, const std::string& source, const std::string& shapeName, const float& scale = 1) {
 		path = FIND_FILE(path);
@@ -639,6 +647,7 @@ public:
 	void addShape(const std::string& name, const std::vector<Triangle>& triangles, const Vertex& center, Bitmap* bmp = nullptr) {
 		if (nameTaken(name)) { std::cout << "Name taken" << std::endl; return; }
 		shapes.emplace_back(new Shape(name, triangles, center, bmp));
+		rendered = false;
 	}
 
 	/**
@@ -649,6 +658,7 @@ public:
 	void addShape(const Shape& shape) {
 		if (nameTaken(shape.name)) { std::cout << "Name taken" << std::endl; return; }
 		shapes.emplace_back(new Shape(shape));
+		rendered = false;
 	}
 
 	/**
@@ -663,6 +673,7 @@ public:
 	void addSphere(const std::string& name, const Vertex& center, const double& radius, Bitmap* bmp, const int& precision = 20) {
 		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
 		shapes.emplace_back(new Sphere(name, center, radius, bmp, precision));
+		rendered = false;
 	}
 
 	/**
@@ -677,6 +688,7 @@ public:
 	void addSphere(const std::string& name, const Vertex& center, const double& radius, const Color& color, const int& precision = 20) {
 		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
 		shapes.emplace_back(new Sphere(name, center, radius, color, precision));
+		rendered = false;
 	}
 
 	/**
@@ -687,6 +699,7 @@ public:
 	void addSphere(const Sphere& sphere) {
 		if (nameTaken(sphere.name)) { std::cout << "error" << std::endl; return; }
 		shapes.emplace_back(new Sphere(sphere));
+		rendered = false;
 	}
 
 	/**
@@ -701,6 +714,7 @@ public:
 		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
 		if (bmp == nullptr) shapes.emplace_back(new Cube(name, center, width, black));
 		else shapes.emplace_back(new Cube(name, center, width, bmp));
+		rendered = false;
 	}
 
 	/**
@@ -711,6 +725,7 @@ public:
 	void addCube(const Cube& cube) {
 		if (nameTaken(cube.name)) { std::cout << "error" << std::endl; return; }
 		shapes.emplace_back(new Cube(cube));
+		rendered = false;
 	}
 
 	/**
@@ -736,6 +751,7 @@ public:
 	void addRectangle(const Rectangle& rectangle) {
 		if (nameTaken(rectangle.name)) { std::cout << "error" << std::endl; return; }
 		shapes.emplace_back(new Rectangle(rectangle));
+		rendered = false;
 	}
 
 	/**
@@ -748,6 +764,7 @@ public:
 			if (!shapes[i]->name.compare(name)) {
 				shapes.erase(shapes.begin() + i);
 				shapes.shrink_to_fit();
+				rendered = false;
 				return;
 			}
 		std::cout << "Warning : A Shape named " << name << " does not exist" << std::endl;
