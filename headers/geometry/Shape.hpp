@@ -137,6 +137,27 @@ public:
 	 */
 	void move(const Vector& movement) {
 		for (Triangle& t : triangles)t.move(movement);
+		center += movement;
+	}
+
+	void rescale(float scale) {
+		for (size_t i = 0; i < triangles.size(); i++) {
+			triangles[i].a -= center;
+			triangles[i].b -= center;
+			triangles[i].c -= center;
+			triangles[i].a.x *= scale;
+			triangles[i].a.y *= scale;
+			triangles[i].a.z *= scale;
+			triangles[i].b.x *= scale;
+			triangles[i].b.y *= scale;
+			triangles[i].b.z *= scale;
+			triangles[i].c.x *= scale;
+			triangles[i].c.y *= scale;
+			triangles[i].c.z *= scale;
+			triangles[i].a += center;
+			triangles[i].b += center;
+			triangles[i].c += center;
+		}
 	}
 };
 
