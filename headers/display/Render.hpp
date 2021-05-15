@@ -88,6 +88,10 @@ public:
 	// Rendering écran
 	void render(const Point2D<int>& topLeft, const int& width, const int& height, InputEvent& inputEvent, const Window& window, ShapeManager& manager) {
 		if (Camera::currentExists()) {
+
+			// For framerate control
+			Uint64 start = SDL_GetPerformanceCounter();
+
 			Physics::move(inputEvent, manager);
 			Camera::getCurrent().update(inputEvent, window, globalTexture, topLeft);
 			if (Camera::currentExists() == false) { std::cout << "Error : current camera does not exist.\n"; exit(1); }
@@ -97,9 +101,11 @@ public:
 			//globalTexture.filterBnW();
 			globalTexture.updateTexture();
 			globalTexture.renderTexture(window.getRenderer(), topLeft, width, height, 0, 0);
+				// framerate.setNextTime(now);
+			// }
+			framerate.stabilizeCalculationAndRendering(60, &start);
 		}
 
-		//framerate.stabilizeCalculationAndRendering(60);
 		//Wait(10);
 
 		framerate.renderFrameRate(10, 10, window.getRenderer());

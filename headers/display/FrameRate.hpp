@@ -37,7 +37,15 @@ private:
 	 * Une variable privée.
 	 * Temps actuel en SDL_GetTicks()
 	 */
-	Uint32 now = 0; 
+	Uint32 now = 0;
+
+	/**
+	 * Une variable privée.
+	 * Temps écoulé en ms
+	 */
+	float elapsedMS = 0;
+
+
 public:
 
 	StableFramerate():timer(1000) {}
@@ -47,13 +55,18 @@ public:
 	 * @brief Limite les calculs et le rendering
 	 * @param framerate Limite imposée
 	 */
-	void stabilizeCalculationAndRendering(const double& framerate = 0) {
-		if (framerate == 60) nextTime += 17;
-		else if (framerate == 25)nextTime += 43.65954;
-		else { nextTime += 1.621059 + 181237898.4 / (1 + pow(framerate / 0.0000460458, 1.156912)); }
-		now = clock(); // current time in SDL_Ticks
-		if (nextTime > now) {
-			SDL_Delay(Uint32(nextTime - now)); // time to wait before rendering next frame
+	void stabilizeCalculationAndRendering(const double& framerate_max = 0, Uint64 *start = 0) {
+		Uint32 ticksPerFrame = 1000.0f / float(framerate_max);
+		Uint64 end = SDL_GetPerformanceCounter();
+		elapsedMS = (end - *start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
+
+		// Cap to 60 FPS
+		Uint32 waitingTime = floor(ticksPerFrame - elapsedMS);
+		// std::cout << elapsedMS << "_" << waitingTime << std::endl;
+		std::cout << "Current FPS: " << floor(1000.0f / elapsedMS) << std::endl;
+		if (elapsedMS < ticksPerFrame)
+		{
+			SDL_Delay(waitingTime);
 		}
 	}
 	
@@ -83,11 +96,18 @@ public:
 	 */
 	void renderFrameRate(const int& X, const int& Y, SDL_Renderer* renderer) {
 		frameCounter++;
-		if (timer.set(1 * CLOCKS_PER_SEC)) {
+		// std::cout << "framecounter: " << frameCounter << std::endl;
+		// std::cout << "Current FPS: " << floor(1000.0f / elapsedMS) << std::endl;
+		
+		// if (timer.set(1 * CLOCKS_PER_SEC)) {
+		if (time(0) > now){ // Si une seconde en utime s'est écoulée
 			framerate = frameCounter; // return the framerate after 1 sec
 			frameCounter = 0;
 		}
-		Draw::RenderDigits(X, Y, 8, framerate, red, renderer);
+		now = time(0);
+
+		// Draw::RenderDigits(X, Y, 8, framerate, red, renderer);
+		Draw::RenderDigits(X, Y, 8, floor(framerate), red, renderer);
 	}
 	
 	/**
