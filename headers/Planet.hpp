@@ -93,7 +93,7 @@ public:
     // Change la visiblité de la planète
     void changeVisibility()
     {
-        visible = ~visible;
+        visible = !visible;
     }
 
     /* ----- GETTERS ----- */
