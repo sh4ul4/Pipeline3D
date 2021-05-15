@@ -57,7 +57,7 @@ public:
 	 */
 	Bitmap(const std::string& name, const std::string& path) :name(name), path(FIND_FILE(path)) {
 		SDL_Surface* newsurface = nullptr;
-		newsurface = IMG_Load(path.c_str());
+		newsurface = IMG_Load(this->path.c_str());
 		if (newsurface == nullptr) { std::cout << "ERROR : [" << path << "] could not be loaded.\n"; exit(1); }
 		SDL_PixelFormat* pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB32); // convert the pixel-format of the surface to ARGB32/ARGB8888
 		surface = SDL_ConvertSurface(newsurface, pixelFormat, 0);
