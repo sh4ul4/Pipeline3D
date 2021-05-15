@@ -213,7 +213,13 @@ public:
 		std::vector<Point2D<int>> line;
 		ScanLine(a.x, a.y, b.x, b.y, line, height, width);
 		for (auto& p : line) {
-			pixels[p.x + width * p.y] = (color.b << 24) + (color.g << 16) + (color.r << 8) + (color.a);
+			float pixdepth = adepth + (a.distance(p)/a.distance(b)) * (bdepth - adepth);
+			const int it = p.x + p.y * width;
+			// clipping check & pixel depth check
+			if (globalTexture.zbuffer[it] <= pixdepth)continue;
+			globalTexture.zbuffer[it] = pixdepth;
+			pixels[it] = (color.b << 24) + (color.g << 16) + (color.r << 8) + (color.a);
+			//pixels[it] = (Maths::clamp0_255(255 - pixdepth * 800) << 24) + (Maths::clamp0_255(255 - pixdepth * 800) << 16) + (Maths::clamp0_255(255 - pixdepth * 800) << 8) + (255);
 		}
 	}
 

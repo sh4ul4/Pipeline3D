@@ -127,12 +127,12 @@ public:
 		light = Maths::clamp(light, 0.0f, 1.0f);
 		if (fill) {
 			if (bmp != nullptr) draw(*bmp, globalTexture, light, Camera::getCurrent().lightColor);
-			else draw(color, globalTexture, light);
+			else draw(color, globalTexture, light, Camera::getCurrent().lightColor);
 		}
 		else if (contour) {
-			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, 0, Point2D<int>{ bScreen.x,bScreen.y }, 0, color);
-			globalTexture.drawLine(globalTexture, Point2D<int>{ bScreen.x,bScreen.y }, 0, Point2D<int>{ cScreen.x,cScreen.y }, 0, color);
-			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, 0, Point2D<int>{ cScreen.x,cScreen.y }, 0, color);
+			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, aScreen.z, Point2D<int>{ bScreen.x,bScreen.y }, bScreen.z, color);
+			globalTexture.drawLine(globalTexture, Point2D<int>{ bScreen.x,bScreen.y }, bScreen.z, Point2D<int>{ cScreen.x,cScreen.y }, cScreen.z, color);
+			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, aScreen.z, Point2D<int>{ cScreen.x,cScreen.y }, cScreen.z, color);
 		}
 	}
 
@@ -165,12 +165,12 @@ private:
 	}
 
 	// dessiner le triangle dans la frame
-	void draw(const Color& color, GlobalTexture& dst, const float& light) const {
+	void draw(const Color& color, GlobalTexture& dst, const float& lightIntensity, const Color& lightColor) const {
 		TextureManager::rasterize(color,
 			Point2D<int>(aScreen.x, aScreen.y),
 			Point2D<int>(bScreen.x, bScreen.y),
 			Point2D<int>(cScreen.x, cScreen.y),
 			aScreen.z, bScreen.z, cScreen.z,
-			dst,light);
+			dst, lightIntensity, lightColor);
 	}
 };
