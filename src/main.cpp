@@ -70,15 +70,15 @@ int main(int argc, char* argv[]) {
 	TextBox t_intro("CROUS Simulator", "fonts/calibri.ttf", 40, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
 	int i_TLx = 440, i_TLy = 310;
 	TextBox t_mur1("Mur 1", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
-	TextInput i_mur1("12  m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
+	TextInput i_mur1("3 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
 	TextBox t_mur2("Mur 2", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
-	TextInput i_mur2("12  m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
+	TextInput i_mur2("3 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
 
 	i_TLx += 280;
 	TextBox t_mur3("Mur 3", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
-	TextInput i_mur3("12  m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
+	TextInput i_mur3("4 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
 	TextBox t_mur4("Mur 4", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
-	TextInput i_mur4("12  m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
+	TextInput i_mur4("4 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
 	
 	TextBox t_error("", "fonts/calibri.ttf", 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, window.getRenderer());
 
@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
 	w1 = stof(i_mur1.getText());
 	w3 = stof(i_mur3.getText());
 	if(w3 < w1) std::swap(w1, w3);
-	HomeDesign hm( "MaChambreCROUS", bm, manager, window, inputEvent, w1, w3 );
+	HomeDesign hm( "MaChambreCROUS", bm, &manager, window, inputEvent, w1, w3 );
 	
 
 	/** ==============================
@@ -165,9 +165,11 @@ int main(int argc, char* argv[]) {
 
 	
 	// 3. Boutons interaction globale
+	/**
+	 * @brief Boutons d'interaction globale avec l'application 
+	 */
 	int b_width = 270, b_height = 38;
 	int b_topleftx = 970, b_tly = 546;
-        
 	bm.addRectTextButtonCustom<camPack*>("b_editSurface", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Editer la surface de la scene", 16, black);
 	// bm.getButton<TextInput*>("b_editSurface").setAction([](TextInput* t) { std::cout << t->getText() << std::endl; }, &ti);
 	b_tly += 58;

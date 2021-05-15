@@ -75,4 +75,5 @@
 
 #include "userinteraction/ScrollArea.hpp"
 
+#include "Furniture.hpp"
 #include "HomeDesign.hpp"

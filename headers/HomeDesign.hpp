@@ -2,160 +2,10 @@
 #include <ctime>
 #include <iomanip>
 
-/**
- * @brief Meuble de base représentée naïvement par un parallélépipède rectangle.
- * Le constructeur crée par défaut le meuble au centre de la caméra utilisateur.
- * 
- * @private string  Indice de la Shape géométrique représentant le meuble
- * @private bool    Mode de sélection du meuble pour définir son intération
- * 
- */ 
-class Furniture {
-private:
-    /**
-     * @brief Indice de la Shape géométrique représentant le meuble.
-     * 
-     * Cet indice sert de pointeur vers l'ensemble des paramètres Shape (vecteur de Triangles et Texture)
-     */
-    std::string shape_name; 
-
-    /**
-     * @brief Booléens indiquant le mode du meuble, si les intéractions sont possibles ou non.
-     */ 
-    bool selected = false;
-    bool clicked = false;
-
-    /**
-     * @brief Boutons d'interface apparaissant près de la forme quand elle est sélectionnée.
-     * 
-     * Chacun des boutons possède un attribut booléen pour indiquer sa visibilité / cliquabilité. 
-     */
-    // Button b_remove;
-    // Button b_rotate;
-    // Button b_rename;
-    // TextInput t_rename;
-
-public:
-    /**
-     * @brief Constructeur par défaut: Fait appel au constructeur de Shape en lui attribuant son nom unique
-     *        et créé un parallélépipède rectangle à partir des dimensions. 
-     *        Le centre de l'objet se positionne sur le centre de la caméra.  
-     * 
-     * @param string    Nom unique de la Shape (Géométrie) à créer
-     * @param height    Hauteur de la forme
-     * @param lenght    Longueur de la forme
-     * @param large     Largeur de la forme
-     * @param Bitmap    Texture à apposer sur la forme géométrique
-     */
-    Furniture(std::string shape_name, float height, float lenght, float large, Bitmap *bmp = nullptr);
-
-    bool isSelected() { return selected; };
-    bool isClicked() { return clicked; };
-
-    /**
-     * @brief Évènement déclenché quand un meuble est sélectionné via clic de souris.
-     * 
-     * Met à jour le booléen et ajoute/retire une texture de surbrillance au meuble sélectionné, 
-     * permettant les intéractions (rend visible les boutons et permet le glissement par maintien de clic)
-     */ 
-    void selectEvent(Mouse mouse);
-
-    /**
-     * @brief Permet le déplacement de l'objet par clic maintenu - Sprite dragging (ou glissement d'objet)
-     * 
-     * - Tant que le clic gauche de souris reste maintenu, le meuble passe en mode transparence
-     * - Une fois le clic lâché, si la place est disponible pour les dimensions du meuble, le meuble est placé
-     * - Si la place n'est pas disponible, le meuble demeure en mode transparence 
-     */ 
-    // void dragSprite(Mouse mouse, HomeDesign hm);
-
-    /**
-     * @brief Supprime le meuble et la Shape géométrique correspondante suite au clic sur bouton remove
-     */ 
-    void remove();
-    // ~Furniture();
+struct insertPack {
+    int *selectedBox;
+    ShapeManager *manager;
 };
-
-
-/**
- * @brief Meuble par défaut issu de la classe Furniture : 
- *        Parallépipède simple surélevé d'une hauteur de pieds
- */ 
-class f_Foot: public Furniture {
-private:
-    /**
-     * @brief Presets de types de meubles pris en charge par cette classe fille. 
-     * 
-     * Les std::string représentent des chemin d'accès vers des fichiers objets
-     */
-    std::string p_table;
-    std::string p_lowtable;
-    std::string p_desk;
-    std::string p_bed;
-public:
-    /**
-     * @brief Constructeur par défaut d'une table / bureau / lit : fait appel au constructeur de la classe mère.
-     *        Similaire au parallépipède simple mais surélevé d'une hauteur de pieds.
-     * 
-     * @param string    Nom unique de la Shape (Géométrie) à créer
-     * @param ft_height Hauteur des pieds du meuble
-     * @param height    Hauteur du meuble hors pieds
-     * @param lenght    Longueur de la forme
-     * @param large     Largeur de la forme
-     * @param Bitmap    Texture à apposer sur la forme géométrique
-     */ 
-    f_Foot(std::string shape_name, float ft_height, float height, float lenght, float large, Bitmap *bmp = nullptr);
-
-
-    /**
-     * @brief Déclenchée au choix d'un des 4 presets de cette classe pour pré-remplir 
-     *        les champs de saisie d'insertion de meuble.
-     * 
-     * @param int Représente le numéro du preset choisi
-     */
-    void selectPreset(int preset);
-};
-
-
-/**
- * @brief Meuble par défaut issu de la classe Furniture : 
- *        Chaise (parallélépipède rectangle surélevé d'une hauteur de pieds et dossier)
- */ 
-class f_Chair: public Furniture {
-private:
-    /**
-     * @brief Presets de types de meubles pris en charge par cette classe fille. 
-     * 
-     * Les std::string représentent des chemin d'accès vers des fichiers objets
-     */
-    std::string p_chair;
-    std::string p_armchair;
-    std::string p_stool;
-public:
-    /**
-     * @brief Constructeur par défaut d'une chaise : fait appel au constructeur de la classe mère.
-     *        Similaire au parallépipède simple mais surélevé d'une hauteur de pieds et augmenté d'un dossier arrière.
-     * 
-     * @param string    Nom unique de la Shape (Géométrie) à créer
-     * @param bk_height Hauteur du dossier de la chaise
-     * @param ft_height Hauteur des pieds du meuble
-     * @param height    Hauteur du meuble hors pieds
-     * @param lenght    Longueur de la forme
-     * @param large     Largeur de la forme
-     * @param Bitmap    Texture à apposer sur la forme géométrique
-     */ 
-    f_Chair(std::string shape_name, float bk_height, float ft_height, float height, float lenght, float large, Bitmap *bmp = nullptr);
-
-
-    /**
-     * @brief Déclenchée au choix d'un des 4 presets de cette classe pour pré-remplir 
-     *        les champs de saisie d'insertion de meuble.
-     * 
-     * @param int Représente le numéro du preset choisi
-     */
-    void selectPreset(int preset);
-};
-
 
 struct camPack {
 	Camera *cam;
@@ -244,44 +94,15 @@ private:
     ButtonManager bmInsertion1;
 
     ButtonManager bmCameras;
-
-    /*===========================================================================================
-     *      INTERFACE GRAPHIQUE
-    ===========================================================================================*/
-    // Window interface;
-    // Textbox title;
-    // Keyboad keyboard;
-    // Mouse mouse;
-
-
+    int checkBoxDominant = -1;
+    insertPack ip0;
+    Texture2D TABLE, TABLETRUE;
     
-    
-    /**
-     * @brief Boutons d'interaction globale avec l'application 
-     */
-    
-
 public:
     static int interactSpace;
 
     HomeDesign() = delete;
     
-    void renderInsertion1(InputEvent& inputEvent, Window& window)  {
-        for (size_t i = 0; i < text_insertion1.size(); i++)  
-            text_insertion1[i]->render(window.getRenderer(), 0, 0);
-
-        for (size_t i = 0; i < input_insertion1.size(); i++)  {
-            input_insertion1[i]->checkForInput(inputEvent, window.getRenderer());
-            input_insertion1[i]->render(window.getRenderer(), 0);
-        }
-
-        // for (size_t i = 0; i < button_insertion1.size(); i++)  {
-        //     button_insertion1[i]->checkButton(inputEvent, Point2D<int>(0, 0));
-        //     button_insertion1[i]->render(window.getRenderer());
-        // }
-        bmInsertion1.checkButtons();
-		bmInsertion1.renderButtons(window.getRenderer());
-    }
 
     /**
      * @brief Constructeur par défaut, appelé à la création d'une scène sur l'interface (1)
@@ -289,17 +110,16 @@ public:
      * @param InputEvent    Utile aux évènements d'interaction utilisateur
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
-    HomeDesign(std::string scene, ButtonManager& bm, ShapeManager& manager, Window& window, InputEvent& inputEvent, float w1, float w3)
-                : scene_name(scene), bmInsertion1(inputEvent, window), bmCameras(inputEvent, window) {
+    HomeDesign(std::string scene, ButtonManager& bm, ShapeManager *manager, Window& window, InputEvent& inputEvent, float w1, float w3)
+                : scene_name(scene), bmInsertion1(inputEvent, window), bmCameras(inputEvent, window), TABLE("HM-Res/TABLE.jpg", window.getRenderer()), TABLETRUE("HM-Res/TABLE-TRUE.jpg", window.getRenderer()) {
         std::cout << " > Constructeur HomeDesign" << std::endl;
         surface = w1 * w3;
         std::cout << "Mur 1: " << w1 << "m" << std::endl;
         std::cout << "Mur 3: " << w3 << "m" << std::endl;
         std::cout << "Surface: " << surface << "m²" <<std::endl;
 
-        // bmInsertion1(inputEvent, window);
 
-        w1 *= 10; w3 *= 10;
+        w1 *= 20; w3 *= 20;
         int h = 60; // Hauteur de chaque mur
         // abcd : sol, a1b1c1d1 : plafond
         Vertex a(-w1/2, 0, -w3/2); // Haut gauche      a           b
@@ -313,26 +133,26 @@ public:
         Vertex d1( w1/2, h,  w3/2);
 
         // sol
-        Bitmap::newBitmap(std::string("defense"), "textures/img.png");
+        Bitmap::newBitmap(std::string("sol"), "textures/sol.jpg");
         Bitmap::newBitmap(std::string("BACKBLUE"), "textures/blue.png");
         Bitmap::newBitmap(std::string("FACE"), "textures/face.jpg");
         Bitmap::newBitmap(std::string("wall"), "textures/wall.jpg");
         Bitmap::newBitmap(std::string("RIGHT"), "textures/80s_1.jpg");
 
-        manager.addRectangle("floor", a, b, c, d, 4, white, Bitmap::getBitmap(std::string("defense")));
+        manager->addRectangle("floor", a, b, c, d, 4, white, false, Bitmap::getBitmap(std::string("sol")));
         // manager.addSphere("point_a", a, 5, blue);
         // manager.addSphere("point_c", c, 5, yellow);
         // manager.addSphere("point_d", d, 5, red);
         
         // Division à mettre en fonction de la surface
-        manager.addRectangle("frontWall", c1, d1, c, d, 4, white, Bitmap::getBitmap("FACE"));
-        manager.addRectangle("backWall", a1, b1, a, b, 4, white, Bitmap::getBitmap("BACKBLUE"));
-        manager.addRectangle("leftWall", a1, c1, a, c, 4, white, Bitmap::getBitmap("wall"));
-        manager.addRectangle("rightWall", b1, d1, b, d, 4, white, Bitmap::getBitmap("RIGHT"));
+        manager->addRectangle("frontWall", c1, d1, c, d, 4, white, false, Bitmap::getBitmap("FACE"));
+        manager->addRectangle("backWall", a1, b1, a, b, 4, white, false, Bitmap::getBitmap("BACKBLUE"));
+        manager->addRectangle("leftWall", a1, c1, a, c, 4, white, false, Bitmap::getBitmap("wall"));
+        manager->addRectangle("rightWall", b1, d1, b, d, 4, white, false, Bitmap::getBitmap("RIGHT"));
         std::cout<<"Room créée"<<std::endl;
 
         // Boutons de vues
-        initViewsButtons(manager, window);
+        initViewsButtons(*manager, window);
 
         // 2. Boutons interaction Frame : insertion
         /**
@@ -382,9 +202,13 @@ public:
                                     Point2D<int>(1155, b_tly), 80, 25, window.getRenderer()));
         b_tly += 40;
 
-
-        bmInsertion1.addRectTextButton<void*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Inserer sur la scene");
-        bmInsertion1.getButton<void*>("b_insertFinal1").setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
+        // CHECKBOXs pour choisir un preset
+        
+        bmInsertion1.addCheckBox<void*>(std::string("c_table"), light_gray, black, Point2D(990, b_tly), 50, &TABLETRUE, &TABLE);
+        bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Inserer sur la scene");
+        ip0 = { &checkBoxDominant, manager };
+        bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(insertPourDeVrai, &ip0);
+        // setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
     };
 
     /**
@@ -466,7 +290,6 @@ private:
     }
 
    
-
     /**
      * @brief Ajoute un meuble au vecteur des meubles de la scène
      * 
@@ -486,6 +309,15 @@ private:
      */
     void reloadInterface();
 
+    static void insertPourDeVrai(insertPack *ip)  {
+        if((*ip->selectedBox) == 1)  {
+            std::cout << "Insertion de TABLE\n";
+            (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 3);
+        }
+        else
+            std::cout << "Insertion de RIEN DU TOUT\n"; 
+    }
+
     /**
      * @brief Vérifie selon la surface disponible et les meubles déjà en place si 
      * le meuble référencé par @param f_name peut être placé 
@@ -498,7 +330,25 @@ private:
 
     void saveScene();
 
-public:
+public: // Méthodes liées à des boutons créés dans main.cpp
+
+    void renderInsertion1(InputEvent& inputEvent, Window& window)  {
+        for (size_t i = 0; i < text_insertion1.size(); i++)  
+            text_insertion1[i]->render(window.getRenderer(), 0, 0);
+
+        for (size_t i = 0; i < input_insertion1.size(); i++)  {
+            input_insertion1[i]->checkForInput(inputEvent, window.getRenderer());
+            input_insertion1[i]->render(window.getRenderer(), 0);
+        }
+
+        bmInsertion1.checkButtons();
+		bmInsertion1.renderButtons(window.getRenderer());
+        if (bmInsertion1.getButton<void*>("c_table").isClicked()) 
+            checkBoxDominant = 1;
+        else
+            checkBoxDominant = 0;
+    }
+
     static void exportImage(Render *r) {
         // Générer un path et nom de fichier en fonction de l'heure
         auto t = std::time(nullptr);
