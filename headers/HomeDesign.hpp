@@ -1,4 +1,6 @@
 #pragma once
+#include <ctime>
+#include <iomanip>
 
 /**
  * @brief Meuble de base représentée naïvement par un parallélépipède rectangle.
@@ -488,7 +490,18 @@ private:
 
     void saveScene();
 
-    void exportImage();
+    void exportImage(Render& r) {
+        // Générer un path et nom de fichier en fonction de l'heure
+        auto t = std::time(nullptr);
+        auto tm = *std::localtime(&t);
+        std::ostringstream oss;
+        oss << std::put_time(&tm, "HM-Export_%d-%m-%y_%H-%M-%S");
+        auto file = oss.str();
+        // r.savePNG(file);
+
+        // Afficher une TextBox pour indiquer que c'est exporté 
+        // Faire une boucle à part pour insérer le nom du fichier ? 
+    };
 };
 
 int HomeDesign::interactSpace = 0;
