@@ -327,58 +327,51 @@ class Rectangle : public Shape {
 public:
 	Vertex hg, bg, hd, bd; 
 
-	Rectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, const Color& color, const bool& fill = true, Bitmap* bmp = nullptr): Shape(name) {
+	Rectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, const Color& color, const bool& fill = true, Bitmap* bmp = nullptr) : Shape(name) {
 		hg = a; bg = b; hd = c; bd = d;
-		if (bmp == nullptr) {
-			this->center = a;
-			this->center += b;
-			this->center += c;
-			this->center += d;
-			this->center.x /= 4;
-			this->center.y /= 4;
-			this->center.z /= 4;
-			// set 2 triangles
-			// triangles.push_back(Triangle(a, b, c, { 0,0,0 }));
-			// triangles.push_back(Triangle(b, c, d, { 0,0,0 }));
-			division += 1;
-			int subdiv = pow(division, 2); // div = 0 -> 1, 1 -> 4, 2 -> 9
-			for (int i = 0; i < subdiv	; i++) {
-				int x = i % division;
-				int y = i / division;
-				Vertex tmpHG(hg.x + (x / (float)division * (hd.x - hg.x)) + (y / (float)division * (bg.x - hg.x)), 
-							 hg.y + (x / (float)division * (hd.y - hg.y)) + (y / (float)division * (bg.y - hg.y)), 
-							 hg.z + (x / (float)division * (hd.z - hg.z)) + (y / (float)division * (bg.z - hg.z)));
+		this->center = a;
+		this->center += b;
+		this->center += c;
+		this->center += d;
+		this->center.x /= 4;
+		this->center.y /= 4;
+		this->center.z /= 4;
+		division += 1;
+		int subdiv = pow(division, 2);
+		for (int i = 0; i < subdiv; i++) {
+			int x = i % division;
+			int y = i / division;
+			Vertex tmpHG(hg.x + (x / (float)division * (hd.x - hg.x)) + (y / (float)division * (bg.x - hg.x)),
+				hg.y + (x / (float)division * (hd.y - hg.y)) + (y / (float)division * (bg.y - hg.y)),
+				hg.z + (x / (float)division * (hd.z - hg.z)) + (y / (float)division * (bg.z - hg.z)));
 
-				Vertex tmpBG(hg.x + ((x + 1) / (float)division * (hd.x - hg.x)) + (y / (float)division * (bg.x - hg.x)),
-							 hg.y + ((x + 1) / (float)division * (hd.y - hg.y)) + (y / (float)division * (bg.y - hg.y)),
-							 hg.z + ((x + 1) / (float)division * (hd.z - hg.z)) + (y / (float)division * (bg.z - hg.z)));
+			Vertex tmpBG(hg.x + ((x + 1) / (float)division * (hd.x - hg.x)) + (y / (float)division * (bg.x - hg.x)),
+				hg.y + ((x + 1) / (float)division * (hd.y - hg.y)) + (y / (float)division * (bg.y - hg.y)),
+				hg.z + ((x + 1) / (float)division * (hd.z - hg.z)) + (y / (float)division * (bg.z - hg.z)));
 
-				Vertex tmpHD(hg.x + (x / (float)division * (hd.x - hg.x)) + ((y + 1) / (float)division * (bg.x - hg.x)),
-							 hg.y + (x / (float)division * (hd.y - hg.y)) + ((y + 1) / (float)division * (bg.y - hg.y)),
-							 hg.z + (x / (float)division * (hd.z - hg.z)) + ((y + 1) / (float)division * (bg.z - hg.z)));
+			Vertex tmpHD(hg.x + (x / (float)division * (hd.x - hg.x)) + ((y + 1) / (float)division * (bg.x - hg.x)),
+				hg.y + (x / (float)division * (hd.y - hg.y)) + ((y + 1) / (float)division * (bg.y - hg.y)),
+				hg.z + (x / (float)division * (hd.z - hg.z)) + ((y + 1) / (float)division * (bg.z - hg.z)));
 
-				Vertex tmpBD(hg.x + ((x + 1) / (float)division * (hd.x - hg.x)) + ((y + 1) / (float)division * (bg.x - hg.x)),
-							 hg.y + ((x + 1) / (float)division * (hd.y - hg.y)) + ((y + 1) / (float)division * (bg.y - hg.y)),
-							 hg.z + ((x + 1) / (float)division * (hd.z - hg.z)) + ((y + 1) / (float)division * (bg.z - hg.z)));
+			Vertex tmpBD(hg.x + ((x + 1) / (float)division * (hd.x - hg.x)) + ((y + 1) / (float)division * (bg.x - hg.x)),
+				hg.y + ((x + 1) / (float)division * (hd.y - hg.y)) + ((y + 1) / (float)division * (bg.y - hg.y)),
+				hg.z + ((x + 1) / (float)division * (hd.z - hg.z)) + ((y + 1) / (float)division * (bg.z - hg.z)));
+			if (bmp == nullptr) {
 				triangles.push_back(Triangle(tmpHG, tmpBG, tmpHD, { 0,0,0 }, color, fill));
 				triangles.push_back(Triangle(tmpBG, tmpHD, tmpBD, { 0,0,0 }, color, fill));
 			}
-		}
-		else {
-			this->center = a;
-			this->center += b;
-			this->center += c;
-			this->center += d;
-			this->center.x /= 4;
-			this->center.y /= 4;
-			this->center.z /= 4;
-			// set 2 triangles
-			triangles.push_back(Triangle(a, b, c, { 0,0,0 }, black, bmp, Point2D<float>{ 0,1 }, Point2D<float>{ 1,1 }, Point2D<float>{ 0,0 }));
-			triangles.push_back(Triangle(c, b, d, { 0,0,0 }, black, bmp, Point2D<float>{ 0,0 } , Point2D<float>{ 1,1 }, Point2D<float>{ 1,0 }));
-			triangles[0].fillIt(1);
-			triangles[0].contourIt(0);
-			triangles[1].fillIt(1);
-			triangles[1].contourIt(0);
+			else {
+				triangles.push_back(Triangle(tmpHG, tmpBG, tmpHD,
+					{ 0,0,0 }, black, bmp,
+					Point2D<float>(x / (float)division, y / (float)division),
+					Point2D<float>((x + 1) / (float)division, y / (float)division),
+					Point2D<float>(x / (float)division, (y + 1) / (float)division)));
+				triangles.push_back(Triangle(tmpBG, tmpHD, tmpBD,
+					{ 0,0,0 }, black, bmp,
+					Point2D<float>((x + 1) / (float)division, y / (float)division),
+					Point2D<float>(x / (float)division, (y + 1) / (float)division),
+					Point2D<float>((x + 1) / (float)division, (y + 1) / (float)division)));
+			}
 		}
 	}
 	Rectangle(const Rectangle& rectangle) :Shape(rectangle) {}
