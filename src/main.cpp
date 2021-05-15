@@ -67,20 +67,20 @@ int main(int argc, char* argv[]) {
 	bool start = false;
 	int checkForError = 0;
 
-	TextBox t_intro("CROUS Simulator", pth+std::string("fonts/calibri.ttf"), 40, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
+	TextBox t_intro("CROUS Simulator", "fonts/calibri.ttf", 40, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
 	int i_TLx = 440, i_TLy = 310;
-	TextBox t_mur1("Mur 1", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
-	TextInput i_mur1("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
-	TextBox t_mur2("Mur 2", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
-	TextInput i_mur2("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
+	TextBox t_mur1("Mur 1", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
+	TextInput i_mur1("12  m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
+	TextBox t_mur2("Mur 2", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
+	TextInput i_mur2("12  m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
 
 	i_TLx += 280;
-	TextBox t_mur3("Mur 3", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
-	TextInput i_mur3("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
-	TextBox t_mur4("Mur 4", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
-	TextInput i_mur4("12  m", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
+	TextBox t_mur3("Mur 3", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
+	TextInput i_mur3("12  m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
+	TextBox t_mur4("Mur 4", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
+	TextInput i_mur4("12  m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
 	
-	TextBox t_error("", pth+std::string("fonts/calibri.ttf"), 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, window.getRenderer());
+	TextBox t_error("", "fonts/calibri.ttf", 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, window.getRenderer());
 
 	bm.addRectTextButton<initPack*>("b_initApp", Point2D<int>(440, 415), 400, 40, "Nouvelle scene a partir de la surface donnee");
 	bm.addRectTextButton<int*>("b_initImport", Point2D<int>(440, 475), 400, 40, "Importer une scene depuis un fichier");
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 				t_error.update("Merci d'entrer des dimensions valides en cliquant sur les barres de saisie !", window.getRenderer());
 				break;
 			case 3:
-				t_error.update("Dimensions valides ! Chargement de la piece...", pth+std::string("fonts/calibri.ttf"), 20, hd_greenButtons, window.getRenderer());
+				t_error.update("Dimensions valides ! Chargement de la piece...", "fonts/calibri.ttf", 20, hd_greenButtons, window.getRenderer());
 				break;
 			default:
 				t_error.update("Erreur innatendue !", window.getRenderer());
@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
 	/** ==============================
 	 *  Initialisation caméras
 	 * ==============================*/
-	TextBox current_cam("Vue du haut", pth+std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
+	TextBox current_cam("Vue du haut", "fonts/calibri.ttf", 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
 	// Top: -90° / 230° (?) / y -= 5 pour zoomer
 	Camera topCam("topCam", {manager.getShape("floor").center.x, manager.getShape("floor").center.y + 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	Camera freeCam("freeCam", { 120,300,65 }, 60, 0, 4);
@@ -173,8 +173,9 @@ int main(int argc, char* argv[]) {
 	b_tly += 58;
 	bm.addRectTextButtonCustom<camPack*>("b_saveScene", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Enregistrer la scene", 16, black);
 	b_tly += 58;
-	bm.addRectTextButtonCustom<camPack*>("b_exportView", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Exporter la vue actuelle", 16, black);
-	TextBox sceneTitle(hm.getSceneName(), pth+std::string("fonts/calibri.ttf"), 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
+	bm.addRectTextButtonCustom<Render*>("b_exportView", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Exporter la vue actuelle", 16, black);
+	bm.getButton<Render*>("b_exportView").setAction(hm.exportImage, &r);
+	TextBox sceneTitle(hm.getSceneName(), "fonts/calibri.ttf", 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
 
 	// Liaison caméras / boutons de changement de vues
 	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window, &manager, "none" };
@@ -182,14 +183,14 @@ int main(int argc, char* argv[]) {
 	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall" };
 	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall" };
 	camPack p4 = { &backCam, "Vue de l'arriere", &current_cam, &window, &manager, "backWall" };
-	camPack p5 = { &freeCam, "Deplacement libre", &current_cam, &window, &manager, "none" };
+	camPack p5 = { &freeCam, "Deplacement libre", &current_cam, &window, &manager, "none", &r };
 	hm.setViewsButtonsAction(p0,p1,p2,p3,p4,p5);
 	
 
 	// Boutons Zoom/Dezoom
-	bm.addRectTextButton<void*>("b_zoom", Point2D<int>(850, 496), 30, b_height, "+"); 
+	bm.addRectTextButton<void*>("b_zoom", Point2D<int>(850, 496), 30, b_height-8, "+"); 
 	bm.getButton<void*>("b_zoom").setAction(zoomCam, nullptr);
-	bm.addRectTextButton<void*>("b_dezoom", Point2D<int>(890, 496), 30, b_height, "-"); 
+	bm.addRectTextButton<void*>("b_dezoom", Point2D<int>(890, 496), 30, b_height-8, "-"); 
 	bm.getButton<void*>("b_dezoom").setAction(dezoomCam, nullptr);
 	
 	

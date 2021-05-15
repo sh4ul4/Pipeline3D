@@ -43,7 +43,7 @@ public:
 	 */
 	TextInput(const std::string& text, const std::string& fontPath, const int& fontSize, const Color& fontColor,
 		const Point2D<int>& topLeft, const int& width, const int& height, SDL_Renderer* renderer)
-		: TextBox(text,fontPath,fontSize,fontColor,Point2D<int>(topLeft + 2),width - 4,height - 4,renderer), text(text) {}
+		: TextBox(text, FIND_FILE(fontPath),fontSize,fontColor,Point2D<int>(topLeft + 2),width - 4,height - 4,renderer), text(text) {}
 
 	// suppression du constructeur par défaut
 	TextInput() = delete;
@@ -108,7 +108,7 @@ public:
 		ie.updateKeyBoard(keyboard);
 		if (!running && mouse.leftClick && checkClick(mouse))
 			start(ie);
-		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && not checkClick(mouse)) )
+		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && !checkClick(mouse)) )
 			stop(ie);
 		if (!running)return;
 		const int size1 = text.length();
@@ -129,7 +129,7 @@ public:
 		ie.updateKeyBoard(keyboard);
 		if (!running && mouse.leftClick && ( checkClick(mouse) || other.checkClick(mouse) ))
 			start(ie);
-		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && not checkClick(mouse) && not other.checkClick(mouse)) )
+		if ( (running && keyboard.enter.down) || (running && mouse.leftClick && !checkClick(mouse) && !other.checkClick(mouse)) )
 			stop(ie);
 		if (!running)return;
 		const int size1 = text.length();

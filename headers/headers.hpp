@@ -22,25 +22,9 @@
 #include <math.h>
 #include <climits>
 
-#include <thread>
-
 #include <assert.h>
 
 #include <filesystem>
-namespace fs = std::filesystem;
-std::string checkLocalisation(const fs::path& p, fs::file_status s = fs::file_status{}) {
-    if(fs::status_known(s) ? fs::exists(s) : fs::exists(p))  
-        return "./";
-    else 
-		return "../";
-}
-std::string pth = checkLocalisation("fonts");
-
-// #if defined(_WIN32)
-// std::string pth = "../";
-// #else
-// std::string pth = "../";
-// #endif
 
 #include "userinteraction/ErrorsHandler.hpp"
 
@@ -52,6 +36,8 @@ std::string pth = checkLocalisation("fonts");
 #include "display/Color.hpp"
 
 #include "display/Draw.hpp"
+
+#include "userinteraction/TextBox.hpp"
 
 #include "display/Window.hpp"
 
@@ -83,11 +69,10 @@ std::string pth = checkLocalisation("fonts");
 
 #include "display/Render.hpp"
 
-#include "userinteraction/TextBox.hpp"
-
 #include "userinteraction/TextInput.hpp"
 
 #include "userinteraction/Button.hpp"
 
 #include "userinteraction/ScrollArea.hpp"
+
 #include "HomeDesign.hpp"

@@ -37,7 +37,7 @@ public:
 	 * @param renderer Renderer SDL
 	 */
 	Texture2D(const std::string& path, SDL_Renderer* renderer) {
-		SDL_Surface* surface = IMG_Load(path.c_str());
+		SDL_Surface* surface = IMG_Load(FIND_FILE(path).c_str());
 		width = surface->w;
 		height = surface->h;
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -54,7 +54,7 @@ public:
 	 */
 	Texture2D(const std::string& path, SDL_Renderer* renderer, const Point2D<int>& pos, const int& width, const int& height)
 		: pos(pos), width(width), height(height) {
-		SDL_Surface* surface = IMG_Load(path.c_str());
+		SDL_Surface* surface = IMG_Load(FIND_FILE(path).c_str());
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_FreeSurface(surface);
 	}

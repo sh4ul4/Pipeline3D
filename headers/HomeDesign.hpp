@@ -164,6 +164,7 @@ struct camPack {
 	Window *window;
 	ShapeManager *manager;
 	std::string referencedWall;
+    Render *render;
 };
 
 /**
@@ -189,10 +190,16 @@ void switchCam(camPack *p) {
 }
 
 void goFreeView(camPack *p) {
-	p->cam->setCurrent();
 	p->cam->unlock();
+    
+    p->cam->moveTo(Camera::getCurrent().getCameraPosition());
+    p->cam->angleX = Camera::getCurrent().angleX;
+    p->cam->angleY = Camera::getCurrent().angleY;
+    SDL_WarpMouseInWindow((*p->window).getWindow(), (*p->render).globalTexture.getWidth() * 0.5, (*p->render).globalTexture.getHeight() * 0.5);
+
+	p->cam->setCurrent();
 	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
-	makeWallsVisible(*p->manager);
+	// makeWallsVisible(*p->manager);
 	(*p->manager).pushShapesEditing();
 	// Make Zoom buttons invisible ?
 }
@@ -306,21 +313,22 @@ public:
         Vertex d1( w1/2, h,  w3/2);
 
         // sol
-        Bitmap::newBitmap(std::string("defense"), std::string(pth+"/textures/img.png"));
-        Bitmap::newBitmap(std::string("BACKBLUE"), std::string(pth+"/textures/blue.png"));
-        Bitmap::newBitmap(std::string("FACE"), std::string(pth+"/textures/face.jpg"));
-        Bitmap::newBitmap(std::string("wall"), std::string(pth+"/textures/wall.jpg"));
-        Bitmap::newBitmap(std::string("RIGHT"), std::string(pth+"/textures/80s_1.jpg"));
+        Bitmap::newBitmap(std::string("defense"), "textures/img.png");
+        Bitmap::newBitmap(std::string("BACKBLUE"), "textures/blue.png");
+        Bitmap::newBitmap(std::string("FACE"), "textures/face.jpg");
+        Bitmap::newBitmap(std::string("wall"), "textures/wall.jpg");
+        Bitmap::newBitmap(std::string("RIGHT"), "textures/80s_1.jpg");
 
-        manager.addRectangle("floor", a, b, c, d, Bitmap::getBitmap(std::string("defense")));
+        manager.addRectangle("floor", a, b, c, d, 4, white, Bitmap::getBitmap(std::string("defense")));
         // manager.addSphere("point_a", a, 5, blue);
         // manager.addSphere("point_c", c, 5, yellow);
         // manager.addSphere("point_d", d, 5, red);
-
-        manager.addRectangle("frontWall", c1, d1, c, d, Bitmap::getBitmap("FACE"));
-        manager.addRectangle("backWall", a1, b1, a, b, Bitmap::getBitmap("BACKBLUE"));
-        manager.addRectangle("leftWall", a1, c1, a, c, Bitmap::getBitmap("wall"));
-        manager.addRectangle("rightWall", b1, d1, b, d, Bitmap::getBitmap("RIGHT"));
+        
+        // Division à mettre en fonction de la surface
+        manager.addRectangle("frontWall", c1, d1, c, d, 4, white, Bitmap::getBitmap("FACE"));
+        manager.addRectangle("backWall", a1, b1, a, b, 4, white, Bitmap::getBitmap("BACKBLUE"));
+        manager.addRectangle("leftWall", a1, c1, a, c, 4, white, Bitmap::getBitmap("wall"));
+        manager.addRectangle("rightWall", b1, d1, b, d, 4, white, Bitmap::getBitmap("RIGHT"));
         std::cout<<"Room créée"<<std::endl;
 
         // Boutons de vues
@@ -336,7 +344,7 @@ public:
         int b_topleftx = 30, b_tly = 596;
         bm.addRectTextButton<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Inserer meuble type 1");
         bm.getButton<int*>("b_insertDefault").setAction(insertFurniture, &un);
-        // TextBox tb13("Inserer meuble type 1", pth+std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
+        // TextBox tb13("Inserer meuble type 1", "fonts/calibri.ttf", 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
         // bm.addRectButton<int*>("b_insertDefault", nullptr, hd_brownButtons, black, &tb13, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
         b_topleftx += 306;
 
@@ -350,27 +358,27 @@ public:
         // Espace interaction : Point2D<int>(970, 30), 270, 506
         b_topleftx = 975; b_tly = 40;
         b_width = 260;
-        text_insertion1.emplace_back(new TextBox("Insertion type 1", pth+std::string("fonts/Segoe UI Bold.ttf"), 30, black, 
+        text_insertion1.emplace_back(new TextBox("Insertion type 1", "fonts/Segoe UI Bold.ttf", 30, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         text_insertion1.back()->center(Point2D<int>(970, 30), 270);
         b_tly += 60;
 
             // y = 100
-        text_insertion1.emplace_back(new TextBox("Nom (referencement)", pth+std::string("fonts/calibri.ttf"), 20, black, 
+        text_insertion1.emplace_back(new TextBox("Nom (referencement)", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
         b_tly += 25;
-        input_insertion1.emplace_back(new TextInput("default", pth+std::string("fonts/calibri.ttf"), 20, black, 
+        input_insertion1.emplace_back(new TextInput("default", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly),  250, 25, window.getRenderer()));
         b_tly += 40;
 
-        text_insertion1.emplace_back(new TextBox("Dimensions (Lxlxh)",  pth+std::string("fonts/calibri.ttf"), 20, black, 
+        text_insertion1.emplace_back(new TextBox("Dimensions (Lxlxh)",  "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
-        input_insertion1.emplace_back(new TextInput("10", pth+std::string("fonts/calibri.ttf"), 20, black, 
+        input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(975, b_tly), 80, 25, window.getRenderer()));
-        input_insertion1.emplace_back(new TextInput("10", pth+std::string("fonts/calibri.ttf"), 20, black, 
+        input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(1065, b_tly), 80, 25, window.getRenderer()));
-        input_insertion1.emplace_back(new TextInput("10", pth+std::string("fonts/calibri.ttf"), 20, black, 
+        input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(1155, b_tly), 80, 25, window.getRenderer()));
         b_tly += 40;
 
@@ -490,14 +498,16 @@ private:
 
     void saveScene();
 
-    void exportImage(Render& r) {
+public:
+    static void exportImage(Render *r) {
         // Générer un path et nom de fichier en fonction de l'heure
         auto t = std::time(nullptr);
         auto tm = *std::localtime(&t);
         std::ostringstream oss;
-        oss << std::put_time(&tm, "HM-Export_%d-%m-%y_%H-%M-%S");
+        oss << std::put_time(&tm, "../HM-Export_%d-%m-%y_%H-%M-%S");
         auto file = oss.str();
-        // r.savePNG(file);
+        r->savePNG(file);
+        std::cout << file << " exporté !!!!\n";
 
         // Afficher une TextBox pour indiquer que c'est exporté 
         // Faire une boucle à part pour insérer le nom du fichier ? 

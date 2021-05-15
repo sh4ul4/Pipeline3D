@@ -381,7 +381,7 @@ public:
 	 *		Attributs
 	 *===========================================================================================*/
 
-	// Un vecteur de pointeurs vers les shapes
+	 // Un vecteur de pointeurs vers les shapes
 	std::vector<std::unique_ptr<Shape>> shapes;
 
 	// Booléen indiquant si les shapes ont déjà été rendered ou pas (via Render::updateTriangles) 
@@ -396,7 +396,8 @@ public:
 		rendered = false;
 	}
 
-	void imprtShapeObj(const std::string& path, const std::string& source, const std::string& shapeName, const float& scale = 1) {
+	void imprtShapeObj(std::string path, const std::string& source, const std::string& shapeName, const float& scale = 1) {
+		path = FIND_FILE(path);
 		if (nameTaken(shapeName)) {
 			PRINT_ON_ERR("Name for shape is already taken");
 			return;
@@ -457,14 +458,14 @@ public:
 	void exprtShapeObj(const std::string& shape) {
 		if (!nameTaken(shape))return; // no shape named that way
 
-		std::ofstream mtl(pth + std::string("OBJ/") + shape + ".mtl");
+		std::ofstream mtl(FIND_FILE(std::string("OBJ/")) + shape + ".mtl");
 		mtl << "newmtl " << shape << "_mtl " <<
 			"\n\tKd 0 0 0 " <<
 			"\n\tmap_Ka " << getShape(shape).bmp->name.c_str() << ".png\n\tmap_Kd " << getShape(shape).bmp->name.c_str() << ".png\n";
-		IMG_SavePNG(getShape(shape).bmp->surface, std::string(pth + std::string("OBJ/") + getShape(shape).bmp->name + ".png").c_str());
+		IMG_SavePNG(getShape(shape).bmp->surface, std::string(FIND_FILE(std::string("OBJ/")) + getShape(shape).bmp->name + ".png").c_str());
 
 
-		std::ofstream out(pth + std::string("OBJ/") + shape + ".obj");
+		std::ofstream out(FIND_FILE(std::string("OBJ/")) + shape + ".obj");
 		out << "# " + shape + ".obj\n";
 		out << "#\n\n";
 		out << "o " + shape + "\n";
@@ -711,7 +712,7 @@ public:
 	 */
 	void addCube(const std::string& name, const Vertex& center, const double& width, Bitmap* bmp = nullptr) {
 		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
-		if (bmp == nullptr) shapes.emplace_back(new Cube(name, center, width));
+		if (bmp == nullptr) shapes.emplace_back(new Cube(name, center, width, black));
 		else shapes.emplace_back(new Cube(name, center, width, bmp));
 		rendered = false;
 	}
@@ -732,12 +733,14 @@ public:
 	 *
 	 * @param Nom unique de la shape
 	 * @param a,b,c,d Sommets du rectangle, permettant de le dessiner
+	 * @param division Nombres de divisions à appliquer au rectangle
+	 * @param color Couleur du rectangle
+	 * @param fill rectangle remplis ou non
 	 * @param bmp Bitmap
 	 */
-	void addRectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, Bitmap* bmp = nullptr) {
+	void addRectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, const Color& color, const bool& fill = true, Bitmap* bmp = nullptr) {
 		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
-		shapes.emplace_back(new Rectangle(name, a, b, c, d, bmp));
-		rendered = false;
+		shapes.emplace_back(new Rectangle(name, a, b, c, d, division, color, fill ,bmp));
 	}
 
 	/**

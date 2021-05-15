@@ -69,7 +69,6 @@ class ScrollZone {
 	Color contourColor;
 
 	std::vector<TextBox const*> textBoxes{};
-	ButtonManager zoneManager;
 
 	DragBar verticalDragBar;
 	DragBar horizontalDragBar;
@@ -79,19 +78,13 @@ public:
 	ScrollZone() = delete;
 	ScrollZone(const InputEvent& input, const Window& window, const Point2D<int>& pos,
 		int width, int height, int renderW, int renderH)
-		: inputEvent(input), pos(pos), zoneManager(input, window), buttonManager(input, window), width(width), height(height),
+		: inputEvent(input), pos(pos), buttonManager(input, window), width(width), height(height),
 		renderPos(0, 0), renderW(renderW), renderH(renderH), 
 		verticalDragBar(Point2D<int>(pos.x + width - 13, pos.y + 1), 12,height- 13,20),
 		horizontalDragBar(Point2D<int>(pos.x + 1, pos.y + height - 13), width- 13, 12, 20, false)
 	{
 		texture = SDL_CreateTexture(window.getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, renderW, renderH);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-		zoneManager.addRectTextButton<Point2D<int>*>("up", pos + Point2D<int>(width - 11, 1), 10, 10, "");
-		zoneManager.getButton<Point2D<int>*>("up").setAction([](Point2D<int>* renderPosition) {renderPosition->y -= 10; }, &renderPos);
-		zoneManager.getButton<Point2D<int>*>("up").contourCol = Color(120, 120, 120, 255);
-		zoneManager.addRectTextButton<Point2D<int>*>("down", pos + Point2D<int>(width - 11, height - 11), 10, 10, "");
-		zoneManager.getButton<Point2D<int>*>("down").setAction([](Point2D<int>* renderPosition) {renderPosition->y += 10; }, &renderPos);
-		zoneManager.getButton<Point2D<int>*>("down").contourCol = Color(120, 120, 120, 255);
 		backgroundColor = Color(60, 60, 60, 255);
 		foregroundColor = Color(90, 90, 90, 255);
 		contourColor = Color(120, 120, 120, 255);
@@ -99,22 +92,17 @@ public:
 	ScrollZone(const InputEvent& input, const Window& window, const Point2D<int>& pos,
 		int width, int height, const Point2D<int>& renderPos, int renderW, int renderH,
 		const Color& bgcolor, const Color& fgcolor, const Color& contcolor)
-		: inputEvent(input), pos(pos), zoneManager(input, window), buttonManager(input, window), width(width), height(height),
+		: inputEvent(input), pos(pos), buttonManager(input, window), width(width), height(height),
 		renderPos(renderPos), renderW(renderW), renderH(renderH), backgroundColor(bgcolor), foregroundColor(fgcolor), contourColor(contcolor),
 		verticalDragBar(Point2D<int>(pos.x + width - 13, pos.y + 1), 12, height - 13, 20),
 		horizontalDragBar(Point2D<int>(pos.x + 1, pos.y + height - 13), width - 13, 12, 20, false)
 	{
 		texture = SDL_CreateTexture(window.getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, renderW, renderH);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-		zoneManager.addRectTextButton<Point2D<int>*>("up", Point2D<int>(pos.x + width - 26, pos.y), 25, 20, "");
-		zoneManager.getButton<Point2D<int>*>("up").setAction([](Point2D<int>* renderPosition) {renderPosition->y -= 10; }, &this->renderPos);
-		zoneManager.addRectTextButton<Point2D<int>*>("down", Point2D<int>(pos.x + width - 26, pos.y + height - 20), 25, 20, "");
-		zoneManager.getButton<Point2D<int>*>("down").setAction([](Point2D<int>* renderPosition) {renderPosition->y += 10; }, &this->renderPos);
 	}
 
 	~ScrollZone() {
 		SDL_DestroyTexture(texture);
-		zoneManager.getButton<Point2D<int>*>("down").deleteTexture();
 	}
 
 	inline void startDrawInside(SDL_Renderer* renderer) { SDL_SetRenderTarget(renderer, texture); }
@@ -158,7 +146,6 @@ public:
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
 		if (mouseInside()) {
-			zoneManager.checkButtons();
 			buttonManager.checkButtons(pos + renderPos);
 			if (keyboard.shift.pressed) {
 				renderPos.x -= mouse.wheelup * 4;
@@ -231,7 +218,6 @@ public:
 		Draw::DrawFillRect(pos, width, height, backgroundColor, window.getRenderer());
 		Draw::DrawFillRect(Point2D<int>(dstx,dsty), dstw, dsth, foregroundColor, window.getRenderer());
 		SDL_RenderCopy(window.getRenderer(), texture, &srcrect, &dstrect);
-		zoneManager.renderButtons(window.getRenderer());
 		verticalDragBar.render(window.getRenderer());
 		horizontalDragBar.render(window.getRenderer());
 		Draw::DrawRect(pos, width, height, 1, contourColor, window.getRenderer());
