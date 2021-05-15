@@ -173,6 +173,13 @@ public:
 		}
 	}
 
+	void groundZero() {
+		float aminx, aminy, aminz;
+		float amaxx, amaxy, amaxz;
+		getBoundingBox(aminx, aminy, aminz, amaxx, amaxy, amaxz);
+		if(aminx < 0) move(Vector(0,-aminx,0));
+	}
+
 	bool hit(Shape& other) {
 		float aminx, aminy, aminz;
 		float amaxx, amaxy, amaxz;
