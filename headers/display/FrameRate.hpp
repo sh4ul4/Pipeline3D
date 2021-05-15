@@ -63,7 +63,7 @@ public:
 		// Cap to 60 FPS
 		Uint32 waitingTime = floor(ticksPerFrame - elapsedMS);
 		// std::cout << elapsedMS << "_" << waitingTime << std::endl;
-		std::cout << "Current FPS: " << floor(1000.0f / elapsedMS) << std::endl;
+		// std::cout << "Current FPS: " << floor(1000.0f / elapsedMS) << std::endl;
 		if (elapsedMS < ticksPerFrame)
 		{
 			SDL_Delay(waitingTime);
