@@ -297,6 +297,12 @@ public:
 };
 
 class Rectangle : public Shape {
+	float max(float a, float b, float c, float d) {
+		return std::max(a, std::max(b, std::max(c, d)));
+	}
+	float min(float a, float b, float c, float d) {
+		return std::min(a, std::min(b, std::min(c, d)));
+	}
 public:
 	Vertex hg, bg, hd, bd; 
 
@@ -318,21 +324,21 @@ public:
 			for (int i = 0; i < subdiv	; i++) {
 				int x = i % division;
 				int y = i / division;
-				Vertex tmpHG(hg.x + (x / (float)division * (hg.x - hd.x)) + (y / (float)division * (hg.x - bg.x)), 
-							 hg.y + (x / (float)division * (hg.y - hd.y)) + (y / (float)division * (hg.y - bg.y)), 
-							 hg.z + (x / (float)division * (hg.z - hd.z)) + (y / (float)division * (hg.z - bg.z)));
+				Vertex tmpHG(hg.x + (x / (float)division * (hd.x - hg.x)) + (y / (float)division * (bg.x - hg.x)), 
+							 hg.y + (x / (float)division * (hd.y - hg.y)) + (y / (float)division * (bg.y - hg.y)), 
+							 hg.z + (x / (float)division * (hd.z - hg.z)) + (y / (float)division * (bg.z - hg.z)));
 
-				Vertex tmpBG(hg.x + ((x + 1) / (float)division * (hg.x - hd.x)) + (y / (float)division * (hg.x - bg.x)), 
-							 hg.y + ((x + 1) / (float)division * (hg.y - hd.y)) + (y / (float)division * (hg.y - bg.y)), 
-							 hg.z + ((x + 1) / (float)division * (hg.z - hd.z)) + (y / (float)division * (hg.z - bg.z)));
+				Vertex tmpBG(hg.x + ((x + 1) / (float)division * (hd.x - hg.x)) + (y / (float)division * (bg.x - hg.x)),
+							 hg.y + ((x + 1) / (float)division * (hd.y - hg.y)) + (y / (float)division * (bg.y - hg.y)),
+							 hg.z + ((x + 1) / (float)division * (hd.z - hg.z)) + (y / (float)division * (bg.z - hg.z)));
 
-				Vertex tmpHD(hg.x + (x / (float)division * (hg.x - hd.x)) + ((y + 1) / (float)division * (hg.x - bg.x)), 
-							 hg.y + (x / (float)division * (hg.y - hd.y)) + ((y + 1) / (float)division * (hg.y - bg.y)), 
-							 hg.z + (x / (float)division * (hg.z - hd.z)) + ((y + 1) / (float)division * (hg.z - bg.z)));
+				Vertex tmpHD(hg.x + (x / (float)division * (hd.x - hg.x)) + ((y + 1) / (float)division * (bg.x - hg.x)),
+							 hg.y + (x / (float)division * (hd.y - hg.y)) + ((y + 1) / (float)division * (bg.y - hg.y)),
+							 hg.z + (x / (float)division * (hd.z - hg.z)) + ((y + 1) / (float)division * (bg.z - hg.z)));
 
-				Vertex tmpBD(hg.x + ((x + 1) / (float)division * (hg.x - hd.x)) + ((y + 1) / (float)division * (hg.x - bg.x)), 
-							 hg.y + ((x + 1) / (float)division * (hg.y - hd.y)) + ((y + 1) / (float)division * (hg.y - bg.y)), 
-							 hg.z + ((x + 1) / (float)division * (hg.z - hd.z)) + ((y + 1) / (float)division * (hg.z - bg.z)));
+				Vertex tmpBD(hg.x + ((x + 1) / (float)division * (hd.x - hg.x)) + ((y + 1) / (float)division * (bg.x - hg.x)),
+							 hg.y + ((x + 1) / (float)division * (hd.y - hg.y)) + ((y + 1) / (float)division * (bg.y - hg.y)),
+							 hg.z + ((x + 1) / (float)division * (hd.z - hg.z)) + ((y + 1) / (float)division * (bg.z - hg.z)));
 				triangles.push_back(Triangle(tmpHG, tmpBG, tmpHD, { 0,0,0 }, color, fill));
 				triangles.push_back(Triangle(tmpBG, tmpHD, tmpBD, { 0,0,0 }, color, fill));
 			}
