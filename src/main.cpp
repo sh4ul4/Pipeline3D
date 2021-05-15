@@ -4,8 +4,8 @@ int main(int argc, char* argv[]) {
 	Window window(800, 600);
 	InputEvent inputEvent;
 	ShapeManager manager;
-	Camera cam1(Vertex(0, 0, 0), 60, 0, 0);
-	Camera cam2(Vertex(0, 0, 0), 60, 0, 0);
+	Camera cam1("cam1", Vertex(0, 0, 0), 60, 0, 0);
+	Camera cam2("cam2", Vertex(0, 0, 0), 60, 0, 0);
 	cam2.setSubject(Vertex(0, 0, 0));
 	cam2.lock();
 	TextBox::initLibrary();
