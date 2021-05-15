@@ -11,54 +11,6 @@
  */
 class Shape {
 public:
-	float getMinX()const {
-		float val = 9999999;
-		for (const Triangle& t : triangles) {
-			if (t.a.x < val)val = t.a.x;
-			if (t.b.x < val)val = t.b.x;
-			if (t.c.x < val)val = t.c.x;
-		} return val;
-	}
-	float getMinY()const {
-		float val = 9999999;
-		for (const Triangle& t : triangles) {
-			if (t.a.y < val)val = t.a.y;
-			if (t.b.y < val)val = t.b.y;
-			if (t.c.y < val)val = t.c.y;
-		} return val;
-	}
-	float getMinZ()const {
-		float val = 9999999;
-		for (const Triangle& t : triangles) {
-			if (t.a.z < val)val = t.a.z;
-			if (t.b.z < val)val = t.b.z;
-			if (t.c.z < val)val = t.c.z;
-		} return val;
-	}
-	float getMaxX()const {
-		float val = -9999999;
-		for (const Triangle& t : triangles) {
-			if (t.a.x > val)val = t.a.x;
-			if (t.b.x > val)val = t.b.x;
-			if (t.c.x > val)val = t.c.x;
-		} return val;
-	}
-	float getMaxY()const {
-		float val = -9999999;
-		for (const Triangle& t : triangles) {
-			if (t.a.y > val)val = t.a.y;
-			if (t.b.y > val)val = t.b.y;
-			if (t.c.y > val)val = t.c.y;
-		} return val;
-	}
-	float getMaxZ()const {
-		float val = -9999999;
-		for (const Triangle& t : triangles) {
-			if (t.a.z > val)val = t.a.z;
-			if (t.b.z > val)val = t.b.z;
-			if (t.c.z > val)val = t.c.z;
-		} return val;
-	}
 	void getBoundingBox(float& minx, float& miny, float& minz, float& maxx, float& maxy, float& maxz) {
 		minx = miny = minz = 9999999;
 		maxx = maxy = maxz = -9999999;
