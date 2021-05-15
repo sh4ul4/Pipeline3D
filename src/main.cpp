@@ -22,18 +22,17 @@ struct Starstruct {
 	std::string radius;
 	std::string x;
 	std::string y;
-	std::string speed;
+	std::string speed_x;
+	std::string speed_y;
 	std::string simuspeed;
 };
 
-void main_addStar(Starstruct* A) {
-	std::cout << "testaddStar" << std::endl;
-	if((std::regex_match(A->mass, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(A->radius, std::regex("([0-9]*[.])[0-9]+")))
-		&& (std::regex_match(A->x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(A->y, std::regex("([0-9]*[.])[0-9]+")))){
-		Star star(std::stof(A->radius), std::stod(A->mass), Point2D<double>(std::stod(A->x), std::stod(A->y)), A->name);
-		std::cout << "testcreation etoile" << std::endl;
-		A->Ssys->addStar(&star);
-		std::cout << "testfincreationStar" << std::endl;
+void main_addStar(Starstruct* S) {
+	if((std::regex_match(S->mass, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->radius, std::regex("([0-9]*[.])[0-9]+")))
+		&& (std::regex_match(S->x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->y, std::regex("([0-9]*[.])[0-9]+")))){
+		Star* star = new Star(std::stof(S->radius), std::stod(S->mass), Point2D<double>(std::stod(S->x), std::stod(S->y)), S->name);
+		S->Ssys->addStar(star);
+		std::cout << S->Ssys->getStar()->getName() << std::endl;
 		return;
 	}
 	else {
@@ -42,15 +41,14 @@ void main_addStar(Starstruct* A) {
 	}
 }
 
-void main_addPlanet(Starstruct* A) {
-	std::cout << "testaddPlanet" << std::endl;
-	if ((std::regex_match(A->mass, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(A->radius, std::regex("([0-9]*[.])[0-9]+")))
-		&& (std::regex_match(A->x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(A->y, std::regex("([0-9]*[.])[0-9]+")))) {
-		Point2D<double> initialPos(std::stod(A->x), std::stod(A->y));
-		Point2D<double> initialSpeed(std::stod(A->x), std::stod(A->y));
-		Planet p(std::stof(A->radius), std::stod(A->mass), initialPos, initialSpeed, A->name);
-		A->Ssys->addPlanet(&p);
-		std::cout << "testfincreationPlanete" << std::endl;
+void main_addPlanet(Starstruct* S) {
+	if ((std::regex_match(S->mass, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->radius, std::regex("([0-9]*[.])[0-9]+")))
+		&& (std::regex_match(S->x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->y, std::regex("([0-9]*[.])[0-9]+")))
+		&& (std::regex_match(S->speed_x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->speed_y, std::regex("([0-9]*[.])[0-9]+")))) {
+		Point2D<double> initialPos(std::stod(S->x), std::stod(S->y));
+		Point2D<double> initialSpeed(std::stod(S->speed_x), std::stod(S->speed_y));
+		Planet* p = new Planet(std::stof(S->radius), std::stod(S->mass), initialPos, initialSpeed, S->name);
+		S->Ssys->addPlanet(p);
 		return;
 	}
 	else {
@@ -76,8 +74,15 @@ void main_startSimu(Starstruct* S) {
 }
 
 void main_reset(Starstruct* S) {
-	std::cout << "Resettest" << std::endl;
 	S->Ssys->reset();
+}
+
+void test_print(Starstruct* S) {
+	if(S->Ssys->getStar())
+		std::cout << S->Ssys->getStar()->getName() << std::endl;
+	else
+		std::cout << "Pas d'étoile" << std::endl;
+	return;
 }
 
 int main(int argc, char* argv[]) {
@@ -122,25 +127,24 @@ int main(int argc, char* argv[]) {
 	TextBox t_posy("Position Y", PATH + std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx + 220, i_TLy + 35), 100, 20, window.getRenderer());
 	TextInput i_posy(" ", PATH + std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx + 310, i_TLy + 35), 100, 20, window.getRenderer());
 
-	TextBox t_speed("Speed", PATH + std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx + 220, i_TLy + 70), 60, 20, window.getRenderer());
-	TextInput i_speed(" ", PATH + std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx + 310, i_TLy + 70), 100, 20, window.getRenderer());
+	TextBox t_speed_x("SpeedX", PATH + std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx + 220, i_TLy + 70), 80, 20, window.getRenderer());
+	TextInput i_speed_x(" ", PATH + std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx + 310, i_TLy + 70), 100, 20, window.getRenderer());
+
+	TextBox t_speed_y("SpeedY", PATH + std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx + 220, i_TLy + 105), 80, 20, window.getRenderer());
+	TextInput i_speed_y(" ", PATH + std::string("fonts/calibri.ttf"), 20, black, Point2D<int>(i_TLx + 310, i_TLy + 105), 100, 20, window.getRenderer());
 
 	i_TLx = 750;
-	i_TLy = 190;
+	i_TLy = 200;
 	TextBox t_planet("Planet", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
-	bm.addCheckBox<void*>("b_switch", black, gray, Point2D<int>(818, 190), 20);
+	bm.addCheckBox<void*>("b_switch", black, gray, Point2D<int>(818, 200), 20);
 	TextBox t_star("Star", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx + 110, i_TLy), 40, 20, window.getRenderer());
 
 	int b_width = 60, b_height = 25;
-	int b_topleftx = 1120, b_tly = 187;
+	int b_topleftx = 1120, b_tly = 197;
 	TextBox b_add("Add", PATH + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Starstruct*>("b_add", nullptr, green, black, &b_add, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 
-	//TEST
-	Star testStar(5000, 1000000, { 153,7456 }, "testStar");
-
-	Starstruct S = { &Ssys, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed.getText() };
-	//FIN_TEST
+	Starstruct S = { &Ssys, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText() };
 
 	i_TLy = 450;
 	TextBox t_simuspeed("Simulation Speed", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx, i_TLy), 140, 25, window.getRenderer());
@@ -164,7 +168,8 @@ int main(int argc, char* argv[]) {
 	b_topleftx += 147;
 
 	TextBox b_stopsimu("Stop simulation", PATH + std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<void*>("b_stop", nullptr, red, black, &b_stopsimu, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<Starstruct*>("b_stop", nullptr, red, black, &b_stopsimu, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<Starstruct*>("b_stop").setAction(test_print, &S);
 
 	b_topleftx += 147;
 
@@ -194,27 +199,30 @@ int main(int argc, char* argv[]) {
 	//6. ScrollZone
 	ScrollZone zone(inputEvent, window, Point2D<int>(750, 230), 430, 200, 520, 410);
 	zone.startDrawInside(window.getRenderer());
-		Draw::DrawTable(Point2D<int>(5, 5), 450, 400, 17, 5, white, black, window.getRenderer());
+		Draw::DrawTable(Point2D<int>(5, 5), 450, 400, 17, 6, white, black, window.getRenderer());
 	zone.stopDrawInside(window.getRenderer());
 
-	TextBox zone_name("NAME", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(30, 10), 80, 30, window.getRenderer());
+	TextBox zone_name("NAME", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(20, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(zone_name);
 
-	TextBox zone_mass("MASS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(120, 10), 80, 30, window.getRenderer());
+	TextBox zone_mass("MASS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(95, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(zone_mass);
 
-	TextBox zone_radius("RADIUS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(200, 10), 80, 30, window.getRenderer());
+	TextBox zone_radius("RADIUS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(165, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(zone_radius);
 
-	TextBox zone_position("POSITION", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(285, 10), 80, 30, window.getRenderer());
+	TextBox zone_position("POSITION", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(232, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(zone_position);
 
-	TextBox zone_speed("SPEED", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(390, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_speed);
+	TextBox zone_speed_x("SPEEDX", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(315, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_speed_x);
+
+	TextBox zone_speed_y("SPEEDY", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(390, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_speed_y);
 
 	//********************************************************************************************************
 	//TEST AFFICHE STAR/PLANETE LORSQUE CREATION
-	Point2D<int>pos(10, 30);
+	/*Point2D<int>pos(10, 30);
 	TextBox star_1_name(testStar.getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
 	pos.x += 90;
 	TextBox star_1_mass(std::to_string(testStar.getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
@@ -259,8 +267,9 @@ int main(int argc, char* argv[]) {
 	zone.linkTextBox(star_2_pos_y);
 	zone.linkTextBox(star_2_speed);
 	pos.x = 10;
-	pos.y += 25;
+	pos.y += 25;*/
 	//********************************************************************************************************
+	
 
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
@@ -269,7 +278,8 @@ int main(int argc, char* argv[]) {
 		i_name.checkForInput(inputEvent, window.getRenderer());
 		i_posx.checkForInput(inputEvent, window.getRenderer());
 		i_posy.checkForInput(inputEvent, window.getRenderer());
-		i_speed.checkForInput(inputEvent, window.getRenderer());
+		i_speed_x.checkForInput(inputEvent, window.getRenderer());
+		i_speed_y.checkForInput(inputEvent, window.getRenderer());
 		i_simuspeed.checkForInput(inputEvent, window.getRenderer());
 		i_loadsave.checkForInput(inputEvent, window.getRenderer());
 
@@ -292,7 +302,8 @@ int main(int argc, char* argv[]) {
 		i_name.render(window.getRenderer(), 0);
 		i_posx.render(window.getRenderer(), 0);
 		i_posy.render(window.getRenderer(), 0);
-		i_speed.render(window.getRenderer(), 0);
+		i_speed_x.render(window.getRenderer(), 0);
+		i_speed_y.render(window.getRenderer(), 0);
 		i_simuspeed.render(window.getRenderer(), 0);
 		i_loadsave.render(window.getRenderer(), 0);
 
@@ -302,12 +313,14 @@ int main(int argc, char* argv[]) {
 		t_name.render(window.getRenderer(), 0, 0);
 		t_posx.render(window.getRenderer(), 0, 0);
 		t_posy.render(window.getRenderer(), 0, 0);
-		t_speed.render(window.getRenderer(), 0, 0);
+		t_speed_x.render(window.getRenderer(), 0, 0);
+		t_speed_y.render(window.getRenderer(), 0, 0);
 		t_planet.render(window.getRenderer(), 0, 0);
 		t_star.render(window.getRenderer(), 0, 0);
 		t_simuspeed.render(window.getRenderer(), 0, 0);
 		t_globset.render(window.getRenderer(), 0, 0);
 		t_loadsave.render(window.getRenderer(), 0, 0);
+		
 		r.updateTriangles(manager);
 
 		//Mise a jour des valeurs
@@ -316,7 +329,8 @@ int main(int argc, char* argv[]) {
 		S.x = i_posx.getText();
 		S.y = i_posy.getText();
 		S.name = i_name.getText();
-		S.speed = i_speed.getText();
+		S.speed_x = i_speed_x.getText();
+		S.speed_y = i_speed_y.getText();
 		S.simuspeed = i_simuspeed.getText();
 
 		zone.update();

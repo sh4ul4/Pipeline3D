@@ -106,6 +106,7 @@ public:
         }
         if (planet)
             planets.push_back(planet);
+            std::cout << "Planete ajoutee au systeme stellaire" << std::endl;
     }
 
     /**
@@ -208,26 +209,21 @@ public:
     // Retire l'étoile du système stellaire
     void deleteStar()
     {
-        std::cout << "delete1" << std::endl;
         if (sun)
         {
             delete sun;
             sun = nullptr;
         }
-        std::cout << "delete2" << std::endl;
     }
 
     // Retire tous les astres du système stellaire
     void reset()
     {
-        std::cout << "Reinitialisationtest1" << std::endl;
         deleteStar();
-        std::cout << "Reinitialisationtest2" << std::endl;
         for (std::vector<Planet*>::iterator it = planets.begin(); it != planets.end();)
         {
             delete (*it);
             it = planets.erase(it);
-            std::cout << "Reinitialisationtestfor" << std::endl;
         }
         std::cout << "Reinitialisation du systeme stellaire terminee" << std::endl;
     }
