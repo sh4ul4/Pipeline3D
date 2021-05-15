@@ -32,7 +32,6 @@ void main_addStar(Starstruct* S) {
 		&& (std::regex_match(S->x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->y, std::regex("([0-9]*[.])[0-9]+")))){
 		Star* star = new Star(std::stof(S->radius), std::stod(S->mass), Point2D<double>(std::stod(S->x), std::stod(S->y)), S->name);
 		S->Ssys->addStar(star);
-		std::cout << S->Ssys->getStar()->getName() << std::endl;
 		return;
 	}
 	else {
@@ -77,14 +76,6 @@ void main_reset(Starstruct* S) {
 	S->Ssys->reset();
 }
 
-void test_print(Starstruct* S) {
-	if(S->Ssys->getStar())
-		std::cout << S->Ssys->getStar()->getName() << std::endl;
-	else
-		std::cout << "Pas d'étoile" << std::endl;
-	return;
-}
-
 int main(int argc, char* argv[]) {
 	Window window(1280, 720);
 	InputEvent inputEvent;
@@ -103,6 +94,30 @@ int main(int argc, char* argv[]) {
 	// 2. Chat
 	TextBox t_textinfo("> Currently no star system.", PATH + std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(40, 520), 650, 150, window.getRenderer());
 	bm.addRectButton<TextInput*>("b_Info", nullptr, white, black, &t_textinfo, Point2D<int>(30, 500), 680, 170);
+
+	//6. ScrollZone
+	ScrollZone zone(inputEvent, window, Point2D<int>(750, 230), 430, 200, 520, 410);
+	zone.startDrawInside(window.getRenderer());
+	Draw::DrawTable(Point2D<int>(5, 5), 450, 400, 17, 6, white, black, window.getRenderer());
+	zone.stopDrawInside(window.getRenderer());
+
+	TextBox zone_name("NAME", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(20, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_name);
+
+	TextBox zone_mass("MASS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(95, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_mass);
+
+	TextBox zone_radius("RADIUS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(165, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_radius);
+
+	TextBox zone_position("POSITION", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(232, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_position);
+
+	TextBox zone_speed_x("SPEEDX", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(315, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_speed_x);
+
+	TextBox zone_speed_y("SPEEDY", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(390, 10), 80, 30, window.getRenderer());
+	zone.linkTextBox(zone_speed_y);
 
 	// 3. Set un astre
 
@@ -144,11 +159,12 @@ int main(int argc, char* argv[]) {
 	TextBox b_add("Add", PATH + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Starstruct*>("b_add", nullptr, green, black, &b_add, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 
-	Starstruct S = { &Ssys, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText() };
-
 	i_TLy = 450;
 	TextBox t_simuspeed("Simulation Speed", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx, i_TLy), 140, 25, window.getRenderer());
 	TextInput i_simuspeed(" x1", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(i_TLx + 130, i_TLy - 3), 195, 25, window.getRenderer());
+
+	//INITIALISATION STRUCT
+	Starstruct S = { &Ssys, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText(), i_simuspeed.getText() };
 
 	b_width = 80, b_height = 30;
 	b_topleftx = 1100, b_tly = 445;
@@ -169,7 +185,6 @@ int main(int argc, char* argv[]) {
 
 	TextBox b_stopsimu("Stop simulation", PATH + std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Starstruct*>("b_stop", nullptr, red, black, &b_stopsimu, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-	bm.getButton<Starstruct*>("b_stop").setAction(test_print, &S);
 
 	b_topleftx += 147;
 
@@ -196,80 +211,33 @@ int main(int argc, char* argv[]) {
 	
 	b_topleftx = 720;
 
-	//6. ScrollZone
-	ScrollZone zone(inputEvent, window, Point2D<int>(750, 230), 430, 200, 520, 410);
-	zone.startDrawInside(window.getRenderer());
-		Draw::DrawTable(Point2D<int>(5, 5), 450, 400, 17, 6, white, black, window.getRenderer());
-	zone.stopDrawInside(window.getRenderer());
-
-	TextBox zone_name("NAME", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(20, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_name);
-
-	TextBox zone_mass("MASS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(95, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_mass);
-
-	TextBox zone_radius("RADIUS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(165, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_radius);
-
-	TextBox zone_position("POSITION", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(232, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_position);
-
-	TextBox zone_speed_x("SPEEDX", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(315, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_speed_x);
-
-	TextBox zone_speed_y("SPEEDY", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(390, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_speed_y);
-
 	//********************************************************************************************************
 	//TEST AFFICHE STAR/PLANETE LORSQUE CREATION
-	/*Point2D<int>pos(10, 30);
-	TextBox star_1_name(testStar.getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 90;
-	TextBox star_1_mass(std::to_string(testStar.getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 90;
-	TextBox star_1_radius(std::to_string(testStar.getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 90;
-	TextBox star_1_pos_x(std::to_string((int)testStar.getPosition().x) + ", ", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
+	Point2D<int>pos(8, 30);
+
+	std::string curName = "";
+	std::string curMass = "";
+	std::string curRadius = "";
+	std::string curpos_x = "";
+	std::string curpos_y = "";
+	TextBox star_1_name(curName, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 75, 30, window.getRenderer());
+	pos.x += 72;
+	TextBox star_1_mass(curMass, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
+	pos.x += 78;
+	TextBox star_1_radius(curRadius, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
+	pos.x += 75;
+	TextBox star_1_pos_x(curpos_x + ", ", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
 	pos.x += 45;
-	TextBox star_1_pos_y(std::to_string((int)testStar.getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 45;
-	TextBox star_1_speed("1", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 90;
-	TextBox b_delete_1("X", PATH + std::string("fonts/calibri.ttf"), 20, black, pos, 30, 30, window.getRenderer());
-	zone.buttonManager.addRectButton<void*>("delete_1", nullptr, red, black, &b_delete_1, pos, 20, 20);
+	TextBox star_1_pos_y(curpos_y, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
 	zone.linkTextBox(star_1_name);
 	zone.linkTextBox(star_1_mass);
 	zone.linkTextBox(star_1_radius);
 	zone.linkTextBox(star_1_pos_x);
 	zone.linkTextBox(star_1_pos_y);
-	zone.linkTextBox(star_1_speed);
 	pos.x = 10;
 	pos.y += 25;
 
-	TextBox star_2_name(testStar.getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 90;
-	TextBox star_2_mass(std::to_string(testStar.getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 90;
-	TextBox star_2_radius(std::to_string(testStar.getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 90;
-	TextBox star_2_pos_x(std::to_string((int)testStar.getPosition().x) + ", ", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 45;
-	TextBox star_2_pos_y(std::to_string((int)testStar.getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 45; 
-	TextBox star_2_speed("1", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 80, 30, window.getRenderer());
-	pos.x += 90;
-	TextBox b_delete_2("X", PATH + std::string("fonts/calibri.ttf"), 20, black, pos, 30, 30, window.getRenderer());
-	zone.buttonManager.addRectButton<void*>("delete_2", nullptr, red, black, &b_delete_1, pos, 20, 20);
-	zone.linkTextBox(star_2_name);
-	zone.linkTextBox(star_2_mass);
-	zone.linkTextBox(star_2_radius);
-	zone.linkTextBox(star_2_pos_x);
-	zone.linkTextBox(star_2_pos_y);
-	zone.linkTextBox(star_2_speed);
-	pos.x = 10;
-	pos.y += 25;*/
 	//********************************************************************************************************
-	
 
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
@@ -333,10 +301,31 @@ int main(int argc, char* argv[]) {
 		S.speed_y = i_speed_y.getText();
 		S.simuspeed = i_simuspeed.getText();
 
+		if (S.Ssys->getStar()) {
+			curName = S.Ssys->getStar()->getName();
+			curMass = std::to_string(S.Ssys->getStar()->getMass());
+			curRadius = std::to_string(S.Ssys->getStar()->getRadius());
+			curpos_x = std::to_string((int)S.Ssys->getStar()->getPosition().x);
+			curpos_y = std::to_string((int)S.Ssys->getStar()->getPosition().y);
+			star_1_name.update(curName, window.getRenderer());
+			star_1_mass.update(curMass, window.getRenderer());
+			star_1_radius.update(curRadius, window.getRenderer());
+			star_1_pos_x.update(curpos_x, window.getRenderer());
+			star_1_pos_y.update(curpos_y, window.getRenderer());
+			
+		}
+		else {
+			star_1_name.update(curName, PATH + std::string("fonts/calibri.ttf"), 18, white, window.getRenderer());
+			star_1_mass.update(curMass, PATH + std::string("fonts/calibri.ttf"), 18, white, window.getRenderer());
+			star_1_radius.update(curRadius, PATH + std::string("fonts/calibri.ttf"), 18, white, window.getRenderer());
+			star_1_pos_x.update(curpos_x, PATH + std::string("fonts/calibri.ttf"), 18, white, window.getRenderer());
+			star_1_pos_y.update(curpos_y, PATH + std::string("fonts/calibri.ttf"), 18, white, window.getRenderer());
+		}
+		
 		zone.update();
 		zone.render(window);
 
-		r.render({ 30,30 }, 680, 430, inputEvent, window, manager); 
+		//r.render({ 30,30 }, 680, 430, inputEvent, window, manager); 
 		if (keyboard.l.down) {
 			if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
 			else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
