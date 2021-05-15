@@ -5,6 +5,8 @@
 struct insertPack {
     int *selectedBox;
     ShapeManager *manager;
+    std::string name;
+    float scale;
 };
 
 struct camPack {
@@ -27,13 +29,22 @@ void makeWallsVisible(ShapeManager& manager)  {
 	manager.getShape("rightWall").visible = true;
 }
 
+void makeWallsInvisible(ShapeManager& manager)  {
+	manager.getShape("frontWall").visible = false;
+	manager.getShape("backWall").visible = false;
+	manager.getShape("leftWall").visible = false;
+	manager.getShape("rightWall").visible = false;
+}
+
 /**
  * @brief Changement de vue Caméra, actualise le nom de vue, le mur à cacher et la caméra courante.
  */
 void switchCam(camPack *p) {
 	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
 	makeWallsVisible(*p->manager);
-	if (p->referencedWall.compare("none"))
+    if (!p->referencedWall.compare("top"))
+        makeWallsInvisible(*p->manager);
+	if (p->referencedWall.compare("none") && p->referencedWall.compare("top"))
 		(*p->manager).getShape(p->referencedWall).visible = false;
 	(*p->manager).pushShapesEditing();
 	p->cam->setCurrent();
@@ -120,7 +131,7 @@ public:
 
 
         w1 *= 20; w3 *= 20;
-        int h = 60; // Hauteur de chaque mur
+        int h = 50; // Hauteur de chaque mur
         // abcd : sol, a1b1c1d1 : plafond
         Vertex a(-w1/2, 0, -w3/2); // Haut gauche      a           b
         Vertex b(-w1/2, 0,  w3/2); // Haut droit     
@@ -191,15 +202,17 @@ public:
                                     Point2D<int>(b_topleftx, b_tly),  250, 25, window.getRenderer()));
         b_tly += 40;
 
-        text_insertion1.emplace_back(new TextBox("Dimensions (Lxlxh)",  "fonts/calibri.ttf", 20, black, 
+        // text_insertion1.emplace_back(new TextBox("Dimensions (Lxlxh)",  "fonts/calibri.ttf", 20, black, 
+        //                             Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
+        text_insertion1.emplace_back(new TextBox("Echelle",  "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(975, b_tly), 80, 25, window.getRenderer()));
-        input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(1065, b_tly), 80, 25, window.getRenderer()));
-        input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(1155, b_tly), 80, 25, window.getRenderer()));
+        // input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
+        //                             Point2D<int>(1065, b_tly), 80, 25, window.getRenderer()));
+        // input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
+        //                             Point2D<int>(1155, b_tly), 80, 25, window.getRenderer()));
         b_tly += 40;
 
         // CHECKBOXs pour choisir un preset
@@ -311,8 +324,12 @@ private:
 
     static void insertPourDeVrai(insertPack *ip)  {
         if((*ip->selectedBox) == 1)  {
-            std::cout << "Insertion de TABLE\n";
-            (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 3);
+            // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
+            // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
+            (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
+            
+            // (*ip->manager).getShape("lit").groundZero();
+            HomeDesign::interactSpace = 0;
         }
         else
             std::cout << "Insertion de RIEN DU TOUT\n"; 
@@ -343,6 +360,13 @@ public: // Méthodes liées à des boutons créés dans main.cpp
 
         bmInsertion1.checkButtons();
 		bmInsertion1.renderButtons(window.getRenderer());
+        ip0.name = input_insertion1[0]->getText();
+        try  {
+		    ip0.scale = stof(input_insertion1[1]->getText());
+	    }  catch (const std::invalid_argument& ia)  {
+            ip0.scale = 1;
+        }
+        
         if (bmInsertion1.getButton<void*>("c_table").isClicked()) 
             checkBoxDominant = 1;
         else

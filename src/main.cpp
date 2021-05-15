@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 	 * ==============================*/
 	TextBox current_cam("Vue du haut", "fonts/calibri.ttf", 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
 	// Top: -90° / 230° (?) / y -= 5 pour zoomer
-	Camera topCam("topCam", {manager.getShape("floor").center.x, manager.getShape("floor").center.y + 200, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
+	Camera topCam("topCam", {manager.getShape("floor").center.x, manager.getShape("floor").center.y + 150, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	Camera freeCam("freeCam", { 120,300,65 }, 60, 0, 4);
 	// -90°, PI (180°) / x -= 5 pour zoomer
 	Camera faceCam("faceCam", {manager.getShape("frontWall").center.x + 100, manager.getShape("frontWall").center.y, manager.getShape("frontWall").center.z}, 60, -1.5708, 3.14159);
@@ -180,7 +180,7 @@ int main(int argc, char* argv[]) {
 	TextBox sceneTitle(hm.getSceneName(), "fonts/calibri.ttf", 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
 
 	// Liaison caméras / boutons de changement de vues
-	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window, &manager, "none" };
+	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window, &manager, "top" };
 	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall" };
 	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall" };
 	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall" };
