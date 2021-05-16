@@ -23,6 +23,18 @@ public:
 			maxz = std::max(std::max(std::max(maxz, t.a.z), t.b.z), t.c.z);
 		}
 	}
+
+	void getBoundingBox2D(float& minx, float& miny, float& maxx, float& maxy) {
+		minx = miny = 9999999;
+		maxx = maxy = -9999999;
+		for (const Triangle& t : triangles) {
+			if (!t.visible) continue;
+			minx = std::min(std::min(std::min(minx, t.aScreen.x), t.bScreen.x), t.cScreen.x);
+			miny = std::min(std::min(std::min(miny, t.aScreen.y), t.bScreen.y), t.cScreen.y);
+			maxx = std::max(std::max(std::max(maxx, t.aScreen.x), t.bScreen.x), t.cScreen.x);
+			maxy = std::max(std::max(std::max(maxy, t.aScreen.y), t.bScreen.y), t.cScreen.y);
+		}
+	}
 public:
 	// Le nom unique de la shape
 	std::string name;
@@ -171,6 +183,18 @@ public:
 			triangles[i].b += center;
 			triangles[i].c += center;
 		}
+	}
+
+	bool hit2D(const Point2D<int> mouse, const Point2D<int> origin) {
+		if (!visible)return false;
+		float aminx, aminy;
+		float amaxx, amaxy;
+		getBoundingBox2D(aminx, aminy, amaxx, amaxy);
+		aminx += origin.x;
+		amaxx += origin.x;
+		aminy += origin.y;
+		amaxy += origin.y;
+		return mouse.x <= amaxx && mouse.x >= aminx && mouse.y <= amaxy && mouse.y >= aminy;
 	}
 
 	void groundZero() {
