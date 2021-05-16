@@ -89,7 +89,7 @@ public:
 		if (width > maxWidth)width = maxWidth;
 		if (height > maxHeight)height = maxHeight;
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
+		SDL_Surface* surface = TTF_RenderUTF8_Blended(font, text.c_str(), fontColor.toSDL_Color());
 		if (texture) SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_FreeSurface(surface);
