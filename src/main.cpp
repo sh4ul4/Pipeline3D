@@ -259,6 +259,7 @@ int main(int argc, char* argv[]) {
 			case 4:
 				// Clic sur un meuble !
 				hm.renderFurnitureInteraction(inputEvent, window, manager);
+				manager.getShape(hm.getSelectedShape()).drawHit2D(Point2D<int>(30,30), window);
 				break;
 			default:
 				// Render infos sur la scène actuelle

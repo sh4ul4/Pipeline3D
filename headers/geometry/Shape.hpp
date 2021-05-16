@@ -11,7 +11,7 @@
  */
 class Shape {
 public:
-	void getBoundingBox(float& minx, float& miny, float& minz, float& maxx, float& maxy, float& maxz) {
+	void getBoundingBox(float& minx, float& miny, float& minz, float& maxx, float& maxy, float& maxz) const {
 		minx = miny = minz = 9999999;
 		maxx = maxy = maxz = -9999999;
 		for (const Triangle& t : triangles) {
@@ -24,7 +24,7 @@ public:
 		}
 	}
 
-	void getBoundingBox2D(float& minx, float& miny, float& maxx, float& maxy) {
+	void getBoundingBox2D(float& minx, float& miny, float& maxx, float& maxy) const {
 		minx = miny = 9999999;
 		maxx = maxy = -9999999;
 		for (const Triangle& t : triangles) {
@@ -185,7 +185,7 @@ public:
 		}
 	}
 
-	bool hit2D(const Point2D<int> mouse, const Point2D<int> origin, const float& width, const float& height) {
+	bool hit2D(const Point2D<int> mouse, const Point2D<int> origin, const float& width, const float& height)const {
 		if (!visible || mouse.x < origin.x || mouse.x > origin.x + width || mouse.y < origin.y || mouse.y > origin.y + height)return false;
 		float aminx, aminy;
 		float amaxx, amaxy;
@@ -195,6 +195,32 @@ public:
 		aminy += origin.y;
 		amaxy += origin.y;
 		return mouse.x <= amaxx && mouse.x >= aminx && mouse.y <= amaxy && mouse.y >= aminy;
+	}
+
+	bool hit2D(const Point2D<int> mouse, const Point2D<int> origin, const float& width, const float& height, const Window& w, const Color& color = red)const {
+		if (!visible || mouse.x < origin.x || mouse.x > origin.x + width || mouse.y < origin.y || mouse.y > origin.y + height)return false;
+		float aminx, aminy;
+		float amaxx, amaxy;
+		getBoundingBox2D(aminx, aminy, amaxx, amaxy);
+		aminx += origin.x;
+		amaxx += origin.x;
+		aminy += origin.y;
+		amaxy += origin.y;
+		bool res = mouse.x <= amaxx && mouse.x >= aminx && mouse.y <= amaxy && mouse.y >= aminy;
+		if (res)Draw::DrawRect(Point2D<int>(aminx, aminy), amaxx - aminx, amaxy - aminy, 1, color, w.getRenderer());
+		return res;
+	}
+
+	void drawHit2D(const Point2D<int> origin, const Window& w, const Color& color = red)const {
+		if (!visible)return;
+		float aminx, aminy;
+		float amaxx, amaxy;
+		getBoundingBox2D(aminx, aminy, amaxx, amaxy);
+		aminx += origin.x;
+		amaxx += origin.x;
+		aminy += origin.y;
+		amaxy += origin.y;
+		Draw::DrawRect(Point2D<int>(aminx, aminy), amaxx - aminx, amaxy - aminy, 1, color, w.getRenderer());
 	}
 
 	void groundZero() {

@@ -98,8 +98,10 @@ private:
      */ 
     // std::vector<Furniture> furnitures;
     std::vector<furnitureInfos*> furnitures;
-    std::vector<std::string> furnitures_ref;
-    ShapeManager furnitureManager;
+
+    // J'aurais pu utiliser ce manager ??
+    // En soi ça change rien à part les 5 murs 
+    // ShapeManager furnitureManager;
 
     int un = 1, deux = 2, trois = 3;
 
@@ -135,7 +137,9 @@ private:
 
     ButtonManager bmCameras;
     int checkBoxDominant = -1;
-    insertPack ip1, ip2, ip3;
+    insertPack ip1, ip2;
+    insertObjPack ip3;
+    editFurniturePack fp;
 
     std::string selectedFurniture;
     
@@ -216,7 +220,7 @@ public:
         initInsertion1(manager, window);
         initInsertion2(manager, window);
         initInsertion3(manager, window);
-        initFurnitureInteraction(window);
+        initFurnitureInteraction(manager, window);
     };
 
     /**
@@ -349,8 +353,6 @@ private:
                                     Point2D<int>(b_topleftx, b_tly),  250, 25, window.getRenderer()));
         b_tly += 40;
 
-        // text_insertion1.emplace_back(new TextBox("Dimensions (Lxlxh)",  "fonts/calibri.ttf", 20, black, 
-        //                             Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         text_insertion1.emplace_back(new TextBox("Échelle",  "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
@@ -389,7 +391,7 @@ private:
         // }
         
 
-        ip1 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &furnitures_ref, &bmInsertion1, &checkboxes1};
+        ip1 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion1, &checkboxes1};
         bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip1);
         // setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
     }
@@ -432,7 +434,7 @@ private:
         bmInsertion2.addCheckBox<void*>(std::string("c_4"), light_gray, black, Point2D(1135, b_tly), 40);
         bmInsertion2.addCheckBox<void*>(std::string("c_5"), light_gray, black, Point2D(1185, b_tly), 40);
         bmInsertion2.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
-        ip2 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &furnitures_ref, &bmInsertion2 };
+        ip2 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion2 };
         bmInsertion2.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip2);
         // setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
     }
@@ -441,46 +443,48 @@ private:
         // Espace interaction : Point2D<int>(970, 30), 270, 506
         int b_topleftx = 975, b_tly = 40;
         int b_width = 260;
-        text_insertion3.emplace_back(new TextBox("Insertion type 3", "fonts/Segoe UI Bold.ttf", 30, black, 
-                                    Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
+        text_insertion3.emplace_back(new TextBox("Insérer un fichier .obj", "fonts/Segoe UI Bold.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), b_width, 80, window.getRenderer()));
         text_insertion3.back()->center(Point2D<int>(970, 30), 270);
         b_tly += 60;
 
             // y = 100
-        text_insertion3.emplace_back(new TextBox("Nom (referencement)", "fonts/calibri.ttf", 20, black, 
+        text_insertion3.emplace_back(new TextBox("Nom (référencement)", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion3.emplace_back(new TextInput("default", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly),  250, 25, window.getRenderer()));
         b_tly += 40;
 
-        // text_insertion3.emplace_back(new TextBox("Dimensions (Lxlxh)",  "fonts/calibri.ttf", 20, black, 
-        //                             Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
+        text_insertion3.emplace_back(new TextBox("Chemin d'accès au dossier",  "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
+        b_tly += 25;
+        input_insertion3.emplace_back(new TextInput("OBJ/default", "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(975, b_tly), b_width, 25, window.getRenderer()));
+        b_tly += 40;
+
+        text_insertion3.emplace_back(new TextBox("Source du fichier .obj",  "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
+        b_tly += 25;
+        input_insertion3.emplace_back(new TextInput("default.obj", "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(975, b_tly), b_width, 25, window.getRenderer()));
+        b_tly += 40;
+
         text_insertion3.emplace_back(new TextBox("Échelle",  "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
-        input_insertion3.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(975, b_tly), 80, 25, window.getRenderer()));
+        input_insertion3.emplace_back(new TextInput("1", "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(975, b_tly), b_width, 25, window.getRenderer()));
         
+        text_insertion3.emplace_back(new TextBox("ceci est un test de textbox un peu trop grande pour le rectangle",  "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, 400), 260, 80, window.getRenderer()));
 
-        // CHECKBOXs pour choisir un preset
-        b_tly += 80;
-        text_insertion3.emplace_back(new TextBox("Meubles préconçus",  "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
-        text_insertion3.back()->center(Point2D<int>(970, 30), 270);
-        b_tly += 30;
-        bmInsertion3.addCheckBox<void*>(std::string("c_1"), light_gray, black, Point2D(985 , b_tly), 40);
-        bmInsertion3.addCheckBox<void*>(std::string("c_2"), light_gray, black, Point2D(1035, b_tly), 40);
-        bmInsertion3.addCheckBox<void*>(std::string("c_3"), light_gray, black, Point2D(1085, b_tly), 40);
-        bmInsertion3.addCheckBox<void*>(std::string("c_4"), light_gray, black, Point2D(1135, b_tly), 40);
-        bmInsertion3.addCheckBox<void*>(std::string("c_5"), light_gray, black, Point2D(1185, b_tly), 40);
-        bmInsertion3.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
-        ip3 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &furnitures_ref, &bmInsertion3 };
-        bmInsertion3.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip3);
-        // setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
+        bmInsertion3.addRectTextButton<insertObjPack*>("b_insertFinal1", Point2D<int>(980, 350), 250, 40, "Insérer sur la scène");
+        ip3 = { &interactSpace, manager, &furnitures };
+        bmInsertion3.getButton<insertObjPack*>("b_insertFinal1").setAction(objInsertion, &ip3);
     }
 
-    void initFurnitureInteraction(Window &window)  {
+    void initFurnitureInteraction(ShapeManager *manager, Window &window)  {
         int b_topleftx = 980, b_tly = 40;
         int b_width = 260;
         text_furnitInteract.emplace_back(new TextBox("Nom du meuble", "fonts/Segoe UI Bold.ttf", 30, black, Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
@@ -510,9 +514,9 @@ private:
                                                        Point2D<int>(b_topleftx, b_tly), 250, 25, window.getRenderer()));
         text_furnitInteract.back()->center(Point2D<int>(970, 30), 270);
         b_tly += 25;
-        bmFurnitInteract.addRectTextButton<insertPack *>("bmfi_fu_Renommer", Point2D<int>(980, b_tly), 250, 25, "Renommer le meuble");
-        // ip3 = {&checkBoxDominant, &interactSpace, manager, &furnitures_ref, &bmFurnitInteract};
-        // bmFurnitInteract.getButton<insertPack *>("bmfi_fu_Renommer").setAction(furnitureRotation, &ip3);
+        bmFurnitInteract.addRectTextButton<editFurniturePack*>("bmfi_fu_Renommer", Point2D<int>(980, b_tly), 250, 25, "Renommer le meuble");
+        fp = { &interactSpace, manager, &furnitures };
+        bmFurnitInteract.getButton<editFurniturePack*>("bmfi_fu_Renommer").setAction(renameFurniture, &fp);
 
         b_tly += 40;
         input_furnitInteract.emplace_back(new TextInput("<échelle>", "fonts/calibri.ttf", 20, black,
@@ -520,24 +524,17 @@ private:
         text_furnitInteract.back()->center(Point2D<int>(970, 30), 270);
         b_tly += 25;
 
-        bmFurnitInteract.addRectTextButton<insertPack *>("bmfi_fu_Echelle", Point2D<int>(980, b_tly), 250, 25, "Changer l'échelle");
-        // ip3 = {&checkBoxDominant, &interactSpace, manager, &furnitures_ref, &bmFurnitInteract};
-        // bmFurnitInteract.getButton<insertPack *>("bmfi_fu_Echelle").setAction(furnitureRotation, &ip3);
-        
+        bmFurnitInteract.addRectTextButton<editFurniturePack*>("bmfi_fu_Echelle", Point2D<int>(980, b_tly), 250, 25, "Changer l'échelle");
+        bmFurnitInteract.getButton<editFurniturePack*>("bmfi_fu_Echelle").setAction(rescaleFurniture, &fp);
+       
+        bmFurnitInteract.addRectTextButton<void *>("bmfi_fu_Deplacer", Point2D<int>(980, 390), 250, 40, "Deplacer le meuble");
+        // bmFurnitInteract.getButton<void *>("bmfi_fu_Deplacer").setAction(furnitureDeplacer, &fp);
 
-        bmFurnitInteract.addRectTextButton<insertPack *>("bmfi_fu_Deplacer", Point2D<int>(980, 390), 250, 40, "Deplacer le meuble");
-        // ip3 = {&checkBoxDominant, &interactSpace, manager, &furnitures_ref, &bmFurnitInteract};
-        // bmFurnitInteract.getButton<insertPack *>("bmfi_fu_Deplacer").setAction(furnitureDeplacer, &ip3);
+        bmFurnitInteract.addRectTextButton<void *>("bmfi_fu_Rotation", Point2D<int>(980, 440), 250, 40, "Rotation du meuble");
+        // bmFurnitInteract.getButton<void *>("bmfi_fu_Rotation").setAction(furnitureRotation, &fp);
 
-        bmFurnitInteract.addRectTextButton<insertPack *>("bmfi_fu_Rotation", Point2D<int>(980, 440), 250, 40, "Rotation du meuble");
-        // ip3 = {&checkBoxDominant, &interactSpace, manager, &furnitures_ref, &bmFurnitInteract};
-        // bmFurnitInteract.getButton<insertPack *>("bmfi_fu_Rotation").setAction(furnitureRotation, &ip3);
-
-        bmFurnitInteract.addRectTextButtonCustom<insertPack *>("bmfi_fu_suppr", Point2D<int>(980, 490), 250, 40, red, black, "Supprimer", 14, black);
-        // ip3 = {&checkBoxDominant, &interactSpace, manager, &furnitures_ref, &bmFurnitInteract};
-        // bmFurnitInteract.getButton<insertPack *>("bmfi_fu_suppr").setAction(furnitureSuppression, &ip3);
-
-        // bmFurnitInteract.addCheckBox<void *>(std::string("c_1"), light_gray, black, Point2D(985, b_tly), 40);
+        bmFurnitInteract.addRectTextButtonCustom<editFurniturePack *>("bmfi_fu_suppr", Point2D<int>(980, 490), 250, 40, red, black, "Supprimer", 14, black);
+        bmFurnitInteract.getButton<editFurniturePack*>("bmfi_fu_suppr").setAction(deleteFurniture, &fp);
     }
     
 
@@ -548,12 +545,6 @@ private:
      */
     void addFurniture(Furniture f);
 
-    /**
-     * @brief Méthode appelée lorsque les boutons de changement de vue
-     * 
-     * @param int   Représente le numéro de la vue (entre 1 et 6)
-     */ 
-    void setView(int view);
 
     /**
      * @brief Responsable de l'affichage sur l'espace (4) lors des modifications 
@@ -568,13 +559,14 @@ private:
      */
     bool checkSpace(std::string f_name);
 
-    
 
     void editSurface();
 
     void saveScene();
 
 public: // Méthodes liées à des boutons créés dans main.cpp
+
+    std::string getSelectedShape() const { return furnitures[fp.selected]->name; };
 
     void renderDefault(InputEvent& inputEvent, Window& window)  {
         for (size_t i = 0; i < text_insertion_def.size(); i++)  
@@ -638,8 +630,11 @@ public: // Méthodes liées à des boutons créés dans main.cpp
     } 
 
     void renderInsertion3(InputEvent& inputEvent, Window& window)  {
-        for (size_t i = 0; i < text_insertion3.size(); i++)  
+        text_insertion3.back()->update(ip3.objRetVal, window.getRenderer());
+        for (size_t i = 0; i < text_insertion3.size(); i++)  {
             text_insertion3[i]->render(window.getRenderer(), 0, 0);
+            text_insertion3[i]->center(Point2D<int>(970, 30), 270);
+        }
 
         for (size_t i = 0; i < input_insertion3.size(); i++)  {
             input_insertion3[i]->checkForInput(inputEvent, window.getRenderer());
@@ -648,17 +643,15 @@ public: // Méthodes liées à des boutons créés dans main.cpp
 
         bmInsertion3.checkButtons();
 		bmInsertion3.renderButtons(window.getRenderer());
+        // ip3 = { .name = input_insertion3[0]->getText(), input_insertion3[1]->getText(), input_insertion3[2]->getText() };
         ip3.name = input_insertion3[0]->getText();
+        ip3.objPath = input_insertion3[1]->getText();
+        ip3.objSource = input_insertion3[2]->getText();
         try  {
-		    ip3.scale = stof(input_insertion3[1]->getText());
+		    ip3.scale = stof(input_insertion3[3]->getText());
 	    }  catch (const std::invalid_argument& ia)  {
             ip3.scale = 1;
         }
-        
-        if (bmInsertion3.getButton<void*>("c_1").isClicked()) 
-            checkBoxDominant = 1;
-        else
-            checkBoxDominant = 0;
     }
 
     void renderFurnitureInteraction(InputEvent& inputEvent, Window& window, ShapeManager& manager)  {
@@ -668,16 +661,15 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         // 4 Echelle
 
         // Faire un struct pour les meubles avec un name, type, echelle, (???)
-        furnitureInfos *curr = nullptr;
-        for (size_t i = 0; i < furnitures.size(); i++)  {
-            if (furnitures[i]->name == manager.getShape(selectedFurniture).name)
-                curr = furnitures[i];
-        }
-        ASSERT(curr, "Meuble '" + manager.getShape(selectedFurniture).name + "' introuvable !");
+        furnitureInfos *curr = furnitures[fp.selected];
+        // for (size_t i = 0; i < furnitures.size(); i++)  {
+        //     if (furnitures[i]->name == manager.getShape(furnitures[fp.selected].name).name)
+        //         curr = furnitures[i];
+        //         fp.selected = i;
+        // }
+        // ASSERT(curr, "Meuble '" + manager.getShape(furnitures[fp.selected].name).name + "' introuvable !");
         
-
-        text_furnitInteract[0]->update(manager.getShape(selectedFurniture).name, window.getRenderer());
-
+        text_furnitInteract[0]->update(curr->name, window.getRenderer());
         text_furnitInteract[2]->update(curr->type, window.getRenderer());
         
         std::stringstream stream;
@@ -695,6 +687,14 @@ public: // Méthodes liées à des boutons créés dans main.cpp
             input_furnitInteract[i]->render(window.getRenderer(), 0);
         }
 
+        fp.newName = input_furnitInteract[0]->getText();
+
+        try  {
+		    fp.newScale = stof(input_furnitInteract[1]->getText());
+	    }  catch (const std::invalid_argument& ia)  {
+            fp.newScale = curr->scale;
+        }
+
         bmFurnitInteract.checkButtons();
 		bmFurnitInteract.renderButtons(window.getRenderer());
     }
@@ -704,14 +704,13 @@ public: // Méthodes liées à des boutons créés dans main.cpp
      */
     void checkFurnitureClick(Mouse mouse, ShapeManager& manager) {
         // Boucle sur tous les meubles de la pièce
-        for (size_t i = 0; i < furnitures_ref.size(); i++)  {
-            if (mouse.leftClick && manager.getShape(furnitures_ref[i]).hit2D(Point2D<int>(mouse.x, mouse.y), Point2D<int>(30,30), 900, 506)) {
-                // manager.getShape(furnitures_ref[i]).move(Vector(1, 0, 0));
+        for (size_t i = 0; i < furnitures.size(); i++)  {
+            if (mouse.leftClick && manager.getShape(furnitures[i]->name).hit2D(Point2D<int>(mouse.x, mouse.y), Point2D<int>(30,30), 900, 506)) {
+                // manager.getShape(furnitures[i]->name).move(Vector(1, 0, 0));
                 interactSpace = 4;
-                selectedFurniture = furnitures_ref[i];
+                selectedFurniture = furnitures[i]->name;
+                fp.selected = i;
             }
-            
-            // Get bouding box de la shape et check si le clic est dessus
         }
 
     }

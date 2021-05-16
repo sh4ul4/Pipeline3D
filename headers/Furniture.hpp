@@ -171,11 +171,22 @@ struct insertPack {
     int *interactSpace;
     ShapeManager *manager;
     std::vector<furnitureInfos*> *furnitures;
-    std::vector<std::string> *furnitures_ref;
     ButtonManager *bmInsertion;
     std::vector<std::string> *checkboxes;
     std::string name;
     float scale;
+};
+
+struct insertObjPack {
+    int *interactSpace;
+    ShapeManager *manager;
+    std::vector<furnitureInfos*> *furnitures;
+
+    std::string name;
+    float scale;
+    std::string objPath;
+    std::string objSource;
+    std::string objRetVal = "";
 };
 
 struct radioButtonPack  {
@@ -184,28 +195,91 @@ struct radioButtonPack  {
     int selected;
 };
 
+struct editFurniturePack  {
+    int *interactSpace;
+    ShapeManager *manager;
+    std::vector<furnitureInfos*> *furnitures;
+    int selected;
+
+    std::string newName;
+    float newScale;
+    // std::string retVal = "";
+};
+
 static void furnitureInsertion(insertPack *ip)  {
-    switch ((*ip->selectedBox))  {
-        case 1:
-            (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
-            (*ip->furnitures_ref).push_back(ip->name);
-            // (*ip->manager).getShape("lit").groundZero();
+    switch (*ip->interactSpace)  {
+    case 1: // Insertion des meubles de type 1
+        switch ((*ip->selectedBox))  {
+            case 1: // Table en bois
+                (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
+    
+                // (*ip->manager).getShape(ip->name).groundZero();
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", ip->scale));
+                break;
+            case 2:
+                // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
+                // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
+                break;
+            default:
+                std::cout << "Insertion de RIEN DU TOUT\n";
+                break;
+        }
+        break;
 
-            (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", ip->scale));
-            break;
-        case 2:
-            // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
-            // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
-            break;
-        default:
-            std::cout << "Insertion de RIEN DU TOUT\n";
-            break;
+    case 2: // Insertion des meubles de type 2
+        break;
+
+    default:
+        break;
     }
-
+    
     // Reset du rectangle d'interaction
     (*ip->interactSpace) = 0;
     
     // Reset des checkboxes du bmInsertion
     for (size_t i = 0; i < (*ip->checkboxes).size(); i++)  
         (*ip->bmInsertion).getButton<radioButtonPack*>((*ip->checkboxes)[i]).setClicked(false);
+}
+
+static void objInsertion(insertObjPack *ip)  {
+    std::string path = FIND_FILE_BUT_DONT_LEAVE(ip->objPath);
+    if (!path.empty())  { 
+        (*ip->manager).imprtShapeObj(path+'/', ip->objSource, ip->name, ip->scale);
+        (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Objet importé manuellement", ip->scale));
+        ip->objRetVal = "L'objet '" + ip->name + "' a été importé avec succès.";
+    }
+    else  {
+        ip->objRetVal = "Le fichier '" + ip->objPath + "' est introuvable.";
+    }
+    std::cout << ip->objRetVal << '\n';
+
+     // pas de reset du rectangle d'interaction pour afficher le dernier message
+    // (*ip->interactSpace) = 0;
+}
+
+static void renameFurniture(editFurniturePack *fp)  {
+    // Vérifier si le nouveau nom n'est pas déjà pris
+    if (!(*fp->manager).nameTaken(fp->newName))  {
+        // Rename la shape dans manager et dans furnitures.name
+        (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).name = fp->newName;
+        (*fp->furnitures)[fp->selected]->name = fp->newName;
+    }
+    else  {
+        // fp->retVal = "Déjà existant !";
+        std::cout << "Le nom de meuble '" << fp->newName << "' est déjà existant !\n";
+    } 
+}
+
+static void rescaleFurniture(editFurniturePack *fp)  {
+    // Multiplication de l'echelle par nouveau/ancienne pour reset la scale
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rescale(fp->newScale / (*fp->furnitures)[fp->selected]->scale);
+    (*fp->furnitures)[fp->selected]->scale = fp->newScale;
+}
+
+static void deleteFurniture(editFurniturePack *fp)  {
+    // Faire une vraie fonction delete, ou alors utiliser la visibilité pour un CTRL Z
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).visible = false;
+    (*fp->manager).pushShapesEditing();
+    // Quitter l'interface d'interaction 
+    (*fp->interactSpace) = 0;
 }
