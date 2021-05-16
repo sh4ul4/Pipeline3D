@@ -160,6 +160,8 @@ struct insertPack {
     int *interactSpace;
     ShapeManager *manager;
     std::vector<std::string> *furnitures;
+    ButtonManager *bmInsertion;
+    std::vector<std::string> *checkboxes;
     std::string name;
     float scale;
 };
@@ -182,4 +184,10 @@ static void furnitureInsertion(insertPack *ip)  {
 
     // Reset du rectangle d'interaction
     (*ip->interactSpace) = 0;
+    
+    // Reset des checkboxes du bmInsertion
+    for (size_t i = 0; i < (*ip->checkboxes).size(); i++)  {
+        // std::cout << (*ip->checkboxes)[i].name << '\n';
+        (*ip->bmInsertion).getButton<void*>((*ip->checkboxes)[i]).setClicked(false);
+    }
 }

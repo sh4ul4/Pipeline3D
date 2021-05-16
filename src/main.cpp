@@ -161,7 +161,8 @@ int main(int argc, char* argv[]) {
 	Camera gaucheCam("gaucheCam", {manager.getShape("leftWall").center.x, manager.getShape("leftWall").center.y, manager.getShape("leftWall").center.z - 100}, 60, 0, 3.1416);
 	// Droit: PI, PI / z -= 5 pour zoomer
 	Camera droitCam("droitCam", {manager.getShape("rightWall").center.x, manager.getShape("rightWall").center.y, manager.getShape("rightWall").center.z + 100}, 60, 3.14159, 3.14159);
-	topCam.lock();  freeCam.lock();  faceCam.lock();  backCam.lock();  gaucheCam.lock();  droitCam.lock();
+	topCam.lock(); freeCam.lock();  faceCam.lock();  backCam.lock();  gaucheCam.lock();  droitCam.lock();
+	// topCam.setControlDragAndDrop(); 
 
 	
 	// 3. Boutons interaction globale
@@ -245,21 +246,22 @@ int main(int argc, char* argv[]) {
 		if (Camera::getCurrent().getCamId() == "topCam")
 			hm.checkFurnitureClick(mouse, manager);
 
-		switch (HomeDesign::interactSpace == 1)  {
+		switch (HomeDesign::interactSpace)  {
 			case 1:
 				hm.renderInsertion1(inputEvent, window);
 				break;
 			case 2:
-				// hm.renderInsertion2(inputEvent, window);
+				hm.renderInsertion2(inputEvent, window);
 				break;
 			case 3:
-				// hm.renderInsertion3(inputEvent, window);
+				hm.renderInsertion3(inputEvent, window);
 				break;
 			case 4:
 				// Clic sur un meuble !
 				break;
 			default:
 				// Render infos sur la scène actuelle
+				hm.renderDefault(inputEvent, window);
 				break;
 		}
 

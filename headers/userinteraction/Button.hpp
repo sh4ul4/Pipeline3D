@@ -21,6 +21,7 @@ public:
 	virtual void setSignal(bool& signal) {}
 	virtual void removeSignal() {}
 	virtual bool isClicked()const { return clicked; }
+	virtual void setClicked(bool click) { clicked = click; }
 	virtual bool isSelected()const { return selected; }
 	virtual void playAction() {}
 	virtual void render(SDL_Renderer* renderer) const {}
@@ -285,6 +286,7 @@ public:
 	}
 
 	bool isClicked() const { return checked; }
+	void setClicked(bool click) const { checked = click; }
 };
 
 class ButtonManager {
