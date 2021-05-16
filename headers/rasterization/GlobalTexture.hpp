@@ -212,13 +212,17 @@ public:
 	void drawLine(const GlobalTexture& globalTexture, const Point2D<int>& a, const float& adepth, const Point2D<int>& b, const float& bdepth, const Color& color) {
 		std::vector<Point2D<int>> line;
 		ScanLine(a.x, a.y, b.x, b.y, line, height, width);
+		const Uint32 color32 = color.toUint32();
+		const float depthDelta = bdepth - adepth;
+		const float pointDelta = a.distance(b);
+		const float delta = (1.0f/pointDelta) * depthDelta;
 		for (auto& p : line) {
-			float pixdepth = adepth + (a.distance(p)/a.distance(b)) * (bdepth - adepth);
+			float pixdepth = adepth + a.distance(p) * delta;
 			const int it = p.x + p.y * width;
 			// clipping check & pixel depth check
 			if (globalTexture.zbuffer[it] <= pixdepth)continue;
 			globalTexture.zbuffer[it] = pixdepth;
-			pixels[it] = (color.b << 24) + (color.g << 16) + (color.r << 8) + (color.a);
+			pixels[it] = color32;
 			//pixels[it] = (Maths::clamp0_255(255 - pixdepth * 800) << 24) + (Maths::clamp0_255(255 - pixdepth * 800) << 16) + (Maths::clamp0_255(255 - pixdepth * 800) << 8) + (255);
 		}
 	}
