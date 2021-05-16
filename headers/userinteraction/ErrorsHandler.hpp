@@ -38,6 +38,18 @@ std::string FIND_FILE(std::string file) {
     FATAL_ERR("invalid string given as path : " + file);
 }
 
+std::string FIND_FILE_BUT_DONT_LEAVE(std::string file) {
+    if (file.length() > 1)  {
+        for (int i = 0; i < 3; i++) {
+            if (FILE_EXISTS(file)) return file;
+            if(file[0] == '.' || file[0] == '/')file = "." + file;
+            else file = "./" + file;
+        }
+    }
+    std::cout << "invalid string given as path: " << file << '\n';
+    return "";
+}
+
 /**
  * @brief Path to the root directory of the project
  */
