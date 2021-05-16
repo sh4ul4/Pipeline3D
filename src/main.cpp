@@ -82,8 +82,8 @@ int main(int argc, char* argv[]) {
 	
 	TextBox t_error("", "fonts/calibri.ttf", 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, window.getRenderer());
 
-	bm.addRectTextButton<initPack*>("b_initApp", Point2D<int>(440, 415), 400, 40, "Nouvelle scene a partir de la surface donnee");
-	bm.addRectTextButton<int*>("b_initImport", Point2D<int>(440, 475), 400, 40, "Importer une scene depuis un fichier");
+	bm.addRectTextButton<initPack*>("b_initApp", Point2D<int>(440, 415), 400, 40, "Nouvelle scène à partir de la surface donnée");
+	bm.addRectTextButton<int*>("b_initImport", Point2D<int>(440, 475), 400, 40, "Importer une scène depuis un fichier");
 	initPack i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText() };
 	bm.getButton<initPack*>("b_initApp").setAction(checkInitialization, &i0);
 
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 				t_error.update("Merci d'entrer des dimensions valides en cliquant sur les barres de saisie !", window.getRenderer());
 				break;
 			case 3:
-				t_error.update("Dimensions valides ! Chargement de la piece...", "fonts/calibri.ttf", 20, hd_greenButtons, window.getRenderer());
+				t_error.update("Dimensions valides ! Chargement de la pièce...", "fonts/calibri.ttf", 20, hd_greenButtons, window.getRenderer());
 				break;
 			default:
 				t_error.update("Erreur innatendue !", window.getRenderer());
@@ -184,8 +184,8 @@ int main(int argc, char* argv[]) {
 	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall" };
 	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall" };
 	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall" };
-	camPack p4 = { &backCam, "Vue de l'arriere", &current_cam, &window, &manager, "backWall" };
-	camPack p5 = { &freeCam, "Deplacement libre", &current_cam, &window, &manager, "none", &r };
+	camPack p4 = { &backCam, "Vue de l'arrière", &current_cam, &window, &manager, "backWall" };
+	camPack p5 = { &freeCam, "Déplacement libre", &current_cam, &window, &manager, "none", &r };
 	hm.setViewsButtonsAction(p0,p1,p2,p3,p4,p5);
 	
 

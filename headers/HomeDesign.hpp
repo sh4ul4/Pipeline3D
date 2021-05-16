@@ -5,6 +5,7 @@
 struct insertPack {
     int *selectedBox;
     ShapeManager *manager;
+    std::vector<std::string> *furnitures;
     std::string name;
     float scale;
 };
@@ -95,6 +96,7 @@ private:
      * @brief Vector des meubles (classe Furniture) existants sur l'instance courante
      */ 
     std::vector<Furniture> furnitures;
+    std::vector<std::string> furnitures_ref;
     ShapeManager furnitureManager;
 
     int un = 1, deux = 2, trois = 3;
@@ -107,7 +109,6 @@ private:
     ButtonManager bmCameras;
     int checkBoxDominant = -1;
     insertPack ip0;
-    Texture2D TABLE, TABLETRUE;
     
 public:
     static int interactSpace;
@@ -122,7 +123,7 @@ public:
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
     HomeDesign(std::string scene, ButtonManager& bm, ShapeManager *manager, Window& window, InputEvent& inputEvent, float w1, float w3)
-                : scene_name(scene), bmInsertion1(inputEvent, window), bmCameras(inputEvent, window), TABLE("HM-Res/TABLE.jpg", window.getRenderer()), TABLETRUE("HM-Res/TABLE-TRUE.jpg", window.getRenderer()) {
+                : scene_name(scene), bmInsertion1(inputEvent, window), bmCameras(inputEvent, window) {
         std::cout << " > Constructeur HomeDesign" << std::endl;
         surface = w1 * w3;
         std::cout << "Mur 1: " << w1 << "m" << std::endl;
@@ -204,22 +205,26 @@ public:
 
         // text_insertion1.emplace_back(new TextBox("Dimensions (Lxlxh)",  "fonts/calibri.ttf", 20, black, 
         //                             Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
-        text_insertion1.emplace_back(new TextBox("Echelle",  "fonts/calibri.ttf", 20, black, 
+        text_insertion1.emplace_back(new TextBox("Échelle",  "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(975, b_tly), 80, 25, window.getRenderer()));
-        // input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
-        //                             Point2D<int>(1065, b_tly), 80, 25, window.getRenderer()));
-        // input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
-        //                             Point2D<int>(1155, b_tly), 80, 25, window.getRenderer()));
-        b_tly += 40;
+        
 
         // CHECKBOXs pour choisir un preset
-        
-        bmInsertion1.addCheckBox<void*>(std::string("c_table"), light_gray, black, Point2D(990, b_tly), 50, &TABLETRUE, &TABLE);
-        bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Inserer sur la scene");
-        ip0 = { &checkBoxDominant, manager };
+        b_tly += 80;
+        text_insertion1.emplace_back(new TextBox("Meubles préconçus",  "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
+        text_insertion1.back()->center(Point2D<int>(970, 30), 270);
+        b_tly += 30;
+        bmInsertion1.addCheckBox<void*>(std::string("c_table"), light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/TABLE-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/TABLE.jpg", window.getRenderer()));
+        bmInsertion1.addCheckBox<void*>(std::string("c_2"), light_gray, black, Point2D(1035, b_tly), 40);
+        bmInsertion1.addCheckBox<void*>(std::string("c_3"), light_gray, black, Point2D(1085, b_tly), 40);
+        bmInsertion1.addCheckBox<void*>(std::string("c_3"), light_gray, black, Point2D(1135, b_tly), 40);
+        bmInsertion1.addCheckBox<void*>(std::string("c_4"), light_gray, black, Point2D(1185, b_tly), 40);
+        bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
+        ip0 = { &checkBoxDominant, manager, &furnitures_ref };
         bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(insertPourDeVrai, &ip0);
         // setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
     };
@@ -296,10 +301,10 @@ private:
         bmCameras.addRectTextButtonCustom<camPack*>("b_View3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, dark_gray, black, "Vue Droite", 14, light_gray);
         b_topleftx += 140;
 
-        bmCameras.addRectTextButtonCustom<camPack*>("b_View4", Point2D<int>(b_topleftx, b_tly), b_width, b_height, dark_gray, black, "Vue Arriere", 14, light_gray);
+        bmCameras.addRectTextButtonCustom<camPack*>("b_View4", Point2D<int>(b_topleftx, b_tly), b_width, b_height, dark_gray, black, "Vue Arrière", 14, light_gray);
         b_topleftx += 140;
 
-        bmCameras.addRectTextButtonCustom<camPack*>("b_freeMotionView", Point2D<int>(b_topleftx, b_tly), b_width+80, b_height, hd_greenButtons, black, "Deplacement libre", 14, light_gray);
+        bmCameras.addRectTextButtonCustom<camPack*>("b_freeMotionView", Point2D<int>(b_topleftx, b_tly), b_width+80, b_height, hd_greenButtons, black, "Déplacement libre", 14, light_gray);
     }
 
    
@@ -327,7 +332,7 @@ private:
             // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
             // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
             (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
-            
+            (*ip->furnitures).push_back(ip->name);
             // (*ip->manager).getShape("lit").groundZero();
             HomeDesign::interactSpace = 0;
         }

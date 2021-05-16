@@ -61,7 +61,7 @@ public:
 		font = TTF_OpenFont(FIND_FILE(fontPath).c_str(), fontSize);
 		if (!font)FATAL_ERR("could not load font");
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
 		width = surface->w;
 		height = surface->h;
 		if (height > maxHeight) height = maxHeight;
@@ -117,7 +117,7 @@ public:
 		font = TTF_OpenFont(FIND_FILE(fontPath).c_str(), fontSize);
 		if (!font)FATAL_ERR("could not load font");
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
 		width = surface->w;
 		height = surface->h;
 		if (height > maxHeight) height = maxHeight;
@@ -134,7 +134,7 @@ public:
 	 */
 	void update(std::string text, SDL_Renderer* renderer) {
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
 		width = surface->w;
 		height = surface->h;
 		if (height > maxHeight) height = maxHeight;
