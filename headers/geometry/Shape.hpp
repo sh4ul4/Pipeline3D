@@ -185,8 +185,8 @@ public:
 		}
 	}
 
-	bool hit2D(const Point2D<int> mouse, const Point2D<int> origin) {
-		if (!visible)return false;
+	bool hit2D(const Point2D<int> mouse, const Point2D<int> origin, const float& width, const float& height) {
+		if (!visible || mouse.x < origin.x || mouse.x > origin.x + width || mouse.y < origin.y || mouse.y > origin.y + height)return false;
 		float aminx, aminy;
 		float amaxx, amaxy;
 		getBoundingBox2D(aminx, aminy, amaxx, amaxy);
