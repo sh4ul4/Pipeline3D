@@ -278,7 +278,7 @@ public:
 	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
 	void checkButton(const InputEvent& inputEvent, const Point2D<int> pos) {
 		if (!ButtonBase::clicked && mouseClickInside(inputEvent, pos)) {
-			ButtonBase::playAction();
+			Button<paramType>::playAction();
 			if (ButtonBase::signal) *ButtonBase::signal = true;
 			this->checked = !this->checked;
 		}
@@ -286,7 +286,7 @@ public:
 	}
 
 	bool isClicked() const { return checked; }
-	void setClicked(bool click) const { checked = click; }
+	void setClicked(bool click) { checked = click; }
 };
 
 class ButtonManager {

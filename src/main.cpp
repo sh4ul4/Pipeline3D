@@ -225,7 +225,7 @@ int main(int argc, char* argv[]) {
 		}
 
 		// Fond de pipeline et rectangle espace interactions
-		drawer.DrawFillRoundedRectContoured(Point2D<int>(30,30), 900, 506, 3, light_gray, black, window.getRenderer());
+		drawer.DrawFillRoundedRectContoured(Point2D<int>(30,30), 900, 506, 5, light_gray, black, window.getRenderer());
 		drawer.DrawFillRoundedRectContoured(Point2D<int>(970, 30), 270, 506, 3, white, black, window.getRenderer());
 
 		// if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(30,30),900,506, window);
@@ -243,7 +243,7 @@ int main(int argc, char* argv[]) {
 		sceneTitle.render(window.getRenderer(), 0, 0);
 		
 		// Check de clic souris si on est en vue du haut
-		if (Camera::getCurrent().getCamId() == "topCam")
+		if (Camera::getCurrent().getCamId() != "freeCam")
 			hm.checkFurnitureClick(mouse, manager);
 
 		switch (HomeDesign::interactSpace)  {
@@ -258,6 +258,7 @@ int main(int argc, char* argv[]) {
 				break;
 			case 4:
 				// Clic sur un meuble !
+				hm.renderFurnitureInteraction(inputEvent, window, manager);
 				break;
 			default:
 				// Render infos sur la scène actuelle

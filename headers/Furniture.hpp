@@ -155,23 +155,43 @@ public:
 };
 
 
+struct furnitureInfos  {
+    std::string name;
+    std::string type;
+    float scale;
+
+    furnitureInfos(std::string name, std::string type, float scale) : 
+        name(name), type(type), scale(scale) {}
+
+    furnitureInfos() = delete;
+};
+
 struct insertPack {
     int *selectedBox;
     int *interactSpace;
     ShapeManager *manager;
-    std::vector<std::string> *furnitures;
+    std::vector<furnitureInfos*> *furnitures;
+    std::vector<std::string> *furnitures_ref;
     ButtonManager *bmInsertion;
     std::vector<std::string> *checkboxes;
     std::string name;
     float scale;
 };
 
+struct radioButtonPack  {
+    ButtonManager *bm;
+    std::vector<std::string> *checkboxes;
+    int selected;
+};
+
 static void furnitureInsertion(insertPack *ip)  {
     switch ((*ip->selectedBox))  {
         case 1:
             (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
-            (*ip->furnitures).push_back(ip->name);
+            (*ip->furnitures_ref).push_back(ip->name);
             // (*ip->manager).getShape("lit").groundZero();
+
+            (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", ip->scale));
             break;
         case 2:
             // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
@@ -186,8 +206,6 @@ static void furnitureInsertion(insertPack *ip)  {
     (*ip->interactSpace) = 0;
     
     // Reset des checkboxes du bmInsertion
-    for (size_t i = 0; i < (*ip->checkboxes).size(); i++)  {
-        // std::cout << (*ip->checkboxes)[i].name << '\n';
-        (*ip->bmInsertion).getButton<void*>((*ip->checkboxes)[i]).setClicked(false);
-    }
+    for (size_t i = 0; i < (*ip->checkboxes).size(); i++)  
+        (*ip->bmInsertion).getButton<radioButtonPack*>((*ip->checkboxes)[i]).setClicked(false);
 }
