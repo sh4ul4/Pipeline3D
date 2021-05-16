@@ -176,13 +176,8 @@ private:
 		k = n / 2;
 
 		while (cnt--) {
-			if (y >= 0 && y < maxHeight /*&& x >= 0 && x < maxWidth*/) {
-				int xtmp;
-				if (x < 0)xtmp = 0;
-				else if (x >= maxWidth) xtmp = maxWidth - 1;
-				else xtmp = x;
-				line.emplace_back(xtmp, y);
-			}
+			if (y >= 0 && y < maxHeight /*&& x >= 0 && x < maxWidth*/)
+				if(x <= maxWidth && x >= 0)line.emplace_back(x, y);
 			k += n;
 			if (k < m) {
 				x += dx2;
@@ -217,7 +212,7 @@ public:
 		const float pointDelta = a.distance(b);
 		const float delta = (1.0f/pointDelta) * depthDelta;
 		for (auto& p : line) {
-			float pixdepth = adepth + a.distance(p) * delta;
+			const float pixdepth = adepth + a.distance(p) * delta;
 			const int it = p.x + p.y * width;
 			// clipping check & pixel depth check
 			if (globalTexture.zbuffer[it] <= pixdepth)continue;
