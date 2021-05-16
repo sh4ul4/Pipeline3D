@@ -153,3 +153,33 @@ public:
      */
     void selectPreset(int preset);
 };
+
+
+struct insertPack {
+    int *selectedBox;
+    int *interactSpace;
+    ShapeManager *manager;
+    std::vector<std::string> *furnitures;
+    std::string name;
+    float scale;
+};
+
+static void furnitureInsertion(insertPack *ip)  {
+    switch ((*ip->selectedBox))  {
+        case 1:
+            (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
+            (*ip->furnitures).push_back(ip->name);
+            // (*ip->manager).getShape("lit").groundZero();
+            break;
+        case 2:
+            // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
+            // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
+            break;
+        default:
+            std::cout << "Insertion de RIEN DU TOUT\n";
+            break;
+    }
+
+    // Reset du rectangle d'interaction
+    (*ip->interactSpace) = 0;
+}

@@ -2,13 +2,7 @@
 #include <ctime>
 #include <iomanip>
 
-struct insertPack {
-    int *selectedBox;
-    ShapeManager *manager;
-    std::vector<std::string> *furnitures;
-    std::string name;
-    float scale;
-};
+
 
 struct camPack {
 	Camera *cam;
@@ -23,28 +17,22 @@ struct camPack {
 /**
  * @brief Rend l'ensemble des murs de la pièce visibles
  */
-void makeWallsVisible(ShapeManager& manager)  {
-	manager.getShape("frontWall").visible = true;
-	manager.getShape("backWall").visible = true;
-	manager.getShape("leftWall").visible = true;
-	manager.getShape("rightWall").visible = true;
+void editWallsVisibility(ShapeManager& manager, bool visibility)  {
+	manager.getShape("frontWall").visible = visibility;
+	manager.getShape("backWall").visible = visibility;
+	manager.getShape("leftWall").visible = visibility;
+	manager.getShape("rightWall").visible = visibility;
 }
 
-void makeWallsInvisible(ShapeManager& manager)  {
-	manager.getShape("frontWall").visible = false;
-	manager.getShape("backWall").visible = false;
-	manager.getShape("leftWall").visible = false;
-	manager.getShape("rightWall").visible = false;
-}
 
 /**
  * @brief Changement de vue Caméra, actualise le nom de vue, le mur à cacher et la caméra courante.
  */
 void switchCam(camPack *p) {
 	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
-	makeWallsVisible(*p->manager);
+	editWallsVisibility(*p->manager, true);
     if (!p->referencedWall.compare("top"))
-        makeWallsInvisible(*p->manager);
+        editWallsVisibility(*p->manager, false);
 	if (p->referencedWall.compare("none") && p->referencedWall.compare("top"))
 		(*p->manager).getShape(p->referencedWall).visible = false;
 	(*p->manager).pushShapesEditing();
@@ -61,7 +49,7 @@ void goFreeView(camPack *p) {
 
 	p->cam->setCurrent();
 	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
-	// makeWallsVisible(*p->manager);
+	// editWallsVisibility(*p->manager, true);
 	(*p->manager).pushShapesEditing();
 	// Make Zoom buttons invisible ?
 }
@@ -152,9 +140,6 @@ public:
         Bitmap::newBitmap(std::string("RIGHT"), "textures/80s_1.jpg");
 
         manager->addRectangle("floor", a, b, c, d, 4, white, false, Bitmap::getBitmap(std::string("sol")));
-        // manager.addSphere("point_a", a, 5, blue);
-        // manager.addSphere("point_c", c, 5, yellow);
-        // manager.addSphere("point_d", d, 5, red);
         
         // Division à mettre en fonction de la surface
         manager->addRectangle("frontWall", c1, d1, c, d, 4, white, false, Bitmap::getBitmap("FACE"));
@@ -221,11 +206,11 @@ public:
         bmInsertion1.addCheckBox<void*>(std::string("c_table"), light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/TABLE-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/TABLE.jpg", window.getRenderer()));
         bmInsertion1.addCheckBox<void*>(std::string("c_2"), light_gray, black, Point2D(1035, b_tly), 40);
         bmInsertion1.addCheckBox<void*>(std::string("c_3"), light_gray, black, Point2D(1085, b_tly), 40);
-        bmInsertion1.addCheckBox<void*>(std::string("c_3"), light_gray, black, Point2D(1135, b_tly), 40);
-        bmInsertion1.addCheckBox<void*>(std::string("c_4"), light_gray, black, Point2D(1185, b_tly), 40);
+        bmInsertion1.addCheckBox<void*>(std::string("c_4"), light_gray, black, Point2D(1135, b_tly), 40);
+        bmInsertion1.addCheckBox<void*>(std::string("c_5"), light_gray, black, Point2D(1185, b_tly), 40);
         bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
-        ip0 = { &checkBoxDominant, manager, &furnitures_ref };
-        bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(insertPourDeVrai, &ip0);
+        ip0 = { &checkBoxDominant, &interactSpace, manager, &furnitures_ref };
+        bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip0);
         // setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
     };
 
@@ -327,18 +312,18 @@ private:
      */
     void reloadInterface();
 
-    static void insertPourDeVrai(insertPack *ip)  {
-        if((*ip->selectedBox) == 1)  {
-            // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
-            // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
-            (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
-            (*ip->furnitures).push_back(ip->name);
-            // (*ip->manager).getShape("lit").groundZero();
-            HomeDesign::interactSpace = 0;
-        }
-        else
-            std::cout << "Insertion de RIEN DU TOUT\n"; 
-    }
+    // static void insertPourDeVrai(insertPack *ip)  {
+    //     if((*ip->selectedBox) == 1)  {
+    //         // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
+    //         // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
+    //         (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
+    //         (*ip->furnitures).push_back(ip->name);
+    //         // (*ip->manager).getShape("lit").groundZero();
+    //         HomeDesign::interactSpace = 0;
+    //     }
+    //     else
+    //         std::cout << "Insertion de RIEN DU TOUT\n"; 
+    // }
 
     /**
      * @brief Vérifie selon la surface disponible et les meubles déjà en place si 
@@ -347,6 +332,8 @@ private:
      * @return  bool    Renvoie vrai si le meuble peut être placé 
      */
     bool checkSpace(std::string f_name);
+
+    
 
     void editSurface();
 
@@ -376,6 +363,17 @@ public: // Méthodes liées à des boutons créés dans main.cpp
             checkBoxDominant = 1;
         else
             checkBoxDominant = 0;
+    }
+
+    /**
+     * @brief Check si un click de mouse a touché l'un des meubles de la pièce
+     */
+    void checkFurnitureClick(Mouse mouse, ShapeManager& manager) {
+        // Boucle sur tous les meubles de la pièce
+        for (size_t i = 0; i < furnitures_ref.size(); i++)  {
+            manager.getShape(furnitures_ref[i]); 
+            // Get bouding box de la shape et check si le clic est dessus
+        }
     }
 
     static void exportImage(Render *r) {

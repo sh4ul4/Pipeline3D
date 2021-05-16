@@ -241,8 +241,26 @@ int main(int argc, char* argv[]) {
 
 		sceneTitle.render(window.getRenderer(), 0, 0);
 		
-		if (HomeDesign::interactSpace == 1)  {
-			hm.renderInsertion1(inputEvent, window);
+		// Check de clic souris si on est en vue du haut
+		if (Camera::getCurrent().getCamId() == "topCam")
+			hm.checkFurnitureClick(mouse, manager);
+
+		switch (HomeDesign::interactSpace == 1)  {
+			case 1:
+				hm.renderInsertion1(inputEvent, window);
+				break;
+			case 2:
+				// hm.renderInsertion2(inputEvent, window);
+				break;
+			case 3:
+				// hm.renderInsertion3(inputEvent, window);
+				break;
+			case 4:
+				// Clic sur un meuble !
+				break;
+			default:
+				// Render infos sur la scène actuelle
+				break;
 		}
 
 		current_cam.render(window.getRenderer(), 0, 0);
