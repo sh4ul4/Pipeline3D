@@ -142,6 +142,8 @@ private:
 
     // Contient les informations nécessaires au modifications du meuble selectionné
     editFurniturePack fp;
+    int maVar = 0;
+    bool monMoving = false;
     
 public:
     static int interactSpace;
@@ -733,11 +735,19 @@ public: // Méthodes liées à des boutons créés dans main.cpp
 
                 // Drag and drop en vue haut et face uniquement
                 if (((Camera::getCurrent().getCamId() == "topCam") || (Camera::getCurrent().getCamId() == "faceCam")) && mouse.moving)  {
-                    manager.getShape(furnitures[i]->name).move(Vector(mouse.ymov, 0, mouse.xmov));
-
+                    const float scale = (float)1.0 / (float)tan(60 / 2.0 * M_PI / 180); // 1.732
+                    std::cout << "Mouse move: " << mouse.ymov << " | " << mouse.xmov << "\n";
+                    // std::cout << Vector(mouse.ymov, 0, mouse.xmov) / scale * manager.getShape(furnitures[i]->name).center.distance(Camera::getCurrent().getCameraPosition()) << '\n';
+                    maVar ++;
+                    
                         // Option1 : Warp sur le centre du meuble
-                    // manager.getShape(furnitures[i]->name).getBoundingBox2D(minx, miny, maxx, maxy);
-                    // SDL_WarpMouseInWindow(window.getWindow(), ((maxx+minx)/2)+30, ((maxy+miny)/2)+30);
+                    if (maVar % 5 == 0)  {
+                        manager.getShape(furnitures[i]->name).getBoundingBox2D(minx, miny, maxx, maxy);
+                        SDL_WarpMouseInWindow(window.getWindow(), ((maxx+minx)/2)+30, ((maxy+miny)/2)+30);
+                    }
+                    else if (mouse.ymov < 10 && mouse.xmov < 10 && mouse.ymov > -10 && mouse.xmov > -10) {
+                        manager.getShape(furnitures[i]->name).move(Vector(mouse.ymov, 0, mouse.xmov));
+                    }
                 }
 
                 return;
@@ -765,64 +775,64 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         if (Camera::getCurrent().getCamId() == "topCam" || Camera::getCurrent().getCamId() == "faceCam")  {
             switch (direction)  {
                 case 0: // Move Left
-                    deplacement = Vector(0, 0, -2);
+                    deplacement = Vector(0, 0, -1);
                     break;
                 case 1: // Move Right
-                    deplacement = Vector(0, 0, 2);
+                    deplacement = Vector(0, 0, 1);
                     break; 
                 case 2: // Move Down
-                    deplacement = Vector(2, 0, 0);
+                    deplacement = Vector(1, 0, 0);
                     break;
                 case 3: // Move Up
-                    deplacement = Vector(-2, 0, 0);
+                    deplacement = Vector(-1, 0, 0);
                     break;
             }
         }
         else if (Camera::getCurrent().getCamId() == "backCam")  {
             switch (direction)  {
                 case 0: // Move Left
-                    deplacement = Vector(0, 0, 2);
+                    deplacement = Vector(0, 0, 1);
                     break;
                 case 1: // Move Right
-                    deplacement = Vector(0, 0, -2);
+                    deplacement = Vector(0, 0, -1);
                     break; 
                 case 2: // Move Down
-                    deplacement = Vector(-2, 0, 0);
+                    deplacement = Vector(-1, 0, 0);
                     break;
                 case 3: // Move Up
-                    deplacement = Vector(2, 0, 0);
+                    deplacement = Vector(1, 0, 0);
                     break;
             }
         }
         else if (Camera::getCurrent().getCamId() == "droitCam")  {
             switch (direction)  {
                 case 0: // Move Left
-                    deplacement = Vector(2, 0, 0);
+                    deplacement = Vector(1, 0, 0);
                     break;
                 case 1: // Move Right
-                    deplacement = Vector(-2, 0, 0);
+                    deplacement = Vector(-1, 0, 0);
                     break; 
                 case 2: // Move Down
-                    deplacement = Vector(0, 0, 2);
+                    deplacement = Vector(0, 0, 1);
                     break;
                 case 3: // Move Up
-                    deplacement = Vector(0, 0, -2);
+                    deplacement = Vector(0, 0, -1);
                     break;
             }
         }
         else if (Camera::getCurrent().getCamId() == "gaucheCam")  {
             switch (direction)  {
                 case 0: // Move Left
-                    deplacement = Vector(-2, 0, 0);
+                    deplacement = Vector(-1, 0, 0);
                     break;
                 case 1: // Move Right
-                    deplacement = Vector(2, 0, 0);
+                    deplacement = Vector(1, 0, 0);
                     break; 
                 case 2: // Move Down
-                    deplacement = Vector(0, 0, -2);
+                    deplacement = Vector(0, 0, -1);
                     break;
                 case 3: // Move Up
-                    deplacement = Vector(0, 0, 2);
+                    deplacement = Vector(0, 0, 1);
                     break;
             }
         }

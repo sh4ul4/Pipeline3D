@@ -274,7 +274,6 @@ int main(int argc, char* argv[]) {
 					hm.moveFurniture(manager, 2);
 				if (keyboard.up.pressed) 
 					hm.moveFurniture(manager, 3);
-
 				break;
 			default:
 				// Render infos sur la scène actuelle
