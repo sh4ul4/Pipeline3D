@@ -40,7 +40,11 @@ public:
      * @param name Nom de la planète
      * @param visible Détermine la visibilité de la planète
      */
-    Planet(float radius, double mass, Point2D<double>& initialPosition, Point2D<double>& initialSpeed, std::string name, bool visible = true) : Luminary(radius, mass, initialPosition, name) {}
+    Planet(float radius, double mass, Point2D<double>& initialPosition, Point2D<double>& initialSpeed, std::string name, bool visible = true) : Luminary(radius, mass, initialPosition, name) {
+        this->initialSpeed=initialSpeed;
+        this->initialPosition=initialPosition;
+        this->visible=visible;
+        }
 
     /*===========================================================================================
      *      METHODES

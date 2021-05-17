@@ -883,15 +883,34 @@ int main(int argc, char* argv[]) {
 	b_topleftx = 720;
 	
 	//********************************************************************************************************
-
-	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
 	
-	//test
-	/*std::vector<Planet*> Planets = Ssys.getPlanets();
-	std::cout<<Planets.size()<<std::endl;
 	Ssys.addStar(new Star(693340000,1.989*pow(10,30),Point2D<double>(0,0),"Soleil"));
-	Ssys.addPlanet();
-	//Ssys*/
+	
+	//afficher tous les objets du système stellaire
+	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "sun", 0.001);
+	Point2D<double>	p1(0,149600000000);
+	Point2D<double> p2(800,0);
+	Ssys.addPlanet(new Planet(6371000,5.972*pow(10,24),p1,p2,std::string("earth")));
+	std::vector<Planet*> Planets = Ssys.getPlanets();
+
+	Planet *test=Planets[0];
+	Point2D<double> Position=test->getPosition();
+	std::cout<<Position.x<<std::endl;
+	std::cout<<Position.y<<std::endl;
+	Position.x=Position.x/pow(10,10);
+	Position.y=Position.y/pow(10,10);
+	std::cout<<Position.x<<std::endl;
+	std::cout<<Position.y<<std::endl;
+	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", test->getName(), 0.001);
+	manager.getShape(test->getName()).setPos(Vertex(Position.x,Position.y,0));
+
+
+	/*
+	for(int i=0;Planets.size();i++){
+		manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
+		manager.getShape("earth").setPos(Vertex(100,100,0));
+		}
+	*/
 
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {

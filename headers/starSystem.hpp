@@ -30,14 +30,12 @@ public:
     {
         std::cout << " > Constructeur starSystem" << std::endl;
 
-        Bitmap::newBitmap(std::string("Space"), std::string(PATH + "textures/space2.jpg"));
+        //Bitmap::newBitmap(std::string("Space"), std::string(PATH + "textures/space2.jpg"));
 
         Vertex hg = { 0, 100, 0 };
         Vertex bg = { 0, 0, 0 };
         Vertex hd = { 158, 100, 0 };
         Vertex bd = { 158, 0, 0 };
-        const Rectangle rect("fond", hg, bg, hd, bd, 1, blue, true, Bitmap::getBitmap("Space"));
-        manager.addRectangle(rect);
         std::cout << "Espace créé" << std::endl;
     }
 

@@ -138,6 +138,10 @@ public:
 	void move(const Vector& movement) {
 		for (Triangle& t : triangles)t.move(movement);
 	}
+	void setPos(const Vertex& pos) {
+		const Vector movement = pos - center;
+		move(movement);
+	}
 };
 
 
