@@ -622,7 +622,7 @@ int main(int argc, char* argv[]) {
 	ShapeManager manager;
 	TextBox::initLibrary();
 	ButtonManager bm(inputEvent, window);
-	Render r(window, 900, 506); // 16:9
+	Render r(window, 600, 400); // 16:9
 	Mouse mouse;
 	Keyboard keyboard;
 	
@@ -877,12 +877,23 @@ int main(int argc, char* argv[]) {
 	bm.addRectButton<void*>("b_save", nullptr, green, black, &b_save, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 
 	//5. Camera
-	Camera faceCam({ manager.getShape("fond").center.x, manager.getShape("fond").center.y, manager.getShape("fond").center.z - 100 }, 60, 0, 3.14519);
+	Camera faceCam(Vertex(0,0,0), 60, 0, 3.14519);
 	faceCam.lock();
 	
 	b_topleftx = 720;
 	
 	//********************************************************************************************************
+
+	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
+	
+	//test
+	std::vector<Planet*> Planets = Ssys.getPlanets();
+	std::cout<<Planets.size()<<std::endl;
+	Ssys.addStar(new Star(693340000,1.989*pow(10,30),Point2D<double>(0,0),"Soleil"));
+	Ssys.addPlanet();
+	//Ssys
+
+
 
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
