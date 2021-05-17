@@ -36,6 +36,9 @@ struct Starstruct {
 	TextBox** TPY;
 	TextBox** TSX;
 	TextBox** TSY;
+
+	TextBox* T_info;
+
 };
 
 void main_addStar(Starstruct* S) {
@@ -46,7 +49,7 @@ void main_addStar(Starstruct* S) {
 		return;
 	}
 	else {
-		std::cout << "Valeurs non initialisees !" << std::endl;
+		S->T_info->update("Valeurs non initialisees !", S->w->getRenderer());
 		return;
 	}
 }
@@ -70,7 +73,7 @@ void main_addPlanet(Starstruct* S) {
 		return;
 	}
 	else {
-		std::cout << "Valeurs non initialisees !" << std::endl;
+		S->T_info->update("Valeurs non initialisees !", S->w->getRenderer());
 		return;
 	}
 }
@@ -78,11 +81,11 @@ void main_addPlanet(Starstruct* S) {
 void main_setSimulation(Starstruct* S) {
 	if (std::regex_match(S->simuspeed, std::regex("([0-9]*[.])[0-9]+"))) {
 		S->Ssys->setSimulationSpeed(std::stof(S->simuspeed));
-		std::cout << "Vitesse de simulation correctement modifiee" << std::endl;
+		S->T_info->update("Vitesse de simulation correctement modifiee", S->w->getRenderer());
 		return;
 	}
 	else {
-		std::cout << "Entrer une valeur valide !" << std::endl;
+		S->T_info->update("Entrer une valeur valide !", S->w->getRenderer());
 		return;
 	}
 }
@@ -95,14 +98,13 @@ void main_reset(Starstruct* S) {
 	S->Ssys->reset();
 	int i;
 	for (i = 0; i < 15; i++) {
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->zone->render(*(S->w));
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 }
 
@@ -113,18 +115,12 @@ void main_deleteStar(Starstruct* S) {
 
 void main_deletePlanet1(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 1) {
+		std::cout << S->Ssys->getPlanets().size() << std::endl;
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(0)->getName());
+
+		std::cout << S->Ssys->getPlanets().size() << std::endl;
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -133,13 +129,13 @@ void main_deletePlanet1(Starstruct* S) {
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -149,15 +145,6 @@ void main_deletePlanet2(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(1)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -166,13 +153,13 @@ void main_deletePlanet2(Starstruct* S) {
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 
 	}
 	return;
@@ -183,15 +170,6 @@ void main_deletePlanet3(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(2)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -200,13 +178,13 @@ void main_deletePlanet3(Starstruct* S) {
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 
 	}
 	return;
@@ -217,15 +195,6 @@ void main_deletePlanet4(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(3)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -234,13 +203,13 @@ void main_deletePlanet4(Starstruct* S) {
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -250,15 +219,6 @@ void main_deletePlanet5(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(4)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -267,13 +227,13 @@ void main_deletePlanet5(Starstruct* S) {
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -283,15 +243,6 @@ void main_deletePlanet6(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(5)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -300,13 +251,13 @@ void main_deletePlanet6(Starstruct* S) {
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -316,15 +267,6 @@ void main_deletePlanet7(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(6)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -333,13 +275,13 @@ void main_deletePlanet7(Starstruct* S) {
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -349,15 +291,6 @@ void main_deletePlanet8(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(7)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -365,15 +298,14 @@ void main_deletePlanet8(Starstruct* S) {
 			S->TPY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -383,15 +315,6 @@ void main_deletePlanet9(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(8)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -399,15 +322,14 @@ void main_deletePlanet9(Starstruct* S) {
 			S->TPY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -417,15 +339,6 @@ void main_deletePlanet10(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(9)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -433,15 +346,14 @@ void main_deletePlanet10(Starstruct* S) {
 			S->TPY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -450,15 +362,6 @@ void main_deletePlanet11(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 11) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(10)->getName()); int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -466,15 +369,14 @@ void main_deletePlanet11(Starstruct* S) {
 			S->TPY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -484,15 +386,6 @@ void main_deletePlanet12(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(11)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -500,15 +393,14 @@ void main_deletePlanet12(Starstruct* S) {
 			S->TPY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -518,15 +410,6 @@ void main_deletePlanet13(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(12)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -534,15 +417,14 @@ void main_deletePlanet13(Starstruct* S) {
 			S->TPY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -552,15 +434,6 @@ void main_deletePlanet14(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(13)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -568,15 +441,14 @@ void main_deletePlanet14(Starstruct* S) {
 			S->TPY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -586,15 +458,6 @@ void main_deletePlanet15(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(14)->getName());
 		int i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
-			S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-			S->zone->render(*(S->w));
-			
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TR[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -602,15 +465,14 @@ void main_deletePlanet15(Starstruct* S) {
 			S->TPY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSX[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TSY[i]->update(std::to_string((int)S->Ssys->getPlanets().at(i)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-
 		}
-		S->TN[i]->update(S->TN[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TM[i]->update(S->TM[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TR[i]->update(S->TR[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPX[i]->update(S->TPX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TPY[i]->update(S->TPY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSX[i]->update(S->TSX[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
-		S->TSY[i]->update(S->TSY[i]->getText(), PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TN[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TM[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TR[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TPY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
+		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 	return;
 }
@@ -632,7 +494,7 @@ int main(int argc, char* argv[]) {
 	bm.addRectButton<TextInput*>("b_contour", nullptr, white, black, nullptr, Point2D<int>(10, 10), 1260, 690);
 
 	// 2. Chat
-	TextBox t_textinfo("> Currently no star system.", PATH + std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(40, 520), 650, 150, window.getRenderer());
+	TextBox t_textinfo("> Star system Empty", PATH + std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(40, 520), 650, 150, window.getRenderer());
 	bm.addRectButton<TextInput*>("b_Info", nullptr, white, black, &t_textinfo, Point2D<int>(30, 500), 680, 170);
 
 	// 3. Set un astre
@@ -704,11 +566,11 @@ int main(int argc, char* argv[]) {
 	TextBox star_1_pos_x(curpos_x, PATH + std::string("fonts/calibri.ttf"), 17, black, pos, 40, 30, window.getRenderer());
 	pos.x += 35;
 	TextBox star_1_pos_y(curpos_y, PATH + std::string("fonts/calibri.ttf"), 17, black, pos, 40, 30, window.getRenderer());
-	zone.linkTextBox(star_1_name);
-	zone.linkTextBox(star_1_mass);
-	zone.linkTextBox(star_1_radius);
-	zone.linkTextBox(star_1_pos_x);
-	zone.linkTextBox(star_1_pos_y);
+	zone.linkTextBox(&star_1_name);
+	zone.linkTextBox(&star_1_mass);
+	zone.linkTextBox(&star_1_radius);
+	zone.linkTextBox(&star_1_pos_x);
+	zone.linkTextBox(&star_1_pos_y);
 	pos.x = 10;
 	pos.y += 23;
 
@@ -736,38 +598,36 @@ int main(int argc, char* argv[]) {
 		planet_speedy[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
 		pos.x = 10;
 		pos.y += 23;
-		zone.linkTextBox(*planet_name[i]);
-		zone.linkTextBox(*planet_mass[i]);
-		zone.linkTextBox(*planet_radius[i]);
-		zone.linkTextBox(*planet_posx[i]);
-		zone.linkTextBox(*planet_posy[i]);
-		zone.linkTextBox(*planet_speedx[i]);
-		zone.linkTextBox(*planet_speedy[i]);
+		zone.linkTextBox(planet_name[i]);
+		zone.linkTextBox(planet_mass[i]);
+		zone.linkTextBox(planet_radius[i]);
+		zone.linkTextBox(planet_posx[i]);
+		zone.linkTextBox(planet_posy[i]);
+		zone.linkTextBox(planet_speedx[i]);
+		zone.linkTextBox(planet_speedy[i]);
 	}
 	//INITIALISATION STRUCT
-	Starstruct S = { &Ssys, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText(), i_simuspeed.getText(),  &zone, &window, planet_name, planet_mass, planet_radius, planet_posx, planet_posy, planet_speedx, planet_speedy };
+	Starstruct S = { &Ssys, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText(), i_simuspeed.getText(),  &zone, &window, planet_name, planet_mass, planet_radius, planet_posx, planet_posy, planet_speedx, planet_speedy, &t_textinfo};
 
-	zone.startDrawInside(window.getRenderer());
-	Draw::DrawTable(Point2D<int>(5, 5), 450, 400, 17, 6, white, black, window.getRenderer());
-	zone.stopDrawInside(window.getRenderer());
+	
 
 	TextBox zone_name("NAME", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(20, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_name);
+	zone.linkTextBox(&zone_name);
 
 	TextBox zone_mass("MASS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(95, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_mass);
+	zone.linkTextBox(&zone_mass);
 
 	TextBox zone_radius("RADIUS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(165, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_radius);
+	zone.linkTextBox(&zone_radius);
 
 	TextBox zone_position("POSITION", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(232, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_position);
+	zone.linkTextBox(&zone_position);
 
 	TextBox zone_speed_x("SPEEDX", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(315, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_speed_x);
+	zone.linkTextBox(&zone_speed_x);
 
 	TextBox zone_speed_y("SPEEDY", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(390, 10), 80, 30, window.getRenderer());
-	zone.linkTextBox(zone_speed_y);
+	zone.linkTextBox(&zone_speed_y);
 
 	Point2D<int> pos_zoneb(465, 30);
 	TextBox zone_b_delete("X", PATH + std::string("fonts/calibri.ttf"), 20, black, pos_zoneb, 20, 20, window.getRenderer());
@@ -835,7 +695,6 @@ int main(int argc, char* argv[]) {
 	zone.buttonManager.getButton<Starstruct*>("b_del15").setAction(main_deletePlanet15, &S);
 
 	//*********************************************************************************
-
 	b_width = 80, b_height = 30;
 	b_topleftx = 1100, b_tly = 445;
 
@@ -996,6 +855,10 @@ int main(int argc, char* argv[]) {
 			star_1_pos_y.update(curpos_y, PATH + std::string("fonts/calibri.ttf"), 18, white, window.getRenderer());
 		}
 
+		zone.startDrawInside(window.getRenderer());
+		Draw::DrawTable(Point2D<int>(5, 5), 450, 400, 17, 6, white, black, window.getRenderer());
+		zone.stopDrawInside(window.getRenderer());
+
 		zone.update();
 		zone.render(window);
 
@@ -1004,8 +867,9 @@ int main(int argc, char* argv[]) {
 			if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
 			else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
 		}
-		if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(50, 50), 600, 400, window);
-		else r.render(Point2D<int>(50, 50), 600, 400, inputEvent, window, manager);
+		//if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(50, 50), 600, 400, window);
+		Draw::DrawFillContouredRect(Point2D<int>(50, 50) - 2, 604, 404, 2, Color(70, 70, 70), gray, window.getRenderer());
+		r.render(Point2D<int>(50, 50), 600, 400, inputEvent, window, manager);
 
 		window.RenderScreen();
 		window.FillScreen(white);
