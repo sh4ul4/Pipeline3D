@@ -219,8 +219,7 @@ static void furnitureInsertion(insertPack *ip)  {
         ip->name += std::to_string(k); k++;
     }
 
-    if (*ip->interactSpace == 1)  {
-    // Insertion des meubles de type 1
+    if (*ip->interactSpace == 1)  {  // Insertion des meubles de type 1
         switch ((*ip->selectedBox))  {
             case 1: // Table en bois
                 (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
@@ -228,12 +227,20 @@ static void furnitureInsertion(insertPack *ip)  {
                 (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", ip->scale));
                 break;
             case 2: // Commode
-                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/Commode/"), "commode.obj", ip->name, ip->scale);
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/commode/"), "commode.obj", ip->name, ip->scale);
                 (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", ip->scale));
                 break;
-            case 3:
-                // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
-                // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
+            case 3: // lit
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/lit/"), "lit.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Lit simple", ip->scale));
+                break;
+            case 4: // bureau
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/bureau/"), "bureau.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Bureau", ip->scale));
+                break;
+            case 5: // chaise
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", ip->scale));
                 break;
             default:
                 std::cout << "Insertion de RIEN DU TOUT\n";
@@ -255,6 +262,13 @@ static void furnitureInsertion(insertPack *ip)  {
 static void objInsertion(insertObjPack *ip)  {
     std::string path = FIND_FILE_BUT_DONT_LEAVE(ip->objPath);
     if (!path.empty())  { 
+        int k = 1;
+        // Rename si déjà pris
+        while ((*ip->manager).nameTaken(ip->name)) {
+            if (std::to_string(k-1)[0] == ip->name.back())
+                ip->name.pop_back();
+            ip->name += std::to_string(k); k++;
+        }
         std::cout << "Import OBJ de " + path+'/' + ip->objSource + "\n";
         (*ip->manager).imprtShapeObj(path+'/', ip->objSource, ip->name, ip->scale);
         (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Objet importé manuellement", ip->scale));

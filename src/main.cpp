@@ -261,6 +261,22 @@ int main(int argc, char* argv[]) {
 				// Clic sur un meuble !
 				hm.renderFurnitureInteractionSpace(inputEvent, window, manager);
 				manager.getShape(hm.getSelectedShape()).drawHit2D(Point2D<int>(30,30), window);
+
+				// Mouvement avec flèches
+					// à passer sur la fonction checkFurnitureClick
+					// Moyen d'implanter la diagonale ?
+					// Maintenant il faut check la collision avec le mur (maxx et maxy de la hitbox ou alors hit2D)
+				if (Camera::getCurrent().getCamId() == "topCam")  {
+					if (keyboard.left.pressed) 
+						hm.moveFurniture(manager, 0);
+					else if (keyboard.right.pressed) 
+						hm.moveFurniture(manager, 1);
+					else if (keyboard.down.pressed) 
+						hm.moveFurniture(manager, 2);
+					else if (keyboard.up.pressed) 
+						hm.moveFurniture(manager, 3);
+				}
+
 				break;
 			default:
 				// Render infos sur la scène actuelle

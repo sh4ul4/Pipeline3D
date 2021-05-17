@@ -440,9 +440,9 @@ private:
         b_tly += 30;
         bmInsertion1.addCheckBox<radioButtonPack*>("c_table", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/TABLE-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/TABLE.jpg", window.getRenderer()));
         bmInsertion1.addCheckBox<radioButtonPack*>("c_commode", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/Commode-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/Commode.jpg", window.getRenderer()));
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_3", light_gray, black, Point2D(1085, b_tly), 40);
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_4", light_gray, black, Point2D(1135, b_tly), 40);
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_5", light_gray, black, Point2D(1185, b_tly), 40);
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_lit", light_gray, black, Point2D(1085, b_tly), 40, nullptr/* texture true */);
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_bureau", light_gray, black, Point2D(1135, b_tly), 40);
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_chaise", light_gray, black, Point2D(1185, b_tly), 40);
         bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
         bmInsertion2.addCheckBox<void*>(std::string("c_1"), light_gray, black, Point2D(985 , b_tly), 40);
@@ -454,7 +454,7 @@ private:
         ip2 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion2 };
         bmInsertion2.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip2);
         
-        checkboxes1.insert(checkboxes1.end(),{"c_table", "c_commode", "c_3", "c_4", "c_5"});
+        checkboxes1.insert(checkboxes1.end(),{"c_table", "c_commode", "c_lit", "c_bureau", "c_chaise"});
         rp11 = {&bmInsertion1, &checkboxes1, 0};
         rp12 = {&bmInsertion1, &checkboxes1, 1};
         rp13 = {&bmInsertion1, &checkboxes1, 2};
@@ -462,14 +462,14 @@ private:
         rp15 = {&bmInsertion1, &checkboxes1, 4};
         bmInsertion1.getButton<radioButtonPack*>("c_table").setAction(radioButtonMode, &rp11);
         bmInsertion1.getButton<radioButtonPack*>("c_commode").setAction(radioButtonMode, &rp12);
-        bmInsertion1.getButton<radioButtonPack*>("c_3").setAction(radioButtonMode, &rp13);
-        bmInsertion1.getButton<radioButtonPack*>("c_4").setAction(radioButtonMode, &rp14);
-        bmInsertion1.getButton<radioButtonPack*>("c_5").setAction(radioButtonMode, &rp15);
+        bmInsertion1.getButton<radioButtonPack*>("c_lit").setAction(radioButtonMode, &rp13);
+        bmInsertion1.getButton<radioButtonPack*>("c_bureau").setAction(radioButtonMode, &rp14);
+        bmInsertion1.getButton<radioButtonPack*>("c_chaise").setAction(radioButtonMode, &rp15);
         // for (int i = 0; i < checkboxes1.size(); i++)  {
         //     rp1.push_back({&bmInsertion1, &checkboxes1, i});
         //     bmInsertion1.getButton<radioButtonPack*>(checkboxes1[i]).setAction(radioButtonMode, &(rp1[i]));
         // }
-        
+
 
         ip1 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion1, &checkboxes1};
         bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip1);
@@ -567,15 +567,6 @@ private:
         bmFurnitInteract.getButton<editFurniturePack*>("bmfi_fu_suppr").setAction(deleteFurniture, &fp);
     }
     
-
-    /**
-     * @brief Ajoute un meuble au vecteur des meubles de la scène
-     * 
-     * @param Furniture     Meuble à ajouter
-     */
-    void addFurniture(Furniture f);
-
-
     /**
      * @brief Responsable de l'affichage sur l'espace (4) lors des modifications 
      */
@@ -588,7 +579,6 @@ private:
      * @return  bool    Renvoie vrai si le meuble peut être placé 
      */
     bool checkSpace(std::string f_name);
-
 
     void editSurface();
 
@@ -633,7 +623,13 @@ public: // Méthodes liées à des boutons créés dans main.cpp
             checkBoxDominant = 1;
         else if (bmInsertion1.getButton<radioButtonPack*>("c_commode").isClicked())
             checkBoxDominant = 2;
-        else 
+        else if (bmInsertion1.getButton<radioButtonPack*>("c_lit").isClicked())
+            checkBoxDominant = 3;
+        else if (bmInsertion1.getButton<radioButtonPack*>("c_bureau").isClicked())
+            checkBoxDominant = 4;
+        else if (bmInsertion1.getButton<radioButtonPack*>("c_chaise").isClicked())
+            checkBoxDominant = 5;
+        else // Ajouter un elseIf pour chaque meuble
             checkBoxDominant = 0;
     }
 
@@ -752,6 +748,25 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         // Clic dans la pipeline : Point2D<int>(30,30), 900, 506
         if (mouse.leftClick && (mouse.x > 30 && mouse.x < 930 && mouse.y > 30 && mouse.y < 536)) {
                 interactSpace = 0;
+        }
+    }
+
+    void moveFurniture(ShapeManager& manager, int direction)  {
+        switch (direction)  {
+            case 0: // Move Left
+                manager.getShape(furnitures[fp.selected]->name).move(Vector(0, 0, -2));
+                break;
+            case 1: // Move Right
+                manager.getShape(furnitures[fp.selected]->name).move(Vector(0, 0, 2));
+                break; 
+            case 2: // Move Down
+                manager.getShape(furnitures[fp.selected]->name).move(Vector(2, 0, 0));
+                break;
+            case 3: // Move Up
+                manager.getShape(furnitures[fp.selected]->name).move(Vector(-2, 0, 0));
+                break;
+            default:
+                break;
         }
     }
 
