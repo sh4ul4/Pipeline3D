@@ -887,13 +887,11 @@ int main(int argc, char* argv[]) {
 	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
 	
 	//test
-	std::vector<Planet*> Planets = Ssys.getPlanets();
+	/*std::vector<Planet*> Planets = Ssys.getPlanets();
 	std::cout<<Planets.size()<<std::endl;
 	Ssys.addStar(new Star(693340000,1.989*pow(10,30),Point2D<double>(0,0),"Soleil"));
 	Ssys.addPlanet();
-	//Ssys
-
-
+	//Ssys*/
 
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
