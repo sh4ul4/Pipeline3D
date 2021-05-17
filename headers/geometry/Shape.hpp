@@ -241,6 +241,11 @@ public:
 			(aminy <= bmaxy && amaxy >= bminy) &&
 			(aminz <= bmaxz && amaxz >= bminz);
 	}
+
+	void changeBitmap(Bitmap* bmp) {
+		this->bmp = bmp;
+		for (auto& t : triangles)t.bmp = bmp;
+	}
 };
 
 
