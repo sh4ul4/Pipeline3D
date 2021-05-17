@@ -165,6 +165,11 @@ public:
 		center += movement;
 	}
 
+	void setPos(const Vertex& pos) {
+		const Vector movement = pos - center;
+		move(movement);
+	}
+
 	void rescale(float scale) {
 		for (size_t i = 0; i < triangles.size(); i++) {
 			triangles[i].a -= center;
