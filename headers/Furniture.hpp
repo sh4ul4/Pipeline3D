@@ -312,6 +312,17 @@ static void dragAndDropFurniture(editFurniturePack *fp)  {
     // Tant que le clic est pas lâché ET qu'il y a de la place pour le meuble (pas de hit)
 }
 
+// Mettre les checks de collision à la rotation !
+static void leftRotateFurniture(editFurniturePack *fp)  {
+    Vertex center = (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).center;
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, -30);
+}
+
+static void rightRotateFurniture(editFurniturePack *fp)  {
+    Vertex center = (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).center;
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, 30);
+}
+
 static void deleteFurniture(editFurniturePack *fp)  {
     // Option 1: rendre la shape invisible avec un nom random (pour faciliter le CTRL+Z)
     static const char alphanum[] =

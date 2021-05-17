@@ -1,6 +1,7 @@
 #pragma once
 #include <ctime>
 #include <iomanip>
+#include <chrono>
 
 struct camPack {
 	Camera *cam;
@@ -15,6 +16,11 @@ struct camPack {
 struct editFloorPack {
     ShapeManager *manager;
     std::string selectedBitmap;
+
+    std::string selectedRight;
+    std::string selectedLeft;
+    std::string selectedFront;
+    std::string selectedBack;
 };
 
 void editFloor(editFloorPack *efp)  {
@@ -22,7 +28,10 @@ void editFloor(editFloorPack *efp)  {
 }
 
 void editWalls(editFloorPack *efp)  {
-
+    (*efp->manager).getShape("rightWall").changeBitmap(Bitmap::getBitmap(efp->selectedRight));
+    (*efp->manager).getShape("leftWall").changeBitmap(Bitmap::getBitmap(efp->selectedLeft));
+    (*efp->manager).getShape("frontWall").changeBitmap(Bitmap::getBitmap(efp->selectedFront));
+    (*efp->manager).getShape("backWall").changeBitmap(Bitmap::getBitmap(efp->selectedBack));
 }
 
 /**
@@ -131,14 +140,14 @@ private:
     std::vector<TextBox*> text_furnitInteract;
     std::vector<TextInput*> input_furnitInteract;
     ButtonManager bmFurnitInteract;
-    
+    std::chrono::steady_clock::time_point launch;
 
     ButtonManager bmCameras;
     int checkBoxDominant = -1;
     insertPack ip1, ip2;
     insertObjPack ip3;
 
-    editFloorPack efp1, efp2, efp3; 
+    editFloorPack efp1, efp2, efp3, efp4, efp5; 
 
     // Contient les informations nécessaires au modifications du meuble selectionné
     editFurniturePack fp;
@@ -160,12 +169,8 @@ public:
     HomeDesign(std::string scene, ButtonManager& bm, ShapeManager *manager, Window& window, InputEvent& inputEvent, float w1, float w3)
                 : scene_name(scene), w1(w1), w3(w3), bmInsertion_def(inputEvent, window), bmInsertion1(inputEvent, window), bmInsertion2(inputEvent, window), 
                   bmInsertion3(inputEvent, window), bmFurnitInteract(inputEvent, window), bmCameras(inputEvent, window) {
-        std::cout << " > Constructeur HomeDesign" << std::endl;
         surface = w1 * w3;
-        std::cout << "Mur 1: " << w1 << "m" << std::endl;
-        std::cout << "Mur 3: " << w3 << "m" << std::endl;
-        std::cout << "Surface: " << surface << "m²" <<std::endl;
-
+        launch = std::chrono::steady_clock::now();
 
         w1 *= 20; w3 *= 20;
         int h = 50; // Hauteur de chaque mur
@@ -205,30 +210,33 @@ public:
         Bitmap::newBitmap("basicFloor", "textures/sol.jpg");
         Bitmap::newBitmap("parquetFloor", "HM-Res/parquetFloor.jpg");
         Bitmap::newBitmap("moquetteFloor", "HM-Res/moquetteFloor.png");
-        efp1 = { manager, "basicFloor" };
-        efp2 = { manager, "parquetFloor" };
-        efp3 = { manager, "moquetteFloor" };
+        Bitmap::newBitmap("grassFloor", "HM-Res/grass2.jpg");
 
         Bitmap::newBitmap("wall", "HM-Res/WALL.jpg");
         Bitmap::newBitmap("basic-wall", "HM-Res/basic-wall.png");
-        Bitmap::newBitmap("windowed-wall", "HM-Res/windowed-wall-rotated.png");
-        Bitmap::newBitmap("doored-wall", "HM-Res/doored-wall-right-rotated.png");
+        Bitmap::newBitmap("windowed-wall", "HM-Res/windowed-wall.png");
+        Bitmap::newBitmap("doored-wall", "HM-Res/doored-wall.png");
+        Bitmap::newBitmap("baie-wall", "HM-Res/baie-wall.png");
+        Bitmap::newBitmap("blue-floor", "HM-Res/blue-floor.jpg");
 
-        Bitmap::newBitmap("grass", "HM-Res/grass2.jpg");
+        efp1 = { manager, "basicFloor", "basic-wall", "basic-wall", "basic-wall", "basic-wall" }; // Tout blanc
+        efp2 = { manager, "parquetFloor", "basic-wall", "doored-wall", "basic-wall", "windowed-wall"  }; // Porte et fenetre
+        efp3 = { manager, "moquetteFloor", "doored-wall", "windowed-wall", "windowed-wall", "baie-wall" }; // Porte, fenetre et baie
+        efp4 = { manager, "grassFloor", "blue-floor", "doored-wall", "blue-floor", "blue-floor" };
+        efp5 = { manager, "blue-floor" }; 
 
-
-        // manager->addRectangle("max_floor", amax, bmax, cmax, dmax, 4, white, false, Bitmap::getBitmap("grass"));
+        // manager->addRectangle("max_floor", amax, bmax, cmax, dmax, 4, white, false, Bitmap::getBitmap("grassFloor"));
         manager->addRectangle("floor", a, b, c, d, 4, white, false, Bitmap::getBitmap("basicFloor"));
 
-        manager->addRectangle("cdmax_floor", c, d, cmax, dmax, 2, white, false, Bitmap::getBitmap("grass"));
-        manager->addRectangle("abmax_floor", amax, bmax, a, b, 2, white, false, Bitmap::getBitmap("grass"));
-        manager->addRectangle("top_floor", atop, a, ctop, c, 2, white, false, Bitmap::getBitmap("grass"));
-        manager->addRectangle("bot_floor", b, bbot, d, dbot, 2, white, false, Bitmap::getBitmap("grass"));
+        manager->addRectangle("cdmax_floor", c, d, cmax, dmax, 2, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("abmax_floor", amax, bmax, a, b, 2, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("top_floor", atop, a, ctop, c, 2, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("bot_floor", b, bbot, d, dbot, 2, white, false, Bitmap::getBitmap("grassFloor"));
         
-        manager->addRectangle("hg_floor", hg, amax, atop, a, 2, white, false, Bitmap::getBitmap("grass"));
-        manager->addRectangle("hd_floor", ctop, c, hd, cmax, 2, white, false, Bitmap::getBitmap("grass"));
-        manager->addRectangle("bg_floor", bmax, bg, b, bbot, 2, white, false, Bitmap::getBitmap("grass"));
-        manager->addRectangle("bd_floor", d, dbot, dmax, bd, 2, white, false, Bitmap::getBitmap("grass"));
+        manager->addRectangle("hg_floor", hg, amax, atop, a, 2, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("hd_floor", ctop, c, hd, cmax, 2, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("bg_floor", bmax, bg, b, bbot, 2, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("bd_floor", d, dbot, dmax, bd, 2, white, false, Bitmap::getBitmap("grassFloor"));
 
         // Division à mettre en fonction de la surface
         manager->addRectangle("frontWall", c1, d1, c, d, 4, white, false, Bitmap::getBitmap("basic-wall"));
@@ -359,29 +367,37 @@ private:
         int b_width = 260;
         text_insertion_def.emplace_back(new TextBox(scene_name, "fonts/Segoe UI Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
-        text_insertion_def.back()->center(Point2D<int>(970, 30), 270);
-        b_tly += 60;
+        b_tly += 50;
 
         std::stringstream stream, stream1, stream2;
         stream << std::fixed << std::setprecision(2) << w1;
         stream2 << std::fixed << std::setprecision(2) << w3;
-        text_insertion_def.emplace_back(new TextBox("Dimension de la pièce : " + stream.str() + "x" + stream2.str() + "m", "fonts/calibri.ttf", 20, black, 
+        text_insertion_def.emplace_back(new TextBox("Dimension de la pièce", "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
-        b_tly += 60;
-        stream1 << std::fixed << std::setprecision(2) << surface;
-        text_insertion_def.emplace_back(new TextBox("Surface : " + stream.str() + "m²", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
-        
-        // input_furnitInteract.emplace_back(new TextInput("<nouvelle tapisserie>", "fonts/calibri.ttf", 20, black,
-        //                                                Point2D<int>(b_topleftx, b_tly), 250, 25, window.getRenderer()));
         b_tly +=25;
+        text_insertion_def.emplace_back(new TextBox(stream.str() + "x" + stream2.str() + "m", "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
+        b_tly += 50;
+        stream1 << std::fixed << std::setprecision(2) << surface;
+        text_insertion_def.emplace_back(new TextBox("Surface de la pièce", "fonts/Calibri Bold.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
+        b_tly +=25;
+        text_insertion_def.emplace_back(new TextBox(stream1.str() + "m²", "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
+        b_tly += 50;
+
+        text_insertion_def.emplace_back(new TextBox("En création depuis :", "fonts/Calibri Bold.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
+        b_tly +=25;
+        text_insertion_def.emplace_back(new TextBox("00:00:00", "fonts/calibri.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         // bmInsertion_def.addRectTextButton<void*>("b_editFloorBmp", Point2D<int>(980, b_tly), 250, 25, "Modifier ");
         // fp = { &interactSpace, manager, &furnitures };
         // bmInsertion_def.getButton<editFurniturePack*>("bmfi_fu_Renommer").setAction(renameFurniture, &fp);
         // bmInsertion_def.addCheckBox<void*>("b_wallsVis", light_gray, black, Point2D(985, 300), 40);
 
-        b_tly += 100;
-        text_insertion_def.emplace_back(new TextBox("Changer la tapisserie",  "fonts/calibri.ttf", 20, black, 
+        b_tly += 60;
+        text_insertion_def.emplace_back(new TextBox("Changer la tapisserie",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         text_insertion_def.back()->center(Point2D<int>(970, 30), 270);
 
@@ -389,12 +405,27 @@ private:
         bmInsertion_def.addCheckBox<editFloorPack*>("c_basicFloor", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("textures/sol.jpg", window.getRenderer()), new Texture2D("textures/sol.jpg", window.getRenderer()));
         bmInsertion_def.addCheckBox<editFloorPack*>("c_parquetFloor", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/parquetFloor.jpg", window.getRenderer()), new Texture2D("HM-Res/parquetFloor.jpg", window.getRenderer()));
         bmInsertion_def.addCheckBox<editFloorPack*>("c_moquetteFloor", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/moquetteFloor.png", window.getRenderer()), new Texture2D("HM-Res/moquetteFloor.png", window.getRenderer()));
+        bmInsertion_def.addCheckBox<editFloorPack*>("c_grassFloor", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/grass2.jpg", window.getRenderer()), new Texture2D("HM-Res/grass2.jpg", window.getRenderer()));
+        bmInsertion_def.addCheckBox<editFloorPack*>("c_blueFloor", light_gray, black, Point2D(1185, b_tly), 40, new Texture2D("HM-Res/blue-floor.jpg", window.getRenderer()), new Texture2D("HM-Res/blue-floor.jpg", window.getRenderer()));
         bmInsertion_def.getButton<editFloorPack*>("c_basicFloor").setAction(editFloor, &efp1);
         bmInsertion_def.getButton<editFloorPack*>("c_parquetFloor").setAction(editFloor, &efp2);
         bmInsertion_def.getButton<editFloorPack*>("c_moquetteFloor").setAction(editFloor, &efp3);
+        bmInsertion_def.getButton<editFloorPack*>("c_grassFloor").setAction(editFloor, &efp4);
+        bmInsertion_def.getButton<editFloorPack*>("c_blueFloor").setAction(editFloor, &efp5);
 
-        bmInsertion_def.addCheckBox<void*>("c_4", light_gray, black, Point2D(1135, b_tly), 40);
-        bmInsertion_def.addCheckBox<void*>("c_5", light_gray, black, Point2D(1185, b_tly), 40);
+        b_tly += 60;
+        text_insertion_def.emplace_back(new TextBox("Changer le papier peint",  "fonts/Calibri Bold.ttf", 20, black, 
+                                    Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
+        text_insertion_def.back()->center(Point2D<int>(970, 30), 270);
+        b_tly += 30;
+        bmInsertion_def.addCheckBox<editFloorPack*>("c_basicWall", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/basic-wall.png", window.getRenderer()), new Texture2D("HM-Res/basic-wall.png", window.getRenderer()));
+        bmInsertion_def.addCheckBox<editFloorPack*>("c_parquetWall", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/fenetre.png", window.getRenderer()), new Texture2D("HM-Res/fenetre.png", window.getRenderer()));
+        bmInsertion_def.addCheckBox<editFloorPack*>("c_moquetteWall", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/baie.jpg", window.getRenderer()), new Texture2D("HM-Res/baie.jpg", window.getRenderer()));
+        bmInsertion_def.addCheckBox<editFloorPack*>("c_blueWall", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/blue-floor.jpg", window.getRenderer()), new Texture2D("HM-Res/blue-floor.jpg", window.getRenderer()));
+        bmInsertion_def.getButton<editFloorPack*>("c_basicWall").setAction(editWalls, &efp1);
+        bmInsertion_def.getButton<editFloorPack*>("c_parquetWall").setAction(editWalls, &efp2);
+        bmInsertion_def.getButton<editFloorPack*>("c_moquetteWall").setAction(editWalls, &efp3);
+        bmInsertion_def.getButton<editFloorPack*>("c_blueWall").setAction(editWalls, &efp4);
     }
     
     void initInsertionSpace(ShapeManager *manager, Window& window) {
@@ -562,8 +593,10 @@ private:
         // bmFurnitInteract.addRectTextButton<editFurniturePack *>("bmfi_fu_Deplacer", Point2D<int>(980, 390), 250, 40, "Deplacer le meuble");
         // bmFurnitInteract.getButton<editFurniturePack *>("bmfi_fu_Deplacer").setAction(dragAndDropFurniture, &fp);
 
-        bmFurnitInteract.addRectTextButton<void *>("bmfi_fu_Rotation", Point2D<int>(980, 440), 250, 40, "Rotation du meuble");
-        // bmFurnitInteract.getButton<void *>("bmfi_fu_Rotation").setAction(furnitureRotation, &fp);
+        bmFurnitInteract.addRectTextButton<editFurniturePack *>("bmfi_fu_leftRotation", Point2D<int>(980, 440), 120, 40, "Rotation gauche");
+        bmFurnitInteract.addRectTextButton<editFurniturePack *>("bmfi_fu_rightRotation", Point2D<int>(1110, 440), 120, 40, "Rotation droite");
+        bmFurnitInteract.getButton<editFurniturePack *>("bmfi_fu_leftRotation").setAction(leftRotateFurniture, &fp);
+        bmFurnitInteract.getButton<editFurniturePack *>("bmfi_fu_rightRotation").setAction(rightRotateFurniture, &fp);
 
         bmFurnitInteract.addRectTextButtonCustom<editFurniturePack *>("bmfi_fu_suppr", Point2D<int>(980, 490), 250, 40, red, black, "Supprimer", 14, black);
         bmFurnitInteract.getButton<editFurniturePack*>("bmfi_fu_suppr").setAction(deleteFurniture, &fp);
@@ -591,8 +624,24 @@ public: // Méthodes liées à des boutons créés dans main.cpp
     std::string getSelectedShape() const { return furnitures[fp.selected]->name; };
 
     void renderDefault(InputEvent& inputEvent, Window& window)  {
-        for (size_t i = 0; i < text_insertion_def.size(); i++)  
+        std::stringstream stream;
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        
+        int seconds = (std::chrono::duration_cast<std::chrono::microseconds>(end - launch).count()) / 1000000.0;
+        std::stringstream minutes;
+        minutes << std::setw(2) << std::setfill('0') << int((seconds/60)%60);
+        std::stringstream hours;
+        hours << std::setw(2) << std::setfill('0') << int((seconds/60)/60);
+        std::stringstream seconds_s;
+        seconds_s << std::setw(2) << std::setfill('0') << int(seconds%60);
+
+        stream << hours.str() + ":" + minutes.str() + ":" + seconds_s.str();
+        // stream << std::fixed << std::setprecision(2) << (std::chrono::duration_cast<std::chrono::microseconds>(end - launch).count()) /1000000.0;
+        text_insertion_def[6]->update(stream.str(), window.getRenderer());
+        for (size_t i = 0; i < text_insertion_def.size(); i++)  {
             text_insertion_def[i]->render(window.getRenderer(), 0, 0);
+            text_insertion_def[i]->center(Point2D<int>(970, 30), 270);
+        }
 
         // for (size_t i = 0; i < input_insertion_def.size(); i++)  {
         //     input_insertion_def[i]->checkForInput(inputEvent, window.getRenderer());
@@ -736,7 +785,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
                 // Drag and drop en vue haut et face uniquement
                 if (((Camera::getCurrent().getCamId() == "topCam") || (Camera::getCurrent().getCamId() == "faceCam")) && mouse.moving)  {
                     const float scale = (float)1.0 / (float)tan(60 / 2.0 * M_PI / 180); // 1.732
-                    std::cout << "Mouse move: " << mouse.ymov << " | " << mouse.xmov << "\n";
+                    // std::cout << "Mouse move: " << mouse.ymov << " | " << mouse.xmov << "\n";
                     // std::cout << Vector(mouse.ymov, 0, mouse.xmov) / scale * manager.getShape(furnitures[i]->name).center.distance(Camera::getCurrent().getCameraPosition()) << '\n';
                     maVar ++;
                     
