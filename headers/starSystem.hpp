@@ -213,6 +213,7 @@ public:
         {
             delete sun;
             sun = nullptr;
+            std::cout << "Etoile detruite" << std::endl;
         }
     }
 
