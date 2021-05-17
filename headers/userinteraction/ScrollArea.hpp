@@ -68,7 +68,7 @@ class ScrollZone {
 	Color foregroundColor;
 	Color contourColor;
 
-	std::vector<TextBox const*> textBoxes{};
+	std::vector<TextBox *> textBoxes{};
 
 	DragBar verticalDragBar;
 	DragBar horizontalDragBar;
@@ -108,8 +108,8 @@ public:
 	inline void startDrawInside(SDL_Renderer* renderer) { SDL_SetRenderTarget(renderer, texture); }
 	inline void stopDrawInside(SDL_Renderer* renderer) { SDL_SetRenderTarget(renderer, NULL); }
 
-	void linkTextBox(const TextBox& tb) {
-		textBoxes.push_back(&tb);
+	void linkTextBox(TextBox* tb) {
+		textBoxes.push_back(tb);
 	}
 
 	void setBackGroundColor(const Color& color) {
@@ -216,10 +216,12 @@ public:
 		const SDL_Rect srcrect{ srcx,srcy,srcw,srch };
 		const SDL_Rect dstrect{ dstx,dsty,dstw,dsth };
 		Draw::DrawFillRect(pos, width, height, backgroundColor, window.getRenderer());
-		Draw::DrawFillRect(Point2D<int>(dstx,dsty), dstw, dsth, foregroundColor, window.getRenderer());
 		SDL_RenderCopy(window.getRenderer(), texture, &srcrect, &dstrect);
 		verticalDragBar.render(window.getRenderer());
 		horizontalDragBar.render(window.getRenderer());
 		Draw::DrawRect(pos, width, height, 1, contourColor, window.getRenderer());
+		SDL_SetRenderTarget(window.getRenderer(), texture);
+		Draw::DrawFillRect(Point2D<int>(0, 0), renderW, renderH, foregroundColor, window.getRenderer());
+		SDL_SetRenderTarget(window.getRenderer(), NULL);
 	}
 };

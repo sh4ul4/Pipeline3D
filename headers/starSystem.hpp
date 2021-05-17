@@ -201,6 +201,7 @@ public:
             {
                 delete (*it);
                 planets.erase(it);
+                planets.shrink_to_fit();
                 return;
             }
         }
