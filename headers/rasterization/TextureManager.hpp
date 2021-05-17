@@ -112,7 +112,7 @@ public:
 		cyminay /= divisor;
 		axmincx /= divisor;
 		// pixel mapping loop
-		for (int y = min.y; y <= max.y; y++) {
+		for (int y = min.y; y < max.y; y++) {
 			// pre calculate some other values
 			const int offset = y * dstw;
 			const float pymincy = y - triC.y;
@@ -123,7 +123,7 @@ public:
 			const int bary1step = -(triA.y - triC.y) * 1;
 			int bary2 = Maths::sign(triA, triB, Point2D<int>(min.x - 1, y));
 			const int bary2step = -(triB.y - triA.y) * 1;
-			for (int x = min.x; x <= max.x; x++) {
+			for (int x = min.x; x < max.x; x++) {
 				bary0 += bary0step;
 				bary1 += bary1step;
 				bary2 += bary2step;
