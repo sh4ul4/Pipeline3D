@@ -196,7 +196,7 @@ int main(int argc, char* argv[]) {
 	bm.addRectTextButton<void*>("b_dezoom", Point2D<int>(890, 496), 30, b_height-8, "-"); 
 	bm.getButton<void*>("b_dezoom").setAction(dezoomCam, nullptr);
 	
-	
+	Texture2D blueSky("HM-Res/blue-sky.jpeg", window.getRenderer());
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
 		inputEvent.update();
@@ -225,7 +225,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		// Fond de pipeline et rectangle espace interactions
-		drawer.DrawFillRoundedRectContoured(Point2D<int>(30,30), 900, 506, 5, light_gray, black, window.getRenderer());
+		// drawer.DrawFillRoundedRectContoured(Point2D<int>(30,30), 900, 506, 5, hd_blueSky, black, window.getRenderer());
+		blueSky.render(window.getRenderer(), Point2D<int>(30,30), 900, 506);
 		drawer.DrawFillRoundedRectContoured(Point2D<int>(970, 30), 270, 506, 3, white, black, window.getRenderer());
 
 		// if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(30,30),900,506, window);
@@ -244,7 +245,7 @@ int main(int argc, char* argv[]) {
 		
 		// Check de clic souris si on est en vue du haut
 		if (Camera::getCurrent().getCamId() != "freeCam")
-			hm.checkFurnitureClick(mouse, manager);
+			hm.checkFurnitureClick(mouse, manager, window);
 
 		switch (HomeDesign::interactSpace)  {
 			case 1:
@@ -253,12 +254,12 @@ int main(int argc, char* argv[]) {
 			case 2:
 				hm.renderInsertion2(inputEvent, window);
 				break;
-			case 3:
-				hm.renderInsertion3(inputEvent, window);
+			case 3: // Insertion Obj
+				hm.renderObjInsertionSpace(inputEvent, window);
 				break;
 			case 4:
 				// Clic sur un meuble !
-				hm.renderFurnitureInteraction(inputEvent, window, manager);
+				hm.renderFurnitureInteractionSpace(inputEvent, window, manager);
 				manager.getShape(hm.getSelectedShape()).drawHit2D(Point2D<int>(30,30), window);
 				break;
 			default:

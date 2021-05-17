@@ -65,7 +65,11 @@ public:
      * - Une fois le clic lâché, si la place est disponible pour les dimensions du meuble, le meuble est placé
      * - Si la place n'est pas disponible, le meuble demeure en mode transparence 
      */ 
-    // void dragSprite(Mouse mouse, HomeDesign hm);
+    void dragSprite(Mouse mouse, Shape selectedShape)  {
+        if (mouse.leftClick && mouse.moving)  {
+            selectedShape.move(Vector(mouse.xmov, 0, mouse.ymov));
+        }
+    };
 
     /**
      * @brief Supprime le meuble et la Shape géométrique correspondante suite au clic sur bouton remove
@@ -207,16 +211,27 @@ struct editFurniturePack  {
 };
 
 static void furnitureInsertion(insertPack *ip)  {
-    switch (*ip->interactSpace)  {
-    case 1: // Insertion des meubles de type 1
+    int k = 1;
+    // Rename si déjà pris
+    while ((*ip->manager).nameTaken(ip->name)) {
+        if (std::to_string(k-1)[0] == ip->name.back())
+            ip->name.pop_back();
+        ip->name += std::to_string(k); k++;
+    }
+
+    if (*ip->interactSpace == 1)  {
+    // Insertion des meubles de type 1
         switch ((*ip->selectedBox))  {
             case 1: // Table en bois
                 (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
-    
                 // (*ip->manager).getShape(ip->name).groundZero();
                 (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", ip->scale));
                 break;
-            case 2:
+            case 2: // Commode
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/Commode/"), "commode.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", ip->scale));
+                break;
+            case 3:
                 // (*ip->manager).imprtShapeObj(std::string("OBJ/lit/"), "Bunk_Bed.obj", "lit", 1.5);
                 // (*ip->manager).imprtShapeObj(std::string("OBJ/tabletest/"), "Desk OBJ.obj", "lit", 1);
                 break;
@@ -224,13 +239,9 @@ static void furnitureInsertion(insertPack *ip)  {
                 std::cout << "Insertion de RIEN DU TOUT\n";
                 break;
         }
-        break;
+    }
+    else  {// Insertion des meubles de type 2
 
-    case 2: // Insertion des meubles de type 2
-        break;
-
-    default:
-        break;
     }
     
     // Reset du rectangle d'interaction
@@ -244,8 +255,10 @@ static void furnitureInsertion(insertPack *ip)  {
 static void objInsertion(insertObjPack *ip)  {
     std::string path = FIND_FILE_BUT_DONT_LEAVE(ip->objPath);
     if (!path.empty())  { 
+        std::cout << "Import OBJ de " + path+'/' + ip->objSource + "\n";
         (*ip->manager).imprtShapeObj(path+'/', ip->objSource, ip->name, ip->scale);
         (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Objet importé manuellement", ip->scale));
+        (*ip->manager).getShape(ip->name).groundZero();
         ip->objRetVal = "L'objet '" + ip->name + "' a été importé avec succès.";
     }
     else  {
@@ -276,10 +289,37 @@ static void rescaleFurniture(editFurniturePack *fp)  {
     (*fp->furnitures)[fp->selected]->scale = fp->newScale;
 }
 
+static void dragAndDropFurniture(editFurniturePack *fp)  {
+    // Need Mouse, manager
+    
+    // Get les coordonnées 2D Window du centre du meuble pour warp la souris dedans
+    // SDL_WarpMouseInWindow((*p->window).getWindow(), center.x, center.y);
+
+    // Tant que le clic est pas lâché ET qu'il y a de la place pour le meuble (pas de hit)
+}
+
 static void deleteFurniture(editFurniturePack *fp)  {
-    // Faire une vraie fonction delete, ou alors utiliser la visibilité pour un CTRL Z
+    // Option 1: rendre la shape invisible avec un nom random (pour faciliter le CTRL+Z)
+    static const char alphanum[] =
+        "0123456789"
+        "!@#$%^&*"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+    int stringLength = sizeof(alphanum) - 1;
+    std::string newName = "del_";
+    for(int z=0; z < 5; z++)  {
+        newName += alphanum[rand() % stringLength];
+    }
     (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).visible = false;
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).name = fp->newName;
+    (*fp->furnitures)[fp->selected]->name = fp->newName;
     (*fp->manager).pushShapesEditing();
+
+
+    // Option 2: supprimer du Manager et du Vector Furnitures (non fonctionnel)
+    // (*fp->manager).removeShape((*fp->furnitures)[fp->selected]->name);
+    // (*fp->furnitures).erase((*fp->furnitures).begin()+fp->selected);
+    
     // Quitter l'interface d'interaction 
     (*fp->interactSpace) = 0;
 }
