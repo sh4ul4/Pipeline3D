@@ -70,15 +70,15 @@ int main(int argc, char* argv[]) {
 	TextBox t_intro("CROUS Simulator", "fonts/calibri.ttf", 40, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
 	int i_TLx = 440, i_TLy = 310;
 	TextBox t_mur1("Mur 1", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
-	TextInput i_mur1("3 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
+	TextInput i_mur1("5 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
 	TextBox t_mur2("Mur 2", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
-	TextInput i_mur2("3 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
+	TextInput i_mur2("5 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
 
 	i_TLx += 280;
 	TextBox t_mur3("Mur 3", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
-	TextInput i_mur3("4 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
+	TextInput i_mur3("6 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
 	TextBox t_mur4("Mur 4", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
-	TextInput i_mur4("4 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
+	TextInput i_mur4("6 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, window.getRenderer());
 	
 	TextBox t_error("", "fonts/calibri.ttf", 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, window.getRenderer());
 
@@ -264,18 +264,16 @@ int main(int argc, char* argv[]) {
 
 				// Mouvement avec flèches
 					// à passer sur la fonction checkFurnitureClick
-					// Moyen d'implanter la diagonale ?
 					// Maintenant il faut check la collision avec le mur (maxx et maxy de la hitbox ou alors hit2D)
-				if (Camera::getCurrent().getCamId() == "topCam")  {
-					if (keyboard.left.pressed) 
-						hm.moveFurniture(manager, 0);
-					else if (keyboard.right.pressed) 
-						hm.moveFurniture(manager, 1);
-					else if (keyboard.down.pressed) 
-						hm.moveFurniture(manager, 2);
-					else if (keyboard.up.pressed) 
-						hm.moveFurniture(manager, 3);
-				}
+				
+				if (keyboard.left.pressed) 
+					hm.moveFurniture(manager, 0);
+				if (keyboard.right.pressed) 
+					hm.moveFurniture(manager, 1);
+				if (keyboard.down.pressed) 
+					hm.moveFurniture(manager, 2);
+				if (keyboard.up.pressed) 
+					hm.moveFurniture(manager, 3);
 
 				break;
 			default:

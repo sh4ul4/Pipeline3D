@@ -751,22 +751,85 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         }
     }
 
+    bool checkWallCollision(ShapeManager& manager, Shape& object)  {
+        if (object.hit(manager.getShape("frontWall"))) return false;
+        if (object.hit(manager.getShape("backWall"))) return false;
+        if (object.hit(manager.getShape("leftWall"))) return false;
+        if (object.hit(manager.getShape("rightWall"))) return false;
+        return true;
+    }
+
     void moveFurniture(ShapeManager& manager, int direction)  {
-        switch (direction)  {
-            case 0: // Move Left
-                manager.getShape(furnitures[fp.selected]->name).move(Vector(0, 0, -2));
-                break;
-            case 1: // Move Right
-                manager.getShape(furnitures[fp.selected]->name).move(Vector(0, 0, 2));
-                break; 
-            case 2: // Move Down
-                manager.getShape(furnitures[fp.selected]->name).move(Vector(2, 0, 0));
-                break;
-            case 3: // Move Up
-                manager.getShape(furnitures[fp.selected]->name).move(Vector(-2, 0, 0));
-                break;
-            default:
-                break;
+        Shape copiedShape(manager.getShape(furnitures[fp.selected]->name));
+        Vector deplacement;
+        if (Camera::getCurrent().getCamId() == "topCam" || Camera::getCurrent().getCamId() == "faceCam")  {
+            switch (direction)  {
+                case 0: // Move Left
+                    deplacement = Vector(0, 0, -2);
+                    break;
+                case 1: // Move Right
+                    deplacement = Vector(0, 0, 2);
+                    break; 
+                case 2: // Move Down
+                    deplacement = Vector(2, 0, 0);
+                    break;
+                case 3: // Move Up
+                    deplacement = Vector(-2, 0, 0);
+                    break;
+            }
+        }
+        else if (Camera::getCurrent().getCamId() == "backCam")  {
+            switch (direction)  {
+                case 0: // Move Left
+                    deplacement = Vector(0, 0, 2);
+                    break;
+                case 1: // Move Right
+                    deplacement = Vector(0, 0, -2);
+                    break; 
+                case 2: // Move Down
+                    deplacement = Vector(-2, 0, 0);
+                    break;
+                case 3: // Move Up
+                    deplacement = Vector(2, 0, 0);
+                    break;
+            }
+        }
+        else if (Camera::getCurrent().getCamId() == "droitCam")  {
+            switch (direction)  {
+                case 0: // Move Left
+                    deplacement = Vector(2, 0, 0);
+                    break;
+                case 1: // Move Right
+                    deplacement = Vector(-2, 0, 0);
+                    break; 
+                case 2: // Move Down
+                    deplacement = Vector(0, 0, 2);
+                    break;
+                case 3: // Move Up
+                    deplacement = Vector(0, 0, -2);
+                    break;
+            }
+        }
+        else if (Camera::getCurrent().getCamId() == "gaucheCam")  {
+            switch (direction)  {
+                case 0: // Move Left
+                    deplacement = Vector(-2, 0, 0);
+                    break;
+                case 1: // Move Right
+                    deplacement = Vector(2, 0, 0);
+                    break; 
+                case 2: // Move Down
+                    deplacement = Vector(0, 0, -2);
+                    break;
+                case 3: // Move Up
+                    deplacement = Vector(0, 0, 2);
+                    break;
+            }
+        }
+        if (Camera::getCurrent().getCamId() == "topCam" || Camera::getCurrent().getCamId() == "faceCam" || Camera::getCurrent().getCamId() == "droitCam" || Camera::getCurrent().getCamId() == "gaucheCam" || Camera::getCurrent().getCamId() == "backCam")  { 
+            copiedShape.move(deplacement);
+            if (checkWallCollision(manager, copiedShape))
+                manager.getShape(furnitures[fp.selected]->name).move(deplacement);
         }
     }
 
