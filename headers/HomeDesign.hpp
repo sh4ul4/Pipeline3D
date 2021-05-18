@@ -23,6 +23,8 @@ struct editFloorPack {
     std::string selectedBack;
 };
 
+
+
 void editFloor(editFloorPack *efp)  {
     (*efp->manager).getShape("floor").changeBitmap(Bitmap::getBitmap(efp->selectedBitmap));
 }
@@ -99,6 +101,9 @@ private:
 
     // Surface de la pièce
     float w1, w3, surface;
+    int optf = 0, optw = 0;
+
+    ShapeManager& refManager;
     
     /**
      * @brief Vector des meubles (classe Furniture) existants sur l'instance courante
@@ -166,13 +171,153 @@ public:
      * @param InputEvent    Utile aux évènements d'interaction utilisateur
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
-    HomeDesign(std::string scene, ButtonManager& bm, ShapeManager *manager, Window& window, InputEvent& inputEvent, float w1, float w3)
+    HomeDesign(std::string scene, ButtonManager& bm, ShapeManager *manager, Window& window, InputEvent& inputEvent, float w1, float w3, std::string importPath, bool mode)
                 : scene_name(scene), w1(w1), w3(w3), bmInsertion_def(inputEvent, window), bmInsertion1(inputEvent, window), bmInsertion2(inputEvent, window), 
-                  bmInsertion3(inputEvent, window), bmFurnitInteract(inputEvent, window), bmCameras(inputEvent, window) {
+                  bmInsertion3(inputEvent, window), bmFurnitInteract(inputEvent, window), bmCameras(inputEvent, window), refManager(*manager) {
+        
+        if (mode) {
+            initImport(bm, manager, window, inputEvent, importPath);
+            return;
+        }
+
         surface = w1 * w3;
         launch = std::chrono::steady_clock::now();
 
         w1 *= 20; w3 *= 20;
+
+        // Initialisation de l'environnement 3D selon les dimensions des murs
+        initializeRoom(manager, w1, w3);
+
+        // Initialisation des boutons de changement de vues
+        initViewsButtons(*manager, window);
+
+        // Initialisation des boutons principaux d'insertion
+        initInsertionButtons(bm);
+        
+        // Initialisation de l'espace interaction : (1) défaut, (2) insertion type 1 et 2, (3) insertion .obj 
+        //                                       et (4) interactions avec meuble 
+        initDefaultInteractSpace(window);
+        initInsertionSpace(manager, window);
+        initObjInsertionSpace(manager, window);
+        initFurnitureInteractionSpace(manager, window);
+    };
+
+    /**
+     * @brief Constructeur par défaut, appelé à la création d'une scène sur l'interface (1)
+     * 
+     * @param ButtonManager Utile aux évènements d'interaction utilisateur
+     * @param path          Fichier à importer pour initialiser la scène
+     */ 
+    void initImport(ButtonManager& bm, ShapeManager *manager, Window& window, InputEvent& inputEvent, std::string path)  {
+        
+        launch = std::chrono::steady_clock::now();
+        path = FIND_FILE(path);
+        std::ifstream in(path);
+        if (!in.is_open()) 
+            in = std::ifstream(path);
+        
+        if (!in.is_open()) {
+            PRINT_ON_ERR("There's no file named " + path);
+            return;
+        }
+
+        // Parcours du fichier
+        std::string line;
+        while(std::getline(in, line))  {
+            std::string type;
+            std::istringstream iss(line);
+            iss >> type;
+            
+            if (!type.compare("TITLE")) {
+                iss >> scene_name;
+            }
+            else if (!type.compare("WALLS"))  {
+                iss >> w1 >> w3;
+            }
+            else if (!type.compare("WOPTS"))  {
+                // Non utilisé
+                int optf, optw;
+                iss >> optf >> optw;
+            }
+            else if (!type.compare("FURNI"))  {
+                std::string name, furType, path, source, scale;
+                
+                std::getline(iss, name, '|');
+                std::getline(iss, furType, '|');
+                std::getline(iss, path, '|');
+                std::getline(iss, source, '|');
+                std::getline(iss, scale, '|');
+                name.erase(0, 1);
+
+                furnitures.push_back(new furnitureInfos(name, furType, path, source, stof(scale)));
+            }
+            else if (!type.compare("SHAPE"))  {
+                std::string name;
+                float x,y,z;
+                bool visible;
+                std::getline(iss, name, '|');
+                name.erase(0, 1);
+                iss >> x >> y >> z >> visible;
+                for (furnitureInfos *fur : furnitures)  {
+                    if (fur->name == name)  {
+                        manager->imprtShapeObj(fur->path, fur->source, name, fur->scale);
+                        manager->getShape(name).visible = visible;
+                        manager->getShape(name).setPos(Vertex(x,y,z));
+                        // Faut aussi set l'orientation
+                        break;
+                    }
+                }
+            }
+            else  
+                continue; 
+        }
+
+        // Fin du parsing
+        surface = w1 * w3;
+
+        // Initialisation de l'environnement 3D selon les dimensions des murs
+        initializeRoom(manager, w1*20, w3*20);
+
+        // Initialisation des boutons de changement de vues
+        initViewsButtons(*manager, window);
+
+        // Initialisation des boutons principaux d'insertion
+        initInsertionButtons(bm);
+        
+        // Initialisation de l'espace interaction : (1) défaut, (2) insertion type 1 et 2, (3) insertion .obj 
+        //                                       et (4) interactions avec meuble 
+        initDefaultInteractSpace(window);
+        initInsertionSpace(manager, window);
+        initObjInsertionSpace(manager, window);
+        initFurnitureInteractionSpace(manager, window);
+    };
+
+    std::string getSceneName()  { return scene_name; };
+    std::string getSelectedShape() const { return furnitures[fp.selected]->name; };
+
+    ~HomeDesign()  {
+        for (size_t i = 0; i < furnitures.size(); i++)  
+            delete furnitures[i];
+
+        for (size_t i = 0; i < text_insertion1.size(); i++)  
+            delete text_insertion1[i];
+        for (size_t i = 0; i < input_insertion1.size(); i++)  
+            delete input_insertion1[i];
+
+        for (size_t i = 0; i < text_insertion2.size(); i++)  
+            delete text_insertion2[i];
+        for (size_t i = 0; i < input_insertion2.size(); i++)  
+            delete input_insertion2[i];
+
+        for (size_t i = 0; i < text_insertion3.size(); i++)  
+            delete text_insertion3[i];
+        for (size_t i = 0; i < input_insertion3.size(); i++)  
+            delete input_insertion3[i];
+    }
+
+private:
+
+    void initializeRoom(ShapeManager *manager, float w1, float w3)  {
         int h = 50; // Hauteur de chaque mur
         // abcd : sol, a1b1c1d1 : plafond
         Vertex a(-w1/2, 0, -w3/2); // Haut gauche      a           c 
@@ -193,14 +338,8 @@ public:
         Vertex hd(w1/2+150, 0, -w3/2-150);
         Vertex bg(-w1/2-150, 0, w3/2+150); 
         Vertex bd(w1/2+150, 0, w3/2+150);
-        // hg             atop       ctop       hd
         
-
-        // amax          a          c           cmax  
-
-
-        // bmax          b          d           dmax
-
+        // Hauteur plafond
         Vertex a1(-w1/2, h, -w3/2);  
         Vertex b1(-w1/2, h,  w3/2);  
         Vertex c1( w1/2, h, -w3/2);
@@ -228,15 +367,15 @@ public:
         // manager->addRectangle("max_floor", amax, bmax, cmax, dmax, 4, white, false, Bitmap::getBitmap("grassFloor"));
         manager->addRectangle("floor", a, b, c, d, 4, white, false, Bitmap::getBitmap("basicFloor"));
 
-        manager->addRectangle("cdmax_floor", c, d, cmax, dmax, 2, white, false, Bitmap::getBitmap("grassFloor"));
-        manager->addRectangle("abmax_floor", amax, bmax, a, b, 2, white, false, Bitmap::getBitmap("grassFloor"));
-        manager->addRectangle("top_floor", atop, a, ctop, c, 2, white, false, Bitmap::getBitmap("grassFloor"));
-        manager->addRectangle("bot_floor", b, bbot, d, dbot, 2, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("cdmax_floor", c, d, cmax, dmax, 3, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("abmax_floor", amax, bmax, a, b, 3, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("top_floor", atop, a, ctop, c, 3, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("bot_floor", b, bbot, d, dbot, 3, white, false, Bitmap::getBitmap("grassFloor"));
         
-        manager->addRectangle("hg_floor", hg, amax, atop, a, 2, white, false, Bitmap::getBitmap("grassFloor"));
-        manager->addRectangle("hd_floor", ctop, c, hd, cmax, 2, white, false, Bitmap::getBitmap("grassFloor"));
-        manager->addRectangle("bg_floor", bmax, bg, b, bbot, 2, white, false, Bitmap::getBitmap("grassFloor"));
-        manager->addRectangle("bd_floor", d, dbot, dmax, bd, 2, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("hg_floor", hg, amax, atop, a, 3, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("hd_floor", ctop, c, hd, cmax, 3, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("bg_floor", bmax, bg, b, bbot, 3, white, false, Bitmap::getBitmap("grassFloor"));
+        manager->addRectangle("bd_floor", d, dbot, dmax, bd, 3, white, false, Bitmap::getBitmap("grassFloor"));
 
         // Division à mettre en fonction de la surface
         manager->addRectangle("frontWall", c1, d1, c, d, 4, white, false, Bitmap::getBitmap("basic-wall"));
@@ -244,82 +383,7 @@ public:
         manager->addRectangle("leftWall", a1, c1, a, c, 4, white, false, Bitmap::getBitmap("doored-wall"));
         manager->addRectangle("rightWall", b1, d1, b, d, 4, white, false, Bitmap::getBitmap("basic-wall"));
         std::cout<<"Room créée"<<std::endl;
-
-        // Boutons de vues
-        initViewsButtons(*manager, window);
-
-        // 2. Boutons interaction Frame : insertion
-        /**
-         * @brief Boutons relatifs à l'insertion de meuble
-         * 
-         * Chaque bouton est lié à la méthode insertFurniture() en spécifiant son numéro
-         */
-        int b_width = 286, b_height = 104;
-        int b_topleftx = 30, b_tly = 596;
-        bm.addRectTextButton<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer meuble type 1");
-        bm.getButton<int*>("b_insertDefault").setAction(insertFurniture, &un);
-        b_topleftx += 306;
-
-        bm.addRectTextButton<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer meuble type 2");
-        bm.getButton<int*>("b_insertDefault2").setAction(insertFurniture, &deux);
-        b_topleftx += 306; 
-
-        bm.addRectTextButton<int*>("b_insertDefault3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer un meuble depuis un fichier .obj");
-        bm.getButton<int*>("b_insertDefault3").setAction(insertFurniture, &trois);
-
-        initDefaultInteractSpace(window);
-        initInsertionSpace(manager, window);
-        initObjInsertionSpace(manager, window);
-        initFurnitureInteractionSpace(manager, window);
-    };
-
-    /**
-     * @brief Constructeur par défaut, appelé à la création d'une scène sur l'interface (1)
-     * 
-     * @param ButtonManager Utile aux évènements d'interaction utilisateur
-     * @param path          Fichier à importer pour initialiser la scène
-     */ 
-    HomeDesign(ButtonManager& bm, std::string path);
-
-    std::string getSceneName()  { return scene_name; };
-    int getInteractInt() { return interactSpace; };
-    void setInteractSpace(int n) { interactSpace = n; };
-
-    void setViewsButtonsAction(camPack& p0, camPack& p1, camPack& p2, camPack& p3, camPack& p4, camPack& p5) {
-        bmCameras.getButton<camPack*>("b_mainView").setAction(switchCam, &p0);
-        bmCameras.getButton<camPack*>("b_View1").setAction(switchCam, &p1);
-        bmCameras.getButton<camPack*>("b_View2").setAction(switchCam, &p2);
-        bmCameras.getButton<camPack*>("b_View3").setAction(switchCam, &p3);
-        bmCameras.getButton<camPack*>("b_View4").setAction(switchCam, &p4);
-        bmCameras.getButton<camPack*>("b_freeMotionView").setAction(goFreeView, &p5);
     }
-
-    void renderViewsButtons(SDL_Renderer *renderer) {
-        bmCameras.checkButtons();
-		bmCameras.renderButtons(renderer);
-    }
-
-    ~HomeDesign()  {
-        for (size_t i = 0; i < furnitures.size(); i++)  
-            delete furnitures[i];
-
-        for (size_t i = 0; i < text_insertion1.size(); i++)  
-            delete text_insertion1[i];
-        for (size_t i = 0; i < input_insertion1.size(); i++)  
-            delete input_insertion1[i];
-
-        for (size_t i = 0; i < text_insertion2.size(); i++)  
-            delete text_insertion2[i];
-        for (size_t i = 0; i < input_insertion2.size(); i++)  
-            delete input_insertion2[i];
-
-        for (size_t i = 0; i < text_insertion3.size(); i++)  
-            delete text_insertion3[i];
-        for (size_t i = 0; i < input_insertion3.size(); i++)  
-            delete input_insertion3[i];
-    }
-
-private:
 
     /**
      * @brief Méthode appelée lorsque les boutons d'insertion de meuble sont pressés
@@ -345,6 +409,26 @@ private:
                 (*rp->bm).getButton<radioButtonPack*>((*rp->checkboxes)[i]).setClicked(false);
             }
         }
+    }
+
+    /**
+     * @brief Boutons relatifs à l'insertion de meuble
+     * 
+     * Chaque bouton est lié à la méthode insertFurniture() en spécifiant son numéro
+     */
+    void initInsertionButtons(ButtonManager& bm)  {
+        int b_width = 286, b_height = 104;
+        int b_topleftx = 30, b_tly = 596;
+        bm.addRectTextButton<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer un meuble basique");
+        bm.getButton<int*>("b_insertDefault").setAction(insertFurniture, &un);
+        b_topleftx += 306;
+
+        bm.addRectTextButton<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer meuble type 2");
+        bm.getButton<int*>("b_insertDefault2").setAction(insertFurniture, &deux);
+        b_topleftx += 306; 
+
+        bm.addRectTextButton<int*>("b_insertDefault3", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer un meuble depuis un fichier .obj");
+        bm.getButton<int*>("b_insertDefault3").setAction(insertFurniture, &trois);
     }
 
     /**
@@ -617,11 +701,21 @@ private:
 
     void editSurface();
 
-    void saveScene();
-
 public: // Méthodes liées à des boutons créés dans main.cpp
 
-    std::string getSelectedShape() const { return furnitures[fp.selected]->name; };
+    void setViewsButtonsAction(camPack& p0, camPack& p1, camPack& p2, camPack& p3, camPack& p4, camPack& p5) {
+        bmCameras.getButton<camPack*>("b_mainView").setAction(switchCam, &p0);
+        bmCameras.getButton<camPack*>("b_View1").setAction(switchCam, &p1);
+        bmCameras.getButton<camPack*>("b_View2").setAction(switchCam, &p2);
+        bmCameras.getButton<camPack*>("b_View3").setAction(switchCam, &p3);
+        bmCameras.getButton<camPack*>("b_View4").setAction(switchCam, &p4);
+        bmCameras.getButton<camPack*>("b_freeMotionView").setAction(goFreeView, &p5);
+    }
+    
+    void renderViewsButtons(SDL_Renderer *renderer) {
+        bmCameras.checkButtons();
+		bmCameras.renderButtons(renderer);
+    }
 
     void renderDefault(InputEvent& inputEvent, Window& window)  {
         std::stringstream stream;
@@ -904,6 +998,48 @@ public: // Méthodes liées à des boutons créés dans main.cpp
 
         // Afficher une TextBox pour indiquer que c'est exporté 
         // Faire une boucle à part pour insérer le nom du fichier ? 
+    };
+
+    
+    static void saveScene(HomeDesign *hm)  {
+        // Générer un path et nom de fichier en fonction de l'heure
+        auto t = std::time(nullptr);
+        auto tm = *std::localtime(&t);
+        std::ostringstream oss;
+        oss << "../" + hm->scene_name;
+        oss << std::put_time(&tm, "_%d-%m-%y_%H-%M-%S");
+        std::ofstream outfile;
+        outfile.open (oss.str());
+
+        outfile << "# HomeDesign Software\n";
+        outfile << '\n';
+        outfile << "# TITLE - Titre de la scène\n";
+        outfile << "# WALLS - Dimensions définies des murs de la pièce\n";
+        outfile << "# WOPTS - Options choisies pour le sol et les murs par défaut (99 si personnalisé)\n";
+        outfile << "# TEXTF - Path vers la texture à appliquer au sol si WOPTS[0] = 99\n";
+        outfile << "# TEXTW - Path vers les textures à appliquer aux murs si WOPTS[1] = 99\n";
+        outfile << "# FURNI - Meuble unique : Nom | Type | Path | Obj source | Échelle\n";
+        outfile << "# SHAPE - Shape associée au meuble : Nom | Coordonnées du centre | Visibilité | Orientation (How?)\n";
+        outfile << '\n';
+
+        outfile << "TITLE " << hm->scene_name << '\n';
+        outfile << "WALLS " << hm->w1 << ' ' << hm->w3 << '\n';
+        outfile << "WOPTS " << hm->optf << ' ' << hm->optw << '\n';
+        outfile << "TEXTF\n" << "TEXTW" << '\n'; // Paths vers textures custom pour murs et sol
+        outfile << '\n';
+
+        for (furnitureInfos *fur : hm->furnitures)  {
+            outfile << "FURNI " << fur->name << "|" << fur->type << "|" << fur->path << "|" << fur->source << "|" << fur->scale << '\n';
+        }
+        outfile << '\n';
+        for (furnitureInfos *fur : hm->furnitures)  {
+            Shape copiedShape((hm->refManager).getShape(fur->name));
+            outfile << "SHAPE " << fur->name << "|" << copiedShape.center.x << ' ' << copiedShape.center.y << ' ' << copiedShape.center.z << ' ';
+            outfile << copiedShape.visible << ' ' << '\n';
+        }
+
+        outfile.close();
+        std::cout << "Correctement exporté vers " << oss.str() << '\n';
     };
 };
 

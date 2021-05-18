@@ -28,10 +28,7 @@ private:
      * 
      * Chacun des boutons possède un attribut booléen pour indiquer sa visibilité / cliquabilité. 
      */
-    // Button b_remove;
-    // Button b_rotate;
-    // Button b_rename;
-    // TextInput t_rename;
+    
 
 public:
     /**
@@ -162,10 +159,15 @@ public:
 struct furnitureInfos  {
     std::string name;
     std::string type;
+    std::string path;
+    std::string source;
     float scale;
 
     furnitureInfos(std::string name, std::string type, float scale) : 
         name(name), type(type), scale(scale) {}
+
+    furnitureInfos(std::string name, std::string type, std::string path, std::string source, float scale) : 
+        name(name), type(type), scale(scale), path(path), source(source) {}
 
     furnitureInfos() = delete;
 };
@@ -224,23 +226,23 @@ static void furnitureInsertion(insertPack *ip)  {
             case 1: // Table en bois
                 (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
                 // (*ip->manager).getShape(ip->name).groundZero();
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", "OBJ/woodtable/", "Wood_Table.obj", ip->scale));
                 break;
             case 2: // Commode
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/commode/"), "commode.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", "HM-Res/furnitures/commode/", "commode.obj", ip->scale));
                 break;
             case 3: // lit
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/lit/"), "lit.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Lit simple", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Lit simple", "HM-Res/furnitures/lit/", "lit.obj", ip->scale));
                 break;
             case 4: // bureau
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/bureau/"), "bureau.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Bureau", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Bureau", "HM-Res/furnitures/bureau/", "bureau.obj", ip->scale));
                 break;
             case 5: // chaise
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", "HM-Res/furnitures/chaise/", "chaise.obj", ip->scale));
                 break;
             default:
                 std::cout << "Insertion de RIEN DU TOUT\n";
@@ -271,7 +273,7 @@ static void objInsertion(insertObjPack *ip)  {
         }
         std::cout << "Import OBJ de " + path+'/' + ip->objSource + "\n";
         (*ip->manager).imprtShapeObj(path+'/', ip->objSource, ip->name, ip->scale);
-        (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Objet importé manuellement", ip->scale));
+        (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Objet importé manuellement", path+'/', ip->objSource, ip->scale));
         (*ip->manager).getShape(ip->name).groundZero();
         ip->objRetVal = "L'objet '" + ip->name + "' a été importé avec succès.";
     }
@@ -336,8 +338,8 @@ static void deleteFurniture(editFurniturePack *fp)  {
         newName += alphanum[rand() % stringLength];
     }
     (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).visible = false;
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).name = fp->newName;
-    (*fp->furnitures)[fp->selected]->name = fp->newName;
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).name = newName;
+    (*fp->furnitures)[fp->selected]->name = newName;
     (*fp->manager).pushShapesEditing();
 
 

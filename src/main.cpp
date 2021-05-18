@@ -28,29 +28,46 @@ void dezoomCam(void *p)  {
 
 
 struct initPack {
-	bool *start;
+	int *start;
 	int *checkForError;
 	std::string w1;
 	std::string w3;
+	std::string scene_name;
+	std::string import_path;
+	int mode;
 };
 
 // Ajouter input pour nom de scène et si vide mettre nom par défaut
 void checkInitialization(initPack *i) {
-	if (i->w1.empty() || i->w3.empty()) {
-		*i->checkForError = 2;
-		return;
-	}
+	if (!i->mode)  {
+		// Mode avec murs
+		if (i->w1.empty() || i->w3.empty()) {
+			*i->checkForError = 2;
+			return;
+		}
 
-	try  {
-		stof(i->w1);
-		stof(i->w3);
-	}  catch (const std::invalid_argument& ia)  {
-		*i->checkForError = 1; // Flottant invalide
-		// Ajouter un if pour gérer les valeurs max.
-		return;
-  	}
-	*i->checkForError = 3; // Flottants valides !
-	*i->start = true;
+		try  {
+			stof(i->w1);
+			stof(i->w3);
+		}  catch (const std::invalid_argument& ia)  {
+			*i->checkForError = 1; // Flottant invalide
+			// Ajouter un if pour gérer les valeurs max.
+			return;
+		}
+		*i->checkForError = 3; // Flottants valides !
+		*i->start = 1;
+	}
+	else  {
+		// Mode importation
+		std::string file = FIND_FILE_BUT_DONT_LEAVE(i->import_path);
+		if (file.empty())  {
+			*i->checkForError = 4; // Path introuvable
+			return;
+		}
+
+		*i->checkForError = 5; // Path trouvé
+		*i->start = 2;
+	}
 }
 
 int main(int argc, char* argv[]) {
@@ -64,11 +81,11 @@ int main(int argc, char* argv[]) {
 	Mouse mouse;
 	Keyboard keyboard;
 
-	bool start = false;
+	int start = 0;
 	int checkForError = 0;
 
-	TextBox t_intro("CROUS Simulator", "fonts/calibri.ttf", 40, black, Point2D<int>(500, 260), 400, 40, window.getRenderer());
-	int i_TLx = 440, i_TLy = 310;
+	TextBox t_intro("CROUS Simulator", "fonts/calibri.ttf", 40, black, Point2D<int>(500, 230), 400, 40, window.getRenderer());
+	int i_TLx = 440, i_TLy = 280;
 	TextBox t_mur1("Mur 1", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
 	TextInput i_mur1("5 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
 	TextBox t_mur2("Mur 2", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, window.getRenderer());
@@ -82,12 +99,23 @@ int main(int argc, char* argv[]) {
 	
 	TextBox t_error("", "fonts/calibri.ttf", 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, window.getRenderer());
 
+	TextInput scene_name("<nom de scène>", "fonts/calibri.ttf", 21, black, Point2D<int>(440, 390), 400, 25, window.getRenderer());
 	bm.addRectTextButton<initPack*>("b_initApp", Point2D<int>(440, 415), 400, 40, "Nouvelle scène à partir de la surface donnée");
-	bm.addRectTextButton<int*>("b_initImport", Point2D<int>(440, 475), 400, 40, "Importer une scène depuis un fichier");
-	initPack i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText() };
-	bm.getButton<initPack*>("b_initApp").setAction(checkInitialization, &i0);
 
-	while (!start && !keyboard.escape.down) {
+	TextInput import_path("<chemin d'accès>", "fonts/calibri.ttf", 21, black, Point2D<int>(440, 475), 400, 25, window.getRenderer());
+	bm.addRectTextButton<initPack*>("b_initImport", Point2D<int>(440, 500), 400, 40, "Importer une scène depuis un fichier");
+	initPack i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), import_path.getText(), 0 };
+	initPack i1 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), import_path.getText(), 1 };
+	
+	bm.getButton<initPack*>("b_initApp").setAction(checkInitialization, &i0);
+	bm.getButton<initPack*>("b_initImport").setAction(checkInitialization, &i0);
+
+	while (!start) {
+		if (keyboard.escape.down)
+			exit(1);
+
+		scene_name.checkForInput(inputEvent, window.getRenderer());
+		import_path.checkForInput(inputEvent, window.getRenderer());
 		i_mur1.checkForInput(inputEvent, window.getRenderer(), i_mur2);
 		i_mur3.checkForInput(inputEvent, window.getRenderer(), i_mur4);
 
@@ -99,11 +127,15 @@ int main(int argc, char* argv[]) {
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
 		
-		i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText() };
+		i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), import_path.getText(), 0 };
+		i1 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), import_path.getText(), 1 };
 		bm.getButton<initPack*>("b_initApp").setParam(&i0);
+		bm.getButton<initPack*>("b_initImport").setParam(&i1);
 		bm.checkButtons();
 		bm.renderButtons(window.getRenderer());
 
+		scene_name.centerizedRender(Point2D<int>(440, 375), 400, window.getRenderer(), 0);
+		import_path.centerizedRender(Point2D<int>(440, 375), 400, window.getRenderer(), 0);
 		i_mur1.render(window.getRenderer(), 0);
 		i_mur2.render(window.getRenderer(), 0);
 		i_mur3.render(window.getRenderer(), 0);
@@ -125,6 +157,12 @@ int main(int argc, char* argv[]) {
 			case 3:
 				t_error.update("Dimensions valides ! Chargement de la pièce...", "fonts/calibri.ttf", 20, hd_greenButtons, window.getRenderer());
 				break;
+			case 4:
+				t_error.update("Le fichier est introuvable !", window.getRenderer());
+				break;
+			case 5:
+				t_error.update("Fichier localisé ! Chargement de la pièce...", "fonts/calibri.ttf", 20, hd_greenButtons, window.getRenderer());
+				break;
 			default:
 				t_error.update("Erreur innatendue !", window.getRenderer());
 				break;
@@ -139,17 +177,22 @@ int main(int argc, char* argv[]) {
 	bm.removeButton("b_initApp");
 	bm.removeButton("b_initImport");
 
-	float w1, w3;
-	w1 = stof(i_mur1.getText());
-	w3 = stof(i_mur3.getText());
-	if(w3 < w1) std::swap(w1, w3);
-	HomeDesign hm( "MaChambreCROUS", bm, &manager, window, inputEvent, w1, w3 );
+	float w1 = 0, w3 = 0;
+
+	bool mode = true;
+	if (start == 1)  {
+		w1 = stof(i_mur1.getText());
+		w3 = stof(i_mur3.getText());
+		if(w3 < w1) std::swap(w1, w3);
+		mode = false;
+	}
+	HomeDesign hm( i0.scene_name, bm, &manager, window, inputEvent, w1, w3, i1.import_path, mode);
 	
 
 	/** ==============================
 	 *  Initialisation caméras
 	 * ==============================*/
-	TextBox current_cam("Vue du haut", "fonts/calibri.ttf", 20, black, Point2D<int>(35, 35), 400, 20, window.getRenderer());
+	TextBox current_cam("Vue du haut", "fonts/calibri.ttf", 20, red, Point2D<int>(35, 35), 400, 20, window.getRenderer());
 	// Top: -90° / 230° (?) / y -= 5 pour zoomer
 	Camera topCam("topCam", {manager.getShape("floor").center.x, manager.getShape("floor").center.y + 150, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	Camera freeCam("freeCam", { 120,300,65 }, 60, 0, 4);
@@ -174,7 +217,9 @@ int main(int argc, char* argv[]) {
 	bm.addRectTextButtonCustom<camPack*>("b_editSurface", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Editer la surface de la scene", 16, black);
 	// bm.getButton<TextInput*>("b_editSurface").setAction([](TextInput* t) { std::cout << t->getText() << std::endl; }, &ti);
 	b_tly += 58;
-	bm.addRectTextButtonCustom<camPack*>("b_saveScene", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Enregistrer la scene", 16, black);
+	bm.addRectTextButtonCustom<HomeDesign*>("b_saveScene", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Enregistrer la scene", 16, black);
+	// exportScenePack ex = { &manager, &hm};
+	bm.getButton<HomeDesign*>("b_saveScene").setAction(hm.saveScene, &hm);
 	b_tly += 58;
 	bm.addRectTextButtonCustom<Render*>("b_exportView", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Exporter la vue actuelle", 16, black);
 	bm.getButton<Render*>("b_exportView").setAction(hm.exportImage, &r);
@@ -197,6 +242,11 @@ int main(int argc, char* argv[]) {
 	bm.getButton<void*>("b_dezoom").setAction(dezoomCam, nullptr);
 	
 	Texture2D blueSky("HM-Res/blue-sky.jpeg", window.getRenderer());
+	// Texture2D CROUS("HM-Res/CROUS.svg", window.getRenderer());
+	// TextBox TITLE("HOME", "fonts/Calibri Bold.ttf", 24, black, Point2D<int>(825, 5), 930, 30, window.getRenderer());
+	// TITLE.setPosition(Point2D(930-TITLE.width, 5));
+	Texture2D LOGO("HM-Res/3DHomeProject.png", window.getRenderer());
+
 	r.updateTriangles(manager);
 	while (!keyboard.escape.down) {
 		inputEvent.update();
@@ -227,6 +277,9 @@ int main(int argc, char* argv[]) {
 		// Fond de pipeline et rectangle espace interactions
 		// drawer.DrawFillRoundedRectContoured(Point2D<int>(30,30), 900, 506, 5, hd_blueSky, black, window.getRenderer());
 		blueSky.render(window.getRenderer(), Point2D<int>(30,30), 900, 506);
+		// CROUS.render(window.getRenderer(), Point2D<int>(810,1), 40, 40);
+		// TITLE.render(window.getRenderer(), 0, 0);
+		LOGO.render(window.getRenderer(), Point2D<int>(800,2), 130, 25);
 		drawer.DrawFillRoundedRectContoured(Point2D<int>(970, 30), 270, 506, 3, white, black, window.getRenderer());
 
 		// if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(30,30),900,506, window);
