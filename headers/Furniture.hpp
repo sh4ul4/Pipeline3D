@@ -200,6 +200,15 @@ struct radioButtonPack  {
     ButtonManager *bm;
     std::vector<std::string> *checkboxes;
     int selected;
+    Window *window;
+    std::string lebail;
+    TextInput *texti;
+
+    radioButtonPack(ButtonManager *bm, std::vector<std::string> *checkboxes, int selected, 
+                    Window *window, std::string lebail, TextInput *texti) : 
+                bm(bm), checkboxes(checkboxes), selected(selected), window(window), lebail(lebail), texti(texti) {}
+    
+    radioButtonPack() = delete; 
 };
 
 struct editFurniturePack  {

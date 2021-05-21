@@ -234,11 +234,11 @@ int main(int argc, char* argv[]) {
 
 	// Liaison caméras / boutons de changement de vues
 	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window, &manager, "top" };
-	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall", "frontWallE" };
-	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall", "leftWallE" };
-	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall", "rightWallE" };
-	camPack p4 = { &backCam, "Vue de l'arrière", &current_cam, &window, &manager, "backWall", "backWallE" };
-	camPack p5 = { &freeCam, "Déplacement libre", &current_cam, &window, &manager, "none", "none", &r };
+	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall" };
+	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall" };
+	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall" };
+	camPack p4 = { &backCam, "Vue de l'arrière", &current_cam, &window, &manager, "backWall" };
+	camPack p5 = { &freeCam, "Déplacement libre", &current_cam, &window, &manager, "none", &r };
 	hm.setViewsButtonsAction(p0,p1,p2,p3,p4,p5);
 	
 
@@ -318,16 +318,14 @@ int main(int argc, char* argv[]) {
 				manager.getShape(hm.getSelectedShape()).drawHit2D(Point2D<int>(30,30), window);
 
 				// Mouvement avec flèches
-				hm.moveFurniture(manager, keyboard);
-					// à passer sur la fonction checkFurnitureClick
-				// if (keyboard.left.pressed) 
-				// 	hm.moveFurniture(manager, keyboard, 0);
-				// if (keyboard.right.pressed) 
-				// 	hm.moveFurniture(manager, keyboard, 1);
-				// if (keyboard.down.pressed) 
-				// 	hm.moveFurniture(manager, keyboard, 2);
-				// if (keyboard.up.pressed) 
-				// 	hm.moveFurniture(manager, keyboard, 3);
+				if (keyboard.left.pressed) 
+					hm.moveFurniture(manager, keyboard, 0);
+				if (keyboard.right.pressed) 
+					hm.moveFurniture(manager, keyboard, 1);
+				if (keyboard.down.pressed) 
+					hm.moveFurniture(manager, keyboard, 2);
+				if (keyboard.up.pressed) 
+					hm.moveFurniture(manager, keyboard, 3);
 				break;
 			default:
 				// Render infos sur la scène actuelle

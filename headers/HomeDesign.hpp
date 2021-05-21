@@ -10,7 +10,6 @@ struct camPack {
 	Window *window;
 	ShapeManager *manager;
 	std::string referencedWall;
-    std::string referencedWallE;
     Render *render;
 };
 
@@ -41,14 +40,17 @@ void editWalls(editFloorPack *efp)  {
  * @brief Rend l'ensemble des murs de la pièce visibles
  */
 void editWallsVisibility(ShapeManager& manager, bool visibility)  {
-	manager.getShape("frontWallE").visible = visibility;
-    manager.getShape("frontWall").visible = visibility;
-	manager.getShape("backWallE").visible = visibility;
-    manager.getShape("backWall").visible = visibility;
-	manager.getShape("leftWallE").visible = visibility;
-	manager.getShape("leftWall").visible = visibility;
-    manager.getShape("rightWallE").visible = visibility;
-    manager.getShape("rightWall").visible = visibility;
+    std::vector<std::string> walls;
+    walls.insert(walls.end(),{"frontWall", "backWall", "leftWall", "rightWall"});
+
+    for (std::string wall : walls)  {
+        manager.getShape(wall).visible = visibility;
+        manager.getShape(wall+'E').visible = visibility;
+        manager.getShape(wall+'T').visible = visibility;
+        manager.getShape(wall+'B').visible = visibility;
+        manager.getShape(wall+'L').visible = visibility;
+        manager.getShape(wall+'R').visible = visibility;
+    }
 }
 
 
@@ -62,7 +64,11 @@ void switchCam(camPack *p) {
         editWallsVisibility(*p->manager, false);
 	if (p->referencedWall.compare("none") && p->referencedWall.compare("top"))  {
 		(*p->manager).getShape(p->referencedWall).visible = false;
-        (*p->manager).getShape(p->referencedWallE).visible = false;
+        (*p->manager).getShape(p->referencedWall + 'E').visible = false;
+        (*p->manager).getShape(p->referencedWall + 'T').visible = false;
+        (*p->manager).getShape(p->referencedWall + 'B').visible = false;
+        (*p->manager).getShape(p->referencedWall + 'L').visible = false;
+        (*p->manager).getShape(p->referencedWall + 'R').visible = false;
     }
 	(*p->manager).pushShapesEditing();
 	p->cam->setCurrent();
@@ -135,8 +141,6 @@ private:
     ButtonManager bmInsertion1;
     std::vector<std::string> checkboxes1, checkboxes2;
     std::vector<radioButtonPack> rp1;
-
-    radioButtonPack rp11, rp12, rp13, rp14, rp15, rp21, rp22, rp23, rp24, rp25;
 
     // Interface d'insertion Type 2
     std::vector<TextBox*> text_insertion2;
@@ -247,16 +251,17 @@ public:
                 iss >> optf >> optw;
             }
             else if (!type.compare("FURNI"))  {
-                std::string name, furType, path, source, scale;
+                std::string name, furType, path, source, scale, rotation;
                 
                 std::getline(iss, name, '|');
                 std::getline(iss, furType, '|');
                 std::getline(iss, path, '|');
                 std::getline(iss, source, '|');
                 std::getline(iss, scale, '|');
+                std::getline(iss, rotation, '|');
                 name.erase(0, 1);
 
-                furnitures.push_back(new furnitureInfos(name, furType, path, source, 0, stof(scale)));
+                furnitures.push_back(new furnitureInfos(name, furType, path, source, stoi(rotation), stof(scale)));
             }
             else if (!type.compare("SHAPE"))  {
                 std::string name;
@@ -269,8 +274,9 @@ public:
                     if (fur->name == name)  {
                         manager->imprtShapeObj(fur->path, fur->source, name, fur->scale);
                         manager->getShape(name).visible = visible;
+                        for (size_t i = 0; i < fur->rotation; i++)
+                            manager->getShape(name).rotateY(manager->getShape(name).center, -1.5708);
                         manager->getShape(name).setPos(Vertex(x,y,z));
-                        // Faut aussi set l'orientation
                         break;
                     }
                 }
@@ -328,8 +334,8 @@ private:
         int h = 50; // Hauteur de chaque mur
         // abcd : sol, a1b1c1d1 : plafond
         Vertex a(-w1/2, 0, -w3/2); // Haut gauche      a           c 
-        Vertex b(-w1/2, 0,  w3/2); // Haut droit     
-        Vertex c( w1/2, 0, -w3/2); // Bas gauche
+        Vertex b(-w1/2, 0,  w3/2); // Bas gauche     
+        Vertex c( w1/2, 0, -w3/2); // Haut droite
         Vertex d( w1/2, 0,  w3/2); // Bas droit        b           d
 
         // Hauteur plafond
@@ -339,7 +345,6 @@ private:
         Vertex d1( w1/2, h,  w3/2);
 
         
-
         Vertex amax(-w1/2-150, 0, -w3/2);       
         Vertex atop(-w1/2, 0, -w3/2-150);  
         Vertex bmax(-w1/2-150, 0,  w3/2);
@@ -454,6 +459,7 @@ private:
                 (*rp->bm).getButton<radioButtonPack*>((*rp->checkboxes)[i]).setClicked(false);
             }
         }
+        (*rp->texti).update(rp->lebail, (*rp->window).getRenderer());
     }
 
     /**
@@ -616,33 +622,23 @@ private:
         bmInsertion2.addRectTextButton<insertPack*>("b_insertFinal2", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
         checkboxes1.insert(checkboxes1.end(),{"c_table", "c_commode", "c_lit", "c_bureau", "c_chaise"});
-        rp11 = {&bmInsertion1, &checkboxes1, 0};
-        rp12 = {&bmInsertion1, &checkboxes1, 1};
-        rp13 = {&bmInsertion1, &checkboxes1, 2};
-        rp14 = {&bmInsertion1, &checkboxes1, 3};
-        rp15 = {&bmInsertion1, &checkboxes1, 4};
-        bmInsertion1.getButton<radioButtonPack*>("c_table").setAction(radioButtonMode, &rp11);
-        bmInsertion1.getButton<radioButtonPack*>("c_commode").setAction(radioButtonMode, &rp12);
-        bmInsertion1.getButton<radioButtonPack*>("c_lit").setAction(radioButtonMode, &rp13);
-        bmInsertion1.getButton<radioButtonPack*>("c_bureau").setAction(radioButtonMode, &rp14);
-        bmInsertion1.getButton<radioButtonPack*>("c_chaise").setAction(radioButtonMode, &rp15);
+        
+        bmInsertion1.getButton<radioButtonPack*>("c_table").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Table", input_insertion1[0]));
+        bmInsertion1.getButton<radioButtonPack*>("c_commode").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Commode", input_insertion1[0]));
+        bmInsertion1.getButton<radioButtonPack*>("c_lit").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Lit", input_insertion1[0]));
+        bmInsertion1.getButton<radioButtonPack*>("c_bureau").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Bureau", input_insertion1[0]));
+        bmInsertion1.getButton<radioButtonPack*>("c_chaise").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Chaise", input_insertion1[0]));
         ip1 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion1, &checkboxes1};
         bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip1);
 
         checkboxes2.insert(checkboxes2.end(),{"c_placard", "c_evier", "c_frigo", "c_microonde", "c_5"});
-        rp21 = {&bmInsertion2, &checkboxes2, 0};
-        rp22 = {&bmInsertion2, &checkboxes2, 1};
-        rp23 = {&bmInsertion2, &checkboxes2, 2};
-        rp24 = {&bmInsertion2, &checkboxes2, 3};
-        rp25 = {&bmInsertion2, &checkboxes2, 4};
-        bmInsertion2.getButton<radioButtonPack*>("c_placard").setAction(radioButtonMode, &rp21);
-        bmInsertion2.getButton<radioButtonPack*>("c_evier").setAction(radioButtonMode, &rp22);
-        bmInsertion2.getButton<radioButtonPack*>("c_frigo").setAction(radioButtonMode, &rp23);
-        bmInsertion2.getButton<radioButtonPack*>("c_microonde").setAction(radioButtonMode, &rp24);
-        bmInsertion2.getButton<radioButtonPack*>("c_5").setAction(radioButtonMode, &rp25);
+        bmInsertion2.getButton<radioButtonPack*>("c_placard").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "Placard", input_insertion2[0]));
+        bmInsertion2.getButton<radioButtonPack*>("c_evier").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "Evier", input_insertion2[0]));
+        bmInsertion2.getButton<radioButtonPack*>("c_frigo").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "Frigo", input_insertion2[0]));
+        bmInsertion2.getButton<radioButtonPack*>("c_microonde").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "Micro-onde", input_insertion2[0]));
+        bmInsertion2.getButton<radioButtonPack*>("c_5").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "default", input_insertion2[0]));
         ip2 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion2, &checkboxes2 };
         bmInsertion2.getButton<insertPack*>("b_insertFinal2").setAction(furnitureInsertion, &ip2);
-        // setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
     }
 
     void initObjInsertionSpace(ShapeManager *manager, Window& window)  {
@@ -982,7 +978,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         return true;
     }
 
-    void moveFurniture(ShapeManager& manager, int direction)  {
+    void moveFurniture(ShapeManager& manager, Keyboard& keyboard, int direction)  {        
         Shape copiedShape(manager.getShape(furnitures[fp.selected]->name));
         Vector deplacement;
         if (Camera::getCurrent().getCamId() == "topCam" || Camera::getCurrent().getCamId() == "faceCam")  {
@@ -1050,9 +1046,13 @@ public: // Méthodes liées à des boutons créés dans main.cpp
             }
         }
         if (Camera::getCurrent().getCamId() == "topCam" || Camera::getCurrent().getCamId() == "faceCam" || Camera::getCurrent().getCamId() == "droitCam" || Camera::getCurrent().getCamId() == "gaucheCam" || Camera::getCurrent().getCamId() == "backCam")  { 
-            copiedShape.move(deplacement);
-            if (checkWallCollision(manager, copiedShape) && checkFurnitureCollision(manager, copiedShape))
+            if (keyboard.shift.pressed)
                 manager.getShape(furnitures[fp.selected]->name).move(deplacement);
+            else  {
+                copiedShape.move(deplacement);
+                if (checkWallCollision(manager, copiedShape) && checkFurnitureCollision(manager, copiedShape))
+                    manager.getShape(furnitures[fp.selected]->name).move(deplacement);
+            }
         }
     }
 
@@ -1077,7 +1077,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         auto tm = *std::localtime(&t);
         std::ostringstream oss;
         oss << "../" + hm->scene_name;
-        oss << std::put_time(&tm, "_%d-%m_%H-%M.3dhome");
+        oss << std::put_time(&tm, "_%d-%m_%H-%M.3dh");
         std::ofstream outfile;
         outfile.open (oss.str());
 
@@ -1089,7 +1089,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         outfile << "# TEXTF - Path vers la texture à appliquer au sol si WOPTS[0] = 99\n";
         outfile << "# TEXTW - Path vers les textures à appliquer aux murs si WOPTS[1] = 99\n";
         outfile << "# FURNI - Meuble unique : Nom | Type | Path | Obj source | Échelle\n";
-        outfile << "# SHAPE - Shape associée au meuble : Nom | Coordonnées du centre | Visibilité | Orientation (How?)\n";
+        outfile << "# SHAPE - Shape associée au meuble : Nom | Coordonnées du centre | Visibilité | Rotation\n";
         outfile << '\n';
 
         outfile << "TITLE " << hm->scene_name << '\n';
@@ -1099,13 +1099,14 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         outfile << '\n';
 
         for (furnitureInfos *fur : hm->furnitures)  {
-            outfile << "FURNI " << fur->name << "|" << fur->type << "|" << fur->path << "|" << fur->source << "|" << fur->scale << '\n';
+            outfile << "FURNI " << fur->name << "|" << fur->type << "|" << fur->path << "|" << fur->source << "|" << fur->scale << '|' << fur->rotation << '\n';
         }
         outfile << '\n';
         for (furnitureInfos *fur : hm->furnitures)  {
             Shape copiedShape((hm->refManager).getShape(fur->name));
+            
             outfile << "SHAPE " << fur->name << "|" << copiedShape.center.x << ' ' << copiedShape.center.y << ' ' << copiedShape.center.z << ' ';
-            outfile << copiedShape.visible << ' ' << '\n';
+            outfile << copiedShape.visible << '\n';
         }
 
         outfile.close();
