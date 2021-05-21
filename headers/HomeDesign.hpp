@@ -603,15 +603,15 @@ private:
         b_tly += 30;
         bmInsertion1.addCheckBox<radioButtonPack*>("c_table", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/TABLE-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/TABLE.jpg", window.getRenderer()));
         bmInsertion1.addCheckBox<radioButtonPack*>("c_commode", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/Commode-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/Commode.jpg", window.getRenderer()));
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_lit", light_gray, black, Point2D(1085, b_tly), 40, nullptr/* texture true */);
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_bureau", light_gray, black, Point2D(1135, b_tly), 40);
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_chaise", light_gray, black, Point2D(1185, b_tly), 40);
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_lit", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/furnitures/lit/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/lit/preview.png", window.getRenderer()));
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_bureau", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/furnitures/bureau/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/bureau/preview.png", window.getRenderer()));
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_chaise", light_gray, black, Point2D(1185, b_tly), 40, new Texture2D("HM-Res/furnitures/chaise/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/chaise/preview.png", window.getRenderer()));
         bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
-        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_placard"), light_gray, black, Point2D(985 , b_tly), 40);
-        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_evier"), light_gray, black, Point2D(1035, b_tly), 40);
-        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_frigo"), light_gray, black, Point2D(1085, b_tly), 40);
-        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_microonde"), light_gray, black, Point2D(1135, b_tly), 40);
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_placard"), light_gray, black, Point2D(985 , b_tly), 40, new Texture2D("HM-Res/furnitures/placard/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/placard/preview.png", window.getRenderer()));
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_evier"), light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/furnitures/blocEvier/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/blocEvier/preview.png", window.getRenderer()));
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_frigo"), light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/furnitures/blocFrigo/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/blocFrigo/preview.png", window.getRenderer()));
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_microonde"), light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/furnitures/microOnde/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/microOnde/preview.png", window.getRenderer()));
         bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_5"), light_gray, black, Point2D(1185, b_tly), 40);
         bmInsertion2.addRectTextButton<insertPack*>("b_insertFinal2", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
