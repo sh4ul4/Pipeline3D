@@ -64,8 +64,12 @@ void checkInitialization(initPack *i) {
 			*i->checkForError = 4; // Path introuvable
 			return;
 		}
+		if (!(file.substr( file.length() - 6 ) == ".3dh"))  {
+			*i->checkForError = 5; // Fichier pas d'application
+			return;
+		}
 
-		*i->checkForError = 5; // Path trouvé
+		*i->checkForError = 6; // Path trouvé
 		*i->start = 2;
 	}
 }
@@ -161,6 +165,9 @@ int main(int argc, char* argv[]) {
 				t_error.update("Le fichier est introuvable !", window.getRenderer());
 				break;
 			case 5:
+				t_error.update("Le fichier ne correspond pas à un fichier d'application '.3dh' !", window.getRenderer());
+				break;
+			case 6:
 				t_error.update("Fichier localisé ! Chargement de la pièce...", "fonts/calibri.ttf", 20, hd_greenButtons, window.getRenderer());
 				break;
 			default:
@@ -227,11 +234,11 @@ int main(int argc, char* argv[]) {
 
 	// Liaison caméras / boutons de changement de vues
 	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window, &manager, "top" };
-	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall" };
-	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall" };
-	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall" };
-	camPack p4 = { &backCam, "Vue de l'arrière", &current_cam, &window, &manager, "backWall" };
-	camPack p5 = { &freeCam, "Déplacement libre", &current_cam, &window, &manager, "none", &r };
+	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall", "frontWallE" };
+	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall", "leftWallE" };
+	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall", "rightWallE" };
+	camPack p4 = { &backCam, "Vue de l'arrière", &current_cam, &window, &manager, "backWall", "backWallE" };
+	camPack p5 = { &freeCam, "Déplacement libre", &current_cam, &window, &manager, "none", "none", &r };
 	hm.setViewsButtonsAction(p0,p1,p2,p3,p4,p5);
 	
 
@@ -242,9 +249,6 @@ int main(int argc, char* argv[]) {
 	bm.getButton<void*>("b_dezoom").setAction(dezoomCam, nullptr);
 	
 	Texture2D blueSky("HM-Res/blue-sky.jpeg", window.getRenderer());
-	// Texture2D CROUS("HM-Res/CROUS.svg", window.getRenderer());
-	// TextBox TITLE("HOME", "fonts/Calibri Bold.ttf", 24, black, Point2D<int>(825, 5), 930, 30, window.getRenderer());
-	// TITLE.setPosition(Point2D(930-TITLE.width, 5));
 	Texture2D LOGO("HM-Res/3DHomeProject.png", window.getRenderer());
 
 	r.updateTriangles(manager);
@@ -277,8 +281,6 @@ int main(int argc, char* argv[]) {
 		// Fond de pipeline et rectangle espace interactions
 		// drawer.DrawFillRoundedRectContoured(Point2D<int>(30,30), 900, 506, 5, hd_blueSky, black, window.getRenderer());
 		blueSky.render(window.getRenderer(), Point2D<int>(30,30), 900, 506);
-		// CROUS.render(window.getRenderer(), Point2D<int>(810,1), 40, 40);
-		// TITLE.render(window.getRenderer(), 0, 0);
 		LOGO.render(window.getRenderer(), Point2D<int>(800,2), 130, 25);
 		drawer.DrawFillRoundedRectContoured(Point2D<int>(970, 30), 270, 506, 3, white, black, window.getRenderer());
 
@@ -317,8 +319,6 @@ int main(int argc, char* argv[]) {
 
 				// Mouvement avec flèches
 					// à passer sur la fonction checkFurnitureClick
-					// Maintenant il faut check la collision avec le mur (maxx et maxy de la hitbox ou alors hit2D)
-				
 				if (keyboard.left.pressed) 
 					hm.moveFurniture(manager, 0);
 				if (keyboard.right.pressed) 

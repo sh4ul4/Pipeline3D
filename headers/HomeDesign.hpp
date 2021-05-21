@@ -10,6 +10,7 @@ struct camPack {
 	Window *window;
 	ShapeManager *manager;
 	std::string referencedWall;
+    std::string referencedWallE;
     Render *render;
 };
 
@@ -40,10 +41,14 @@ void editWalls(editFloorPack *efp)  {
  * @brief Rend l'ensemble des murs de la pièce visibles
  */
 void editWallsVisibility(ShapeManager& manager, bool visibility)  {
-	manager.getShape("frontWall").visible = visibility;
-	manager.getShape("backWall").visible = visibility;
+	manager.getShape("frontWallE").visible = visibility;
+    manager.getShape("frontWall").visible = visibility;
+	manager.getShape("backWallE").visible = visibility;
+    manager.getShape("backWall").visible = visibility;
+	manager.getShape("leftWallE").visible = visibility;
 	manager.getShape("leftWall").visible = visibility;
-	manager.getShape("rightWall").visible = visibility;
+    manager.getShape("rightWallE").visible = visibility;
+    manager.getShape("rightWall").visible = visibility;
 }
 
 
@@ -53,10 +58,12 @@ void editWallsVisibility(ShapeManager& manager, bool visibility)  {
 void switchCam(camPack *p) {
 	(*p->current_cam_t).update(p->viewName, (*p->window).getRenderer());
 	editWallsVisibility(*p->manager, true);
-    if (!p->referencedWall.compare("top"))
+    if (!p->referencedWall.compare("top")) // Vue du haut: pas de murs
         editWallsVisibility(*p->manager, false);
-	if (p->referencedWall.compare("none") && p->referencedWall.compare("top"))
+	if (p->referencedWall.compare("none") && p->referencedWall.compare("top"))  {
 		(*p->manager).getShape(p->referencedWall).visible = false;
+        (*p->manager).getShape(p->referencedWallE).visible = false;
+    }
 	(*p->manager).pushShapesEditing();
 	p->cam->setCurrent();
 }
@@ -126,10 +133,10 @@ private:
     std::vector<TextBox*> text_insertion1;
     std::vector<TextInput*> input_insertion1;
     ButtonManager bmInsertion1;
-    std::vector<std::string> checkboxes1;
+    std::vector<std::string> checkboxes1, checkboxes2;
     std::vector<radioButtonPack> rp1;
 
-    radioButtonPack rp11, rp12, rp13, rp14, rp15;
+    radioButtonPack rp11, rp12, rp13, rp14, rp15, rp21, rp22, rp23, rp24, rp25;
 
     // Interface d'insertion Type 2
     std::vector<TextBox*> text_insertion2;
@@ -249,7 +256,7 @@ public:
                 std::getline(iss, scale, '|');
                 name.erase(0, 1);
 
-                furnitures.push_back(new furnitureInfos(name, furType, path, source, stof(scale)));
+                furnitures.push_back(new furnitureInfos(name, furType, path, source, 0, stof(scale)));
             }
             else if (!type.compare("SHAPE"))  {
                 std::string name;
@@ -325,6 +332,14 @@ private:
         Vertex c( w1/2, 0, -w3/2); // Bas gauche
         Vertex d( w1/2, 0,  w3/2); // Bas droit        b           d
 
+        // Hauteur plafond
+        Vertex a1(-w1/2, h, -w3/2);  
+        Vertex b1(-w1/2, h,  w3/2);  
+        Vertex c1( w1/2, h, -w3/2);
+        Vertex d1( w1/2, h,  w3/2);
+
+        
+
         Vertex amax(-w1/2-150, 0, -w3/2);       
         Vertex atop(-w1/2, 0, -w3/2-150);  
         Vertex bmax(-w1/2-150, 0,  w3/2);
@@ -339,11 +354,7 @@ private:
         Vertex bg(-w1/2-150, 0, w3/2+150); 
         Vertex bd(w1/2+150, 0, w3/2+150);
         
-        // Hauteur plafond
-        Vertex a1(-w1/2, h, -w3/2);  
-        Vertex b1(-w1/2, h,  w3/2);  
-        Vertex c1( w1/2, h, -w3/2);
-        Vertex d1( w1/2, h,  w3/2);
+        
 
         // sol
         Bitmap::newBitmap("basicFloor", "textures/sol.jpg");
@@ -356,6 +367,7 @@ private:
         Bitmap::newBitmap("windowed-wall", "HM-Res/windowed-wall.png");
         Bitmap::newBitmap("doored-wall", "HM-Res/doored-wall.png");
         Bitmap::newBitmap("baie-wall", "HM-Res/baie-wall.png");
+        Bitmap::newBitmap("exterior-wall", "HM-Res/exterior-wall.png");
         Bitmap::newBitmap("blue-floor", "HM-Res/blue-floor.jpg");
 
         efp1 = { manager, "basicFloor", "basic-wall", "basic-wall", "basic-wall", "basic-wall" }; // Tout blanc
@@ -382,6 +394,16 @@ private:
         manager->addRectangle("backWall", a1, b1, a, b, 4, white, false, Bitmap::getBitmap("windowed-wall"));
         manager->addRectangle("leftWall", a1, c1, a, c, 4, white, false, Bitmap::getBitmap("doored-wall"));
         manager->addRectangle("rightWall", b1, d1, b, d, 4, white, false, Bitmap::getBitmap("basic-wall"));
+
+        // Épaisseur back (a, b)
+        manager->addRectangle("frontWallE", Vertex(c1.x+3, c1.y, c1.z), Vertex(d1.x+3, d1.y, d1.z), Vertex(c.x+3, c.y, c.z), Vertex(d.x+3, d.y, d.z), 4, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("backWallE", Vertex(a1.x-3, a1.y, a1.z), Vertex(b1.x-3, b1.y, b1.z), Vertex(a.x-3, a.y, a.z), Vertex(b.x-3, b.y, b.z), 4, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("leftWallE", Vertex(a1.x, a1.y, a1.z-3), Vertex(c1.x, c1.y, c1.z-3), Vertex(a.x, a.y, a.z-3), Vertex(c.x, c.y, c.z-3), 4, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("rightWallE", Vertex(b1.x, b1.y, b1.z+3), Vertex(d1.x, d1.y, d1.z+3), Vertex(b.x, b.y, b.z+3), Vertex(d.x, d.y, d.z+3), 4, white, false, Bitmap::getBitmap("exterior-wall"));
+
+
+        manager->addRectangle("frontWallT", Vertex(c1.x+3, c1.y, c1.z), Vertex(d1.x+3, d1.y, d1.z), c1, d1, 4, white, false, Bitmap::getBitmap("exterior-wall"));
+        
         std::cout<<"Room créée"<<std::endl;
     }
 
@@ -458,21 +480,21 @@ private:
         stream2 << std::fixed << std::setprecision(2) << w3;
         text_insertion_def.emplace_back(new TextBox("Dimension de la pièce", "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
-        b_tly +=25;
+        b_tly +=25; //125
         text_insertion_def.emplace_back(new TextBox(stream.str() + "x" + stream2.str() + "m", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         b_tly += 50;
         stream1 << std::fixed << std::setprecision(2) << surface;
         text_insertion_def.emplace_back(new TextBox("Surface de la pièce", "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
-        b_tly +=25;
+        b_tly +=25;//200
         text_insertion_def.emplace_back(new TextBox(stream1.str() + "m²", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         b_tly += 50;
 
         text_insertion_def.emplace_back(new TextBox("En création depuis :", "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
-        b_tly +=25;
+        b_tly +=25;//275
         text_insertion_def.emplace_back(new TextBox("00:00:00", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         // bmInsertion_def.addRectTextButton<void*>("b_editFloorBmp", Point2D<int>(980, b_tly), 250, 25, "Modifier ");
@@ -480,12 +502,12 @@ private:
         // bmInsertion_def.getButton<editFurniturePack*>("bmfi_fu_Renommer").setAction(renameFurniture, &fp);
         // bmInsertion_def.addCheckBox<void*>("b_wallsVis", light_gray, black, Point2D(985, 300), 40);
 
-        b_tly += 60;
+        b_tly += 60;//335
         text_insertion_def.emplace_back(new TextBox("Changer la tapisserie",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         text_insertion_def.back()->center(Point2D<int>(970, 30), 270);
 
-        b_tly += 30;
+        b_tly += 30;//365
         bmInsertion_def.addCheckBox<editFloorPack*>("c_basicFloor", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("textures/sol.jpg", window.getRenderer()), new Texture2D("textures/sol.jpg", window.getRenderer()));
         bmInsertion_def.addCheckBox<editFloorPack*>("c_parquetFloor", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/parquetFloor.jpg", window.getRenderer()), new Texture2D("HM-Res/parquetFloor.jpg", window.getRenderer()));
         bmInsertion_def.addCheckBox<editFloorPack*>("c_moquetteFloor", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/moquetteFloor.png", window.getRenderer()), new Texture2D("HM-Res/moquetteFloor.png", window.getRenderer()));
@@ -497,11 +519,12 @@ private:
         bmInsertion_def.getButton<editFloorPack*>("c_grassFloor").setAction(editFloor, &efp4);
         bmInsertion_def.getButton<editFloorPack*>("c_blueFloor").setAction(editFloor, &efp5);
 
-        b_tly += 60;
+        b_tly += 60;//425
+        b_tly+=25;//TEST:440
         text_insertion_def.emplace_back(new TextBox("Changer le papier peint",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         text_insertion_def.back()->center(Point2D<int>(970, 30), 270);
-        b_tly += 30;
+        b_tly += 30;//455
         bmInsertion_def.addCheckBox<editFloorPack*>("c_basicWall", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/basic-wall.png", window.getRenderer()), new Texture2D("HM-Res/basic-wall.png", window.getRenderer()));
         bmInsertion_def.addCheckBox<editFloorPack*>("c_parquetWall", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/fenetre.png", window.getRenderer()), new Texture2D("HM-Res/fenetre.png", window.getRenderer()));
         bmInsertion_def.addCheckBox<editFloorPack*>("c_moquetteWall", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/baie.jpg", window.getRenderer()), new Texture2D("HM-Res/baie.jpg", window.getRenderer()));
@@ -562,14 +585,12 @@ private:
         bmInsertion1.addCheckBox<radioButtonPack*>("c_chaise", light_gray, black, Point2D(1185, b_tly), 40);
         bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
-        bmInsertion2.addCheckBox<void*>(std::string("c_1"), light_gray, black, Point2D(985 , b_tly), 40);
-        bmInsertion2.addCheckBox<void*>(std::string("c_2"), light_gray, black, Point2D(1035, b_tly), 40);
-        bmInsertion2.addCheckBox<void*>(std::string("c_3"), light_gray, black, Point2D(1085, b_tly), 40);
-        bmInsertion2.addCheckBox<void*>(std::string("c_4"), light_gray, black, Point2D(1135, b_tly), 40);
-        bmInsertion2.addCheckBox<void*>(std::string("c_5"), light_gray, black, Point2D(1185, b_tly), 40);
-        bmInsertion2.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
-        ip2 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion2 };
-        bmInsertion2.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip2);
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_placard"), light_gray, black, Point2D(985 , b_tly), 40);
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_evier"), light_gray, black, Point2D(1035, b_tly), 40);
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_frigo"), light_gray, black, Point2D(1085, b_tly), 40);
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_microonde"), light_gray, black, Point2D(1135, b_tly), 40);
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_5"), light_gray, black, Point2D(1185, b_tly), 40);
+        bmInsertion2.addRectTextButton<insertPack*>("b_insertFinal2", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
         checkboxes1.insert(checkboxes1.end(),{"c_table", "c_commode", "c_lit", "c_bureau", "c_chaise"});
         rp11 = {&bmInsertion1, &checkboxes1, 0};
@@ -582,14 +603,22 @@ private:
         bmInsertion1.getButton<radioButtonPack*>("c_lit").setAction(radioButtonMode, &rp13);
         bmInsertion1.getButton<radioButtonPack*>("c_bureau").setAction(radioButtonMode, &rp14);
         bmInsertion1.getButton<radioButtonPack*>("c_chaise").setAction(radioButtonMode, &rp15);
-        // for (int i = 0; i < checkboxes1.size(); i++)  {
-        //     rp1.push_back({&bmInsertion1, &checkboxes1, i});
-        //     bmInsertion1.getButton<radioButtonPack*>(checkboxes1[i]).setAction(radioButtonMode, &(rp1[i]));
-        // }
-
-
         ip1 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion1, &checkboxes1};
         bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip1);
+
+        checkboxes2.insert(checkboxes2.end(),{"c_placard", "c_evier", "c_frigo", "c_microonde", "c_5"});
+        rp21 = {&bmInsertion2, &checkboxes2, 0};
+        rp22 = {&bmInsertion2, &checkboxes2, 1};
+        rp23 = {&bmInsertion2, &checkboxes2, 2};
+        rp24 = {&bmInsertion2, &checkboxes2, 3};
+        rp25 = {&bmInsertion2, &checkboxes2, 4};
+        bmInsertion2.getButton<radioButtonPack*>("c_placard").setAction(radioButtonMode, &rp21);
+        bmInsertion2.getButton<radioButtonPack*>("c_evier").setAction(radioButtonMode, &rp22);
+        bmInsertion2.getButton<radioButtonPack*>("c_frigo").setAction(radioButtonMode, &rp23);
+        bmInsertion2.getButton<radioButtonPack*>("c_microonde").setAction(radioButtonMode, &rp24);
+        bmInsertion2.getButton<radioButtonPack*>("c_5").setAction(radioButtonMode, &rp25);
+        ip2 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion2, &checkboxes2 };
+        bmInsertion2.getButton<insertPack*>("b_insertFinal2").setAction(furnitureInsertion, &ip2);
         // setAction([](void* ptr){std::cout << "AAAAAIIEE batââââârd !!!!!" << std::endl;});
     }
 
@@ -796,11 +825,19 @@ public: // Méthodes liées à des boutons créés dans main.cpp
             ip2.scale = 1;
         }
         
-        if (bmInsertion2.getButton<void*>("c_1").isClicked()) 
+        if (bmInsertion2.getButton<radioButtonPack*>("c_placard").isClicked()) 
             checkBoxDominant = 1;
-        else
+        else if (bmInsertion2.getButton<radioButtonPack*>("c_evier").isClicked())
+            checkBoxDominant = 2;
+        else if (bmInsertion2.getButton<radioButtonPack*>("c_frigo").isClicked())
+            checkBoxDominant = 3;
+        else if (bmInsertion2.getButton<radioButtonPack*>("c_microonde").isClicked())
+            checkBoxDominant = 4;
+        else if (bmInsertion2.getButton<radioButtonPack*>("c_5").isClicked())
+            checkBoxDominant = 5;
+        else // Ajouter un elseIf pour chaque meuble
             checkBoxDominant = 0;
-    } 
+    }
 
     void renderObjInsertionSpace(InputEvent& inputEvent, Window& window)  {
         text_insertion3.back()->update(ip3.objRetVal, window.getRenderer());
@@ -912,6 +949,16 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         return true;
     }
 
+    bool checkFurnitureCollision(ShapeManager& manager, Shape& object)  {
+        for (furnitureInfos *fur : furnitures)  {
+            if (object.name == fur->name)
+                continue;
+            if (object.hit(manager.getShape(fur->name))) 
+                return false;
+        }
+        return true;
+    }
+
     void moveFurniture(ShapeManager& manager, int direction)  {
         Shape copiedShape(manager.getShape(furnitures[fp.selected]->name));
         Vector deplacement;
@@ -981,7 +1028,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         }
         if (Camera::getCurrent().getCamId() == "topCam" || Camera::getCurrent().getCamId() == "faceCam" || Camera::getCurrent().getCamId() == "droitCam" || Camera::getCurrent().getCamId() == "gaucheCam" || Camera::getCurrent().getCamId() == "backCam")  { 
             copiedShape.move(deplacement);
-            if (checkWallCollision(manager, copiedShape))
+            if (checkWallCollision(manager, copiedShape) && checkFurnitureCollision(manager, copiedShape))
                 manager.getShape(furnitures[fp.selected]->name).move(deplacement);
         }
     }
@@ -1007,7 +1054,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         auto tm = *std::localtime(&t);
         std::ostringstream oss;
         oss << "../" + hm->scene_name;
-        oss << std::put_time(&tm, "_%d-%m-%y_%H-%M-%S");
+        oss << std::put_time(&tm, "_%d-%m_%H-%M.3dhome");
         std::ofstream outfile;
         outfile.open (oss.str());
 

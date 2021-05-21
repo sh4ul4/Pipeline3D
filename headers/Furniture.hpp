@@ -161,13 +161,14 @@ struct furnitureInfos  {
     std::string type;
     std::string path;
     std::string source;
+    int rotation;
     float scale;
 
     furnitureInfos(std::string name, std::string type, float scale) : 
         name(name), type(type), scale(scale) {}
 
-    furnitureInfos(std::string name, std::string type, std::string path, std::string source, float scale) : 
-        name(name), type(type), scale(scale), path(path), source(source) {}
+    furnitureInfos(std::string name, std::string type, std::string path, std::string source, int rotation, float scale) : 
+        name(name), type(type), scale(scale), rotation(rotation), path(path), source(source) {}
 
     furnitureInfos() = delete;
 };
@@ -226,23 +227,23 @@ static void furnitureInsertion(insertPack *ip)  {
             case 1: // Table en bois
                 (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
                 // (*ip->manager).getShape(ip->name).groundZero();
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", "OBJ/woodtable/", "Wood_Table.obj", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", "OBJ/woodtable/", "Wood_Table.obj", 0, ip->scale));
                 break;
             case 2: // Commode
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/commode/"), "commode.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", "HM-Res/furnitures/commode/", "commode.obj", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", "HM-Res/furnitures/commode/", "commode.obj", 0, ip->scale));
                 break;
             case 3: // lit
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/lit/"), "lit.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Lit simple", "HM-Res/furnitures/lit/", "lit.obj", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Lit simple", "HM-Res/furnitures/lit/", "lit.obj", 0, ip->scale));
                 break;
             case 4: // bureau
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/bureau/"), "bureau.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Bureau", "HM-Res/furnitures/bureau/", "bureau.obj", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Bureau", "HM-Res/furnitures/bureau/", "bureau.obj", 0, ip->scale));
                 break;
             case 5: // chaise
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", "HM-Res/furnitures/chaise/", "chaise.obj", ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", "HM-Res/furnitures/chaise/", "chaise.obj", 0, ip->scale));
                 break;
             default:
                 std::cout << "Insertion de RIEN DU TOUT\n";
@@ -250,7 +251,31 @@ static void furnitureInsertion(insertPack *ip)  {
         }
     }
     else  {// Insertion des meubles de type 2
-
+        switch ((*ip->selectedBox))  {
+            case 1: // Placard
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/placard/"), "placard.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Placard de cuisine", "HM-Res/furnitures/placard/", "placard.obj", 0, ip->scale));
+                break;
+            case 2: // evier
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/blocEvier/"), "evier.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Évier de cuisine", "HM-Res/furnitures/blocEvier/", "evier.obj", 0, ip->scale));
+                break;
+            case 3: // frigo
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/blocFrigo/"), "frigo.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Réfrigirateur", "HM-Res/furnitures/blocFrigo/", "frigo.obj", 0, ip->scale));
+                break;
+            case 4: // micro onde
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/microOnde/"), "microOnde.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Micro-onde", "HM-Res/furnitures/microOnde/", "microOnde.obj", 0, ip->scale));
+                break;
+            case 5: 
+                // (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
+                // (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", "HM-Res/furnitures/chaise/", "chaise.obj", ip->scale));
+                break;
+            default:
+                std::cout << "Insertion de RIEN DU TOUT\n";
+                break;
+        }
     }
     
     // Reset du rectangle d'interaction
@@ -273,8 +298,8 @@ static void objInsertion(insertObjPack *ip)  {
         }
         std::cout << "Import OBJ de " + path+'/' + ip->objSource + "\n";
         (*ip->manager).imprtShapeObj(path+'/', ip->objSource, ip->name, ip->scale);
-        (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Objet importé manuellement", path+'/', ip->objSource, ip->scale));
-        (*ip->manager).getShape(ip->name).groundZero();
+        (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Objet importé manuellement", path+'/', ip->objSource, 0, ip->scale));
+        // (*ip->manager).getShape(ip->name).groundZero();
         ip->objRetVal = "L'objet '" + ip->name + "' a été importé avec succès.";
     }
     else  {
@@ -317,12 +342,12 @@ static void dragAndDropFurniture(editFurniturePack *fp)  {
 // Mettre les checks de collision à la rotation !
 static void leftRotateFurniture(editFurniturePack *fp)  {
     Vertex center = (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).center;
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, -30);
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, 1.5708);
 }
 
 static void rightRotateFurniture(editFurniturePack *fp)  {
     Vertex center = (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).center;
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, 30);
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, -1.5708);
 }
 
 static void deleteFurniture(editFurniturePack *fp)  {
