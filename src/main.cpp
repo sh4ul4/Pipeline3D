@@ -747,31 +747,35 @@ int main(int argc, char* argv[]) {
 	
 	//afficher tous les objets du système stellaire
 	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "sun", 0.001);
-	Point2D<double>	p1(0,149600000000);
-	Point2D<double> p2(800,0);
-	Ssys.addPlanet(new Planet(6371000,5.972*pow(10,24),p1,p2,std::string("earth")));
+	//Point2D<double>	pos1(0,149600000000);
+	//Point2D<double> speed1(0,0);
+	//Ssys.addPlanet(new Planet(6371000,5.972*pow(10,24),pos1,speed1,std::string("earth")));
+	Point2D<double>	pos1(0,149600000000);
+	Point2D<double> speed1(0,0);
+	Ssys.addPlanet(new Planet(6371000,5.972*pow(10,24),pos1,speed1,std::string("earth")));
 	std::vector<Planet*> Planets = Ssys.getPlanets();
-
+	
 	Planet *test=Planets[0];
-	Point2D<double> Position=test->getPosition();
-	std::cout<<Position.x<<std::endl;
-	std::cout<<Position.y<<std::endl;
-	Position.x=Position.x/pow(10,10);
-	Position.y=Position.y/pow(10,10);
-	std::cout<<Position.x<<std::endl;
-	std::cout<<Position.y<<std::endl;
+	Point2D<double> Position1=test->getPosition();
+	Position1.x=Position1.x/pow(10,10);
+	Position1.y=Position1.y/pow(10,10);
+	
 	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", test->getName(), 0.001);
-	manager.getShape(test->getName()).setPos(Vertex(Position.x,Position.y,0));
-
-
+	manager.getShape(test->getName()).setPos(Vertex(Position1.x,Position1.y,0));
+	
+	
+	//Ssys.simulation();
 	/*
-	for(int i=0;Planets.size();i++){
-		manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth", 0.001);
-		manager.getShape("earth").setPos(Vertex(100,100,0));
-		}
-	*/
+	Point2D<double> Position2=test->getPosition();
+	Position2.x=Position2.x/pow(10,10);
+	Position2.y=Position2.y/pow(10,10);
+	std::cout<<"x="<<Position2.x<<std::endl;
+	std::cout<<"y="<<Position2.y<<std::endl;*/
+
+
 
 	r.updateTriangles(manager);
+	
 	while (!keyboard.escape.down) {
 		i_mass.checkForInput(inputEvent, window.getRenderer());
 		i_radius.checkForInput(inputEvent, window.getRenderer());
@@ -814,6 +818,14 @@ int main(int argc, char* argv[]) {
 		t_globset.render(window.getRenderer(), 0, 0);
 		t_loadsave.render(window.getRenderer(), 0, 0);
 		
+		Ssys.simulation();
+		Planet *test=Planets[0];
+		Point2D<double> Position=test->getPosition();
+		Position.x=Position.x/pow(10,10);
+		Position.y=Position.y/pow(10,10);
+		//std::cout<<"Position.x"<<Position.x<<std::endl;
+		//std::cout<<"Position.y"<<Position.y<<std::endl;
+		manager.getShape(test->getName()).setPos(Vertex(Position.x,Position.y,0));
 		r.updateTriangles(manager);
 
 		//Mise a jour des valeurs

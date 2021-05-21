@@ -261,11 +261,11 @@ public:
             std::cout << "Aucune planetes dans le systeme stellaire !" << std::endl << "Simulation abordee" << std::endl;
             return;
         }
-        std::cout << "Debut de l'initialisation" << std::endl;
+        //std::cout << "Debut de l'initialisation" << std::endl;
         // Somme de toutes les forces qui s'exercent sur les astres
         Point2D<double> force, tmp;
         // Force exercée par toutes les autres planètes
-        for (std::vector<Planet*>::iterator i = planets.begin(); i != planets.end() - 1; i++)
+        for (std::vector<Planet*>::iterator i = planets.begin(); i != planets.end(); i++)
         {
             force.x = force.y = 0;
             for (std::vector<Planet*>::iterator j = planets.begin() + 1; j != planets.end(); j++)
@@ -288,6 +288,10 @@ public:
 
             // On détermine le vecteur position de 'i' à partir du vecteur vitesse
             Cinematic::getPositionFromSpeed(*i);
+            (*i)->setInitialSpeed((*i)->getSpeed());
+            (*i)->setInitialPosition((*i)->getPosition());
+
+
         }
     }
 

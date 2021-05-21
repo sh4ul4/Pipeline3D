@@ -2,7 +2,7 @@
 
 namespace Cinematic
 {
-	float time = 0;						 // Représente le temps qui s'écoule dans le système stellaire
+	float time = 1;						 // Reprï¿½sente le temps qui s'ï¿½coule dans le systï¿½me stellaire
 	const float G = 6.67 * pow(10, -11); // Contante de gravitation
 
 	/* ----- CALCULS MATHEMATIQUES ----- */
@@ -11,8 +11,8 @@ namespace Cinematic
 	 * @brief Calcul le vecteur AB, dont la norme est la distance entre le point A et B, et la direction, celle du segment AB
 	 *
 	 * @param p1 Le premier point
-	 * @param p2 Le deuxième point
-	 * @return Vecteur p1p2 avec ses coordonnées x et y
+	 * @param p2 Le deuxiï¿½me point
+	 * @return Vecteur p1p2 avec ses coordonnï¿½es x et y
 	 */
 	Point2D<double> vectorPoints(const Point2D<double>& p1, const Point2D<double>& p2)
 	{
@@ -32,7 +32,7 @@ namespace Cinematic
 	Point2D<double> getUnitVector(const Point2D<double>& vector)
 	{
 		Point2D<double> unitVector;
-		double norm = unitVector.distance({ 0, 0 }); // Norme du vecteur
+		double norm = vector.distance({ 0, 0 }); // Norme du vecteur
 		unitVector.x = vector.x / norm;
 		unitVector.y = vector.y / norm;
 
@@ -52,8 +52,8 @@ namespace Cinematic
 	 * @brief Calcul la force d'attraction entre deux astres
 	 *
 	 * @param l1 Premier astre
-	 * @param l2 Deuxième astre
-	 * @return Vecteur représentant le force exercé de l1 sur l2
+	 * @param l2 Deuxiï¿½me astre
+	 * @return Vecteur reprï¿½sentant le force exercï¿½ de l1 sur l2
 	 */
 	Point2D<double> attractionForce(Luminary* l1, Luminary* l2)
 	{
@@ -63,15 +63,13 @@ namespace Cinematic
 		double value = ((G * l1->getMass() * l2->getMass()) / pow(vector.distance({ 0, 0 }), 2));
 		force.x = value * unitVector.x;
 		force.y = value * unitVector.y;
-
 		return force;
 	}
-
 	/**
-	 * @brief Calcul l'accélération d'un astre en fonction des forces exercées sur celui-ci
+	 * @brief Calcul l'accï¿½lï¿½ration d'un astre en fonction des forces exercï¿½es sur celui-ci
 	 *
-	 * @param force La somme des forces exercées sur l'astre l
-	 * @param p La planète sur laquelle les forces sont exercées. L'attribut 'acceleration' est mis à jour
+	 * @param force La somme des forces exercï¿½es sur l'astre l
+	 * @param p La planï¿½te sur laquelle les forces sont exercï¿½es. L'attribut 'acceleration' est mis ï¿½ jour
 	 */
 	void Newton2nd(const Point2D<double>& force, Planet* p)
 	{
@@ -82,14 +80,15 @@ namespace Cinematic
 	}
 
 	/**
-	 * @brief Calcul le vecteur vitesse d'un astre à partir de son acceleration
+	 * @brief Calcul le vecteur vitesse d'un astre ï¿½ partir de son acceleration
 	 *
-	 * @param p La planète concernée. l'attribut 'speed' est mis à jour
+	 * @param p La planï¿½te concernï¿½e. l'attribut 'speed' est mis ï¿½ jour
 	 */
 	void getSpeedFromAcceleration(Planet* p)
 	{
 		Point2D<double> acceleration = p->getAcceleration();
 		Point2D<double> initialSpeed = p->getInitialSpeed();
+
 		double x = (acceleration.x * time) + initialSpeed.x;
 		double y = (acceleration.y * time) + initialSpeed.y;
 		p->setSpeed({ x, y });
@@ -98,13 +97,14 @@ namespace Cinematic
 	/**
 	 * @brief Calcul la position de l'astre
 	 *
-	 * @param p La planète concernée. l'attribut 'position' est mis à jour
+	 * @param p La planï¿½te concernï¿½e. l'attribut 'position' est mis ï¿½ jour
 	 */
 	void getPositionFromSpeed(Planet* p)
 	{
 		Point2D<double> initialSpeed = p->getInitialSpeed();
 		Point2D<double> initialPosition = p->getInitialPosition();
 		Point2D<double> speed = p->getSpeed();
+		
 		double x = ((speed.x / 2) * pow(time, 2)) + (initialSpeed.x * time) + initialPosition.x;
 		double y = ((speed.y / 2) * pow(time, 2)) + (initialSpeed.y * time) + initialPosition.y;
 		Point2D<double> p_set(x, y);
