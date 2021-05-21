@@ -64,7 +64,7 @@ void checkInitialization(initPack *i) {
 			*i->checkForError = 4; // Path introuvable
 			return;
 		}
-		if (!(file.substr( file.length() - 6 ) == ".3dh"))  {
+		if (!(file.substr( file.length() - 4 ) == ".3dh"))  {
 			*i->checkForError = 5; // Fichier pas d'application
 			return;
 		}
@@ -318,15 +318,16 @@ int main(int argc, char* argv[]) {
 				manager.getShape(hm.getSelectedShape()).drawHit2D(Point2D<int>(30,30), window);
 
 				// Mouvement avec flèches
+				hm.moveFurniture(manager, keyboard);
 					// à passer sur la fonction checkFurnitureClick
-				if (keyboard.left.pressed) 
-					hm.moveFurniture(manager, 0);
-				if (keyboard.right.pressed) 
-					hm.moveFurniture(manager, 1);
-				if (keyboard.down.pressed) 
-					hm.moveFurniture(manager, 2);
-				if (keyboard.up.pressed) 
-					hm.moveFurniture(manager, 3);
+				// if (keyboard.left.pressed) 
+				// 	hm.moveFurniture(manager, keyboard, 0);
+				// if (keyboard.right.pressed) 
+				// 	hm.moveFurniture(manager, keyboard, 1);
+				// if (keyboard.down.pressed) 
+				// 	hm.moveFurniture(manager, keyboard, 2);
+				// if (keyboard.up.pressed) 
+				// 	hm.moveFurniture(manager, keyboard, 3);
 				break;
 			default:
 				// Render infos sur la scène actuelle

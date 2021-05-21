@@ -243,7 +243,7 @@ static void furnitureInsertion(insertPack *ip)  {
                 break;
             case 5: // chaise
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", "HM-Res/furnitures/chaise/", "chaise.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise", "HM-Res/furnitures/chaise/", "chaise.obj", 0, ip->scale));
                 break;
             default:
                 std::cout << "Insertion de RIEN DU TOUT\n";
@@ -343,18 +343,23 @@ static void dragAndDropFurniture(editFurniturePack *fp)  {
 static void leftRotateFurniture(editFurniturePack *fp)  {
     Vertex center = (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).center;
     (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, 1.5708);
+    int rotat = (*fp->furnitures)[fp->selected]->rotation;
+    rotat = (rotat+3) % 4;
+    (*fp->furnitures)[fp->selected]->rotation = rotat;
 }
 
 static void rightRotateFurniture(editFurniturePack *fp)  {
     Vertex center = (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).center;
     (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, -1.5708);
+    int rotat = (*fp->furnitures)[fp->selected]->rotation;
+    rotat = (rotat+1) % 4;
+    (*fp->furnitures)[fp->selected]->rotation = rotat;
 }
 
 static void deleteFurniture(editFurniturePack *fp)  {
     // Option 1: rendre la shape invisible avec un nom random (pour faciliter le CTRL+Z)
     static const char alphanum[] =
         "0123456789"
-        "!@#$%^&*"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz";
     int stringLength = sizeof(alphanum) - 1;
@@ -362,7 +367,9 @@ static void deleteFurniture(editFurniturePack *fp)  {
     for(int z=0; z < 5; z++)  {
         newName += alphanum[rand() % stringLength];
     }
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).visible = false;
+
+    // (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).visible = false;
+    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).setPos(Vertex(0,255,0)); // On le met dans l'espace en gros
     (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).name = newName;
     (*fp->furnitures)[fp->selected]->name = newName;
     (*fp->manager).pushShapesEditing();
