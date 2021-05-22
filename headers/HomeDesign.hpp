@@ -606,7 +606,7 @@ private:
         bmInsertion1.addCheckBox<radioButtonPack*>("c_bureau", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/furnitures/bureau/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/bureau/preview.png", window.getRenderer()));
         bmInsertion1.addCheckBox<radioButtonPack*>("c_chaise", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/furnitures/chaise/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/chaise/preview.png", window.getRenderer()));
         bmInsertion1.addCheckBox<radioButtonPack*>("c_lit", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/furnitures/lit/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/lit/preview.png", window.getRenderer()));
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_commode", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/Commode-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/Commode.jpg", window.getRenderer()));
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_commode", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/furnitures/commode/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/commode/preview.png", window.getRenderer()));
         bmInsertion1.addCheckBox<radioButtonPack*>("c_armoire", light_gray, black, Point2D(1185, b_tly), 40, new Texture2D("HM-Res/furnitures/armoire/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/armoire/preview.png", window.getRenderer()));
         bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
