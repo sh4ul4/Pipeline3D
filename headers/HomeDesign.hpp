@@ -470,11 +470,11 @@ private:
     void initInsertionButtons(ButtonManager& bm)  {
         int b_width = 286, b_height = 104;
         int b_topleftx = 30, b_tly = 596;
-        bm.addRectTextButton<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer un meuble basique");
+        bm.addRectTextButton<int*>("b_insertDefault", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer un meuble de chambre");
         bm.getButton<int*>("b_insertDefault").setAction(insertFurniture, &un);
         b_topleftx += 306;
 
-        bm.addRectTextButton<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer meuble type 2");
+        bm.addRectTextButton<int*>("b_insertDefault2", Point2D<int>(b_topleftx, b_tly), b_width, b_height, "Insérer un meuble de cuisine");
         bm.getButton<int*>("b_insertDefault2").setAction(insertFurniture, &deux);
         b_topleftx += 306; 
 
@@ -500,7 +500,7 @@ private:
         // Espace interaction : Point2D<int>(970, 30), 270, 506
         int b_topleftx = 975, b_tly = 40;
         int b_width = 260;
-        text_insertion_def.emplace_back(new TextBox(scene_name, "fonts/Segoe UI Bold.ttf", 20, black, 
+        text_insertion_def.emplace_back(new TextBox(scene_name, "fonts/Calibri Bold.ttf", 25, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         b_tly += 50;
 
@@ -568,75 +568,70 @@ private:
         // Espace interaction : Point2D<int>(970, 30), 270, 506
         int b_topleftx = 975, b_tly = 40;
         int b_width = 260;
-        text_insertion1.emplace_back(new TextBox("Insertion type 1", "fonts/Segoe UI Bold.ttf", 30, black, 
+        text_insertion1.emplace_back(new TextBox("Meuble de chambre", "fonts/Calibri Bold.ttf", 25, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
 
-        text_insertion2.emplace_back(new TextBox("Insertion type 2", "fonts/Segoe UI Bold.ttf", 30, black, 
+        text_insertion2.emplace_back(new TextBox("Meuble de cuisine", "fonts/Calibri Bold.ttf", 25, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
-        // text_insertion1.back()->center(Point2D<int>(970, 30), 270);
-        // text_insertion2.back()->center(Point2D<int>(970, 30), 270);
         b_tly += 60;
             // y = 100
-        text_insertion1.emplace_back(new TextBox("Nom (referencement)", "fonts/calibri.ttf", 20, black, 
+        text_insertion1.emplace_back(new TextBox("Nom du meuble", "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
-        text_insertion2.emplace_back(new TextBox("Nom (referencement)", "fonts/calibri.ttf", 20, black, 
+        text_insertion2.emplace_back(new TextBox("Nom du meuble", "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion1.emplace_back(new TextInput("default", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(b_topleftx, b_tly),  250, 25, window.getRenderer()));
+                                    Point2D<int>(b_topleftx, b_tly), 260, 25, window.getRenderer()));
         input_insertion2.emplace_back(new TextInput("default", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(b_topleftx, b_tly),  250, 25, window.getRenderer()));
+                                    Point2D<int>(b_topleftx, b_tly), 260, 25, window.getRenderer()));
         b_tly += 40;
-        text_insertion1.emplace_back(new TextBox("Échelle",  "fonts/calibri.ttf", 20, black, 
+        text_insertion1.emplace_back(new TextBox("Échelle",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
-        text_insertion2.emplace_back(new TextBox("Échelle",  "fonts/calibri.ttf", 20, black, 
+        text_insertion2.emplace_back(new TextBox("Échelle",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion1.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(975, b_tly), 80, 25, window.getRenderer()));
+                                    Point2D<int>(b_topleftx, b_tly), 260, 25, window.getRenderer()));
         input_insertion2.emplace_back(new TextInput("10", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(975, b_tly), 80, 25, window.getRenderer()));
+                                    Point2D<int>(b_topleftx, b_tly), 260, 25, window.getRenderer()));
         
-        // CHECKBOXs pour choisir un preset
+        
         b_tly += 80;
-        text_insertion1.emplace_back(new TextBox("Meubles préconçus",  "fonts/calibri.ttf", 20, black, 
+        text_insertion1.emplace_back(new TextBox("Meubles préconçus",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
-        text_insertion2.emplace_back(new TextBox("Meubles préconçus",  "fonts/calibri.ttf", 20, black, 
+        text_insertion2.emplace_back(new TextBox("Meubles préconçus",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
-        text_insertion1.back()->center(Point2D<int>(970, 30), 270);
-        text_insertion2.back()->center(Point2D<int>(970, 30), 270);
 
         b_tly += 30;
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_table", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/TABLE-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/TABLE.jpg", window.getRenderer()));
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_commode", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/Commode-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/Commode.jpg", window.getRenderer()));
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_bureau", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/furnitures/bureau/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/bureau/preview.png", window.getRenderer()));
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_chaise", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/furnitures/chaise/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/chaise/preview.png", window.getRenderer()));
         bmInsertion1.addCheckBox<radioButtonPack*>("c_lit", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/furnitures/lit/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/lit/preview.png", window.getRenderer()));
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_bureau", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/furnitures/bureau/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/bureau/preview.png", window.getRenderer()));
-        bmInsertion1.addCheckBox<radioButtonPack*>("c_chaise", light_gray, black, Point2D(1185, b_tly), 40, new Texture2D("HM-Res/furnitures/chaise/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/chaise/preview.png", window.getRenderer()));
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_commode", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/Commode-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/Commode.jpg", window.getRenderer()));
+        bmInsertion1.addCheckBox<radioButtonPack*>("c_armoire", light_gray, black, Point2D(1185, b_tly), 40, new Texture2D("HM-Res/furnitures/armoire/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/armoire/preview.png", window.getRenderer()));
         bmInsertion1.addRectTextButton<insertPack*>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
         bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_placard"), light_gray, black, Point2D(985 , b_tly), 40, new Texture2D("HM-Res/furnitures/placard/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/placard/preview.png", window.getRenderer()));
         bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_evier"), light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/furnitures/blocEvier/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/blocEvier/preview.png", window.getRenderer()));
         bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_frigo"), light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/furnitures/blocFrigo/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/blocFrigo/preview.png", window.getRenderer()));
         bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_microonde"), light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/furnitures/microOnde/preview-TRUE.png", window.getRenderer()), new Texture2D("HM-Res/furnitures/microOnde/preview.png", window.getRenderer()));
-        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_5"), light_gray, black, Point2D(1185, b_tly), 40);
+        bmInsertion2.addCheckBox<radioButtonPack*>(std::string("c_table"), light_gray, black, Point2D(1185, b_tly), 40, new Texture2D("HM-Res/TABLE-TRUE.jpg", window.getRenderer()), new Texture2D("HM-Res/TABLE.jpg", window.getRenderer()));
         bmInsertion2.addRectTextButton<insertPack*>("b_insertFinal2", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         
-        checkboxes1.insert(checkboxes1.end(),{"c_table", "c_commode", "c_lit", "c_bureau", "c_chaise"});
-        
-        bmInsertion1.getButton<radioButtonPack*>("c_table").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Table", input_insertion1[0]));
-        bmInsertion1.getButton<radioButtonPack*>("c_commode").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Commode", input_insertion1[0]));
-        bmInsertion1.getButton<radioButtonPack*>("c_lit").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Lit", input_insertion1[0]));
+        checkboxes1.insert(checkboxes1.end(),{"c_bureau", "c_chaise", "c_lit", "c_commode", "c_armoire" });
         bmInsertion1.getButton<radioButtonPack*>("c_bureau").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Bureau", input_insertion1[0]));
-        bmInsertion1.getButton<radioButtonPack*>("c_chaise").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 0, &window, "Chaise", input_insertion1[0]));
+        bmInsertion1.getButton<radioButtonPack*>("c_chaise").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 1, &window, "Chaise", input_insertion1[0]));
+        bmInsertion1.getButton<radioButtonPack*>("c_lit").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 2, &window, "Lit", input_insertion1[0]));
+        bmInsertion1.getButton<radioButtonPack*>("c_commode").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 3, &window, "Commode", input_insertion1[0]));
+        bmInsertion1.getButton<radioButtonPack*>("c_armoire").setAction(radioButtonMode, new radioButtonPack(&bmInsertion1, &checkboxes1, 4, &window, "Armoire", input_insertion1[0]));
         ip1 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion1, &checkboxes1};
         bmInsertion1.getButton<insertPack*>("b_insertFinal1").setAction(furnitureInsertion, &ip1);
 
-        checkboxes2.insert(checkboxes2.end(),{"c_placard", "c_evier", "c_frigo", "c_microonde", "c_5"});
+        checkboxes2.insert(checkboxes2.end(),{"c_placard", "c_evier", "c_frigo", "c_microonde", "c_table"});
         bmInsertion2.getButton<radioButtonPack*>("c_placard").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "Placard", input_insertion2[0]));
-        bmInsertion2.getButton<radioButtonPack*>("c_evier").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "Evier", input_insertion2[0]));
-        bmInsertion2.getButton<radioButtonPack*>("c_frigo").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "Frigo", input_insertion2[0]));
-        bmInsertion2.getButton<radioButtonPack*>("c_microonde").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "Micro-onde", input_insertion2[0]));
-        bmInsertion2.getButton<radioButtonPack*>("c_5").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 0, &window, "default", input_insertion2[0]));
+        bmInsertion2.getButton<radioButtonPack*>("c_evier").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 1, &window, "Evier", input_insertion2[0]));
+        bmInsertion2.getButton<radioButtonPack*>("c_frigo").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 2, &window, "Frigo", input_insertion2[0]));
+        bmInsertion2.getButton<radioButtonPack*>("c_microonde").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 3, &window, "Micro-onde", input_insertion2[0]));
+        bmInsertion2.getButton<radioButtonPack*>("c_table").setAction(radioButtonMode, new radioButtonPack(&bmInsertion2, &checkboxes2, 4, &window, "default", input_insertion2[0]));
         ip2 = { &checkBoxDominant, &interactSpace, manager, &furnitures, &bmInsertion2, &checkboxes2 };
         bmInsertion2.getButton<insertPack*>("b_insertFinal2").setAction(furnitureInsertion, &ip2);
     }
@@ -645,34 +640,33 @@ private:
         // Espace interaction : Point2D<int>(970, 30), 270, 506
         int b_topleftx = 975, b_tly = 40;
         int b_width = 260;
-        text_insertion3.emplace_back(new TextBox("Insérer un fichier .obj", "fonts/Segoe UI Bold.ttf", 20, black, 
+        text_insertion3.emplace_back(new TextBox("Insérer un fichier .obj", "fonts/Calibri Bold.ttf", 25, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 80, window.getRenderer()));
-        text_insertion3.back()->center(Point2D<int>(970, 30), 270);
         b_tly += 60;
 
             // y = 100
-        text_insertion3.emplace_back(new TextBox("Nom (référencement)", "fonts/calibri.ttf", 20, black, 
+        text_insertion3.emplace_back(new TextBox("Nom du meuble", "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion3.emplace_back(new TextInput("default", "fonts/calibri.ttf", 20, black, 
-                                    Point2D<int>(b_topleftx, b_tly),  250, 25, window.getRenderer()));
+                                    Point2D<int>(b_topleftx, b_tly),  260, 25, window.getRenderer()));
         b_tly += 40;
 
-        text_insertion3.emplace_back(new TextBox("Chemin d'accès au dossier",  "fonts/calibri.ttf", 20, black, 
+        text_insertion3.emplace_back(new TextBox("Chemin d'accès au dossier",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion3.emplace_back(new TextInput("OBJ/default", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(975, b_tly), b_width, 25, window.getRenderer()));
         b_tly += 40;
 
-        text_insertion3.emplace_back(new TextBox("Source du fichier .obj",  "fonts/calibri.ttf", 20, black, 
+        text_insertion3.emplace_back(new TextBox("Source du fichier .obj",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion3.emplace_back(new TextInput("default.obj", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(975, b_tly), b_width, 25, window.getRenderer()));
         b_tly += 40;
 
-        text_insertion3.emplace_back(new TextBox("Échelle",  "fonts/calibri.ttf", 20, black, 
+        text_insertion3.emplace_back(new TextBox("Échelle",  "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
         b_tly += 25;
         input_insertion3.emplace_back(new TextInput("1", "fonts/calibri.ttf", 20, black, 
@@ -689,7 +683,7 @@ private:
     void initFurnitureInteractionSpace(ShapeManager *manager, Window &window)  {
         int b_topleftx = 980, b_tly = 40;
         int b_width = 260;
-        text_furnitInteract.emplace_back(new TextBox("Nom du meuble", "fonts/Segoe UI Bold.ttf", 30, black, Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
+        text_furnitInteract.emplace_back(new TextBox("Nom du meuble", "fonts/Calibri Bold.ttf", 30, black, Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         
         b_tly += 60;
 
@@ -795,12 +789,15 @@ public: // Méthodes liées à des boutons créés dans main.cpp
     }
 
     void renderInsertion1(InputEvent& inputEvent, Window& window)  {
-        for (size_t i = 0; i < text_insertion1.size(); i++)  
+        for (size_t i = 0; i < text_insertion1.size(); i++)  {
             text_insertion1[i]->render(window.getRenderer(), 0, 0);
+            text_insertion1[i]->center(Point2D<int>(970, 30), 270);
+        }
 
         for (size_t i = 0; i < input_insertion1.size(); i++)  {
             input_insertion1[i]->checkForInput(inputEvent, window.getRenderer());
-            input_insertion1[i]->render(window.getRenderer(), 0);
+            input_insertion1[i]->centerizedRender(Point2D<int>(970, 40), 270, window.getRenderer(), 0);
+            // input_insertion1[i]->render(window.getRenderer(), 0);
         }
 
         bmInsertion1.checkButtons();
@@ -812,27 +809,29 @@ public: // Méthodes liées à des boutons créés dans main.cpp
             ip1.scale = 1;
         }
 
-        if (bmInsertion1.getButton<radioButtonPack*>("c_table").isClicked()) 
+        if (bmInsertion1.getButton<radioButtonPack*>("c_bureau").isClicked())
             checkBoxDominant = 1;
-        else if (bmInsertion1.getButton<radioButtonPack*>("c_commode").isClicked())
+        else if (bmInsertion1.getButton<radioButtonPack*>("c_chaise").isClicked())
             checkBoxDominant = 2;
         else if (bmInsertion1.getButton<radioButtonPack*>("c_lit").isClicked())
             checkBoxDominant = 3;
-        else if (bmInsertion1.getButton<radioButtonPack*>("c_bureau").isClicked())
+        else if (bmInsertion1.getButton<radioButtonPack*>("c_commode").isClicked())
             checkBoxDominant = 4;
-        else if (bmInsertion1.getButton<radioButtonPack*>("c_chaise").isClicked())
+        else if (bmInsertion1.getButton<radioButtonPack*>("c_armoire").isClicked()) 
             checkBoxDominant = 5;
         else // Ajouter un elseIf pour chaque meuble
             checkBoxDominant = 0;
     }
 
     void renderInsertion2(InputEvent& inputEvent, Window& window)  {
-        for (size_t i = 0; i < text_insertion2.size(); i++)  
+        for (size_t i = 0; i < text_insertion2.size(); i++)  {
             text_insertion2[i]->render(window.getRenderer(), 0, 0);
+            text_insertion2[i]->center(Point2D<int>(970, 30), 270);
+        }
 
         for (size_t i = 0; i < input_insertion2.size(); i++)  {
             input_insertion2[i]->checkForInput(inputEvent, window.getRenderer());
-            input_insertion2[i]->render(window.getRenderer(), 0);
+            input_insertion2[i]->centerizedRender(Point2D<int>(970, 40), 270, window.getRenderer(), 0);
         }
 
         bmInsertion2.checkButtons();
@@ -852,7 +851,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
             checkBoxDominant = 3;
         else if (bmInsertion2.getButton<radioButtonPack*>("c_microonde").isClicked())
             checkBoxDominant = 4;
-        else if (bmInsertion2.getButton<radioButtonPack*>("c_5").isClicked())
+        else if (bmInsertion2.getButton<radioButtonPack*>("c_table").isClicked())
             checkBoxDominant = 5;
         else // Ajouter un elseIf pour chaque meuble
             checkBoxDominant = 0;
@@ -860,19 +859,16 @@ public: // Méthodes liées à des boutons créés dans main.cpp
 
     void renderObjInsertionSpace(InputEvent& inputEvent, Window& window)  {
         text_insertion3.back()->update(ip3.objRetVal, window.getRenderer());
-        for (size_t i = 0; i < text_insertion3.size(); i++)  {
-            text_insertion3[i]->render(window.getRenderer(), 0, 0);
-            text_insertion3[i]->center(Point2D<int>(970, 30), 270);
-        }
+        for (size_t i = 0; i < text_insertion3.size(); i++)
+            text_insertion3[i]->centerizedRender(Point2D<int>(970, 30), 270, window.getRenderer());
 
         for (size_t i = 0; i < input_insertion3.size(); i++)  {
             input_insertion3[i]->checkForInput(inputEvent, window.getRenderer());
-            input_insertion3[i]->render(window.getRenderer(), 0);
+            input_insertion3[i]->centerizedRender(Point2D<int>(975, 30), 260, window.getRenderer(), 0);
         }
 
         bmInsertion3.checkButtons();
 		bmInsertion3.renderButtons(window.getRenderer());
-        // ip3 = { .name = input_insertion3[0]->getText(), input_insertion3[1]->getText(), input_insertion3[2]->getText() };
         ip3.name = input_insertion3[0]->getText();
         ip3.objPath = input_insertion3[1]->getText();
         ip3.objSource = input_insertion3[2]->getText();

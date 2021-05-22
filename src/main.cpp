@@ -259,23 +259,16 @@ int main(int argc, char* argv[]) {
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
 
-		if (keyboard.one.down) 
-			switchCam(&p0);
-		else if (keyboard.two.down)
-			switchCam(&p1);
-		else if (keyboard.three.down)
-			switchCam(&p2);
-		else if (keyboard.four.down)
-			switchCam(&p3);
-		else if (keyboard.five.down)
-			switchCam(&p4);
-		else if (keyboard.l.down) {
+		if (keyboard.l.down) {
 			if (!Camera::getCurrent().locked)	Camera::getCurrent().lock();
 			// if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
 			// else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
 		}
-		else if (keyboard.F11.down) {
-			window.ToggleWindow(window.getWidth(), window.getHeight());
+
+		if (HomeDesign::interactSpace != 4)  {// Hors mode insertion meuble
+			
+			
+			// Ajouter ici déplacement de caméra par touches fléchées
 		}
 
 		// Fond de pipeline et rectangle espace interactions
@@ -330,6 +323,21 @@ int main(int argc, char* argv[]) {
 			default:
 				// Render infos sur la scène actuelle
 				hm.renderDefault(inputEvent, window);
+
+				// Changement de caméra
+				if (keyboard.one.down) 
+					switchCam(&p0);
+				else if (keyboard.two.down)
+					switchCam(&p1);
+				else if (keyboard.three.down)
+					switchCam(&p2);
+				else if (keyboard.four.down)
+					switchCam(&p3);
+				else if (keyboard.five.down)
+					switchCam(&p4);
+				// else if (keyboard.F11.down) {
+				// 	window.ToggleWindow(window.getWidth(), window.getHeight());
+				// }
 				break;
 		}
 

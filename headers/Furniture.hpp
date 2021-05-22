@@ -233,26 +233,25 @@ static void furnitureInsertion(insertPack *ip)  {
 
     if (*ip->interactSpace == 1)  {  // Insertion des meubles de type 1
         switch ((*ip->selectedBox))  {
-            case 1: // Table en bois
-                (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
-                // (*ip->manager).getShape(ip->name).groundZero();
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", "OBJ/woodtable/", "Wood_Table.obj", 0, ip->scale));
+            case 1: // Bureau
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/bureau/"), "bureau.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Bureau", "HM-Res/furnitures/bureau/", "bureau.obj", 0, ip->scale));
                 break;
-            case 2: // Commode
-                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/commode/"), "commode.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", "HM-Res/furnitures/commode/", "commode.obj", 0, ip->scale));
+            case 2: // Chaise
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise", "HM-Res/furnitures/chaise/", "chaise.obj", 0, ip->scale));
                 break;
             case 3: // lit
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/lit/"), "lit.obj", ip->name, ip->scale);
                 (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Lit simple", "HM-Res/furnitures/lit/", "lit.obj", 0, ip->scale));
                 break;
-            case 4: // bureau
-                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/bureau/"), "bureau.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Bureau", "HM-Res/furnitures/bureau/", "bureau.obj", 0, ip->scale));
+            case 4: // Commode
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/commode/"), "commode.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", "HM-Res/furnitures/commode/", "commode.obj", 0, ip->scale));
                 break;
-            case 5: // chaise
-                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise", "HM-Res/furnitures/chaise/", "chaise.obj", 0, ip->scale));
+            case 5: // Armoire
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/armoire/"), "armoire.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Armoire", "HM-Res/furnitures/armoire/", "armoire.obj", 0, ip->scale));
                 break;
             default:
                 std::cout << "Insertion de RIEN DU TOUT\n";
@@ -277,7 +276,10 @@ static void furnitureInsertion(insertPack *ip)  {
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/microOnde/"), "microOnde.obj", ip->name, ip->scale);
                 (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Micro-onde", "HM-Res/furnitures/microOnde/", "microOnde.obj", 0, ip->scale));
                 break;
-            case 5: 
+            case 5: // Table en bois 
+                (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", "OBJ/woodtable/", "Wood_Table.obj", 0, ip->scale));
+                // (*ip->manager).getShape(ip->name).groundZero();
                 // (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
                 // (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", "HM-Res/furnitures/chaise/", "chaise.obj", ip->scale));
                 break;
