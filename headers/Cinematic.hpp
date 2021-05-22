@@ -2,7 +2,7 @@
 
 namespace Cinematic
 {
-	float time = 1;						 // Repr�sente le temps qui s'�coule dans le syst�me stellaire
+	float time = 1000;						 // Repr�sente le temps qui s'�coule dans le syst�me stellaire
 	const float G = 6.67 * pow(10, -11); // Contante de gravitation
 
 	/* ----- CALCULS MATHEMATIQUES ----- */

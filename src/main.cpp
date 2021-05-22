@@ -18,6 +18,7 @@ void goFreeView(Camera *cam) {
 
 struct Starstruct {
 	starSystem* Ssys;
+	ShapeManager* manager;
 	std::string name;
 	std::string mass;
 	std::string radius;
@@ -26,6 +27,7 @@ struct Starstruct {
 	std::string speed_x;
 	std::string speed_y;
 	std::string simuspeed;
+	bool start_stop=false;
 
 	ScrollZone* zone;
 	Window* w;
@@ -40,14 +42,37 @@ struct Starstruct {
 	TextBox* T_info;
 
 };
-
-void main_addStar(Starstruct* S) {
-	if((std::regex_match(S->mass, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->radius, std::regex("([0-9]*[.])[0-9]+")))
-		&& (std::regex_match(S->x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->y, std::regex("([0-9]*[.])[0-9]+")))){
-		Star* star = new Star(std::stof(S->radius), std::stod(S->mass), Point2D<double>(std::stod(S->x), std::stod(S->y)), S->name);
-		S->Ssys->addStar(star);
-		return;
+void science_val(std::string str,double &val,double &exposant){
+	size_t size=str.size();
+	std::string s_val;
+	std::string s_exposant;
+	size_t i=0;
+	while(i<size && str[i]!='*'){
+		s_val.push_back(str[i]);
+		i++;
+		}
+	i=i+4;
+	while(i<size){
+		s_exposant.push_back(str[i]);
+		i++;
+		}
+	val=std::stod(s_val);
+	exposant=std::stod(s_exposant);
+	
 	}
+void main_addStar(Starstruct* S) {
+	if((std::regex_match(S->mass, std::regex("([0-9]*[.]?)[0-9]+[*]10[^][0-9]+"))) && (std::regex_match(S->radius, std::regex("([0-9]*[.]?)[0-9]+[*]10[^][0-9]+")))){
+		double val=0;
+		double exposant=1;
+		science_val(S->mass,val,exposant);
+		double mass=val*pow(10,exposant);
+		science_val(S->radius,val,exposant);
+		float radius=(float)val*pow(10,exposant);
+		Star* star = new Star(radius,mass,Point2D<double>(0,0),S->name);
+		S->Ssys->addStar(star);
+		S->manager->imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", S->name, 0.001);
+		return;
+		}
 	else {
 		S->T_info->update("Valeurs non initialisees !", S->w->getRenderer());
 		return;
@@ -55,13 +80,29 @@ void main_addStar(Starstruct* S) {
 }
 
 void main_addPlanet(Starstruct* S) {
-	if ((std::regex_match(S->mass, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->radius, std::regex("([0-9]*[.])[0-9]+")))
-		&& (std::regex_match(S->x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->y, std::regex("([0-9]*[.])[0-9]+")))
-		&& (std::regex_match(S->speed_x, std::regex("([0-9]*[.])[0-9]+"))) && (std::regex_match(S->speed_y, std::regex("([0-9]*[.])[0-9]+")))) {
-		Point2D<double> initialPos(std::stod(S->x), std::stod(S->y));
-		Point2D<double> initialSpeed(std::stod(S->speed_x), std::stod(S->speed_y));
-		Planet* p = new Planet(std::stof(S->radius), std::stod(S->mass), initialPos, initialSpeed, S->name);
+	if ((std::regex_match(S->mass, std::regex("([0-9]*[.]?)[0-9]+[*]10[^][0-9]+"))) && (std::regex_match(S->radius, std::regex("([0-9]*[.]?)[0-9]+[*]10[^][0-9]+")))
+		&& (std::regex_match(S->x, std::regex("([0-9]*[.]?)[0-9]+[*]10[^][0-9]+"))) && (std::regex_match(S->y, std::regex("([0-9]*[.]?)[0-9]+[*]10[^][0-9]+")))
+		&& (std::regex_match(S->speed_x, std::regex("([0-9]*[.]?)[0-9]+[*]10[^][0-9]+"))) && (std::regex_match(S->speed_y, std::regex("([0-9]*[.]?)[0-9]+[*]10[^][0-9]+")))) {
+		double val=0;
+		double exposant=1;
+		science_val(S->mass,val,exposant);
+		double mass=val*pow(10,exposant);
+		science_val(S->radius,val,exposant);
+		float radius=(float)val*pow(10,exposant);
+		science_val(S->x,val,exposant);
+		double position_x=val*pow(10,exposant);
+		science_val(S->y,val,exposant);
+		double position_y=val*pow(10,exposant);
+		science_val(S->speed_x,val,exposant);
+		double speed_x=val*pow(10,exposant);
+		science_val(S->speed_y,val,exposant);
+		double speed_y=val*pow(10,exposant);
+		Point2D<double> initialPos(position_x, position_y);
+		Point2D<double> initialSpeed(speed_x, speed_y);
+		Planet* p = new Planet(radius,mass, initialPos, initialSpeed, S->name);
 		S->Ssys->addPlanet(p);
+		S->manager->imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", S->name, 0.001);
+		S->manager->getShape(S->name).setPos(Vertex(position_x/pow(10,10),position_y/pow(10,10),0));
 
 		S->TN[S->Ssys->getPlanets().size() - 1]->update(S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		S->TM[S->Ssys->getPlanets().size() - 1]->update(std::to_string(S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -91,8 +132,13 @@ void main_setSimulation(Starstruct* S) {
 }
 
 void main_startSimu(Starstruct* S) {
-	S->Ssys->simulation();
-}
+	S->start_stop=true;
+	std::cout<<S->start_stop<<std::endl;
+	}
+void main_stopSimu(Starstruct *S){
+	S->start_stop=false;
+	std::cout<<S->start_stop<<std::endl;
+	}
 
 void main_reset(Starstruct* S) {
 	S->Ssys->reset();
@@ -607,7 +653,7 @@ int main(int argc, char* argv[]) {
 		zone.linkTextBox(planet_speedy[i]);
 	}
 	//INITIALISATION STRUCT
-	Starstruct S = { &Ssys, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText(), i_simuspeed.getText(),  &zone, &window, planet_name, planet_mass, planet_radius, planet_posx, planet_posy, planet_speedx, planet_speedy, &t_textinfo};
+	Starstruct S = { &Ssys,&manager, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText(), i_simuspeed.getText(),false,&zone,&window, planet_name, planet_mass, planet_radius, planet_posx, planet_posy, planet_speedx, planet_speedy, &t_textinfo};
 
 	
 
@@ -715,7 +761,7 @@ int main(int argc, char* argv[]) {
 
 	TextBox b_stopsimu("Stop simulation", PATH + std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Starstruct*>("b_stop", nullptr, red, black, &b_stopsimu, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-
+	bm.getButton<Starstruct*>("b_stop").setAction(main_stopSimu,&S);
 	b_topleftx += 147;
 
 	TextBox b_reset("Reset", PATH + std::string("fonts/calibri.ttf"), 16, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
@@ -743,36 +789,14 @@ int main(int argc, char* argv[]) {
 	
 	//********************************************************************************************************
 	
-	Ssys.addStar(new Star(693340000,1.989*pow(10,30),Point2D<double>(0,0),"Soleil"));
+	//Ssys.addStar(new Star(693340000,1.989*pow(10,30),Point2D<double>(0,0),"Soleil"));
 	
 	//afficher tous les objets du système stellaire
-	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "sun", 0.001);
-	//Point2D<double>	pos1(0,149600000000);
-	//Point2D<double> speed1(0,0);
-	//Ssys.addPlanet(new Planet(6371000,5.972*pow(10,24),pos1,speed1,std::string("earth")));
+	//manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "sun", 0.001);
 	Point2D<double>	pos1(0,149600000000);
-	Point2D<double> speed1(0,0);
-	Ssys.addPlanet(new Planet(6371000,5.972*pow(10,24),pos1,speed1,std::string("earth")));
+	Point2D<double> speed1(2000,0);
+	//Ssys.addPlanet(new Planet(6371000,5.972*pow(10,24),pos1,speed1,std::string("earth")));
 	std::vector<Planet*> Planets = Ssys.getPlanets();
-	
-	Planet *test=Planets[0];
-	Point2D<double> Position1=test->getPosition();
-	Position1.x=Position1.x/pow(10,10);
-	Position1.y=Position1.y/pow(10,10);
-	
-	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", test->getName(), 0.001);
-	manager.getShape(test->getName()).setPos(Vertex(Position1.x,Position1.y,0));
-	
-	
-	//Ssys.simulation();
-	/*
-	Point2D<double> Position2=test->getPosition();
-	Position2.x=Position2.x/pow(10,10);
-	Position2.y=Position2.y/pow(10,10);
-	std::cout<<"x="<<Position2.x<<std::endl;
-	std::cout<<"y="<<Position2.y<<std::endl;*/
-
-
 
 	r.updateTriangles(manager);
 	
@@ -818,14 +842,20 @@ int main(int argc, char* argv[]) {
 		t_globset.render(window.getRenderer(), 0, 0);
 		t_loadsave.render(window.getRenderer(), 0, 0);
 		
-		Ssys.simulation();
-		Planet *test=Planets[0];
-		Point2D<double> Position=test->getPosition();
-		Position.x=Position.x/pow(10,10);
-		Position.y=Position.y/pow(10,10);
-		//std::cout<<"Position.x"<<Position.x<<std::endl;
-		//std::cout<<"Position.y"<<Position.y<<std::endl;
-		manager.getShape(test->getName()).setPos(Vertex(Position.x,Position.y,0));
+		if(S.start_stop){
+			std::vector<Planet*> Planets = Ssys.getPlanets();
+			for(size_t i=0;i<Planets.size();i++){
+				Ssys.simulation();
+				Planet *test=Planets[0];
+				Point2D<double> Position=test->getPosition();
+				Position.x=Position.x/pow(10,10);
+				Position.y=Position.y/pow(10,10);
+				std::cout<<"x="<<Position.x<<std::endl;
+				std::cout<<"y"<<Position.y<<std::endl;
+				manager.getShape(test->getName()).setPos(Vertex(Position.x,Position.y,0));
+				}
+			}
+		
 		r.updateTriangles(manager);
 
 		//Mise a jour des valeurs
