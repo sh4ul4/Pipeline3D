@@ -135,9 +135,8 @@ private:
     /**
      * @brief Vector des meubles (classe Furniture) existants sur l'instance courante
      */ 
-    std::vector<Furniture*> furnitures_new;
-    std::vector<furnitureInfos*> furnitures;
-
+    std::vector<Furniture*> furnitures;
+    
     // J'aurais pu utiliser ce manager ??
     // En soi ça change rien à part les 5 murs 
     // ShapeManager furnitureManager;
@@ -275,8 +274,8 @@ public:
                 std::getline(iss, rotation, '|');
                 name.erase(0, 1);
 
-                furnitures.push_back(new furnitureInfos(name, furType, path, source, stoi(rotation), stof(scale)));
-                // furnitures_new.push_back(new Furniture(name, furType, path, source, stoi(rotation), stof(scale)));
+                // furnitures.push_back(new furnitureInfos(name, furType, path, source, stoi(rotation), stof(scale)));
+                furnitures.push_back(new Furniture(name, furType, path, source, stoi(rotation), stof(scale)));
             }
             else if (!type.compare("SHAPE"))  {
                 std::string name;
@@ -285,8 +284,7 @@ public:
                 std::getline(iss, name, '|');
                 name.erase(0, 1);
                 iss >> x >> y >> z >> visible;
-                // for (Furniture *fur : furnitures_new)  {
-                for (furnitureInfos *fur : furnitures)  {
+                for (Furniture *fur : furnitures)  {
                     if (fur->name == name)  {
                         manager->imprtShapeObj(fur->path, fur->source, name, fur->scale);
                         manager->getShape(name).visible = visible;
@@ -902,7 +900,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         // 2 Type du meuble
         // 4 Echelle
 
-        furnitureInfos *curr = furnitures[fp.selected];       
+        Furniture *curr = furnitures[fp.selected];       
         
         text_furnitInteract[0]->update(curr->name, window.getRenderer());
         text_furnitInteract[2]->update(curr->type, window.getRenderer());
@@ -982,7 +980,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
     }
 
     bool checkFurnitureCollision(ShapeManager& manager, Shape& object)  {
-        for (furnitureInfos *fur : furnitures)  {
+        for (Furniture *fur : furnitures)  {
             if (object.name == fur->name)
                 continue;
             if (object.hit(manager.getShape(fur->name))) 
@@ -1236,11 +1234,11 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         outfile << "TEXTF\n" << "TEXTW" << '\n'; // Paths vers textures custom pour murs et sol
         outfile << '\n';
 
-        for (furnitureInfos *fur : hm->furnitures)  {
+        for (Furniture *fur : hm->furnitures)  {
             outfile << "FURNI " << fur->name << "|" << fur->type << "|" << fur->path << "|" << fur->source << "|" << fur->scale << '|' << fur->rotation << '\n';
         }
         outfile << '\n';
-        for (furnitureInfos *fur : hm->furnitures)  {
+        for (Furniture *fur : hm->furnitures)  {
             Shape copiedShape((hm->refManager).getShape(fur->name));
             
             outfile << "SHAPE " << fur->name << "|" << copiedShape.center.x << ' ' << copiedShape.center.y << ' ' << copiedShape.center.z << ' ';

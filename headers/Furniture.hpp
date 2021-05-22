@@ -1,5 +1,8 @@
 #pragma once
 
+
+
+
 /**
  * @brief Contient les informations d'un meuble inséré ainsi que ses méthodes d'interaction.
  */ 
@@ -69,46 +72,93 @@ public:
         }
     };
 
+
+    void leftRotate(ShapeManager *manager)  {
+        Vertex center = manager->getShape(name).center;
+        manager->getShape(name).rotateY(center, 1.5708);
+        rotation = (rotation+3) % 4;
+    }
+
+    void rightRotate(ShapeManager *manager)  {
+        Vertex center = manager->getShape(name).center;
+        manager->getShape(name).rotateY(center, -1.5708);
+        rotation = (rotation+1) % 4;
+    }
+
+    void rename(ShapeManager *manager, std::string newName)  {
+        // Vérifier si le nouveau nom n'est pas déjà pris
+        if (!manager->nameTaken(newName))  {
+            // Rename la shape dans manager et dans furnitures.name
+            manager->getShape(name).name = newName;
+            name = newName;
+        }
+        else  {
+            // fp->retVal = "Déjà existant !";
+            std::cout << "Le nom de meuble '" << newName << "' est déjà existant !\n";
+        } 
+    }
+
+    void rescale(ShapeManager *manager, float newScale)  {
+         // Multiplication de l'echelle par nouveau/ancienne pour reset la scale
+        manager->getShape(name).rescale(newScale / scale);
+        scale = newScale;
+    }
+    
     /**
      * @brief Supprime le meuble et la Shape géométrique correspondante suite au clic sur bouton remove
      */ 
-    void remove();
+    void remove(ShapeManager *manager)  {
+        // Option 1: rendre la shape invisible avec un nom random (pour faciliter le CTRL+Z)
+        static const char alphanum[] =
+            "0123456789"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz";
+        int stringLength = sizeof(alphanum) - 1;
+        std::string newName = "del_";
+        for(int z=0; z < 5; z++)  {
+            newName += alphanum[rand() % stringLength];
+        }
+
+        // manager->getShape(name).visible = false;
+        manager->getShape(name).setPos(Vertex(0,255,0)); // On le met dans l'espace en gros
+        manager->getShape(name).name = newName;
+        name = newName;
+        manager->pushShapesEditing();
+
+
+        // Option 2: supprimer du Manager et du Vector Furnitures (non fonctionnel)
+        // manager->removeShape(name);
+        // (*fp->furnitures).erase((*fp->furnitures).begin()+fp->selected);
+    };
     ~Furniture() { };
-};
-
-
-struct furnitureInfos  {
-    std::string name;
-    std::string type;
-    std::string path;
-    std::string source;
-    int rotation;
-    float scale;
-
-    furnitureInfos(std::string name, std::string type, float scale) : 
-        name(name), type(type), scale(scale) {}
-
-    furnitureInfos(std::string name, std::string type, std::string path, std::string source, int rotation, float scale) : 
-        name(name), type(type), scale(scale), rotation(rotation), path(path), source(source) {}
-
-    furnitureInfos() = delete;
 };
 
 struct insertPack {
     int *selectedBox;
     int *interactSpace;
     ShapeManager *manager;
-    std::vector<furnitureInfos*> *furnitures;
+    std::vector<Furniture*> *furnitures;
     ButtonManager *bmInsertion;
     std::vector<std::string> *checkboxes;
     std::string name;
     float scale;
 };
 
+struct editFurniturePack  {
+    int *interactSpace;
+    ShapeManager *manager;
+    std::vector<Furniture*> *furnitures;
+    int selected;
+
+    std::string newName;
+    float newScale;
+    // std::string retVal = "";
+};
+
 struct insertObjPack {
     int *interactSpace;
     ShapeManager *manager;
-    std::vector<furnitureInfos*> *furnitures;
+    std::vector<Furniture*> *furnitures;
 
     std::string name;
     float scale;
@@ -132,16 +182,7 @@ struct radioButtonPack  {
     radioButtonPack() = delete; 
 };
 
-struct editFurniturePack  {
-    int *interactSpace;
-    ShapeManager *manager;
-    std::vector<furnitureInfos*> *furnitures;
-    int selected;
 
-    std::string newName;
-    float newScale;
-    // std::string retVal = "";
-};
 
 static void furnitureInsertion(insertPack *ip)  {
     int k = 1;
@@ -156,23 +197,23 @@ static void furnitureInsertion(insertPack *ip)  {
         switch ((*ip->selectedBox))  {
             case 1: // Bureau
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/bureau/"), "bureau.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Bureau", "HM-Res/furnitures/bureau/", "bureau.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Bureau", "HM-Res/furnitures/bureau/", "bureau.obj", 0, ip->scale));
                 break;
             case 2: // Chaise
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise", "HM-Res/furnitures/chaise/", "chaise.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Chaise", "HM-Res/furnitures/chaise/", "chaise.obj", 0, ip->scale));
                 break;
             case 3: // lit
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/lit/"), "lit.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Lit simple", "HM-Res/furnitures/lit/", "lit.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Lit simple", "HM-Res/furnitures/lit/", "lit.obj", 0, ip->scale));
                 break;
             case 4: // Commode
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/commode/"), "commode.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Commode 4 tiroirs", "HM-Res/furnitures/commode/", "commode.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Commode 4 tiroirs", "HM-Res/furnitures/commode/", "commode.obj", 0, ip->scale));
                 break;
             case 5: // Armoire
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/armoire/"), "armoire.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Armoire", "HM-Res/furnitures/armoire/", "armoire.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Armoire", "HM-Res/furnitures/armoire/", "armoire.obj", 0, ip->scale));
                 break;
             default:
                 std::cout << "Insertion de RIEN DU TOUT\n";
@@ -183,26 +224,24 @@ static void furnitureInsertion(insertPack *ip)  {
         switch ((*ip->selectedBox))  {
             case 1: // Placard
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/placard/"), "placard.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Placard de cuisine", "HM-Res/furnitures/placard/", "placard.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Placard de cuisine", "HM-Res/furnitures/placard/", "placard.obj", 0, ip->scale));
                 break;
             case 2: // evier
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/blocEvier/"), "evier.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Évier de cuisine", "HM-Res/furnitures/blocEvier/", "evier.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Évier de cuisine", "HM-Res/furnitures/blocEvier/", "evier.obj", 0, ip->scale));
                 break;
             case 3: // frigo
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/blocFrigo/"), "frigo.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Réfrigérateur", "HM-Res/furnitures/blocFrigo/", "frigo.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Réfrigérateur", "HM-Res/furnitures/blocFrigo/", "frigo.obj", 0, ip->scale));
                 break;
             case 4: // micro onde
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/microOnde/"), "microOnde.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Micro-onde", "HM-Res/furnitures/microOnde/", "microOnde.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Micro-onde", "HM-Res/furnitures/microOnde/", "microOnde.obj", 0, ip->scale));
                 break;
             case 5: // Table en bois 
                 (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Table en bois", "OBJ/woodtable/", "Wood_Table.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Table en bois", "OBJ/woodtable/", "Wood_Table.obj", 0, ip->scale));
                 // (*ip->manager).getShape(ip->name).groundZero();
-                // (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/chaise/"), "chaise.obj", ip->name, ip->scale);
-                // (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Chaise d'école", "HM-Res/furnitures/chaise/", "chaise.obj", ip->scale));
                 break;
             default:
                 std::cout << "Insertion de RIEN DU TOUT\n";
@@ -230,7 +269,7 @@ static void objInsertion(insertObjPack *ip)  {
         }
         std::cout << "Import OBJ de " + path+'/' + ip->objSource + "\n";
         (*ip->manager).imprtShapeObj(path+'/', ip->objSource, ip->name, ip->scale);
-        (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Objet importé manuellement", path+'/', ip->objSource, 0, ip->scale));
+        (*ip->furnitures).push_back(new Furniture(ip->name, "Objet importé manuellement", path+'/', ip->objSource, 0, ip->scale));
         // (*ip->manager).getShape(ip->name).groundZero();
         ip->objRetVal = "L'objet '" + ip->name + "' a été importé avec succès.";
     }
@@ -244,72 +283,29 @@ static void objInsertion(insertObjPack *ip)  {
 }
 
 static void renameFurniture(editFurniturePack *fp)  {
-    // Vérifier si le nouveau nom n'est pas déjà pris
-    if (!(*fp->manager).nameTaken(fp->newName))  {
-        // Rename la shape dans manager et dans furnitures.name
-        (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).name = fp->newName;
-        (*fp->furnitures)[fp->selected]->name = fp->newName;
-    }
-    else  {
-        // fp->retVal = "Déjà existant !";
-        std::cout << "Le nom de meuble '" << fp->newName << "' est déjà existant !\n";
-    } 
+    (*fp->furnitures)[fp->selected]->rename(fp->manager, fp->newName);
 }
 
 static void rescaleFurniture(editFurniturePack *fp)  {
-    // Multiplication de l'echelle par nouveau/ancienne pour reset la scale
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rescale(fp->newScale / (*fp->furnitures)[fp->selected]->scale);
-    (*fp->furnitures)[fp->selected]->scale = fp->newScale;
+    (*fp->furnitures)[fp->selected]->rescale(fp->manager, fp->newScale);
 }
 
 static void dragAndDropFurniture(editFurniturePack *fp)  {
     // Need Mouse, manager
-    
-    // Get les coordonnées 2D Window du centre du meuble pour warp la souris dedans
-    // SDL_WarpMouseInWindow((*p->window).getWindow(), center.x, center.y);
-
-    // Tant que le clic est pas lâché ET qu'il y a de la place pour le meuble (pas de hit)
+    // (*fp->furnitures)[fp->selected]->dragSprite();
 }
 
 // Mettre les checks de collision à la rotation !
 static void leftRotateFurniture(editFurniturePack *fp)  {
-    Vertex center = (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).center;
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, 1.5708);
-    int rotat = (*fp->furnitures)[fp->selected]->rotation;
-    rotat = (rotat+3) % 4;
-    (*fp->furnitures)[fp->selected]->rotation = rotat;
+    (*fp->furnitures)[fp->selected]->leftRotate(fp->manager);
 }
 
 static void rightRotateFurniture(editFurniturePack *fp)  {
-    Vertex center = (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).center;
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).rotateY(center, -1.5708);
-    int rotat = (*fp->furnitures)[fp->selected]->rotation;
-    rotat = (rotat+1) % 4;
-    (*fp->furnitures)[fp->selected]->rotation = rotat;
+    (*fp->furnitures)[fp->selected]->rightRotate(fp->manager);
 }
 
 static void deleteFurniture(editFurniturePack *fp)  {
-    // Option 1: rendre la shape invisible avec un nom random (pour faciliter le CTRL+Z)
-    static const char alphanum[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
-    int stringLength = sizeof(alphanum) - 1;
-    std::string newName = "del_";
-    for(int z=0; z < 5; z++)  {
-        newName += alphanum[rand() % stringLength];
-    }
-
-    // (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).visible = false;
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).setPos(Vertex(0,255,0)); // On le met dans l'espace en gros
-    (*fp->manager).getShape((*fp->furnitures)[fp->selected]->name).name = newName;
-    (*fp->furnitures)[fp->selected]->name = newName;
-    (*fp->manager).pushShapesEditing();
-
-
-    // Option 2: supprimer du Manager et du Vector Furnitures (non fonctionnel)
-    // (*fp->manager).removeShape((*fp->furnitures)[fp->selected]->name);
-    // (*fp->furnitures).erase((*fp->furnitures).begin()+fp->selected);
+    (*fp->furnitures)[fp->selected]->remove(fp->manager);
     
     // Quitter l'interface d'interaction 
     (*fp->interactSpace) = 0;
