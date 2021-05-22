@@ -1,51 +1,52 @@
 #pragma once
 
 /**
- * @brief Meuble de base représentée naïvement par un parallélépipède rectangle.
- * Le constructeur crée par défaut le meuble au centre de la caméra utilisateur.
- * 
- * @private string  Indice de la Shape géométrique représentant le meuble
- * @private bool    Mode de sélection du meuble pour définir son intération
- * 
+ * @brief Contient les informations d'un meuble inséré ainsi que ses méthodes d'interaction.
  */ 
 class Furniture {
 private:
-    /**
-     * @brief Indice de la Shape géométrique représentant le meuble.
-     * 
-     * Cet indice sert de pointeur vers l'ensemble des paramètres Shape (vecteur de Triangles et Texture)
-     */
-    std::string shape_name; 
-
-    /**
-     * @brief Booléens indiquant le mode du meuble, si les intéractions sont possibles ou non.
-     */ 
-    bool selected = false;
-    bool clicked = false;
-
-    /**
-     * @brief Boutons d'interface apparaissant près de la forme quand elle est sélectionnée.
-     * 
-     * Chacun des boutons possède un attribut booléen pour indiquer sa visibilité / cliquabilité. 
-     */
-    
 
 public:
+    /**
+     * @brief Indice de la Shape géométrique représentant le meuble.
+     * Cet indice sert de pointeur vers l'ensemble des paramètres Shape (vecteur de Triangles et Texture)
+     */
+    std::string name;
+    std::string type;
+    std::string path;
+    std::string source;
+    int rotation;
+    float scale;
+
+    /**
+     * @brief Booléen indiquant le mode du meuble, si les interactions sont possibles ou non.
+     */ 
+    bool selected = false;
+
+
     /**
      * @brief Constructeur par défaut: Fait appel au constructeur de Shape en lui attribuant son nom unique
      *        et créé un parallélépipède rectangle à partir des dimensions. 
      *        Le centre de l'objet se positionne sur le centre de la caméra.  
      * 
-     * @param string    Nom unique de la Shape (Géométrie) à créer
-     * @param height    Hauteur de la forme
-     * @param lenght    Longueur de la forme
-     * @param large     Largeur de la forme
+     * @param string    Nom unique référent de la Shape (Géométrie)
+     * @param type      Type de meuble
+     * @param path      Lien du dossier contenant le fichier .obj
+     * @param source    Source du fichier .obj
+     * @param rotation  Rotation par tranche de 90° du meuble
+     * @param scale     Echelle d'affichage du meuble           
      * @param Bitmap    Texture à apposer sur la forme géométrique
      */
-    Furniture(std::string shape_name, float height, float lenght, float large, Bitmap *bmp = nullptr);
+    Furniture(std::string name, std::string type, std::string path, std::string source, int rotation, float scale) : 
+        name(name), type(type), scale(scale), rotation(rotation), path(path), source(source) {}
+
+    Furniture(std::string name, std::string type, float scale) : 
+        name(name), type(type), scale(scale) {}
+
+    Furniture() = delete;
 
     bool isSelected() { return selected; };
-    bool isClicked() { return clicked; };
+    
 
     /**
      * @brief Évènement déclenché quand un meuble est sélectionné via clic de souris.
@@ -72,7 +73,7 @@ public:
      * @brief Supprime le meuble et la Shape géométrique correspondante suite au clic sur bouton remove
      */ 
     void remove();
-    // ~Furniture();
+    ~Furniture() { };
 };
 
 
@@ -190,7 +191,7 @@ static void furnitureInsertion(insertPack *ip)  {
                 break;
             case 3: // frigo
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/blocFrigo/"), "frigo.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Réfrigirateur", "HM-Res/furnitures/blocFrigo/", "frigo.obj", 0, ip->scale));
+                (*ip->furnitures).push_back(new furnitureInfos(ip->name, "Réfrigérateur", "HM-Res/furnitures/blocFrigo/", "frigo.obj", 0, ip->scale));
                 break;
             case 4: // micro onde
                 (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/microOnde/"), "microOnde.obj", ip->name, ip->scale);

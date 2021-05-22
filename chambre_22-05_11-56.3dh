@@ -14,32 +14,32 @@ WOPTS 0 0
 TEXTF
 TEXTW
 
-FURNI default|Armoire|HM-Res/furnitures/armoire/|armoire.obj|10|0
-FURNI default1|Lit simple|HM-Res/furnitures/lit/|lit.obj|10|0
-FURNI default2|Commode 4 tiroirs|HM-Res/furnitures/commode/|commode.obj|10|3
-FURNI default3|Placard de cuisine|HM-Res/furnitures/placard/|placard.obj|10|3
-FURNI default4|Évier de cuisine|HM-Res/furnitures/blocEvier/|evier.obj|10|2
-FURNI default5|Réfrigirateur|HM-Res/furnitures/blocFrigo/|frigo.obj|10|3
-FURNI default6|Placard de cuisine|HM-Res/furnitures/placard/|placard.obj|10|2
-FURNI default7|Micro-onde|HM-Res/furnitures/microOnde/|microOnde.obj|10|3
+FURNI armoiire|Armoire|HM-Res/furnitures/armoire/|armoire.obj|10|0
+FURNI lit|Lit simple|HM-Res/furnitures/lit/|lit.obj|10|0
+FURNI commode|Commode 4 tiroirs|HM-Res/furnitures/commode/|commode.obj|10|3
+FURNI placard|Placard de cuisine|HM-Res/furnitures/placard/|placard.obj|10|3
+FURNI evier|Évier de cuisine|HM-Res/furnitures/blocEvier/|evier.obj|10|2
+FURNI frigo|Réfrigérateur|HM-Res/furnitures/blocFrigo/|frigo.obj|10|3
+FURNI placard1|Placard de cuisine|HM-Res/furnitures/placard/|placard.obj|10|2
+FURNI microonde|Micro-onde|HM-Res/furnitures/microOnde/|microOnde.obj|10|3
 FURNI del_fa37J|Évier de cuisine|HM-Res/furnitures/blocEvier/|evier.obj|10|3
-FURNI default8|Table en bois|OBJ/woodtable/|Wood_Table.obj|25|0
-FURNI default9|Bureau|HM-Res/furnitures/bureau/|bureau.obj|10|1
-FURNI default10|Chaise|HM-Res/furnitures/chaise/|chaise.obj|10|3
-FURNI default1011|Chaise|HM-Res/furnitures/chaise/|chaise.obj|10|1
-FURNI default10112|Chaise|HM-Res/furnitures/chaise/|chaise.obj|10|0
+FURNI table|Table en bois|OBJ/woodtable/|Wood_Table.obj|25|0
+FURNI bureau|Bureau|HM-Res/furnitures/bureau/|bureau.obj|10|1
+FURNI chaise|Chaise|HM-Res/furnitures/chaise/|chaise.obj|10|3
+FURNI chaise1|Chaise|HM-Res/furnitures/chaise/|chaise.obj|10|1
+FURNI chaise2|Chaise|HM-Res/furnitures/chaise/|chaise.obj|10|0
 
-SHAPE default|-43 0 -21 1
-SHAPE default1|-24 0 39 1
-SHAPE default2|-42 0 55 1
-SHAPE default3|43 0 53 1
-SHAPE default4|44 0 41 1
-SHAPE default5|18 0 53 1
-SHAPE default6|43 0 28 1
-SHAPE default7|31 0 54 1
+SHAPE armoiire|-43 0 -21 1
+SHAPE lit|-24 0 39 1
+SHAPE commode|-42 0 55 1
+SHAPE placard|43 0 53 1
+SHAPE evier|44 0 41 1
+SHAPE frigo|18 0 53 1
+SHAPE placard1|43 0 28 1
+SHAPE microonde|31 0 54 1
 SHAPE del_fa37J|-5 510 -54 1
-SHAPE default8|13 0 11 1
-SHAPE default9|-5 0 -52 1
-SHAPE default10|-4 0 -39 1
-SHAPE default1011|12 0 -3 1
-SHAPE default10112|-1 0 12 1
+SHAPE table|13 0 11 1
+SHAPE bureau|-5 0 -52 1
+SHAPE chaise|-4 0 -39 1
+SHAPE chaise1|12 0 -3 1
+SHAPE chaise2|-1 0 12 1

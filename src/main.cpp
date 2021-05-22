@@ -27,16 +27,6 @@ void dezoomCam(void *p)  {
 }
 
 
-struct initPack {
-	int *start;
-	int *checkForError;
-	std::string w1;
-	std::string w3;
-	std::string scene_name;
-	std::string import_path;
-	int mode;
-};
-
 // Ajouter input pour nom de scène et si vide mettre nom par défaut
 void checkInitialization(initPack *i) {
 	if (!i->mode)  {
@@ -80,6 +70,7 @@ int main(int argc, char* argv[]) {
 	ShapeManager manager;
 	TextBox::initLibrary();
 	ButtonManager bm(inputEvent, window);
+	ButtonManager bmstart(inputEvent, window);
 	Render r(window, 900, 506); // 16:9
 	Draw drawer;
 	Mouse mouse;
@@ -88,7 +79,7 @@ int main(int argc, char* argv[]) {
 	int start = 0;
 	int checkForError = 0;
 
-	TextBox t_intro("CROUS Simulator", "fonts/calibri.ttf", 40, black, Point2D<int>(500, 230), 400, 40, window.getRenderer());
+	TextBox t_intro("CROUS Simulator", "fonts/calibri.ttf", 40, black, Point2D<int>(500, 230), 1280, 40, window.getRenderer());
 	int i_TLx = 440, i_TLy = 280;
 	TextBox t_mur1("Mur 1", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
 	TextInput i_mur1("5 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
@@ -104,15 +95,15 @@ int main(int argc, char* argv[]) {
 	TextBox t_error("", "fonts/calibri.ttf", 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, window.getRenderer());
 
 	TextInput scene_name("<nom de scène>", "fonts/calibri.ttf", 21, black, Point2D<int>(440, 390), 400, 25, window.getRenderer());
-	bm.addRectTextButton<initPack*>("b_initApp", Point2D<int>(440, 415), 400, 40, "Nouvelle scène à partir de la surface donnée");
+	bmstart.addRectTextButton<initPack*>("b_initApp", Point2D<int>(440, 415), 400, 40, "Nouvelle scène à partir de la surface donnée");
 
 	TextInput import_path("<chemin d'accès>", "fonts/calibri.ttf", 21, black, Point2D<int>(440, 475), 400, 25, window.getRenderer());
-	bm.addRectTextButton<initPack*>("b_initImport", Point2D<int>(440, 500), 400, 40, "Importer une scène depuis un fichier");
+	bmstart.addRectTextButton<initPack*>("b_initImport", Point2D<int>(440, 500), 400, 40, "Importer une scène depuis un fichier");
 	initPack i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), import_path.getText(), 0 };
 	initPack i1 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), import_path.getText(), 1 };
 	
-	bm.getButton<initPack*>("b_initApp").setAction(checkInitialization, &i0);
-	bm.getButton<initPack*>("b_initImport").setAction(checkInitialization, &i0);
+	bmstart.getButton<initPack*>("b_initApp").setAction(checkInitialization, &i0);
+	bmstart.getButton<initPack*>("b_initImport").setAction(checkInitialization, &i0);
 
 	while (!start) {
 		if (keyboard.escape.down)
@@ -133,10 +124,10 @@ int main(int argc, char* argv[]) {
 		
 		i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), import_path.getText(), 0 };
 		i1 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), import_path.getText(), 1 };
-		bm.getButton<initPack*>("b_initApp").setParam(&i0);
-		bm.getButton<initPack*>("b_initImport").setParam(&i1);
-		bm.checkButtons();
-		bm.renderButtons(window.getRenderer());
+		bmstart.getButton<initPack*>("b_initApp").setParam(&i0);
+		bmstart.getButton<initPack*>("b_initImport").setParam(&i1);
+		bmstart.checkButtons();
+		bmstart.renderButtons(window.getRenderer());
 
 		scene_name.centerizedRender(Point2D<int>(440, 375), 400, window.getRenderer(), 0);
 		import_path.centerizedRender(Point2D<int>(440, 375), 400, window.getRenderer(), 0);
@@ -145,7 +136,7 @@ int main(int argc, char* argv[]) {
 		i_mur3.render(window.getRenderer(), 0);
 		i_mur4.render(window.getRenderer(), 0);
 
-		t_intro.render(window.getRenderer(), 0, 0);
+		t_intro.centerizedRender(Point2D<int>(0,0), 1280, window.getRenderer());
 		t_mur1.render(window.getRenderer(), 0, 0);
 		t_mur2.render(window.getRenderer(), 0, 0);
 		t_mur3.render(window.getRenderer(), 0, 0);
@@ -181,8 +172,6 @@ int main(int argc, char* argv[]) {
 		window.RenderScreen();
 		window.FillScreen(hd_beigeBackground);
 	}
-	bm.removeButton("b_initApp");
-	bm.removeButton("b_initImport");
 
 	float w1 = 0, w3 = 0;
 
@@ -193,7 +182,7 @@ int main(int argc, char* argv[]) {
 		if(w3 < w1) std::swap(w1, w3);
 		mode = false;
 	}
-	HomeDesign hm( i0.scene_name, bm, &manager, window, inputEvent, w1, w3, i1.import_path, mode);
+	HomeDesign hm( i0.scene_name, bm, &manager, window, inputEvent, mouse, keyboard, w1, w3, i1.import_path, mode);
 	
 
 	/** ==============================
@@ -221,11 +210,10 @@ int main(int argc, char* argv[]) {
 	 */
 	int b_width = 270, b_height = 38;
 	int b_topleftx = 970, b_tly = 546;
-	bm.addRectTextButtonCustom<camPack*>("b_editSurface", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Editer la surface de la scene", 16, black);
-	// bm.getButton<TextInput*>("b_editSurface").setAction([](TextInput* t) { std::cout << t->getText() << std::endl; }, &ti);
+	bm.addRectTextButtonCustom<HomeDesign*>("b_editParam", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Éditer les paramètres de la scène", 16, black);
+	bm.getButton<HomeDesign*>("b_editParam").setAction(hm.editSceneParams, &hm);
 	b_tly += 58;
 	bm.addRectTextButtonCustom<HomeDesign*>("b_saveScene", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Enregistrer la scene", 16, black);
-	// exportScenePack ex = { &manager, &hm};
 	bm.getButton<HomeDesign*>("b_saveScene").setAction(hm.saveScene, &hm);
 	b_tly += 58;
 	bm.addRectTextButtonCustom<Render*>("b_exportView", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Exporter la vue actuelle", 16, black);
@@ -289,6 +277,7 @@ int main(int argc, char* argv[]) {
 		hm.renderViewsButtons(window.getRenderer());
 		r.renderOrientation(Point2D<int>(50, 470), 50, window);
 
+		sceneTitle.update(hm.getSceneName(), window.getRenderer());
 		sceneTitle.render(window.getRenderer(), 0, 0);
 		
 		// Check de clic souris si on est en vue du haut

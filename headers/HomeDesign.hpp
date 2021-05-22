@@ -3,6 +3,16 @@
 #include <iomanip>
 #include <chrono>
 
+struct initPack {
+	int *start;
+	int *checkForError;
+	std::string w1;
+	std::string w3;
+	std::string scene_name;
+	std::string import_path;
+	int mode;
+};
+
 struct camPack {
 	Camera *cam;
 	std::string viewName;
@@ -117,11 +127,15 @@ private:
     int optf = 0, optw = 0;
 
     ShapeManager& refManager;
+    Window& refWindow;
+    InputEvent& refInputEvent;
+    Mouse& refMouse;
+    Keyboard refKeyboard;
     
     /**
      * @brief Vector des meubles (classe Furniture) existants sur l'instance courante
      */ 
-    // std::vector<Furniture> furnitures;
+    std::vector<Furniture*> furnitures_new;
     std::vector<furnitureInfos*> furnitures;
 
     // J'aurais pu utiliser ce manager ??
@@ -132,7 +146,6 @@ private:
 
     // Espace interaction : affichage par défaut
     std::vector<TextBox*> text_insertion_def;
-    // std::vector<TextInput*> input_insertion_def;
     ButtonManager bmInsertion_def;
 
     // Interface d'insertion Type 1
@@ -182,9 +195,10 @@ public:
      * @param InputEvent    Utile aux évènements d'interaction utilisateur
      * @param float         Dimensions des 4 murs formant la pièce principale pour créer les rectangles
      */ 
-    HomeDesign(std::string scene, ButtonManager& bm, ShapeManager *manager, Window& window, InputEvent& inputEvent, float w1, float w3, std::string importPath, bool mode)
+    HomeDesign(std::string scene, ButtonManager& bm, ShapeManager *manager, Window& window, InputEvent& inputEvent, Mouse& mouse, Keyboard& keyboard, float w1, float w3, std::string importPath, bool mode)
                 : scene_name(scene), w1(w1), w3(w3), bmInsertion_def(inputEvent, window), bmInsertion1(inputEvent, window), bmInsertion2(inputEvent, window), 
-                  bmInsertion3(inputEvent, window), bmFurnitInteract(inputEvent, window), bmCameras(inputEvent, window), refManager(*manager) {
+                  bmInsertion3(inputEvent, window), bmFurnitInteract(inputEvent, window), bmCameras(inputEvent, window), 
+                  refManager(*manager), refWindow(window), refInputEvent(inputEvent), refMouse(mouse), refKeyboard(keyboard) {
         
         if (mode) {
             initImport(bm, manager, window, inputEvent, importPath);
@@ -262,6 +276,7 @@ public:
                 name.erase(0, 1);
 
                 furnitures.push_back(new furnitureInfos(name, furType, path, source, stoi(rotation), stof(scale)));
+                // furnitures_new.push_back(new Furniture(name, furType, path, source, stoi(rotation), stof(scale)));
             }
             else if (!type.compare("SHAPE"))  {
                 std::string name;
@@ -270,6 +285,7 @@ public:
                 std::getline(iss, name, '|');
                 name.erase(0, 1);
                 iss >> x >> y >> z >> visible;
+                // for (Furniture *fur : furnitures_new)  {
                 for (furnitureInfos *fur : furnitures)  {
                     if (fur->name == name)  {
                         manager->imprtShapeObj(fur->path, fur->source, name, fur->scale);
@@ -774,6 +790,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         stream << hours.str() + ":" + minutes.str() + ":" + seconds_s.str();
         // stream << std::fixed << std::setprecision(2) << (std::chrono::duration_cast<std::chrono::microseconds>(end - launch).count()) /1000000.0;
         text_insertion_def[6]->update(stream.str(), window.getRenderer());
+        text_insertion_def[0]->update(scene_name, window.getRenderer());
         for (size_t i = 0; i < text_insertion_def.size(); i++)  {
             text_insertion_def[i]->render(window.getRenderer(), 0, 0);
             text_insertion_def[i]->center(Point2D<int>(970, 30), 270);
@@ -1066,6 +1083,131 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         // Faire une boucle à part pour insérer le nom du fichier ? 
     };
 
+    static void checkParamsEdition(initPack *i)  {
+        if (!i->mode)  {
+            // Mode avec murs
+            if (i->w1.empty() || i->w3.empty()) {
+                *i->checkForError = 2;
+                return;
+            }
+
+            try  {
+                stof(i->w1);
+                stof(i->w3);
+            }  catch (const std::invalid_argument& ia)  {
+                *i->checkForError = 1; // Flottant invalide
+                // Ajouter un if pour gérer les valeurs max.
+                return;
+            }
+            *i->checkForError = 3; // Flottants valides !
+            *i->start = 1;
+        }
+        else  {
+            *i->checkForError = 6; // Annulation
+            *i->start = 2; // Annulation
+        }
+    }
+
+    static void editSceneParams(HomeDesign *hm)  {
+        int start = 0;
+        int checkForError = 0;
+
+        TextBox t_intro("Éditer les paramètres de la scène actuelle", "fonts/Calibri Bold.ttf", 30, black, Point2D<int>(0, 230), 1280, 40, hm->refWindow.getRenderer());
+        int i_TLx = 440, i_TLy = 280;
+        TextBox t_mur1("Mur 1", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, hm->refWindow.getRenderer());
+        TextInput i_mur1(std::to_string(hm->w1), "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, hm->refWindow.getRenderer());
+        TextBox t_mur2("Mur 2", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, hm->refWindow.getRenderer());
+        TextInput i_mur2(std::to_string(hm->w1), "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, hm->refWindow.getRenderer());
+
+        i_TLx += 280;
+        TextBox t_mur3("Mur 3", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, hm->refWindow.getRenderer());
+        TextInput i_mur3(std::to_string(hm->w3), "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, hm->refWindow.getRenderer());
+        TextBox t_mur4("Mur 4", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy+45), 60, 20, hm->refWindow.getRenderer());
+        TextInput i_mur4(std::to_string(hm->w3), "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy+45), 60, 25, hm->refWindow.getRenderer());
+        
+        TextBox t_error("", "fonts/calibri.ttf", 20, red, Point2D<int>(0, i_TLy+80), 1000, 25, hm->refWindow.getRenderer());
+
+        TextInput scene_name(hm->scene_name, "fonts/calibri.ttf", 21, black, Point2D<int>(440, 390), 400, 25, hm->refWindow.getRenderer());
+        RectTextButton<initPack*> b_confirm("b_confirmEdits", Point2D<int>(440, 415), 400, 40, "Confirmer les modifications de nom et de surface", hm->refWindow);
+
+        RectTextButton<initPack*> b_cancel("b_cancelEdits", Point2D<int>(440, 475), 400, 40, "Annuler les modifications", hm->refWindow);
+        initPack i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), " ", 0 };
+        initPack i1 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), " ", 1 };
+
+        b_confirm.setAction(checkParamsEdition, &i0);
+        b_cancel.setAction(checkParamsEdition, &i0);
+
+        while (!start)  {
+            if (hm->refKeyboard.escape.down)
+			    exit(1);
+
+            scene_name.checkForInput(hm->refInputEvent, hm->refWindow.getRenderer());
+            i_mur1.checkForInput(hm->refInputEvent, hm->refWindow.getRenderer(), i_mur2);
+            i_mur3.checkForInput(hm->refInputEvent, hm->refWindow.getRenderer(), i_mur4);
+            i_mur2.checkForInput(i_mur1, hm->refWindow.getRenderer());
+            i_mur4.checkForInput(i_mur3, hm->refWindow.getRenderer());
+
+            hm->refInputEvent.update();
+
+            hm->refInputEvent.updateMouse(hm->refMouse);
+            hm->refInputEvent.updateKeyBoard(hm->refKeyboard);
+            
+            i0 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), " ", 0 };
+            i1 = { &start, &checkForError, i_mur1.getText(), i_mur3.getText(), scene_name.getText(), " ", 1 };
+            b_confirm.setParam(&i0);
+            b_cancel.setParam(&i1);
+            b_confirm.checkButton(hm->refInputEvent, Point2D<int>(0, 0));
+            b_confirm.render(hm->refWindow.getRenderer());
+            b_cancel.checkButton(hm->refInputEvent, Point2D<int>(0, 0));
+            b_cancel.render(hm->refWindow.getRenderer());
+
+            scene_name.centerizedRender(Point2D<int>(440, 375), 400, hm->refWindow.getRenderer(), 0);
+            i_mur1.render(hm->refWindow.getRenderer(), 0);
+            i_mur2.render(hm->refWindow.getRenderer(), 0);
+            i_mur3.render(hm->refWindow.getRenderer(), 0);
+            i_mur4.render(hm->refWindow.getRenderer(), 0);
+
+            t_intro.centerizedRender(Point2D<int>(0, 0), 1280, hm->refWindow.getRenderer());
+            t_mur1.render(hm->refWindow.getRenderer(), 0, 0);
+            t_mur2.render(hm->refWindow.getRenderer(), 0, 0);
+            t_mur3.render(hm->refWindow.getRenderer(), 0, 0);
+            t_mur4.render(hm->refWindow.getRenderer(), 0, 0);
+            if (checkForError)  {
+                switch (checkForError)  {
+                case 1:
+                    t_error.update("Merci d'entrer un nombre flottant valide pour vos dimensions !", hm->refWindow.getRenderer());
+                    break;
+                case 2:
+                    t_error.update("Merci d'entrer des dimensions valides en cliquant sur les barres de saisie !", hm->refWindow.getRenderer());
+                    break;
+                case 3:
+                    t_error.update("Dimensions valides ! Rechargement de la pièce...", "fonts/calibri.ttf", 20, hd_greenButtons, hm->refWindow.getRenderer());
+                    break;
+                case 6:
+                    t_error.update("Annulation de la saisie...", "fonts/calibri.ttf", 20, hd_greenButtons, hm->refWindow.getRenderer());
+                    break;
+                default:
+                    t_error.update("Erreur innatendue !", hm->refWindow.getRenderer());
+                    break;
+                }
+                t_error.center(Point2D<int>(0, i_TLy+90), 1280);
+                t_error.render(hm->refWindow.getRenderer(), 0, 0);
+            }
+
+            hm->refWindow.RenderScreen();
+            hm->refWindow.FillScreen(hd_beigeBackground);
+        }
+
+        if (start == 2)
+            return; // Annulation 
+        float w1 = 0, w3 = 0;
+        w1 = stof(i_mur1.getText());
+        w3 = stof(i_mur3.getText());
+        if(w3 < w1) std::swap(w1, w3);
+        std::cout << "From: " << hm->scene_name << " | To: " << i0.scene_name << '\n';
+        hm->scene_name = i0.scene_name;
+        std::cout << "New dimension: " << i_mur1.getText() <<'x'<< i_mur3.getText() << '\n';
+    }
     
     static void saveScene(HomeDesign *hm)  {
         // Générer un path et nom de fichier en fonction de l'heure
