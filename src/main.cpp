@@ -182,7 +182,7 @@ int main(int argc, char* argv[]) {
 		if(w3 < w1) std::swap(w1, w3);
 		mode = false;
 	}
-	HomeDesign hm( i0.scene_name, bm, &manager, window, inputEvent, mouse, keyboard, w1, w3, i1.import_path, mode);
+	HomeDesign hm( i0.scene_name, bm, &manager, window, inputEvent, r, mouse, keyboard, w1, w3, i1.import_path, mode);
 	
 
 	/** ==============================
@@ -216,8 +216,8 @@ int main(int argc, char* argv[]) {
 	bm.addRectTextButtonCustom<HomeDesign*>("b_saveScene", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Enregistrer la scene", 16, black);
 	bm.getButton<HomeDesign*>("b_saveScene").setAction(hm.saveScene, &hm);
 	b_tly += 58;
-	bm.addRectTextButtonCustom<Render*>("b_exportView", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Exporter la vue actuelle", 16, black);
-	bm.getButton<Render*>("b_exportView").setAction(hm.exportImage, &r);
+	bm.addRectTextButtonCustom<HomeDesign*>("b_exportView", Point2D<int>(b_topleftx, b_tly), b_width, b_height, hd_brownButtons, black, "Exporter la vue actuelle", 16, black);
+	bm.getButton<HomeDesign*>("b_exportView").setAction(hm.exportImage, &hm);
 	TextBox sceneTitle(hm.getSceneName(), "fonts/calibri.ttf", 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
 
 	// Liaison caméras / boutons de changement de vues

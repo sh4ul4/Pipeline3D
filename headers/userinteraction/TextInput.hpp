@@ -52,6 +52,12 @@ public:
      *      METHODES
     ===========================================================================================*/
 public:
+
+	void overwrite(std::string text, SDL_Renderer* renderer) {
+		this->text = text;
+		update(text, renderer);
+	}
+
 	/**
 	 * @brief Afficher la texture du texte.
 	 * @param renderer Renderer SDL
