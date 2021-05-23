@@ -120,7 +120,8 @@ private:
      * @brief Vector ensemble de 4 rectangles représentant 
      *        des murs délimitant la pièce intérieure
      */ 
-    std::vector<Rectangle> walls; 
+    std::vector<std::string> walls;
+    std::vector<std::string> ground;
 
     // Surface de la pièce
     float w1, w3, surface;
@@ -137,9 +138,6 @@ private:
      */ 
     std::vector<Furniture*> furnitures;
     
-    // J'aurais pu utiliser ce manager ??
-    // En soi ça change rien à part les 5 murs 
-    // ShapeManager furnitureManager;
 
     int un = 1, deux = 2, trois = 3;
 
@@ -199,6 +197,8 @@ public:
                   bmInsertion3(inputEvent, window), bmFurnitInteract(inputEvent, window), bmCameras(inputEvent, window), 
                   refManager(*manager), refWindow(window), refInputEvent(inputEvent), refMouse(mouse), refKeyboard(keyboard) {
         
+        walls.insert(walls.end(),{"frontWall", "backWall", "leftWall", "rightWall"});
+        ground.insert(ground.end(),{"floor", "cdmax_floor", "abmax_floor", "top_floor", "bot_floor", "hg_floor", "hd_floor", "bg_floor", "bd_floor"});
         if (mode) {
             initImport(bm, manager, window, inputEvent, importPath);
             return;
@@ -344,7 +344,24 @@ public:
 
 private:
 
+    void resetRoom(float w1, float w3)  {
+
+        for(std::string floor : ground)  
+            refManager.removeShape(floor);
+
+        for (std::string wall : walls)  {
+            refManager.removeShape(wall);
+            refManager.removeShape(wall+'E'); 
+            refManager.removeShape(wall+'T'); 
+            refManager.removeShape(wall+'B'); 
+            refManager.removeShape(wall+'L'); 
+            refManager.removeShape(wall+'R');
+        }
+        initializeRoom(&refManager, w1*20, w3*20);
+    }
+
     void initializeRoom(ShapeManager *manager, float w1, float w3)  {
+
         int h = 50; // Hauteur de chaque mur
         // abcd : sol, a1b1c1d1 : plafond
         Vertex a(-w1/2, 0, -w3/2); // Haut gauche      a           c 
@@ -372,7 +389,6 @@ private:
         Vertex hd(w1/2+150, 0, -w3/2-150);
         Vertex bg(-w1/2-150, 0, w3/2+150); 
         Vertex bd(w1/2+150, 0, w3/2+150);
-        
         
 
         // sol
@@ -436,15 +452,6 @@ private:
         manager->addRectangle("rightWallB", Vertex(d.x, d.y, d.z + 3), Vertex(b.x, b.y, b.z + 3), d, b, 4, white, false, Bitmap::getBitmap("exterior-wall"));
         manager->addRectangle("rightWallL", Vertex(d1.x, d1.y, d1.z + 3), d1, Vertex(d.x, d.y, d.z + 3), d, 4, white, false, Bitmap::getBitmap("exterior-wall"));
         manager->addRectangle("rightWallR", Vertex(b1.x, b1.y, b1.z + 3), b1, Vertex(b.x, b.y, b.z + 3), b, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-
-        // Épaisseur back (a, b)
-        
-
-
-        // void createParallelepipede(const std::string &name, const Vertex &a, const Vertex &b, const Vertex &c, const Vertex &d, int division, const Color &color, const bool &fill = true, Bitmap *bmp = nullptr){
-        //     manager->addRectangle("frontWall", c1, d1, c, d, 4, white, false, Bitmap::getBitmap("basic-wall"));
-        // }
-
 
         std::cout<<"Room créée"<<std::endl;
     }
@@ -527,10 +534,10 @@ private:
         text_insertion_def.emplace_back(new TextBox(stream.str() + "x" + stream2.str() + "m", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         b_tly += 50;
-        stream1 << std::fixed << std::setprecision(2) << surface;
         text_insertion_def.emplace_back(new TextBox("Surface de la pièce", "fonts/Calibri Bold.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 20, window.getRenderer()));
         b_tly +=25;//200
+        stream1 << std::fixed << std::setprecision(2) << surface;
         text_insertion_def.emplace_back(new TextBox(stream1.str() + "m²", "fonts/calibri.ttf", 20, black, 
                                     Point2D<int>(b_topleftx, b_tly), b_width, 40, window.getRenderer()));
         b_tly += 50;
@@ -774,7 +781,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
     }
 
     void renderDefault(InputEvent& inputEvent, Window& window)  {
-        std::stringstream stream;
+        std::stringstream ss, ss1, ss2, ss3;
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         
         int seconds = (std::chrono::duration_cast<std::chrono::microseconds>(end - launch).count()) / 1000000.0;
@@ -785,10 +792,19 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         std::stringstream seconds_s;
         seconds_s << std::setw(2) << std::setfill('0') << int(seconds%60);
 
-        stream << hours.str() + ":" + minutes.str() + ":" + seconds_s.str();
-        // stream << std::fixed << std::setprecision(2) << (std::chrono::duration_cast<std::chrono::microseconds>(end - launch).count()) /1000000.0;
-        text_insertion_def[6]->update(stream.str(), window.getRenderer());
+        ss << hours.str() + ":" + minutes.str() + ":" + seconds_s.str();
+        // ss << std::fixed << std::setprecision(2) << (std::chrono::duration_cast<std::chrono::microseconds>(end - launch).count()) /1000000.0;
+        text_insertion_def[6]->update(ss.str(), window.getRenderer());
         text_insertion_def[0]->update(scene_name, window.getRenderer());
+
+        
+        ss1 << std::fixed << std::setprecision(2) << w1;
+        ss2 << std::fixed << std::setprecision(2) << w3;
+        text_insertion_def[2]->update(ss1.str()+"x"+ss2.str()+"m", window.getRenderer());
+
+        ss3 << std::fixed << std::setprecision(2) << surface;
+        text_insertion_def[4]->update(ss3.str()+"m²", window.getRenderer());
+
         for (size_t i = 0; i < text_insertion_def.size(); i++)  {
             text_insertion_def[i]->render(window.getRenderer(), 0, 0);
             text_insertion_def[i]->center(Point2D<int>(970, 30), 270);
@@ -1202,9 +1218,15 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         w1 = stof(i_mur1.getText());
         w3 = stof(i_mur3.getText());
         if(w3 < w1) std::swap(w1, w3);
-        std::cout << "From: " << hm->scene_name << " | To: " << i0.scene_name << '\n';
         hm->scene_name = i0.scene_name;
-        std::cout << "New dimension: " << i_mur1.getText() <<'x'<< i_mur3.getText() << '\n';
+
+        if (w1 != hm->w1 || w3 != hm->w3)  {
+            hm->w1 = w1;
+            hm->w3 = w3;
+            hm->surface = w1*w3;
+            std::cout << "New dimension: " << i_mur1.getText() <<'x'<< i_mur3.getText() << '\n';
+            hm->resetRoom(w1, w3);
+        }
     }
     
     static void saveScene(HomeDesign *hm)  {

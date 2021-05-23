@@ -671,7 +671,7 @@ public:
 	 * @param precision Degré de précision (par defaut : 20)
 	 */
 	void addSphere(const std::string& name, const Vertex& center, const double& radius, Bitmap* bmp, const int& precision = 20) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "ERR - Name '" + name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Sphere(name, center, radius, bmp, precision));
 		rendered = false;
 	}
@@ -686,7 +686,7 @@ public:
 	 * @param precision Degré de précision (par defaut : 20)
 	 */
 	void addSphere(const std::string& name, const Vertex& center, const double& radius, const Color& color, const int& precision = 20) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "ERR - Name '" + name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Sphere(name, center, radius, color, precision));
 		rendered = false;
 	}
@@ -697,7 +697,7 @@ public:
 	 * @param sphere Sphère qui sera ajoutée
 	 */
 	void addSphere(const Sphere& sphere) {
-		if (nameTaken(sphere.name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(sphere.name)) { std::cout << "ERR - Name '" + sphere.name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Sphere(sphere));
 		rendered = false;
 	}
@@ -711,7 +711,7 @@ public:
 	 * @param bmp Bitmap
 	 */
 	void addCube(const std::string& name, const Vertex& center, const double& width, Bitmap* bmp = nullptr) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "ERR - Name '" + name + "' already taken." << std::endl; return; }
 		if (bmp == nullptr) shapes.emplace_back(new Cube(name, center, width, black));
 		else shapes.emplace_back(new Cube(name, center, width, bmp));
 		rendered = false;
@@ -723,7 +723,7 @@ public:
 	 * @param cube Cube qui sera ajouté
 	 */
 	void addCube(const Cube& cube) {
-		if (nameTaken(cube.name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(cube.name)) { std::cout << "ERR - Name '" + cube.name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Cube(cube));
 		rendered = false;
 	}
@@ -739,7 +739,7 @@ public:
 	 * @param bmp Bitmap
 	 */
 	void addRectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, const Color& color, const bool& fill = true, Bitmap* bmp = nullptr) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "ERR - Name '" + name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Rectangle(name, a, b, c, d, division, color, fill ,bmp));
 	}
 
@@ -749,7 +749,7 @@ public:
 	 * @param rectangle Rectangle qui sera ajouté
 	 */
 	void addRectangle(const Rectangle& rectangle) {
-		if (nameTaken(rectangle.name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(rectangle.name)) { std::cout << "ERR - Name '" + rectangle.name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Rectangle(rectangle));
 		rendered = false;
 	}
