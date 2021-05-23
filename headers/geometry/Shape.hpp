@@ -167,6 +167,7 @@ public:
 
 	void setPos(const Vertex& pos) {
 		const Vector movement = pos - center;
+		center = pos;
 		move(movement);
 	}
 
