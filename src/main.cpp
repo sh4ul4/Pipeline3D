@@ -1,6 +1,30 @@
 #include "headers.hpp"
 #include <regex>
-
+std::string doubleToString(double d){
+	std::string res;
+	std::string test=std::to_string(d);
+	if(d<1){
+		return std::string("0");
+		}
+	int exp=0;
+	while(d>=10){	
+		d=d/10;
+		exp++;
+		}
+	std::string tor=std::to_string(exp);
+	res.push_back(test[0]);
+	res.push_back('.');
+	for(size_t i=1;i<test.size()&&i<4;i++){
+		res.push_back(test[i]);
+		}
+	res.append("*10^");
+	for(size_t i=0;i<tor.size();i++){
+		res.push_back(tor[i]);
+		}
+	return res;
+	}
+//std::string doubleToString(float f){
+//	}
 void startFunc(int *s) {
 	*s = 0; 
 }
@@ -19,6 +43,7 @@ void goFreeView(Camera *cam) {
 struct Starstruct {
 	starSystem* Ssys;
 	ShapeManager* manager;
+	std::string load_save;
 	std::string name;
 	std::string mass;
 	std::string radius;
@@ -133,14 +158,57 @@ void main_setSimulation(Starstruct* S) {
 
 void main_startSimu(Starstruct* S) {
 	S->start_stop=true;
-	std::cout<<S->start_stop<<std::endl;
 	}
 void main_stopSimu(Starstruct *S){
 	S->start_stop=false;
-	std::cout<<S->start_stop<<std::endl;
 	}
-
+void main_save(Starstruct *S){
+	std::string path=PATH+std::string("impexp/") +S->load_save;
+	std::ofstream file;
+	file.open(path);
+	if(!file.is_open()){
+		std::cout<<"error opening a file"<<std::endl;
+		return;
+		}
+	Star *star=S->Ssys->getStar();
+	if(star!=nullptr){
+		file<<"S ";
+		file<<star->getName()<<" ";
+		std::string mass=doubleToString(star->getMass());
+		std::string radius=doubleToString((double)star->getRadius());
+		file<<mass<<" ";
+		file<<radius<<"\n";
+		}
+	std::vector<Planet*> Planets=S->Ssys->getPlanets();
+	for(size_t i=0;i<Planets.size();i++){
+		Point2D<double> Position=Planets[i]->getInitialPosition();
+		Point2D<double> Speed=Planets[i]->getInitialSpeed();
+		file<<"P ";
+		std::string mass=doubleToString(Planets[i]->getMass());
+		std::string radius=doubleToString((double)Planets[i]->getRadius());
+		std::string position_x=doubleToString(Position.x);
+		std::string position_y=doubleToString(Position.y);
+		std::string speed_x=doubleToString(Speed.x);
+		std::string speed_y=doubleToString(Speed.y);
+		file<<Planets[i]->getName()<<" ";
+		file<<mass<<" ";
+		file<<radius<<" ";
+		file<<position_x<<" ";
+		file<<position_y<<" ";
+		file<<speed_x<<" ";
+		file<<speed_y<<"\n";
+		}
+	file.close();
+	}
 void main_reset(Starstruct* S) {
+	Star *star=S->Ssys->getStar();
+	if(star==nullptr){
+		S->manager->removeShape(star->getName());
+		}
+	std::vector<Planet*> Planets=S->Ssys->getPlanets();
+	for(size_t i=0;i<Planets.size();i++){
+		S->manager->removeShape(Planets[i]->getName());
+		}
 	S->Ssys->reset();
 	int i;
 	for (i = 0; i < 15; i++) {
@@ -165,7 +233,7 @@ void main_deletePlanet1(Starstruct* S) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(0)->getName());
 
 		std::cout << S->Ssys->getPlanets().size() << std::endl;
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -189,7 +257,7 @@ void main_deletePlanet1(Starstruct* S) {
 void main_deletePlanet2(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 2) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(1)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -214,7 +282,7 @@ void main_deletePlanet2(Starstruct* S) {
 void main_deletePlanet3(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 3) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(2)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -239,7 +307,7 @@ void main_deletePlanet3(Starstruct* S) {
 void main_deletePlanet4(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 4) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(3)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -263,7 +331,7 @@ void main_deletePlanet4(Starstruct* S) {
 void main_deletePlanet5(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 5) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(4)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -287,7 +355,7 @@ void main_deletePlanet5(Starstruct* S) {
 void main_deletePlanet6(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 6) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(5)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -311,7 +379,7 @@ void main_deletePlanet6(Starstruct* S) {
 void main_deletePlanet7(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 7) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(6)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -335,7 +403,7 @@ void main_deletePlanet7(Starstruct* S) {
 void main_deletePlanet8(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 8) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(7)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -359,7 +427,7 @@ void main_deletePlanet8(Starstruct* S) {
 void main_deletePlanet9(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 9) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(8)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -383,7 +451,7 @@ void main_deletePlanet9(Starstruct* S) {
 void main_deletePlanet10(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 10) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(9)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -406,7 +474,8 @@ void main_deletePlanet10(Starstruct* S) {
 
 void main_deletePlanet11(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 11) {
-		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(10)->getName()); int i;
+		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(10)->getName()); 
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -430,7 +499,7 @@ void main_deletePlanet11(Starstruct* S) {
 void main_deletePlanet12(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 12) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(11)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -454,7 +523,7 @@ void main_deletePlanet12(Starstruct* S) {
 void main_deletePlanet13(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 13) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(12)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -478,7 +547,7 @@ void main_deletePlanet13(Starstruct* S) {
 void main_deletePlanet14(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 14) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(13)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -502,7 +571,7 @@ void main_deletePlanet14(Starstruct* S) {
 void main_deletePlanet15(Starstruct* S) {
 	if (S->Ssys->getPlanets().size() >= 15) {
 		S->Ssys->deletePlanet(S->Ssys->getPlanets().at(14)->getName());
-		int i;
+		size_t i;
 		for (i = 0; i < S->Ssys->getPlanets().size(); i++) {
 			S->TN[i]->update(S->Ssys->getPlanets().at(i)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 			S->TM[i]->update(std::to_string(S->Ssys->getPlanets().at(i)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -594,7 +663,6 @@ int main(int argc, char* argv[]) {
 	//6. ScrollZone
 	ScrollZone zone(inputEvent, window, Point2D<int>(750, 230), 430, 200, 520, 410);
 
-	int i;
 	//TEST AFFICHE STAR/PLANETE LORSQUE CREATION
 	Point2D<int>pos(8, 30);
 
@@ -653,7 +721,7 @@ int main(int argc, char* argv[]) {
 		zone.linkTextBox(planet_speedy[i]);
 	}
 	//INITIALISATION STRUCT
-	Starstruct S = { &Ssys,&manager, i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText(), i_simuspeed.getText(),false,&zone,&window, planet_name, planet_mass, planet_radius, planet_posx, planet_posy, planet_speedx, planet_speedy, &t_textinfo};
+	Starstruct S = { &Ssys,&manager,std::string(),i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText(), i_simuspeed.getText(),false,&zone,&window, planet_name, planet_mass, planet_radius, planet_posx, planet_posy, planet_speedx, planet_speedy, &t_textinfo};
 
 	
 
@@ -775,11 +843,12 @@ int main(int argc, char* argv[]) {
 	b_width = 80, b_height = 25;
 	b_topleftx = 1003, b_tly = 617;
 	TextBox b_load("Load", PATH + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<void*>("b_load", nullptr, green, black, &b_load, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<Starstruct*>("b_load", nullptr, green, black, &b_load, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
 
 	b_topleftx = 1100;
 	TextBox b_save("Save", PATH + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
-	bm.addRectButton<void*>("b_save", nullptr, green, black, &b_save, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.addRectButton<Starstruct*>("b_save", nullptr, green, black, &b_save, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
+	bm.getButton<Starstruct*>("b_save").setAction(main_save, &S);
 
 	//5. Camera
 	Camera faceCam(Vertex(0,0,0), 60, 0, 3.14519);
@@ -789,14 +858,13 @@ int main(int argc, char* argv[]) {
 	
 	//********************************************************************************************************
 	
-	//Ssys.addStar(new Star(693340000,1.989*pow(10,30),Point2D<double>(0,0),"Soleil"));
+	//Ssys.addStar(new Star(693340000,1.989*pow(10,30),Point2D<double>(0,0),std::string("Soleil")));
 	
 	//afficher tous les objets du système stellaire
 	//manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "sun", 0.001);
 	Point2D<double>	pos1(0,149600000000);
 	Point2D<double> speed1(2000,0);
 	//Ssys.addPlanet(new Planet(6371000,5.972*pow(10,24),pos1,speed1,std::string("earth")));
-	std::vector<Planet*> Planets = Ssys.getPlanets();
 
 	r.updateTriangles(manager);
 	
@@ -855,7 +923,6 @@ int main(int argc, char* argv[]) {
 				manager.getShape(test->getName()).setPos(Vertex(Position.x,Position.y,0));
 				}
 			}
-		
 		r.updateTriangles(manager);
 
 		//Mise a jour des valeurs
@@ -867,6 +934,7 @@ int main(int argc, char* argv[]) {
 		S.speed_x = i_speed_x.getText();
 		S.speed_y = i_speed_y.getText();
 		S.simuspeed = i_simuspeed.getText();
+		S.load_save = i_loadsave.getText();
 
 		//GESTION DES ASTRES
 		if (!bm.getButton<void*>("b_switch").isClicked()) {
