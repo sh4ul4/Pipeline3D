@@ -432,6 +432,11 @@ public:
 		continuousControl = true;
 	}
 
+	void swapControl() {
+		dragAndDropControl = !dragAndDropControl;
+		continuousControl = !continuousControl;
+	}
+
 	/**
 	 * Fonction publique
 	 * @param inputEvent, window
