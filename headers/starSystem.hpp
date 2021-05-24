@@ -36,7 +36,7 @@ public:
         Vertex bg = { 0, 0, 0 };
         Vertex hd = { 158, 100, 0 };
         Vertex bd = { 158, 0, 0 };
-        std::cout << "Espace créé" << std::endl;
+        std::cout << "Systeme stellaire cree" << std::endl;
     }
 
     /**
