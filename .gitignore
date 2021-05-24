@@ -46,4 +46,4 @@ Makefile
 CMakeFiles
 RelWithDebInfo
 
-OBJ/
+#OBJ/

@@ -1,7 +1,7 @@
 #pragma once
 
 #define PLANETMAX 15               // Nos systèmes stellaires comprendront au maximum 15 planètes
-#define DISTANCEMAX 6 * pow(10, 9) // En m
+#define DISTANCEMAX pow(10, 13) // En m
 
 /**
  * @class Cette classe représente un système stellaire, avec une étoile autour de laquelle tournent des planètes
@@ -98,6 +98,12 @@ public:
      */
     void addPlanet(Planet* planet)
     {
+        float distance = planet->getInitialPosition().distance({ 0,0 });
+        if (distance > DISTANCEMAX)
+        {
+            std::cout << "La planète que vous tentez d'ajouter est trop loin du soleil" << std::endl;
+            return;
+        }
         if (planets.size() >= PLANETMAX) {
             std::cout << "Taille maximale de planetes atteintes" << std::endl;
             return;
@@ -223,13 +229,14 @@ public:
         for (std::vector<Planet*>::iterator it = planets.begin(); it != planets.end();)
         {
             delete (*it);
+            std::cout << (*it)->getName() << " detruite" << std::endl;
             it = planets.erase(it);
         }
         std::cout << "Reinitialisation du systeme stellaire terminee" << std::endl;
     }
 
     // Vérifie qu'aucune collision n'a lieu dans le système stellaire
-    void checkCollision()
+    bool checkCollision()
     {
         double distance;
         Point2D<double> posA, posB;
@@ -239,18 +246,28 @@ public:
             // Check si il y a une collision entre la planète et toutes les autres
             for (std::vector<Planet*>::iterator j = planets.begin() + 1; j != planets.end(); j++)
             {
+                if ((*i)->getName() == (*j)->getName())
+                    return false;
                 posB = (*j)->getPosition();
                 distance = posA.distance(posB);
-                if (distance <= (*i)->getRadius() + (*j)->getRadius())
-                    std::cout << "STOP THE SIMULATION !" << std::endl;
+                if (distance <= (double)(*i)->getRadius() + (double)(*j)->getRadius())
+                {
+                    std::cout << "Collision entre " << (*i)->getName() << " et " << (*j)->getName() << std::endl;
+                    return true;
+                }
             }
 
             // Check si il y a une collision entre la planète et l'étoile
             posB = sun->getPosition();
             distance = posA.distance(posB);
-            if (distance <= (*i)->getRadius() + sun->getRadius())
-                std::cout << "STOP THE SIMULATION !" << std::endl;
+            if (distance <= (double)(*i)->getRadius() + (double)sun->getRadius())
+            {
+                std::cout << "Collision entre " << (*i)->getName() << " et l'etoile" << std::endl;
+                return true;
+            }
         }
+
+        return false;
     }
 
     // Appelle les fonctions dans cinématique sur les planètes du système stellaires. Calcule la nouvelle position de toutes les planètes du système stellaire.
@@ -270,6 +287,8 @@ public:
             force.x = force.y = 0;
             for (std::vector<Planet*>::iterator j = planets.begin() + 1; j != planets.end(); j++)
             {
+                if ((*i)->getName() == (*j)->getName())
+                    continue;
                 tmp = Cinematic::attractionForce(*i, *j);
                 force = force + tmp;
             }
@@ -290,8 +309,6 @@ public:
             Cinematic::getPositionFromSpeed(*i);
             (*i)->setInitialSpeed((*i)->getSpeed());
             (*i)->setInitialPosition((*i)->getPosition());
-
-
         }
     }
 
@@ -302,5 +319,12 @@ public:
      */
     void calculateInitialSpeed(Planet& p)
     {
+        Point2D<double> zero(0, 0);
+        const double norme_position = p.getInitialPosition().distance(zero);
+        const double new_speed = 5 * pow(10, 15) * (norme_position / p.getMass());
+        Point2D<double> new_position(0, norme_position); // Replace la planète "au dessus" de l'étoile pour pouvoir lui affecter sa nouvelle vitesse initiale qui sera un vecteur orthogonal avec le vecteur entre cette planète et l'étoile
+        p.setInitialPosition(new_position);
+        Point2D<double> initialSpeed(new_speed, 0);
+        p.setInitialSpeed(initialSpeed);
     }
 };

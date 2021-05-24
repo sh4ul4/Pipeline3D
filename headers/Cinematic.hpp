@@ -2,7 +2,7 @@
 
 namespace Cinematic
 {
-	float time = 1000;						 // Repr�sente le temps qui s'�coule dans le syst�me stellaire
+	float time = 500;						 // Repr�sente le temps qui s'�coule dans le syst�me stellaire
 	const float G = 6.67 * pow(10, -11); // Contante de gravitation
 
 	/* ----- CALCULS MATHEMATIQUES ----- */
@@ -36,8 +36,7 @@ namespace Cinematic
 		unitVector.x = vector.x / norm;
 		unitVector.y = vector.y / norm;
 
-		// TRES IMPORTANT, CA REGLE LE PROBLEME DE LA PLANETE QUI PART EN N'IMPORTE QUOI !!!
-		// --> REGLE LE PROBLEME DU ZERO NEGATIF
+		// Règle le problème du zéro négatif
 		if (unitVector.x < 0.00001 && unitVector.x > -0.00001)
 			unitVector.x = 0;
 		if (unitVector.y < 0.00001 && unitVector.y > -0.00001)
@@ -60,7 +59,9 @@ namespace Cinematic
 		Point2D<double> force, vector, unitVector;
 		vector = vectorPoints(l1->getPosition(), l2->getPosition());
 		unitVector = getUnitVector(vector);
-		double value = ((G * l1->getMass() * l2->getMass()) / pow(vector.distance({ 0, 0 }), 2));
+		const double denominator = pow(vector.distance({ 0, 0 }), 2);
+		//printf("distance = %f\n", vector.distance({ 0, 0 }));
+		const double value = (G * l1->getMass() * l2->getMass()) / denominator;
 		force.x = value * unitVector.x;
 		force.y = value * unitVector.y;
 		return force;

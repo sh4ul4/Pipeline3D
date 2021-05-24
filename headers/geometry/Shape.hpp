@@ -160,7 +160,49 @@ public:
 	Sphere(const std::string& name, const Vertex& center, const double& radius, Bitmap* bmp, const int& precision) :Shape(name, {}, center), radius(radius) {}
 
 	// constructeur / remplissage par couleur unique
-	Sphere(const std::string& name, const Vertex& center, const double& radius, const Color& color, const int& precision) :Shape(name, {}, center), radius(radius) {}
+	Sphere(const std::string& name, const Vertex& center, const double& radius, const Color& color, const int& precision) :Shape(name, {}, center), radius(radius) 
+	{
+		//int precision = precision;
+		const float deltaTheta = M_PI / precision;
+		const float deltaPhi = 2 * M_PI / precision;
+		float theta = 0;
+		float phi = 0;
+		std::vector<Vertex> ps;
+		ps.push_back(Vertex(0, 0, static_cast<float>(radius))); //north pole end cap
+		for (int ring = 0; ring < precision; ring++) { //move to a new z - offset
+			theta += deltaTheta;
+			for (int point = 0; point < precision; point++) { // draw a ring
+				phi += deltaPhi;
+				float x = sin(theta) * cos(phi) * radius;
+				float y = sin(theta) * sin(phi) * radius;
+				float z = cos(theta) * radius;
+				ps.push_back({ x, y, z });
+			}
+		}
+		ps.push_back({ 0, 0, static_cast<float>(-radius) });
+		for (size_t i = 2; i < precision && i < ps.size(); i += 2) {
+			//triangles.push_back({ ps[static_cast<unsigned>(i) - 2],ps[static_cast<unsigned>(i) - 1],ps[0] });
+			triangles.push_back(Triangle(ps[i - 2], ps[i - 1], ps[0], Vector(0, 0, 0), color, false));
+			triangles[triangles.size() - 1].fillIt(1);
+		}
+		for (int i = precision; i < ps.size(); i++) {
+			triangles.push_back(Triangle(ps[i], ps[(int)(i - 1)], ps[(int)(i - precision)], Vector(0, 0, 0), color, false));
+			triangles[triangles.size() - 1].fillIt(1);
+		}
+		for (int i = 0; i < ps.size() && i < triangles.size(); i++) {
+			triangles[i].a.x += center.x;
+			triangles[i].b.x += center.x;
+			triangles[i].c.x += center.x;
+
+			triangles[i].a.y += center.y;
+			triangles[i].b.y += center.y;
+			triangles[i].c.y += center.y;
+
+			triangles[i].a.z += center.z;
+			triangles[i].b.z += center.z;
+			triangles[i].c.z += center.z;
+		}
+	}
 
 	// constructeur par copie
 	Sphere(const Sphere& sphere) : Shape(sphere), radius(sphere.radius) {}

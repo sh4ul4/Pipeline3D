@@ -8,7 +8,7 @@ namespace Physics
 	bool applyPhysics = false;
 	Vertex playerHB = {0, 0, 0};
 	float interactionDistance = 0.001;
-	float speed = 1;
+	float speed = 5;
 	float slippiness = 0.1f;
 	bool intentionalMoving = false;
 
