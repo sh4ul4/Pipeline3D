@@ -1,5 +1,13 @@
 #include "headers.hpp"
 
+template <typename T>
+std::string stdstrprec(const T a_value, const int n = 2)
+{
+	std::ostringstream out;
+	out.precision(n);
+	out << std::fixed << a_value;
+	return out.str();
+}
 
 int main(int argc, char* argv[]) {
 	Window window(1100, 550);
@@ -69,6 +77,19 @@ int main(int argc, char* argv[]) {
 	DragBar angleybar(Point2D<int>(903, 275), 160, 11, 20, false);
 	angleybar.padPos = 70;
 
+	/**		Matrix		**/
+	TextBox viewmatrixtb("view-matrix", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 324), window.getRenderer());
+	TextBox viewmatrixtbr1("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 339), window.getRenderer());
+	TextBox viewmatrixtbr2("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 349), window.getRenderer());
+	TextBox viewmatrixtbr3("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 359), window.getRenderer());
+	TextBox viewmatrixtbr4("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 369), window.getRenderer());
+
+	TextBox projmatrixtb("projection-matrix", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 324), window.getRenderer());
+	TextBox projmatrixtbr1("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 339), window.getRenderer());
+	TextBox projmatrixtbr2("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 349), window.getRenderer());
+	TextBox projmatrixtbr3("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 359), window.getRenderer());
+	TextBox projmatrixtbr4("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 369), window.getRenderer());
+
 	/**		Shapes		**/
 	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth1", 0.001);
 	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth2", 0.001);
@@ -101,19 +122,19 @@ int main(int argc, char* argv[]) {
 		camcontroltb.render(window.getRenderer());
 
 		lightX.check(inputEvent, Point2D<int>(0, 0));
-		cam1.lightSource.x = lightX.normalizedPadPos - 0.5;
+		cam1.lightSource.x = -1 + lightX.normalizedPadPos * 2;
 		lightX.render(window.getRenderer());
-		lightxtb.update("light-source x : " + std::to_string(cam1.lightSource.x), window.getRenderer());
+		lightxtb.update("light-source x : " + stdstrprec(cam1.lightSource.x), window.getRenderer());
 		lightxtb.render(window.getRenderer());
 		lightY.check(inputEvent, Point2D<int>(0, 0));
-		cam1.lightSource.y = lightY.normalizedPadPos - 0.5;
+		cam1.lightSource.y = -1 + lightY.normalizedPadPos * 2;
 		lightY.render(window.getRenderer());
-		lightytb.update("light-source y : " + std::to_string(cam1.lightSource.y), window.getRenderer());
+		lightytb.update("light-source y : " + stdstrprec(cam1.lightSource.y), window.getRenderer());
 		lightytb.render(window.getRenderer());
 		lightZ.check(inputEvent, Point2D<int>(0, 0));
-		cam1.lightSource.z = lightZ.normalizedPadPos - 0.5;
+		cam1.lightSource.z = -1 + lightZ.normalizedPadPos * 2;
 		lightZ.render(window.getRenderer());
-		lightztb.update("light-source z : " + std::to_string(cam1.lightSource.z), window.getRenderer());
+		lightztb.update("light-source z : " + stdstrprec(cam1.lightSource.z), window.getRenderer());
 		lightztb.render(window.getRenderer());
 		cam1.lightSource.normalize();
 
@@ -139,7 +160,45 @@ int main(int argc, char* argv[]) {
 		angleybar.check(inputEvent, Point2D<int>(0, 0));
 		angleybar.render(window.getRenderer());
 
+		/*Matrix*/
+		Draw::DrawFillContouredRect(Point2D<int>(788, 324) - 4, 300, 65, 2, Color(70, 70, 70), gray, window.getRenderer());
+		viewmatrixtb.render(window.getRenderer());
+		viewmatrixtbr1.update(
+			stdstrprec(cam1.viewMatrix.get(0, 0)) + "  " + stdstrprec(cam1.viewMatrix.get(0, 1)) + "  " + stdstrprec(cam1.viewMatrix.get(0, 2)) + "  " + stdstrprec(cam1.viewMatrix.get(0, 3))
+			, window.getRenderer());
+		viewmatrixtbr2.update(
+			stdstrprec(cam1.viewMatrix.get(1, 0)) + "  " + stdstrprec(cam1.viewMatrix.get(1, 1)) + "  " + stdstrprec(cam1.viewMatrix.get(1, 2)) + "  " + stdstrprec(cam1.viewMatrix.get(1, 3))
+			, window.getRenderer());
+		viewmatrixtbr3.update(
+			stdstrprec(cam1.viewMatrix.get(2, 0)) + "  " + stdstrprec(cam1.viewMatrix.get(2, 1)) + "  " + stdstrprec(cam1.viewMatrix.get(2, 2)) + "  " + stdstrprec(cam1.viewMatrix.get(2, 3))
+			, window.getRenderer());
+		viewmatrixtbr4.update(
+			stdstrprec(cam1.viewMatrix.get(3, 0)) + "  " + stdstrprec(cam1.viewMatrix.get(3, 1)) + "  " + stdstrprec(cam1.viewMatrix.get(3, 2)) + "  " + stdstrprec(cam1.viewMatrix.get(3, 3))
+			, window.getRenderer());
+		viewmatrixtbr1.render(window.getRenderer());
+		viewmatrixtbr2.render(window.getRenderer());
+		viewmatrixtbr3.render(window.getRenderer());
+		viewmatrixtbr4.render(window.getRenderer());
+		projmatrixtb.render(window.getRenderer());
+		projmatrixtbr1.update(
+			stdstrprec(cam1.projectionMatrix.get(0, 0)) + "  " + stdstrprec(cam1.projectionMatrix.get(0, 1)) + "  " + stdstrprec(cam1.projectionMatrix.get(0, 2)) + "  " + stdstrprec(cam1.projectionMatrix.get(0, 3))
+			, window.getRenderer());
+		projmatrixtbr2.update(
+			stdstrprec(cam1.projectionMatrix.get(1, 0)) + "  " + stdstrprec(cam1.projectionMatrix.get(1, 1)) + "  " + stdstrprec(cam1.projectionMatrix.get(1, 2)) + "  " + stdstrprec(cam1.projectionMatrix.get(1, 3))
+			, window.getRenderer());
+		projmatrixtbr3.update(
+			stdstrprec(cam1.projectionMatrix.get(2, 0)) + "  " + stdstrprec(cam1.projectionMatrix.get(2, 1)) + "  " + stdstrprec(cam1.projectionMatrix.get(2, 2)) + "  " + stdstrprec(cam1.projectionMatrix.get(2, 3))
+			, window.getRenderer());
+		projmatrixtbr4.update(
+			stdstrprec(cam1.projectionMatrix.get(3, 0)) + "  " + stdstrprec(cam1.projectionMatrix.get(3, 1)) + "  " + stdstrprec(cam1.projectionMatrix.get(3, 2)) + "  " + stdstrprec(cam1.projectionMatrix.get(3, 3))
+			, window.getRenderer());
+		projmatrixtbr1.render(window.getRenderer());
+		projmatrixtbr2.render(window.getRenderer());
+		projmatrixtbr3.render(window.getRenderer());
+		projmatrixtbr4.render(window.getRenderer());
 
+
+		/*final rendering steps*/
 		Draw::DrawFillContouredRect(Point2D<int>(20, 20) - 2, 762, 468, 2, Color(70, 70, 70), gray, window.getRenderer());
 		r.render(Point2D<int>(20, 20), 758, 464, inputEvent, window, manager, filter, renderDepth, showMesh);
 
