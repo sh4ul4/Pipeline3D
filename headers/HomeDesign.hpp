@@ -1282,9 +1282,17 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         auto tm = *std::localtime(&t);
         std::ostringstream oss;
         oss << "../" + hm->scene_name;
-        oss << std::put_time(&tm, "_%d-%m_%H-%M.3dh");
+        int i = 1;
+        while(FILE_EXISTS(oss.str() + ".3dh"))  {
+            if (!FILE_EXISTS(oss.str()+"_"+std::to_string(i) + ".3dh"))  {
+                oss << "_" + std::to_string(i);
+                break;
+            }
+            i++;
+        }
+        // oss << std::put_time(&tm, "_%d-%m_%H-%M.3dh");
         std::ofstream outfile;
-        outfile.open(oss.str());
+        outfile.open(oss.str() + ".3dh");
 
         outfile << "# HomeDesign Software\n";
         outfile << '\n';
@@ -1318,7 +1326,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         }
 
         outfile.close();
-        hm->textBoxesDefault[9]->update("La scène a correctement été exportée vers " + oss.str(), hm->refWindow.getRenderer());
+        hm->textBoxesDefault[9]->update("La scène a correctement été exportée vers " + oss.str() + ".3dh", hm->refWindow.getRenderer());
     };
 };
 
