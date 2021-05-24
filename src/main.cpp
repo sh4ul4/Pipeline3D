@@ -5,7 +5,7 @@ std::string doubleToString(double d) {
 	std::string res;
 	std::string test = std::to_string(d);
 	if (d < 1) {
-		return std::string("0");
+		return std::string("0*10^1");
 	}
 	int exp = 0;
 	while (d >= 10) {
@@ -238,7 +238,82 @@ void main_reset(Starstruct* S) {
 		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
 }
-
+void main_load(Starstruct* S){
+	//main_reset(S);
+	std::ifstream file;
+	std::string line;
+	std::string path=PATH+std::string("impexp/") +S->load_save;
+	file.open(path);
+	if(!file.is_open()){
+		std::cout<<"error opening a file"<<std::endl;
+		return;
+		}
+	while(std::getline(file,line)){
+		size_t i=2;
+		std::string name;
+		std::string mass;
+		std::string radius;
+		while(line[i]!=' '){
+			name.push_back(line[i]);
+			i++;
+			}
+		i++;
+		while(line[i]!=' '){
+			mass.push_back(line[i]);
+			i++;
+			}
+		i++;
+		if(line[0]=='S'){
+			while(i<line.size()){
+				radius.push_back(line[i]);
+				i++;
+				}
+			S->name=name;
+			S->mass=mass;
+			S->radius=radius;
+			main_addStar(S);
+			}
+		else{
+			std::string position_x;
+			std::string position_y;
+			std::string speed_x;
+			std::string speed_y;
+			while(line[i]!=' '){
+				radius.push_back(line[i]);
+				i++;
+				}
+			i++;
+			while(line[i]!=' '){
+				position_x.push_back(line[i]);
+				i++;
+				}
+			i++;
+			while(line[i]!=' '){
+				position_y.push_back(line[i]);
+				i++;
+				}
+			i++;
+			while(line[i]!=' '){
+				speed_x.push_back(line[i]);
+				i++;
+				}
+			i++;
+			while(i<line.size()){
+				speed_y.push_back(line[i]);
+				i++;
+				}
+			S->name=name;
+			S->mass=mass;
+			S->radius=radius;
+			S->x=position_x;
+			S->y=position_y;
+			S->speed_x=speed_x;
+			S->speed_y=speed_y;
+			main_addPlanet(S);
+			}
+		}
+	file.close();
+	}
 void main_deleteStar(Starstruct* S) {
 	S->Ssys->deleteStar();
 	return;
@@ -859,7 +934,7 @@ int main(int argc, char* argv[]) {
 	b_topleftx = 1003, b_tly = 617;
 	TextBox b_load("Load", PATH + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Starstruct*>("b_load", nullptr, green, black, &b_load, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
-
+	bm.getButton<Starstruct*>("b_load").setAction(main_load, &S);
 	b_topleftx = 1100;
 	TextBox b_save("Save", PATH + std::string("fonts/calibri.ttf"), 17, black, Point2D<int>(b_topleftx, b_tly), b_width, b_height, window.getRenderer());
 	bm.addRectButton<Starstruct*>("b_save", nullptr, green, black, &b_save, Point2D<int>(b_topleftx, b_tly), b_width, b_height);
