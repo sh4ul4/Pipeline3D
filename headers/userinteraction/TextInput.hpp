@@ -74,6 +74,22 @@ public:
 		if (!text.empty()) TextBox::render(renderer);
 	}
 
+	void centerizedRender(Point2D<int> tl, int maxwidth, SDL_Renderer* renderer, const size_t DRAWTYPE = DRAWFILLCONTOURRECT) const {
+		switch (DRAWTYPE) {
+		case DRAWRECT: if (running) Draw::DrawRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, dark_gray, renderer);
+					 else Draw::DrawRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, Color(30, 30, 30), renderer); break;
+		case DRAWFILLRECT: if (running) Draw::DrawFillRect(pos - 2, maxWidth + 4, maxHeight + 4, light_gray, renderer);
+					 else Draw::DrawFillRect(pos - 2, maxWidth + 4, maxHeight + 4, gray, renderer); break;
+		case DRAWFILLCONTOURRECT: if (running) Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, light_gray, Color(30,30,30), renderer);
+								else Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, gray, Color(30, 30, 30), renderer); break;
+		case DRAWFILLROUNDEDCONTOURRECT: if (running) Draw::DrawFillRoundedRectContoured(pos - 2, maxWidth + 4, maxHeight + 4, 3, light_gray, Color(30, 30, 30), renderer);
+									   else Draw::DrawFillRoundedRectContoured(pos - 2, maxWidth + 4, maxHeight + 4, 3, gray, Color(30, 30, 30), renderer); break;
+		default : if (running) Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, light_gray, Color(30, 30, 30), renderer);
+				else Draw::DrawFillContouredRect(pos - 2, maxWidth + 4, maxHeight + 4, 1, gray, Color(30, 30, 30), renderer); break;
+		}
+		if (!text.empty()) TextBox::centerizedRender(tl, maxwidth, renderer);
+	}
+
 	/**
 	 * @brief Démarrer l'enregistrement de l'input utilisateur.
 	 * @param ie Event pour suivre l'input utilisateur.

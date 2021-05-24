@@ -157,6 +157,14 @@ public:
 		SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
 	}
 
+	void centerizedRender(Point2D<int> tl, int max_width, SDL_Renderer* renderer) const {
+		if (renderer == nullptr || texture == nullptr) { PRINT_ON_ERR("Error occured in renderTexture()"); return; }
+		const SDL_Rect srcrect{ 0, 0, width, height };
+		int perfect = ((max_width - this->width) / 2) + tl.x;
+		const SDL_Rect dstrect{ perfect, pos.y, width, height };
+		SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
+	}
+
 	/**
 	 * @brief Afficher la texture du texte.
 	 * @param renderer Renderer SDL
