@@ -240,33 +240,29 @@ public:
     {
         double distance;
         Point2D<double> posA, posB;
-        for (std::vector<Planet*>::iterator i = planets.begin(); i != planets.end() - 1; i++)
+        for (int i = 0; i < planets.size(); i++)
         {
-            posA = (*i)->getPosition();
+            posA = planets.at(i)->getPosition();
             // Check si il y a une collision entre la planète et toutes les autres
-            for (std::vector<Planet*>::iterator j = planets.begin() + 1; j != planets.end(); j++)
+            for (int j = i + 1; j < planets.size(); j++)
             {
-                if ((*i)->getName() == (*j)->getName())
-                    return false;
-                posB = (*j)->getPosition();
+                posB = planets.at(j)->getPosition();
                 distance = posA.distance(posB);
-                if (distance <= (double)(*i)->getRadius() + (double)(*j)->getRadius())
+                if (distance <= (double)planets.at(i)->getRadius() + (double)planets.at(j)->getRadius())
                 {
-                    std::cout << "Collision entre " << (*i)->getName() << " et " << (*j)->getName() << std::endl;
+                    std::cout << "Collision entre " << planets.at(i)->getName() << " et " << planets.at(j)->getName() << std::endl;
                     return true;
                 }
             }
-
             // Check si il y a une collision entre la planète et l'étoile
             posB = sun->getPosition();
             distance = posA.distance(posB);
-            if (distance <= (double)(*i)->getRadius() + (double)sun->getRadius())
+            if (distance <= (double)planets.at(i)->getRadius() + (double)sun->getRadius())
             {
-                std::cout << "Collision entre " << (*i)->getName() << " et l'etoile" << std::endl;
+                std::cout << "Collision entre " << planets.at(i)->getName() << " et l'etoile" << std::endl;
                 return true;
             }
         }
-
         return false;
     }
 

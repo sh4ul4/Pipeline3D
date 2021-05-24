@@ -1041,6 +1041,8 @@ int main(int argc, char* argv[]) {
 		
 
 		if (S.start_stop) {
+			if (Ssys.checkCollision())
+				main_stopSimu(&S);
 			std::vector<Planet*> Planets = Ssys.getPlanets();
 			for (size_t i = 0; i < Planets.size(); i++) {
 				Ssys.simulation();
@@ -1049,8 +1051,6 @@ int main(int argc, char* argv[]) {
 				Position.x = Position.x / normalize;
 				Position.y = Position.y / normalize;
 				manager.getShape(test->getName()).setPos(Vertex(Position.x, Position.y, 0));
-				if (Ssys.checkCollision())
-					main_stopSimu(&S);
 			}
 		}
 
