@@ -181,8 +181,8 @@ private:
 
     // Contient les informations nécessaires au modifications du meuble selectionné
     editFurniturePack fp;
-    int maVar = 0;
-    bool monMoving = false;
+    // int maVar = 0;
+    // bool monMoving = false;
 
 public:
     static int interactSpace;
@@ -979,24 +979,24 @@ public: // Méthodes liées à des boutons créés dans main.cpp
                 fp.selected = i;
 
                 // Drag and drop en vue haut et face uniquement
-                if (((Camera::getCurrent().getCamId() == "topCam") || (Camera::getCurrent().getCamId() == "faceCam")) && mouse.moving)
-                {
-                    const float scale = (float)1.0 / (float)tan(60 / 2.0 * M_PI / 180); // 1.732
-                    // std::cout << "Mouse move: " << mouse.ymov << " | " << mouse.xmov << "\n";
-                    // std::cout << Vector(mouse.ymov, 0, mouse.xmov) / scale * manager.getShape(furnitures[i]->name).center.distance(Camera::getCurrent().getCameraPosition()) << '\n';
-                    maVar++;
+                // if (((Camera::getCurrent().getCamId() == "topCam") || (Camera::getCurrent().getCamId() == "faceCam")) && mouse.moving)
+                // {
+                //     const float scale = (float)1.0 / (float)tan(60 / 2.0 * M_PI / 180); // 1.732
+                //     // std::cout << "Mouse move: " << mouse.ymov << " | " << mouse.xmov << "\n";
+                //     // std::cout << Vector(mouse.ymov, 0, mouse.xmov) / scale * manager.getShape(furnitures[i]->name).center.distance(Camera::getCurrent().getCameraPosition()) << '\n';
+                //     maVar++;
 
-                    // Option1 : Warp sur le centre du meuble
-                    if (maVar % 5 == 0)
-                    {
-                        manager.getShape(furnitures[i]->name).getBoundingBox2D(minx, miny, maxx, maxy);
-                        SDL_WarpMouseInWindow(window.getWindow(), ((maxx + minx) / 2) + 30, ((maxy + miny) / 2) + 30);
-                    }
-                    else if (mouse.ymov < 10 && mouse.xmov < 10 && mouse.ymov > -10 && mouse.xmov > -10)
-                    {
-                        manager.getShape(furnitures[i]->name).move(Vector(mouse.ymov, 0, mouse.xmov));
-                    }
-                }
+                //     // Option1 : Warp sur le centre du meuble
+                //     if (maVar % 5 == 0)
+                //     {
+                //         manager.getShape(furnitures[i]->name).getBoundingBox2D(minx, miny, maxx, maxy);
+                //         SDL_WarpMouseInWindow(window.getWindow(), ((maxx + minx) / 2) + 30, ((maxy + miny) / 2) + 30);
+                //     }
+                //     else if (mouse.ymov < 10 && mouse.xmov < 10 && mouse.ymov > -10 && mouse.xmov > -10)
+                //     {
+                //         manager.getShape(furnitures[i]->name).move(Vector(mouse.ymov, 0, mouse.xmov));
+                //     }
+                // }
 
                 return;
             }
