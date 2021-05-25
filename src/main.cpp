@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 	int start = 0;
 	int checkForError = 0;
 
-	TextBox t_intro("CROUS Simulator", "fonts/calibri.ttf", 40, black, Point2D<int>(500, 230), 1280, 40, window.getRenderer());
+	TextBox t_intro("Conception d'un aménagement intérieur", "fonts/Calibri Bold.ttf", 40, hd_brownButtons, Point2D<int>(500, 200), 1280, 40, window.getRenderer());
 	int i_TLx = 440, i_TLy = 280;
 	TextBox t_mur1("Mur 1", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx, i_TLy), 60, 20, window.getRenderer());
 	TextInput i_mur1("5 m", "fonts/calibri.ttf", 20, black, Point2D<int>(i_TLx+60, i_TLy), 60, 25, window.getRenderer());
