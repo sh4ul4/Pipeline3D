@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 	bmstart.getButton<initPack*>("b_initImport").setAction(checkInitialization, &i0);
 
 	while (!start) {
-		if (keyboard.q.down)
+		if (keyboard.ctrl.pressed && keyboard.q.down)
 			exit(1);
 
 		scene_name.checkForInput(inputEvent, window.getRenderer());
@@ -241,7 +241,7 @@ int main(int argc, char* argv[]) {
 
 	r.updateTriangles(manager);
 	bool wbool = true;
-	while (!keyboard.q.down) {
+	while (!(keyboard.ctrl.pressed && keyboard.q.down)) {
 		inputEvent.update();
 		r.updateTriangles(manager);
 

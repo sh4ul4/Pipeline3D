@@ -41,5 +41,5 @@ public:
 	Key zero, one, two, three, four, five, six, seven, eight, nine;
 	Key up, down, left, right;
 	Key F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12;
-	Key tab, plus, minus, slash, backslash, equal, point, semicolon, escape, space, enter, delete_, quote, shift, backspace, comma;
+	Key tab, plus, minus, slash, backslash, equal, point, semicolon, escape, space, enter, delete_, quote, shift, ctrl, backspace, comma;
 };

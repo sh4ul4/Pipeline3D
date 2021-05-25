@@ -1,8 +1,6 @@
 #pragma once
 
 
-
-
 /**
  * @brief Contient les informations d'un meuble inséré ainsi que ses méthodes d'interaction.
  */ 
@@ -128,7 +126,7 @@ public:
 
         // Option 2: supprimer du Manager et du Vector Furnitures (non fonctionnel)
         // manager->removeShape(name);
-        // (*fp->furnitures).erase((*fp->furnitures).begin()+fp->selected);
+        // delete this;
     };
     ~Furniture() { };
 };

@@ -114,6 +114,8 @@ public:
 				case SDLK_COMMA: keyboard.comma.press(); break;
 				case SDLK_LSHIFT: keyboard.shift.press(); break;
 				case SDLK_RSHIFT: keyboard.shift.press(); break;
+				case SDLK_LCTRL: keyboard.ctrl.press(); break;
+				case SDLK_RCTRL: keyboard.ctrl.press(); break;
 				case SDLK_BACKSPACE: keyboard.backspace.press(); break;
 				case SDLK_a: keyboard.a.press(); break;
 				case SDLK_b: keyboard.b.press(); break;
@@ -188,6 +190,8 @@ public:
 				case SDLK_COMMA: keyboard.comma.release(); break;
 				case SDLK_LSHIFT: keyboard.shift.release(); break;
 				case SDLK_RSHIFT: keyboard.shift.release(); break;
+				case SDLK_LCTRL: keyboard.ctrl.release(); break;
+				case SDLK_RCTRL: keyboard.ctrl.release(); break;
 				case SDLK_BACKSPACE: keyboard.backspace.release(); break;
 				case SDLK_a: keyboard.a.release(); keyboard.A.release(); break;
 				case SDLK_b: keyboard.b.release(); keyboard.B.release(); break;
