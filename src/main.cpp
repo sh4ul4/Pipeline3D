@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 	bmstart.getButton<initPack*>("b_initImport").setAction(checkInitialization, &i0);
 
 	while (!start) {
-		if (keyboard.escape.down)
+		if (keyboard.q.down)
 			exit(1);
 
 		scene_name.checkForInput(inputEvent, window.getRenderer());
@@ -240,21 +240,29 @@ int main(int argc, char* argv[]) {
 	Texture2D LOGO("HM-Res/3DHomeProject.png", window.getRenderer());
 
 	r.updateTriangles(manager);
-	while (!keyboard.escape.down) {
+	while (!keyboard.q.down) {
 		inputEvent.update();
 		r.updateTriangles(manager);
 
 		inputEvent.updateMouse(mouse);
 		inputEvent.updateKeyBoard(keyboard);
 
-		if (keyboard.l.down) {
+		if (keyboard.escape.down) {
 			if (!Camera::getCurrent().locked)	Camera::getCurrent().lock();
 			// if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
 			// else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
 		}
 
 		if (HomeDesign::interactSpace != 4)  {// Hors mode insertion meuble
-			
+			// Mouvement avec flèches
+			if (keyboard.left.pressed) 
+				hm.moveCamera(0);
+			if (keyboard.right.pressed) 
+				hm.moveCamera(1);
+			if (keyboard.down.pressed) 
+				hm.moveCamera(2);
+			if (keyboard.up.pressed) 
+				hm.moveCamera(3);
 			
 			// Ajouter ici déplacement de caméra par touches fléchées
 		}
@@ -299,7 +307,7 @@ int main(int argc, char* argv[]) {
 				hm.renderFurnitureInteractionSpace(inputEvent, window, manager);
 				manager.getShape(hm.getSelectedShape()).drawHit2D(Point2D<int>(30,30), window);
 
-				// Mouvement avec flèches
+				// Déplacement du meuble par touches directionnelles
 				if (keyboard.left.pressed) 
 					hm.moveFurniture(manager, keyboard, 0);
 				if (keyboard.right.pressed) 
@@ -336,31 +344,7 @@ int main(int argc, char* argv[]) {
 		window.FillScreen(hd_beigeBackground);
 	}
 
+	hm.saveScene(&hm);
+	std::cout << "Application quittée, la scène '"+ hm.getSceneName() +"' a été sauvegardée automatiquement.\n";
 	return 0;
 }
-
-
-// TextInput ti("Hello world!", pth+std::string("fonts/calibri.ttf"), 30, black, Point2D<int>(450, 50), 200, 25, window.getRenderer());
-// TextBox tb1("OK!", pth + std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(1300, 100), 100, 25, window.getRenderer());
-// TextBox tb2("ajouter cube", pth+std::string("fonts/calibri.ttf"), 16, light_gray, Point2D<int>(1300, 150), 100, 25, window.getRenderer());
-
-// bm.addRectButton<TextInput*>("buttonA", nullptr, dark_gray, black, &tb1, Point2D<int>(1300, 100), 100, 25);
-// bm.getButton<TextInput*>("buttonA").setAction([](TextInput* t) { std::cout << t->getText() << std::endl; }, &ti);
-
-
-
-// struct Function {
-// 	Bitmap* bmp;
-// 	ShapeManager* sm;
-// 	void f(Function* f) {
-// 		f->sm->addCube("cubeX", { 6,6,6 }, 40, bmp);
-// 	}
-// };
-// Function func;
-// Bitmap::newBitmap("80s_1", pth + std::string("textures/80s_1.jpg"));//t1
-// func.bmp = Bitmap::getBitmap("80s_1");
-// func.sm = &manager;
-// bm.addRectButton<Function*>("buttonC", nullptr, gray, dark_gray, &tb2, Point2D<int>(1300, 150), 100, 25);
-// bm.getButton<Function*>("buttonC").setAction([](Function* f) { f->sm->addCube("cubeX", { 6,6,6 }, 40, f->bmp); }, &func);
-
-// bm.addCheckBox<void*>("cb1", white, dark_gray, Point2D<int>(1300, 200), 20);

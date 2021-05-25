@@ -823,7 +823,6 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         bmInsert1.checkButtons();
         bmInsert1.renderButtons(window.getRenderer());
         ip1.name = textInputsInsert1[0]->getText();
-        // std::cout <<textInputsInsert1[0]->getText() <<'|'<< ip1.name << '\n'; 
         try  {
             ip1.scale = stof(textInputsInsert1[1]->getText());
         }
@@ -1016,8 +1015,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         return true;
     }
 
-    bool checkFurnitureCollision(ShapeManager &manager, Shape &object)
-    {
+    bool checkFurnitureCollision(ShapeManager &manager, Shape &object)  {
         for (Furniture *fur : furnitures)
         {
             if (object.name == fur->name)
@@ -1028,12 +1026,10 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         return true;
     }
 
-    void moveFurniture(ShapeManager &manager, Keyboard &keyboard, int direction)
-    {
+    void moveFurniture(ShapeManager &manager, Keyboard &keyboard, int direction)  {
         Shape copiedShape(manager.getShape(furnitures[fp.selected]->name));
         Vector deplacement;
-        if (Camera::getCurrent().getCamId() == "topCam" || Camera::getCurrent().getCamId() == "faceCam")
-        {
+        if (Camera::getCurrent().getCamId() == "topCam" || Camera::getCurrent().getCamId() == "faceCam")  {
             switch (direction)
             {
             case 0: // Move Left
@@ -1050,8 +1046,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
                 break;
             }
         }
-        else if (Camera::getCurrent().getCamId() == "backCam")
-        {
+        else if (Camera::getCurrent().getCamId() == "backCam")  {
             switch (direction)
             {
             case 0: // Move Left
@@ -1068,8 +1063,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
                 break;
             }
         }
-        else if (Camera::getCurrent().getCamId() == "droitCam")
-        {
+        else if (Camera::getCurrent().getCamId() == "droitCam")  {
             switch (direction)
             {
             case 0: // Move Left
@@ -1086,8 +1080,7 @@ public: // Méthodes liées à des boutons créés dans main.cpp
                 break;
             }
         }
-        else if (Camera::getCurrent().getCamId() == "gaucheCam")
-        {
+        else if (Camera::getCurrent().getCamId() == "gaucheCam")  {
             switch (direction)
             {
             case 0: // Move Left
@@ -1117,8 +1110,79 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         }
     }
 
-    static void exportImage(HomeDesign *hm)
-    {
+    void moveCamera(int direction)  {
+        Vector deplacement;
+        if (Camera::getCurrent().getCamId() == "topCam")  {
+            switch (direction)  {
+            case 0: // Move Left
+                deplacement = Vector(0, 0, -1);
+                break;
+            case 1: // Move Right
+                deplacement = Vector(0, 0, 1);
+                break;
+            case 2: // Move Down
+                deplacement = Vector(1, 0, 0);
+                break;
+            case 3: // Move Up
+                deplacement = Vector(-1, 0, 0);
+                break;
+            }
+        }
+        else if (Camera::getCurrent().getCamId() == "faceCam")  {
+            switch (direction)  {
+            case 0: // Move Left
+                deplacement = Vector(0, 0, -1);
+                break;
+            case 1: // Move Right
+                deplacement = Vector(0, 0, 1);
+                break;
+            default:
+                break;
+            }
+        }
+        else if (Camera::getCurrent().getCamId() == "backCam")  {
+            switch (direction)  {
+            case 0: // Move Left
+                deplacement = Vector(0, 0, 1);
+                break;
+            case 1: // Move Right
+                deplacement = Vector(0, 0, -1);
+                break;
+            default:
+                break;
+            }
+        }
+        else if (Camera::getCurrent().getCamId() == "droitCam")  {
+            switch (direction)
+            {
+            case 0: // Move Left
+                deplacement = Vector(1, 0, 0);
+                break;
+            case 1: // Move Right
+                deplacement = Vector(-1, 0, 0);
+                break;
+            default:
+                break;
+            }
+        }
+        else if (Camera::getCurrent().getCamId() == "gaucheCam")  {
+            switch (direction)
+            {
+            case 0: // Move Left
+                deplacement = Vector(-1, 0, 0);
+                break;
+            case 1: // Move Right
+                deplacement = Vector(1, 0, 0);
+                break;
+            default:
+                break;
+            }
+        }
+        
+        Camera::getCurrent().moveLockedCam(deplacement);
+    }
+
+    static void exportImage(HomeDesign *hm)  {
         // Générer un path et nom de fichier en fonction de l'heure
         auto t = std::time(nullptr);
         auto tm = *std::localtime(&t);
@@ -1129,6 +1193,8 @@ public: // Méthodes liées à des boutons créés dans main.cpp
 
         hm->textBoxesDefault[9]->update("La capture d'écran '" + file + "' a été enregistrée.", hm->refWindow.getRenderer());
     };
+
+    
 
     static void checkParamsEdition(initPack *i)
     {
@@ -1192,10 +1258,12 @@ public: // Méthodes liées à des boutons créés dans main.cpp
         b_confirm.setAction(checkParamsEdition, &i0);
         b_cancel.setAction(checkParamsEdition, &i0);
 
-        while (!start)
-        {
-            if (hm->refKeyboard.escape.down)
-                exit(1);
+        while (!start)  {
+            // La touche Echap annule les modifications 
+            if (hm->refKeyboard.escape.down)  {
+                start = 2;
+                break;
+            }
 
             scene_name.checkForInput(hm->refInputEvent, hm->refWindow.getRenderer());
             i_mur1.checkForInput(hm->refInputEvent, hm->refWindow.getRenderer(), i_mur2);
@@ -1265,12 +1333,10 @@ public: // Méthodes liées à des boutons créés dans main.cpp
             std::swap(w1, w3);
         hm->scene_name = i0.scene_name;
 
-        if (w1 != hm->w1 || w3 != hm->w3)
-        {
+        if (w1 != hm->w1 || w3 != hm->w3)  {
             hm->w1 = w1;
             hm->w3 = w3;
             hm->surface = w1 * w3;
-            std::cout << "New dimension: " << i_mur1.getText() << 'x' << i_mur3.getText() << '\n';
             hm->resetRoom(w1, w3);
         }
     }
