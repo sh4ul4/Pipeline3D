@@ -125,7 +125,7 @@ void main_addPlanet(Starstruct* S) {
 		Planet* p = new Planet(radius, mass, initialPos, initialSpeed, S->name);
 
 		if (S->name == "mercury")
-			S->manager->imprtShapeObj(std::string("OBJ/mercury/"), "mercury.obj", S->name, 20);
+			S->manager->imprtShapeObj(std::string("OBJ/mercury/"), "mercury.obj", S->name, 22);
 		else if (S->name == "neptune")
 			S->manager->imprtShapeObj(std::string("OBJ/neptune/"), "neptune.obj", S->name, 15);
 		else if (S->name == "mars")
@@ -152,7 +152,7 @@ void main_addPlanet(Starstruct* S) {
 }
 
 void main_setSimulation(Starstruct* S) {
-	if (std::regex_match(S->simuspeed, std::regex("([0-9]*[.])[0-9]+"))) {
+	if (std::regex_match(S->simuspeed, std::regex("[0-9]+"))) {
 		S->Ssys->setSimulationSpeed(std::stof(S->simuspeed));
 		S->T_info->update("Vitesse de simulation correctement modifiee", S->w->getRenderer());
 		return;
@@ -166,11 +166,13 @@ void main_setSimulation(Starstruct* S) {
 void main_startSimu(Starstruct* S) {
 	S->start_stop = true;
 	std::cout << "La simulation est en cours" << std::endl;
+	S->T_info->update("La simulation est en cours", S->w->getRenderer());
 }
 
 void main_stopSimu(Starstruct* S) {
 	S->start_stop = false;
 	std::cout << "La simulation est en pause" << std::endl;
+	S->T_info->update("La simulation est en pause", S->w->getRenderer());
 }
 
 void main_save(Starstruct* S) {
@@ -179,6 +181,7 @@ void main_save(Starstruct* S) {
 	file.open(path);
 	if (!file.is_open()) {
 		std::cout << "Erreur lors de l'ouverture du fichier" << std::endl;
+		S->T_info->update("Erreur lors de l'ouverture du fichier", S->w->getRenderer());
 		return;
 	}
 	Star* star = S->Ssys->getStar();
@@ -211,6 +214,7 @@ void main_save(Starstruct* S) {
 	}
 	file.close();
 	std::cout << "La configuration a bien ete sauvegardee" << std::endl;
+	S->T_info->update("La configuration a bien ete sauvegardee", S->w->getRenderer());
 }
 
 void main_reset(Starstruct* S) {
@@ -234,6 +238,8 @@ void main_reset(Starstruct* S) {
 		S->TSX[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 		S->TSY[i]->update(" ", PATH + std::string("fonts/calibri.ttf"), 18, white, S->w->getRenderer());
 	}
+
+	S->T_info->update("RESET effectue", S->w->getRenderer());
 }
 
 void main_load(Starstruct* S) {
@@ -244,6 +250,7 @@ void main_load(Starstruct* S) {
 	file.open(path);
 	if (!file.is_open()) {
 		std::cout << "Erreur lors de l'ouverture du fichier" << std::endl;
+		S->T_info->update("Erreur lors de l'ouverture du fichier", S->w->getRenderer());
 		return;
 	}
 	while (std::getline(file, line)) {
@@ -312,6 +319,7 @@ void main_load(Starstruct* S) {
 	}
 	file.close();
 	std::cout << "La configuration a bien ete chargee" << std::endl;
+	S->T_info->update("La configuration a bien ete chargee", S->w->getRenderer());
 }
 
 void main_deleteStar(Starstruct* S) {
@@ -799,7 +807,6 @@ int main(int argc, char* argv[]) {
 	//6. ScrollZone
 	ScrollZone zone(inputEvent, window, Point2D<int>(750, 230), 430, 200, 520, 410);
 
-	//TEST AFFICHE STAR/PLANETE LORSQUE CREATION
 	Point2D<int>pos(8, 30);
 
 	std::string curName = "";
@@ -1041,8 +1048,10 @@ int main(int argc, char* argv[]) {
 		
 
 		if (S.start_stop) {
-			if (Ssys.checkCollision())
+			if (Ssys.checkCollision()) {
 				main_stopSimu(&S);
+				S.T_info->update("Collision detectee", S.w->getRenderer());
+			}
 			std::vector<Planet*> Planets = Ssys.getPlanets();
 			for (size_t i = 0; i < Planets.size(); i++) {
 				Ssys.simulation();
@@ -1101,12 +1110,10 @@ int main(int argc, char* argv[]) {
 		zone.update();
 		zone.render(window);
 
-		//r.render({ 30,30 }, 680, 430, inputEvent, window, manager); 
 		if (keyboard.l.down) {
 			if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
 			else if (!Camera::getCurrent().locked)Camera::getCurrent().lock();
 		}
-		//if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(50, 50), 600, 400, window);
 		Draw::DrawFillContouredRect(Point2D<int>(30, 30) - 2, 684, 458, 2, Color(0, 0, 0), gray, window.getRenderer());
 		r.render(Point2D<int>(30, 30), 680, 454, inputEvent, window, manager);
 

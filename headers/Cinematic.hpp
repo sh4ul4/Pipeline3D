@@ -2,7 +2,7 @@
 
 namespace Cinematic
 {
-	float time = 400;						 // Repr�sente le temps qui s'�coule dans le syst�me stellaire
+	float time = 400;					// Représente l'intervalle de temps entre les calculs (le temps n'est pas réel)
 	const float G = 6.67 * pow(10, -11); // Contante de gravitation
 
 	/* ----- CALCULS MATHEMATIQUES ----- */
@@ -60,7 +60,6 @@ namespace Cinematic
 		vector = vectorPoints(l1->getPosition(), l2->getPosition());
 		unitVector = getUnitVector(vector);
 		const double denominator = pow(vector.distance({ 0, 0 }), 2);
-		//printf("distance = %f\n", vector.distance({ 0, 0 }));
 		const double value = (G * l1->getMass() * l2->getMass()) / denominator;
 		force.x = value * unitVector.x;
 		force.y = value * unitVector.y;
@@ -109,6 +108,6 @@ namespace Cinematic
 		double x = ((speed.x / 2) * pow(time, 2)) + (initialSpeed.x * time) + initialPosition.x;
 		double y = ((speed.y / 2) * pow(time, 2)) + (initialSpeed.y * time) + initialPosition.y;
 		Point2D<double> p_set(x, y);
-		p->setPosition(p_set);	//Erreur : non - const lvalue reference to type 'Point2D<double>' cannot bind to an initializer list temporary
+		p->setPosition(p_set);
 	}
 }

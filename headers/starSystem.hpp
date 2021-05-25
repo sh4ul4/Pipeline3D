@@ -1,7 +1,7 @@
 #pragma once
 
 #define PLANETMAX 15               // Nos systèmes stellaires comprendront au maximum 15 planètes
-#define DISTANCEMAX pow(10, 13) // En m
+#define DISTANCEMAX pow(10, 13) // En mètre
 
 /**
  * @class Cette classe représente un système stellaire, avec une étoile autour de laquelle tournent des planètes
@@ -17,8 +17,6 @@ private:
     std::vector<Planet*> planets;
     // Représente l'étoile du système
     Star* sun = nullptr;
-    // Détermine la vitesse de simulation du système (c'est un facteur)
-    float simulationSpeed = 1;
 
 public:
     /*===========================================================================================
@@ -28,10 +26,6 @@ public:
     // Constructeur par défaut
     starSystem(ButtonManager& bm, ShapeManager& manager, Window& window)
     {
-        std::cout << " > Constructeur starSystem" << std::endl;
-
-        //Bitmap::newBitmap(std::string("Space"), std::string(PATH + "textures/space2.jpg"));
-
         Vertex hg = { 0, 100, 0 };
         Vertex bg = { 0, 0, 0 };
         Vertex hd = { 158, 100, 0 };
@@ -135,7 +129,7 @@ public:
      */
     void setSimulationSpeed(float speed)
     {
-        this->simulationSpeed = speed;
+        Cinematic::time = speed;
     }
 
     /* ----- GETTERS ----- */
@@ -167,7 +161,7 @@ public:
      */
     float getSimulationSpeed()
     {
-        return simulationSpeed;
+        return Cinematic::time;
     }
 
     /* ----- METHODES ----- */
@@ -201,7 +195,7 @@ public:
     {
         for (std::vector<Planet*>::iterator it = planets.begin(); it != planets.end(); it++)
         {
-            if ((*it)->getName() == name)
+            if ( (*it) != nullptr && (*it)->getName() == name )
             {
                 delete (*it);
                 planets.erase(it);
@@ -218,7 +212,6 @@ public:
         {
             delete sun;
             sun = nullptr;
-            std::cout << "Etoile detruite" << std::endl;
         }
     }
 
@@ -229,7 +222,6 @@ public:
         for (std::vector<Planet*>::iterator it = planets.begin(); it != planets.end();)
         {
             delete (*it);
-            std::cout << (*it)->getName() << " detruite" << std::endl;
             it = planets.erase(it);
         }
         std::cout << "Reinitialisation du systeme stellaire terminee" << std::endl;
@@ -274,7 +266,6 @@ public:
             std::cout << "Aucune planetes dans le systeme stellaire !" << std::endl << "Simulation abordee" << std::endl;
             return;
         }
-        //std::cout << "Debut de l'initialisation" << std::endl;
         // Somme de toutes les forces qui s'exercent sur les astres
         Point2D<double> force, tmp;
         // Force exercée par toutes les autres planètes
