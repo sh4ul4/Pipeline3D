@@ -695,7 +695,7 @@ private:
         textBoxesObjInsert.emplace_back(new TextBox("ceci est un test de textbox un peu trop grande pour le rectangle", "fonts/calibri.ttf", 20, black,
                                                     Point2D<int>(b_topleftx, 400), 260, 80, window.getRenderer()));
 
-        bmObjInsert.addRectTextButton<insertObjPack *>("b_insertFinal1", Point2D<int>(980, 350), 250, 40, "Insérer sur la scène");
+        bmObjInsert.addRectTextButton<insertObjPack *>("b_insertFinal1", Point2D<int>(980, 440), 250, 40, "Insérer sur la scène");
         ip3 = {&interactSpace, manager, &furnitures};
         bmObjInsert.getButton<insertObjPack *>("b_insertFinal1").setAction(objInsertion, &ip3);
     }
