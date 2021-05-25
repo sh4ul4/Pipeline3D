@@ -80,6 +80,7 @@ private:
 	{
 		// render textures on surface
 		// signlethreaded version
+		toRender.shrink_to_fit();
 		const size_t size = toRender.size();
 		const Point2D<int> center(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2);
 		for (size_t i = 0; i < size; i++)
