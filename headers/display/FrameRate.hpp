@@ -1,5 +1,10 @@
 #pragma once
 
+/** 
+ * @file FrameRate.hpp
+ * @brief Gestion de l'écoulement des frames de la boucle principale de la pipeline
+ */
+
 class StableFramerate
 {
 private:

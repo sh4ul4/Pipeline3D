@@ -1,0 +1,18 @@
+Dans ce fichier se trouvent les détails que l'on a du changer et qui diffèrent donc de ce qui a été fourni dans le cahier des
+spécifiactions.
+
+- Luminary : 
+	- Point2D<int> position; --> Point2D<double> position;
+		=> Changement dans le constructeur
+		=> Changement dans la méthode 'setPosition'
+		=> Changement dans la méthode 'getPosition'
+
+- Cinématique :
+	- void Newton2nd(const Point2D<double> &force, Luminary *l) --> void Newton2nd(const Point2D<double> &force, Planet *p)
+	- void getSpeedFromAcceleration(Luminary *l) --> void getSpeedFromAcceleration(Planet *p)
+	- void getPositionFromSpeed(Luminary *l) --> void getPositionFromSpeed(Planet *p)
+
+- Planet :
+	- Constructeur : Point2D<int> &initialPosition --> Point2D<double> &initialPosition
+		=> Point2D<int> getInitialPosition() --> Point2D<double> getInitialPosition()
+		=> 'setInitialPosition' --> Point2D<double>

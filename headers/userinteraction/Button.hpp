@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file Button.hpp
+ * @brief Interaction Utilisateur : Contient les classes correspondant aux différents boutons 
+ */
 
 // base-class of a button without the template parameters
 class ButtonBase {

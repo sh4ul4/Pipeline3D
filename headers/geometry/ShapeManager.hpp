@@ -1,6 +1,13 @@
 #pragma once
 #include <iomanip>
 #include <sstream>
+
+/**
+ * @file ShapeManager.hpp
+ * @brief Le Manager de formes est la classe principale du sous-moduel de gestion des entités géométriques, il contient l'ensemble
+ * des formes actives et en traitement continu sur la pipeline. Ce fichier contient également les méthodes d'import/export d'obj et de fichiers.
+ */
+
 class ShapeManager
 {
 private:

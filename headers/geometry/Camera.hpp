@@ -1,5 +1,10 @@
 #pragma once
 /**
+ * @file Camera.hpp
+ * @brief Module géométrie : Gestion et mise à jour de la caméra (déplacement, angles de vues, position et vitesse) 
+ */
+
+/**
  * @class Camera
  * @brief Gestion et mise à jour de la caméra
  * 

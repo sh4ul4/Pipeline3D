@@ -1,5 +1,10 @@
 #pragma once
 /**
+ * @file TextureManager.hpp
+ * @brief Permet d'encapsuler la partie rastérisation et texture mapping.
+ */
+
+/**
  * @class TextureManager pour encapsuler la partie rastérisation et texture mapping
  */
 class TextureManager {

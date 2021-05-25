@@ -1,5 +1,8 @@
 #pragma once
-
+/**
+ * @file Matrix.hpp
+ * @brief Module mathématiques : La classe Matrix permett de manipuler et calculer avec des matrices de tailles diverses nécessaires dans la pipeline 
+ */
 template <size_t T1,size_t T2>
 class Matrix {
 public:

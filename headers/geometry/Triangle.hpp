@@ -1,4 +1,10 @@
 #pragma once
+
+/** 
+ * @file Triangle.hpp
+ * @brief La classe Triangle permet d'encapsuler les données d'un triangle, à la fois sous sa forme 3D
+ * dans l'environnement et sous sa forme 2D dans la frame.
+ */ 
 /**
  * @class Triangle permet d'encapsuler les données d'un triangle, à la fois sous sa forme 3D
  * dans l'environnement et sous sa forme 2D dans la frame.

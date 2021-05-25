@@ -1,8 +1,8 @@
 #pragma once
 
 /**
- * @file Issu du module de Rendering, sous-module (?) 
- * Rendering et Affichage des triangles
+ * @file Render.hpp
+ * @brief Module Affichage 2D, rendering et Affichage des triangles à l'écran via une pile de triangles à traiter actualisée à chaque tic
  */
 
 /*===========================================================================================

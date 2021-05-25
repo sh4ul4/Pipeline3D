@@ -1,7 +1,8 @@
 #pragma once
+
 /**
- * @file Issu du module de Intéraction Utilisateur.
- * Extension de la classe TextBox.
+ * @file TextInput.hpp
+ * @brief Interaction Utilisateur : Extension de la classe Textbox permettant la saisie de texte
  */
 
 /*===========================================================================================
@@ -52,6 +53,12 @@ public:
      *      METHODES
     ===========================================================================================*/
 public:
+
+	void overwrite(std::string text, SDL_Renderer* renderer) {
+		this->text = text;
+		update(text, renderer);
+	}
+	
 	/**
 	 * @brief Afficher la texture du texte.
 	 * @param renderer Renderer SDL

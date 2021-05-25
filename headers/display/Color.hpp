@@ -1,4 +1,9 @@
 #pragma once
+
+/** 
+ * @file Color.hpp
+ * @brief La classe Color permet de faciliter l'utilisation de couleurs RGBA 32 bits.
+ */
 /** @brief class Color
  * La classe Color permet de faciliter l'utilisation de couleurs RGBA 32 bits
  */

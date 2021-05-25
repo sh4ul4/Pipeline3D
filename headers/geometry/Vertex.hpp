@@ -1,5 +1,9 @@
 #pragma once
 
+/**
+ * @file Vertex.hpp
+ * @brief Représente un Sommet (3 coordonnées flottantes) et contient toutes les méthodes nécessaires aux calculs entre sommets.
+ */
 class Vector;
 
 class Vertex {

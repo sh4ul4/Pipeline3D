@@ -1,6 +1,9 @@
 #pragma once
+
 /**
- * @file Module Affichage 2D
+ * @file Texture.hpp
+ * @brief Affichage 2D : La classe Texture2D permet de contenir les données d'une texture graphique à affichage accéléré.
+ * Cette texture a l'avantage d'être rapide à l'affichage mais lente en modification des pixels.
  */ 
 
 /** @brief class Texture2D

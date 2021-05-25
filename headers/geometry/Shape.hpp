@@ -1,4 +1,11 @@
 #pragma once
+
+/**
+ * @file Shape.hpp
+ * @brief Contient les informations de base d'une forme 3D (Rectangle, Cube, Sphère, Parallélépipède et forme personnalisée type Obj).
+ * Cette classe est adaptée pour le polymorphisme.
+ */
+
 /** 
  * @class Shape
  * @brief Contient les informations de base d'une forme.

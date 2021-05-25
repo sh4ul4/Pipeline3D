@@ -1,4 +1,10 @@
 #pragma once
+
+/**
+ * @file GlobalTexture.hpp
+ * @brief Permet de contenir et mettre à jour la frame en bout de Pipeline.
+ */
+
 /**
  * @class GlobalTexture pour contenir et mettre à jour la frame en bout de Pipeline
  */

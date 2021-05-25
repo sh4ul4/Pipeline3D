@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file ScrollArea.hpp
+ * @brief Interaction Utilisateur : Contient les classes nécessaires à la zone de défilement.
+ */
+
 class DragBar {
 public:
 	Point2D<int> pos{ 0,0 };

@@ -1,7 +1,8 @@
 #pragma once
+
 /**
- * @file Issu du module de Intéraction Utilisateur.
- * S'appuie sur les classes Mouse et Keyboard.
+ * @file InputEvent.hpp
+ * @brief Interaction Utilisateur : S'appuie sur les classes Mouse et Keyboard.
  */
 
 /*===========================================================================================

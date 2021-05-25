@@ -1,5 +1,8 @@
 #pragma once
-// Région déclarative contenant des valeurs et des méthodes concernant la physique étudiant le mouvement 
+/**
+ * @file Physics.hpp
+ * @brief Région déclarative contenant des valeurs et des méthodes concernant la physique étudiant le mouvement (collisions, interactions)
+ */
 namespace Physics
 {
 	/* ----- Valeurs correspondant aux lois physiques utilisées ----- */

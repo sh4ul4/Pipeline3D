@@ -1,4 +1,8 @@
 #pragma once
+/**
+ * @file ErrorsHandler.hpp
+ * @brief Interaction Utilisateur : Contient les différentes gestions d'erreur de chemins de fichier
+ */
 
 /** 
  * @brief Erreur fatale

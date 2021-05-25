@@ -1,4 +1,10 @@
 #pragma once
+
+/**
+ * @file Chrono.hpp
+ * @brief Contient la classe Timer, minuteur avec contrôle du lancement et du temps écoulé
+ */
+
 /**
  * @class Timer
  * @brief Minuteur avec contrôle du lancement et du temps écoulé
