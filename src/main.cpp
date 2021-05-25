@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	/**		Camera		**/
 	TextBox aovtb("angle of view : 60", "../fonts/calibri.ttf", 12, black, Point2D<int>(950, 30), window.getRenderer());
 	DragBar aov(Point2D<int>(788, 30), 160, 11, 20, false);
-	aov.padPos = 80;
+	aov.padPos = 81;
 
 	TextBox camcontroltb("camera-control : drag&drop / continuous", "../fonts/calibri.ttf", 12, black, Point2D<int>(800, 50), window.getRenderer());
 	bm.addCheckBox<Camera*>("dragndrop", dark_gray, gray, Point2D<int>(788, 50), 10);
