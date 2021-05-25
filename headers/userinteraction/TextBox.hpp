@@ -61,7 +61,7 @@ public:
 		font = TTF_OpenFont(FIND_FILE(fontPath).c_str(), fontSize);
 		if (!font)FATAL_ERR("could not load font");
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
 		width = surface->w;
 		height = surface->h;
 		if (height > maxHeight) height = maxHeight;
@@ -89,7 +89,7 @@ public:
 		if (width > maxWidth)width = maxWidth;
 		if (height > maxHeight)height = maxHeight;
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), fontColor.toSDL_Color());
+		SDL_Surface* surface = TTF_RenderUTF8_Blended(font, text.c_str(), fontColor.toSDL_Color());
 		if (texture) SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 		SDL_FreeSurface(surface);
@@ -117,7 +117,7 @@ public:
 		font = TTF_OpenFont(FIND_FILE(fontPath).c_str(), fontSize);
 		if (!font)FATAL_ERR("could not load font");
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
 		width = surface->w;
 		height = surface->h;
 		if (height > maxHeight) height = maxHeight;
@@ -134,7 +134,7 @@ public:
 	 */
 	void update(std::string text, SDL_Renderer* renderer) {
 		if (text.empty()) text = " ";
-		SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
+		SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), fontColor.toSDL_Color(), maxWidth);
 		width = surface->w;
 		height = surface->h;
 		if (height > maxHeight) height = maxHeight;
@@ -154,6 +154,14 @@ public:
 		if (renderer == nullptr || texture == nullptr) { PRINT_ON_ERR("Error occured in renderTexture()"); return; }
 		const SDL_Rect srcrect{ 0, 0, width, height };
 		const SDL_Rect dstrect{ pos.x, pos.y, width, height };
+		SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
+	}
+
+	void centerizedRender(Point2D<int> tl, int max_width, SDL_Renderer* renderer) const {
+		if (renderer == nullptr || texture == nullptr) { PRINT_ON_ERR("Error occured in renderTexture()"); return; }
+		const SDL_Rect srcrect{ 0, 0, width, height };
+		int perfect = ((max_width - this->width) / 2) + tl.x;
+		const SDL_Rect dstrect{ perfect, pos.y, width, height };
 		SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
 	}
 
@@ -180,6 +188,11 @@ public:
 	 * @param pos Position de la texture lors de l'affichage
 	 */
 	void setPosition(const Point2D<int>& pos) { this->pos = pos; }
+
+	void center(const Point2D<int>& tl, int max_width)  {
+		int perfect = ((max_width - this->width) / 2) + tl.x;
+		setPosition(Point2D<int>(perfect, pos.y));
+	}
 
 	/**
 	 * @brief Changer les dimensions de la texture du texte.

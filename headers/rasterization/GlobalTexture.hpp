@@ -176,13 +176,8 @@ private:
 		k = n / 2;
 
 		while (cnt--) {
-			if (y >= 0 && y < maxHeight /*&& x >= 0 && x < maxWidth*/) {
-				int xtmp;
-				if (x < 0)xtmp = 0;
-				else if (x >= maxWidth) xtmp = maxWidth - 1;
-				else xtmp = x;
-				line.emplace_back(xtmp, y);
-			}
+			if (y >= 0 && y < maxHeight /*&& x >= 0 && x < maxWidth*/)
+				if(x <= maxWidth && x >= 0)line.emplace_back(x, y);
 			k += n;
 			if (k < m) {
 				x += dx2;
@@ -212,8 +207,18 @@ public:
 	void drawLine(const GlobalTexture& globalTexture, const Point2D<int>& a, const float& adepth, const Point2D<int>& b, const float& bdepth, const Color& color) {
 		std::vector<Point2D<int>> line;
 		ScanLine(a.x, a.y, b.x, b.y, line, height, width);
+		const Uint32 color32 = color.toUint32();
+		const float depthDelta = bdepth - adepth;
+		const float pointDelta = a.distance(b);
+		const float delta = (1.0f/pointDelta) * depthDelta;
 		for (auto& p : line) {
-			pixels[p.x + width * p.y] = (color.b << 24) + (color.g << 16) + (color.r << 8) + (color.a);
+			const float pixdepth = adepth + a.distance(p) * delta;
+			const int it = p.x + p.y * width;
+			// clipping check & pixel depth check
+			if (globalTexture.zbuffer[it] <= pixdepth)continue;
+			globalTexture.zbuffer[it] = pixdepth;
+			pixels[it] = color32;
+			//pixels[it] = (Maths::clamp0_255(255 - pixdepth * 800) << 24) + (Maths::clamp0_255(255 - pixdepth * 800) << 16) + (Maths::clamp0_255(255 - pixdepth * 800) << 8) + (255);
 		}
 	}
 

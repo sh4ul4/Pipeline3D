@@ -21,6 +21,7 @@ public:
 	virtual void setSignal(bool& signal) {}
 	virtual void removeSignal() {}
 	virtual bool isClicked()const { return clicked; }
+	virtual void setClicked(bool click) { clicked = click; }
 	virtual bool isSelected()const { return selected; }
 	virtual void playAction() {}
 	virtual void render(SDL_Renderer* renderer) const {}
@@ -179,7 +180,13 @@ public:
 	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, const Window& window,
 		const size_t DRAWTYPE = DRAWFILLCONTOURRECT)
 		: Button<paramType>(name, nullptr, dark_gray, Color(30,30,30),
-			new TextBox(text, FIND_FILE(std::string("fonts/Segoe UI.ttf")), 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
+			new TextBox(text, "fonts/Segoe UI.ttf", 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
+		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
+
+	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const Color& bgCol, const Color& contCol, const std::string& text, const int fontsize, const Color& textCol, const Window& window,
+		const size_t DRAWTYPE = DRAWFILLCONTOURRECT)
+		: Button<paramType>(name, nullptr, bgCol, contCol,
+			new TextBox(text, "fonts/Segoe UI.ttf", fontsize, textCol, Point2D<int>(0, 0), window.getRenderer())),
 		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
 
 	RectTextButton() = delete;
@@ -271,7 +278,7 @@ public:
 	// check if the mouse clicked and/or is inside the button-zone and handle accordingly
 	void checkButton(const InputEvent& inputEvent, const Point2D<int> pos) {
 		if (!ButtonBase::clicked && mouseClickInside(inputEvent, pos)) {
-			ButtonBase::playAction();
+			Button<paramType>::playAction();
 			if (ButtonBase::signal) *ButtonBase::signal = true;
 			this->checked = !this->checked;
 		}
@@ -279,6 +286,7 @@ public:
 	}
 
 	bool isClicked() const { return checked; }
+	void setClicked(bool click) { checked = click; }
 };
 
 class ButtonManager {
@@ -313,6 +321,12 @@ public:
 	void addRectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text) {
 		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
 		buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, text, window));
+	}
+
+	template <class paramType>
+	void addRectTextButtonCustom(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const Color& bgCol, const Color& contCol, const std::string& text, const int fontsize, const Color& textCol) {
+		if (nameUsed(name))std::cout << "Warning : A Button named " << name << " already exists" << std::endl;
+		buttons.emplace_back(new RectTextButton<paramType>(name, pos, width, height, bgCol, contCol, text, fontsize, textCol, window));
 	}
 
 	void removeButton(const std::string& name) {

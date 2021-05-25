@@ -384,9 +384,17 @@ public:
 	 // Un vecteur de pointeurs vers les shapes
 	std::vector<std::unique_ptr<Shape>> shapes;
 
+	// Booléen indiquant si les shapes ont déjà été rendered ou pas (via Render::updateTriangles) 
+	bool rendered = false;
+
 	/*=============================================================================================
 	 *		Méthodes
 	 *===========================================================================================*/
+
+	// Marquer les modifications portées sur les shapes comme *à actualiser* 
+	void pushShapesEditing()  {
+		rendered = false;
+	}
 
 	void imprtShapeObj(std::string path, const std::string& source, const std::string& shapeName, const float& scale = 1) {
 		path = FIND_FILE(path);
@@ -513,17 +521,17 @@ public:
 	}
 
 	// pas terminé
-	void exprt(const std::string& name)const {
-		std::ofstream out(name + ".flanf");
+	void exprt(const std::string& name) {
+		std::ofstream out(FIND_FILE(std::string("FLANF/")) + name + ".flanf");
 		for (size_t s = 0; s < shapes.size(); s++) {
 			out << "shape " + shapes[s]->name + "\n";
 			for (size_t t = 0; t < shapes[s]->triangles.size(); t++) {
 				out << "tr ";
-				out << (Uint8)shapes[s]->triangles[t].color.r << " "
-					<< (Uint8)shapes[s]->triangles[t].color.g << " "
-					<< (Uint8)shapes[s]->triangles[t].color.b << " "
-					<< (Uint8)shapes[s]->triangles[t].color.a << " ";
-				out << (bool)shapes[s]->triangles[t].fill << " ";
+				out << std::to_string(shapes[s]->triangles[t].color.r) << " "
+					<< std::to_string(shapes[s]->triangles[t].color.g) << " "
+					<< std::to_string(shapes[s]->triangles[t].color.b) << " "
+					<< std::to_string(shapes[s]->triangles[t].color.a) << " ";
+				out << std::to_string(shapes[s]->triangles[t].fill) << " ";
 				if (shapes[s]->triangles[t].bmp == nullptr) {
 					out << "null null ";
 				}
@@ -541,14 +549,32 @@ public:
 					<< shapes[s]->triangles[t].c.x << " "
 					<< shapes[s]->triangles[t].c.y << " "
 					<< shapes[s]->triangles[t].c.z << " endtr\n";
+
+				/*out << "mtl\n";
+
+					out << std::fixed << std::setprecision(8);
+					out << "f " << std::to_string((t + 1) * 3 - 2) << "/" << std::to_string((t + 1) * 3 - 2) << "/" << std::to_string(t + 1) << " ";
+					out << std::to_string((t + 1) * 3 - 1) << "/" << std::to_string((t + 1) * 3 - 1) << "/" << std::to_string(t + 1) << " ";
+					out << std::to_string((t + 1) * 3) << "/" << std::to_string((t + 1) * 3) << "/" << std::to_string(t + 1) << "\n";
+				if (shapes[s]->triangles[t].bmp != nullptr) {
+				
+		            out << "\n\tKd 0 0 0 " <<"\n\tmap_Ka " << shapes[s]->triangles[t].bmp->name.c_str() << ".png\n\tmap_Kd " << shapes[s]->triangles[t].bmp->name.c_str() << ".png\n";
+		            IMG_SavePNG(shapes[s]->triangles[t].bmp->surface, std::string(FIND_FILE(std::string("OBJ/")) + shapes[s]->triangles[t].bmp->name + ".png").c_str());
+				}
+
+				out << "endmtl\n";*/
 			}
+
+
+
+
 			out << "endshape\n";
 		}
 	}
 
 	// pas terminé
 	void imprt(const std::string& name) {
-		std::ifstream in(name + ".flanf");
+		std::ifstream in("FLANF/"+name + ".flanf");
 		std::string nxt;
 		while (in >> nxt) {
 			//std::cout << nxt << std::endl;
@@ -584,6 +610,9 @@ public:
 						trs.push_back(Triangle(a, b, c, n, color, fill));
 					}
 					else if (!tr.compare("endtr")) continue;
+					/*else if(!tr.compare("mtl")){
+
+					}*/
 					else if (!tr.compare("endshape")) break;
 				}
 				std::cout << name << std::endl;
@@ -639,6 +668,7 @@ public:
 	void addShape(const std::string& name, const std::vector<Triangle>& triangles, const Vertex& center, Bitmap* bmp = nullptr) {
 		if (nameTaken(name)) { std::cout << "Name taken" << std::endl; return; }
 		shapes.emplace_back(new Shape(name, triangles, center, bmp));
+		rendered = false;
 	}
 
 	/**
@@ -649,6 +679,7 @@ public:
 	void addShape(const Shape& shape) {
 		if (nameTaken(shape.name)) { std::cout << "Name taken" << std::endl; return; }
 		shapes.emplace_back(new Shape(shape));
+		rendered = false;
 	}
 
 	/**
@@ -661,8 +692,9 @@ public:
 	 * @param precision Degré de précision (par defaut : 20)
 	 */
 	void addSphere(const std::string& name, const Vertex& center, const double& radius, Bitmap* bmp, const int& precision = 20) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "ERR - Name '" + name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Sphere(name, center, radius, bmp, precision));
+		rendered = false;
 	}
 
 	/**
@@ -675,8 +707,9 @@ public:
 	 * @param precision Degré de précision (par defaut : 20)
 	 */
 	void addSphere(const std::string& name, const Vertex& center, const double& radius, const Color& color, const int& precision = 20) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "ERR - Name '" + name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Sphere(name, center, radius, color, precision));
+		rendered = false;
 	}
 
 	/**
@@ -685,8 +718,9 @@ public:
 	 * @param sphere Sphère qui sera ajoutée
 	 */
 	void addSphere(const Sphere& sphere) {
-		if (nameTaken(sphere.name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(sphere.name)) { std::cout << "ERR - Name '" + sphere.name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Sphere(sphere));
+		rendered = false;
 	}
 
 	/**
@@ -698,9 +732,10 @@ public:
 	 * @param bmp Bitmap
 	 */
 	void addCube(const std::string& name, const Vertex& center, const double& width, Bitmap* bmp = nullptr) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "ERR - Name '" + name + "' already taken." << std::endl; return; }
 		if (bmp == nullptr) shapes.emplace_back(new Cube(name, center, width, black));
 		else shapes.emplace_back(new Cube(name, center, width, bmp));
+		rendered = false;
 	}
 
 	/**
@@ -709,8 +744,9 @@ public:
 	 * @param cube Cube qui sera ajouté
 	 */
 	void addCube(const Cube& cube) {
-		if (nameTaken(cube.name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(cube.name)) { std::cout << "ERR - Name '" + cube.name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Cube(cube));
+		rendered = false;
 	}
 
 	/**
@@ -724,7 +760,7 @@ public:
 	 * @param bmp Bitmap
 	 */
 	void addRectangle(const std::string& name, const Vertex& a, const Vertex& b, const Vertex& c, const Vertex& d, int division, const Color& color, const bool& fill = true, Bitmap* bmp = nullptr) {
-		if (nameTaken(name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(name)) { std::cout << "ERR - Name '" + name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Rectangle(name, a, b, c, d, division, color, fill ,bmp));
 	}
 
@@ -734,8 +770,9 @@ public:
 	 * @param rectangle Rectangle qui sera ajouté
 	 */
 	void addRectangle(const Rectangle& rectangle) {
-		if (nameTaken(rectangle.name)) { std::cout << "error" << std::endl; return; }
+		if (nameTaken(rectangle.name)) { std::cout << "ERR - Name '" + rectangle.name + "' already taken." << std::endl; return; }
 		shapes.emplace_back(new Rectangle(rectangle));
+		rendered = false;
 	}
 
 	/**
@@ -748,6 +785,7 @@ public:
 			if (!shapes[i]->name.compare(name)) {
 				shapes.erase(shapes.begin() + i);
 				shapes.shrink_to_fit();
+				rendered = false;
 				return;
 			}
 		std::cout << "Warning : A Shape named " << name << " does not exist" << std::endl;

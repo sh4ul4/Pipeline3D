@@ -20,8 +20,8 @@ public:
 
 	void render(SDL_Renderer* renderer) const {
 		Draw::DrawFillContouredRect(pos, width, height, 1, gray, dark_gray, renderer);
-		if (vertical) Draw::DrawFillRoundedRectContoured(Point2D<int>(pos.x + 1, pos.y + padPos), width-2, padSize, 3, light_gray, black, renderer);
-		else Draw::DrawFillRoundedRectContoured(Point2D<int>(pos.x + padPos, pos.y + 1), padSize, height-2, 3, light_gray, black, renderer);
+		if (vertical) Draw::DrawFillRoundedRectContoured(Point2D<int>(pos.x + 1, pos.y + padPos), width - 2, padSize, 3, light_gray, black, renderer);
+		else Draw::DrawFillRoundedRectContoured(Point2D<int>(pos.x + padPos, pos.y + 1), padSize, height - 2, 3, light_gray, black, renderer);
 	}
 
 	bool mouseInside(const InputEvent& ie, const Point2D<int>& p = { 0,0 }) {
@@ -57,7 +57,7 @@ class ScrollZone {
 	Keyboard keyboard;
 
 	SDL_Texture* texture;
-	
+
 	Point2D<int> pos;
 	int width, height;
 
@@ -68,7 +68,7 @@ class ScrollZone {
 	Color foregroundColor;
 	Color contourColor;
 
-	std::vector<TextBox *> textBoxes{};
+	std::vector<TextBox*> textBoxes{};
 
 	DragBar verticalDragBar;
 	DragBar horizontalDragBar;
@@ -79,9 +79,9 @@ public:
 	ScrollZone(const InputEvent& input, const Window& window, const Point2D<int>& pos,
 		int width, int height, int renderW, int renderH)
 		: inputEvent(input), pos(pos), buttonManager(input, window), width(width), height(height),
-		renderPos(0, 0), renderW(renderW), renderH(renderH), 
-		verticalDragBar(Point2D<int>(pos.x + width - 13, pos.y + 1), 12,height- 13,20),
-		horizontalDragBar(Point2D<int>(pos.x + 1, pos.y + height - 13), width- 13, 12, 20, false)
+		renderPos(0, 0), renderW(renderW), renderH(renderH),
+		verticalDragBar(Point2D<int>(pos.x + width - 13, pos.y + 1), 12, height - 13, 20),
+		horizontalDragBar(Point2D<int>(pos.x + 1, pos.y + height - 13), width - 13, 12, 20, false)
 	{
 		texture = SDL_CreateTexture(window.getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, renderW, renderH);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);

@@ -24,6 +24,10 @@ public:
 		return color;
 	}
 
+	Uint32 toUint32() const {
+		return (b << 24) + (g << 16) + (r << 8) + (a);
+	}
+
 	// correspondance entre deux couleurs
 	bool operator == (const Color& col) { return (col.r == r && col.g == g && col.b == b && col.a == a); }
 
