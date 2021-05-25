@@ -137,8 +137,8 @@ void main_addPlanet(Starstruct* S) {
 		S->manager->getShape(S->name).setPos(Vertex(position_x / normalize, position_y / normalize, 0));
 
 		S->TN[S->Ssys->getPlanets().size() - 1]->update(S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getName(), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-		S->TM[S->Ssys->getPlanets().size() - 1]->update(std::to_string(S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
-		S->TR[S->Ssys->getPlanets().size() - 1]->update(std::to_string(S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
+		S->TM[S->Ssys->getPlanets().size() - 1]->update(doubleToString(S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getMass()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
+		S->TR[S->Ssys->getPlanets().size() - 1]->update(doubleToString(S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getRadius()), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		S->TPX[S->Ssys->getPlanets().size() - 1]->update(std::to_string((int)S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getPosition().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		S->TPY[S->Ssys->getPlanets().size() - 1]->update(std::to_string((int)S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		S->TSX[S->Ssys->getPlanets().size() - 1]->update(std::to_string((int)S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
@@ -805,7 +805,7 @@ int main(int argc, char* argv[]) {
 	b_topleftx = 1100, b_tly = 445;
 
 	//6. ScrollZone
-	ScrollZone zone(inputEvent, window, Point2D<int>(750, 230), 430, 200, 520, 410);
+	ScrollZone zone(inputEvent, window, Point2D<int>(750, 230), 430, 200, 900, 410);
 
 	Point2D<int>pos(8, 30);
 
@@ -814,15 +814,15 @@ int main(int argc, char* argv[]) {
 	std::string curRadius = "";
 	std::string curpos_x = "";
 	std::string curpos_y = "";
-	TextBox star_1_name(curName, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 75, 30, window.getRenderer());
-	pos.x += 74;
-	TextBox star_1_mass(curMass, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
-	pos.x += 77;
-	TextBox star_1_radius(curRadius, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
-	pos.x += 73;
-	TextBox star_1_pos_x(curpos_x, PATH + std::string("fonts/calibri.ttf"), 17, black, pos, 40, 30, window.getRenderer());
-	pos.x += 35;
-	TextBox star_1_pos_y(curpos_y, PATH + std::string("fonts/calibri.ttf"), 17, black, pos, 40, 30, window.getRenderer());
+	TextBox star_1_name(curName, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 120, 30, window.getRenderer());
+	pos.x += 140;
+	TextBox star_1_mass(curMass, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 100, 30, window.getRenderer());
+	pos.x += 141;
+	TextBox star_1_radius(curRadius, PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 100, 30, window.getRenderer());
+	pos.x += 140;
+	TextBox star_1_pos_x(curpos_x, PATH + std::string("fonts/calibri.ttf"), 17, black, pos, 60, 30, window.getRenderer());
+	pos.x += 70;
+	TextBox star_1_pos_y(curpos_y, PATH + std::string("fonts/calibri.ttf"), 17, black, pos, 60, 30, window.getRenderer());
 	zone.linkTextBox(&star_1_name);
 	zone.linkTextBox(&star_1_mass);
 	zone.linkTextBox(&star_1_radius);
@@ -840,19 +840,19 @@ int main(int argc, char* argv[]) {
 	TextBox* planet_speedy[15];
 
 	for (int i = 0; i < 15; i++) {
-		planet_name[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 75, 30, window.getRenderer());
-		pos.x += 74;
-		planet_mass[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
-		pos.x += 76;
-		planet_radius[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
-		pos.x += 75;
-		planet_posx[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
-		pos.x += 35;
-		planet_posy[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
-		pos.x += 38;
-		planet_speedx[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
-		pos.x += 75;
-		planet_speedy[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 70, 30, window.getRenderer());
+		planet_name[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 120, 30, window.getRenderer());
+		pos.x += 140;
+		planet_mass[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 100, 30, window.getRenderer());
+		pos.x += 141;
+		planet_radius[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 100, 30, window.getRenderer());
+		pos.x += 140;
+		planet_posx[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 60, 30, window.getRenderer());
+		pos.x += 70;
+		planet_posy[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 60, 30, window.getRenderer());
+		pos.x += 68;
+		planet_speedx[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 100, 30, window.getRenderer());
+		pos.x += 140;
+		planet_speedy[i] = new TextBox("", PATH + std::string("fonts/calibri.ttf"), 18, black, pos, 100, 30, window.getRenderer());
 		pos.x = 10;
 		pos.y += 23;
 		zone.linkTextBox(planet_name[i]);
@@ -866,25 +866,25 @@ int main(int argc, char* argv[]) {
 	//INITIALISATION STRUCT
 	Starstruct S = { &Ssys,&manager,std::string(),i_name.getText(), i_mass.getText(), i_radius.getText(), i_posx.getText(), i_posy.getText(), i_speed_x.getText(), i_speed_y.getText(), i_simuspeed.getText(),false,&zone,&window, planet_name, planet_mass, planet_radius, planet_posx, planet_posy, planet_speedx, planet_speedy, &t_textinfo };
 
-	TextBox zone_name("NAME", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(20, 10), 80, 30, window.getRenderer());
+	TextBox zone_name("NAME", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(50, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(&zone_name);
 
-	TextBox zone_mass("MASS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(95, 10), 80, 30, window.getRenderer());
+	TextBox zone_mass("MASS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(195, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(&zone_mass);
 
-	TextBox zone_radius("RADIUS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(165, 10), 80, 30, window.getRenderer());
+	TextBox zone_radius("RADIUS", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(330, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(&zone_radius);
 
-	TextBox zone_position("POSITION", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(232, 10), 80, 30, window.getRenderer());
+	TextBox zone_position("POSITION", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(457, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(&zone_position);
 
-	TextBox zone_speed_x("SPEEDX", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(315, 10), 80, 30, window.getRenderer());
+	TextBox zone_speed_x("SPEEDX", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(600, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(&zone_speed_x);
 
-	TextBox zone_speed_y("SPEEDY", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(390, 10), 80, 30, window.getRenderer());
+	TextBox zone_speed_y("SPEEDY", PATH + std::string("fonts/calibri.ttf"), 18, black, Point2D<int>(745, 10), 80, 30, window.getRenderer());
 	zone.linkTextBox(&zone_speed_y);
 
-	Point2D<int> pos_zoneb(465, 30);
+	Point2D<int> pos_zoneb(860, 30);
 	TextBox zone_b_delete("X", PATH + std::string("fonts/calibri.ttf"), 20, black, pos_zoneb, 20, 20, window.getRenderer());
 	zone.buttonManager.addRectButton<Starstruct*>("b_del0", nullptr, red, black, &zone_b_delete, pos_zoneb, 20, 20);
 	zone.buttonManager.getButton<Starstruct*>("b_del0").setAction(main_deleteStar, &S);
@@ -1084,8 +1084,8 @@ int main(int argc, char* argv[]) {
 
 		if (S.Ssys->getStar()) {
 			curName = S.Ssys->getStar()->getName();
-			curMass = std::to_string(S.Ssys->getStar()->getMass());
-			curRadius = std::to_string(S.Ssys->getStar()->getRadius());
+			curMass = doubleToString(S.Ssys->getStar()->getMass());
+			curRadius = doubleToString(S.Ssys->getStar()->getRadius());
 			curpos_x = std::to_string((int)S.Ssys->getStar()->getPosition().x);
 			curpos_y = std::to_string((int)S.Ssys->getStar()->getPosition().y);
 			star_1_name.update(curName, window.getRenderer());
@@ -1104,7 +1104,7 @@ int main(int argc, char* argv[]) {
 		}
 
 		zone.startDrawInside(window.getRenderer());
-		Draw::DrawTable(Point2D<int>(5, 5), 450, 400, 17, 6, white, black, window.getRenderer());
+		Draw::DrawTable(Point2D<int>(5, 5), 840, 400, 17, 6, white, black, window.getRenderer());
 		zone.stopDrawInside(window.getRenderer());
 
 		zone.update();
