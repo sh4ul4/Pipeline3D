@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
 	TextBox camcontroltb("camera-control : drag&drop / continuous", "../fonts/calibri.ttf", 12, black, Point2D<int>(800, 50), window.getRenderer());
 	bm.addCheckBox<Camera*>("dragndrop", dark_gray, gray, Point2D<int>(788, 50), 10);
-	bm.getButton<Camera*>("dragndrop").setAction([](Camera* cam) {cam->swapControl(); }, &cam1);
+	bm.getButton<Camera*>("dragndrop").setAction([](Camera* cam) {if (cam->locked)cam->unlock(); else cam->lock(); }, &cam1);
 
 	TextBox lightxtb("light-source x : 0", "../fonts/calibri.ttf", 12, black, Point2D<int>(950, 70), window.getRenderer());
 	DragBar lightX(Point2D<int>(788, 70), 160, 11, 20, false);
