@@ -94,6 +94,7 @@ void main_addStar(Starstruct* S) {
 		Star* star = new Star(radius, mass, Point2D<double>(0, 0), S->name);
 		S->Ssys->addStar(star);
 		S->manager->imprtShapeObj(std::string("OBJ/soleil/"), "soleil.obj", S->name, 20);
+		S->T_info->update("Etoile correctement ajoutee !", S->w->getRenderer());
 	}
 	else {
 		S->T_info->update("Valeurs non initialisees !", S->w->getRenderer());
@@ -143,6 +144,7 @@ void main_addPlanet(Starstruct* S) {
 		S->TPY[S->Ssys->getPlanets().size() - 1]->update(std::to_string((int)S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getPosition().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		S->TSX[S->Ssys->getPlanets().size() - 1]->update(std::to_string((int)S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getSpeed().x), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
 		S->TSY[S->Ssys->getPlanets().size() - 1]->update(std::to_string((int)S->Ssys->getPlanets().at(S->Ssys->getPlanets().size() - 1)->getSpeed().y), PATH + std::string("fonts/calibri.ttf"), 18, black, S->w->getRenderer());
+		S->T_info->update("Planete correctement ajoutee !", S->w->getRenderer());
 		return;
 	}
 	else {
