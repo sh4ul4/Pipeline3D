@@ -386,15 +386,21 @@ private:
         Vertex bd(w1 / 2 + 150, 0, w3 / 2 + 150);
 
         // sol
-        Bitmap::newBitmap("basicFloor", "textures/sol.jpg");
+        Bitmap::newBitmap("basicFloor", "HM-Res/quadrillage.jpg");
         Bitmap::newBitmap("parquetFloor", "HM-Res/parquetFloor.jpg");
         Bitmap::newBitmap("moquetteFloor", "HM-Res/moquetteFloor.png");
         Bitmap::newBitmap("grassFloor", "HM-Res/grass2.jpg");
 
         Bitmap::newBitmap("wall", "HM-Res/WALL.jpg");
         Bitmap::newBitmap("basic-wall", "HM-Res/basic-wall.png");
+        Bitmap::newBitmap("basic-wall-2", "HM-Res/basic-wall-2.png");
+        Bitmap::newBitmap("basic-wall-3", "HM-Res/basic-wall-3.png");
         Bitmap::newBitmap("windowed-wall", "HM-Res/windowed-wall.png");
+        Bitmap::newBitmap("windowed-wall-2", "HM-Res/windowed-wall-2.png");
+        Bitmap::newBitmap("windowed-wall-3", "HM-Res/windowed-wall-3.png");
         Bitmap::newBitmap("doored-wall", "HM-Res/doored-wall.png");
+        Bitmap::newBitmap("doored-wall-2", "HM-Res/doored-wall-2.png");
+        Bitmap::newBitmap("doored-wall-3", "HM-Res/doored-wall-3.png");
         Bitmap::newBitmap("baie-wall", "HM-Res/baie-wall.png");
         Bitmap::newBitmap("exterior-wall", "HM-Res/exterior-wall.png");
         Bitmap::newBitmap("blue-floor", "HM-Res/blue-floor.jpg");
@@ -402,8 +408,8 @@ private:
         efp1 = {manager, "basicFloor", "basic-wall", "basic-wall", "basic-wall", "basic-wall"};          // Tout blanc
         efp2 = {manager, "parquetFloor", "basic-wall", "doored-wall", "basic-wall", "windowed-wall"};    // Porte et fenetre
         efp3 = {manager, "moquetteFloor", "doored-wall", "windowed-wall", "windowed-wall", "baie-wall"}; // Porte, fenetre et baie
-        efp4 = {manager, "grassFloor", "blue-floor", "doored-wall", "blue-floor", "blue-floor"};
-        efp5 = {manager, "blue-floor"};
+        efp4 = {manager, "grassFloor", "basic-wall-2", "doored-wall-2", "basic-wall-2", "windowed-wall-2"};
+        efp5 = {manager, "blue-floor", "basic-wall-3", "doored-wall-3", "basic-wall-3", "windowed-wall-3"};
 
         // manager->addRectangle("max_floor", amax, bmax, cmax, dmax, 4, white, false, Bitmap::getBitmap("grassFloor"));
         manager->addRectangle("floor", a, b, c, d, 4, white, false, Bitmap::getBitmap("basicFloor"));
@@ -546,7 +552,7 @@ private:
                                                   Point2D<int>(b_topleftx, b_tly), 260, 20, window.getRenderer()));
 
         b_tly += 30; //365
-        bmDefault.addCheckBox<editFloorPack *>("c_basicFloor", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("textures/sol.jpg", window.getRenderer()), new Texture2D("textures/sol.jpg", window.getRenderer()));
+        bmDefault.addCheckBox<editFloorPack *>("c_basicFloor", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/quadr-preview.png", window.getRenderer()), new Texture2D("HM-Res/quadr-preview.png", window.getRenderer()));
         bmDefault.addCheckBox<editFloorPack *>("c_parquetFloor", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/parquetFloor.jpg", window.getRenderer()), new Texture2D("HM-Res/parquetFloor.jpg", window.getRenderer()));
         bmDefault.addCheckBox<editFloorPack *>("c_moquetteFloor", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/moquetteFloor.png", window.getRenderer()), new Texture2D("HM-Res/moquetteFloor.png", window.getRenderer()));
         bmDefault.addCheckBox<editFloorPack *>("c_grassFloor", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/grass2.jpg", window.getRenderer()), new Texture2D("HM-Res/grass2.jpg", window.getRenderer()));
@@ -569,11 +575,13 @@ private:
         bmDefault.addCheckBox<editFloorPack *>("c_basicWall", light_gray, black, Point2D(985, b_tly), 40, new Texture2D("HM-Res/basic-wall.png", window.getRenderer()), new Texture2D("HM-Res/basic-wall.png", window.getRenderer()));
         bmDefault.addCheckBox<editFloorPack *>("c_parquetWall", light_gray, black, Point2D(1035, b_tly), 40, new Texture2D("HM-Res/fenetre.png", window.getRenderer()), new Texture2D("HM-Res/fenetre.png", window.getRenderer()));
         bmDefault.addCheckBox<editFloorPack *>("c_moquetteWall", light_gray, black, Point2D(1085, b_tly), 40, new Texture2D("HM-Res/baie.jpg", window.getRenderer()), new Texture2D("HM-Res/baie.jpg", window.getRenderer()));
-        bmDefault.addCheckBox<editFloorPack *>("c_blueWall", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/blue-floor.jpg", window.getRenderer()), new Texture2D("HM-Res/blue-floor.jpg", window.getRenderer()));
+        bmDefault.addCheckBox<editFloorPack *>("c_secondWall", light_gray, black, Point2D(1135, b_tly), 40, new Texture2D("HM-Res/basic-wall-2.png", window.getRenderer()), new Texture2D("HM-Res/basic-wall-2.png", window.getRenderer()));
+        bmDefault.addCheckBox<editFloorPack *>("c_blueWall", light_gray, black, Point2D(1185, b_tly), 40, new Texture2D("HM-Res/basic-wall-3.png", window.getRenderer()), new Texture2D("HM-Res/basic-wall-3.png", window.getRenderer()));
         bmDefault.getButton<editFloorPack *>("c_basicWall").setAction(editWalls, &efp1);
         bmDefault.getButton<editFloorPack *>("c_parquetWall").setAction(editWalls, &efp2);
         bmDefault.getButton<editFloorPack *>("c_moquetteWall").setAction(editWalls, &efp3);
-        bmDefault.getButton<editFloorPack *>("c_blueWall").setAction(editWalls, &efp4);
+        bmDefault.getButton<editFloorPack *>("c_secondWall").setAction(editWalls, &efp4);
+        bmDefault.getButton<editFloorPack *>("c_blueWall").setAction(editWalls, &efp5);
     }
 
     void initInsertionSpace(ShapeManager *manager, Window &window)  {

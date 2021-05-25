@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
 	/** ==============================
 	 *  Initialisation caméras
 	 * ==============================*/
-	TextBox current_cam("Vue du haut", "fonts/calibri.ttf", 20, red, Point2D<int>(35, 35), 400, 20, window.getRenderer());
+	TextBox current_cam("Vue du haut : W pour afficher / cacher les murs", "fonts/Calibri Bold.ttf", 20, maroon, Point2D<int>(35, 35), 500, 20, window.getRenderer());
 	// Top: -90° / 230° (?) / y -= 5 pour zoomer
 	Camera topCam("topCam", {manager.getShape("floor").center.x, manager.getShape("floor").center.y + 150, manager.getShape("floor").center.z}, 60, -1.5708, 4.71239);
 	Camera freeCam("freeCam", { 120,300,65 }, 60, 0, 4);
@@ -221,7 +221,7 @@ int main(int argc, char* argv[]) {
 	TextBox sceneTitle(hm.getSceneName(), "fonts/calibri.ttf", 24, black, Point2D<int>(30, 5), 930, 30, window.getRenderer());
 
 	// Liaison caméras / boutons de changement de vues
-	camPack p0 = { &topCam, "Vue du haut", &current_cam, &window, &manager, "top" };
+	camPack p0 = { &topCam, "Vue du haut : W pour afficher / cacher les murs", &current_cam, &window, &manager, "top" };
 	camPack p1 = { &faceCam, "Vue de face", &current_cam, &window, &manager, "frontWall" };
 	camPack p2 = { &gaucheCam, "Vue de gauche", &current_cam, &window, &manager, "leftWall" };
 	camPack p3 = { &droitCam, "Vue de droite", &current_cam, &window, &manager, "rightWall" };
@@ -240,6 +240,7 @@ int main(int argc, char* argv[]) {
 	Texture2D LOGO("HM-Res/3DHomeProject.png", window.getRenderer());
 
 	r.updateTriangles(manager);
+	bool wbool = true;
 	while (!keyboard.q.down) {
 		inputEvent.update();
 		r.updateTriangles(manager);
@@ -332,6 +333,11 @@ int main(int argc, char* argv[]) {
 					switchCam(&p3);
 				else if (keyboard.five.down)
 					switchCam(&p4);
+				else if (keyboard.w.down && Camera::getCurrent().getCamId() == "topCam")  {
+					editWallsVisibility(manager, wbool);
+					wbool = 1 - wbool;
+					manager.pushShapesEditing();
+				}
 				// else if (keyboard.F11.down) {
 				// 	window.ToggleWindow(window.getWidth(), window.getHeight());
 				// }
