@@ -1067,25 +1067,6 @@ int main(int argc, char* argv[]) {
 		t_simuspeed.render(window.getRenderer(), 0, 0);
 		t_globset.render(window.getRenderer(), 0, 0);
 		t_loadsave.render(window.getRenderer(), 0, 0);
-		
-
-		if (S.start_stop) {
-			if (Ssys.checkCollision()) {
-				main_stopSimu(&S);
-				S.T_info->update("Collision detectee", S.w->getRenderer());
-			}
-			std::vector<Planet*> Planets = Ssys.getPlanets();
-			for (size_t i = 0; i < Planets.size(); i++) {
-				Ssys.simulation();
-				Planet* test = Planets[i];
-				Point2D<double> Position = test->getPosition();
-				Position.x = Position.x / normalize;
-				Position.y = Position.y / normalize;
-				manager.getShape(test->getName()).setPos(Vertex(Position.x, Position.y, 0));
-			}
-		}
-
-		r.updateTriangles(manager);
 
 		//Mise a jour des valeurs
 		S.mass = i_mass.getText();
@@ -1131,6 +1112,24 @@ int main(int argc, char* argv[]) {
 
 		zone.update();
 		zone.render(window);
+
+		if (S.start_stop) {
+			if (Ssys.checkCollision()) {
+				main_stopSimu(&S);
+				S.T_info->update("Collision detectee", S.w->getRenderer());
+			}
+			std::vector<Planet*> Planets = Ssys.getPlanets();
+			for (size_t i = 0; i < Planets.size(); i++) {
+				Ssys.simulation();
+				Planet* test = Planets[i];
+				Point2D<double> Position = test->getPosition();
+				Position.x = Position.x / normalize;
+				Position.y = Position.y / normalize;
+				manager.getShape(test->getName()).setPos(Vertex(Position.x, Position.y, 0));
+			}
+		}
+
+		r.updateTriangles(manager);
 
 		if (keyboard.l.down) {
 			if (Camera::getCurrent().locked)Camera::getCurrent().unlock();
