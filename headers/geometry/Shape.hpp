@@ -174,8 +174,8 @@ public:
 
 	void setPos(const Vertex& pos) {
 		const Vector movement = pos - center;
-		center = pos;
 		move(movement);
+		center = pos;
 	}
 
 	void rescale(float scale) {
