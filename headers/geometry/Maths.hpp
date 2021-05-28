@@ -1,5 +1,8 @@
 #pragma once
-
+/**
+ * @file Maths.hpp
+ * @brief Module mathématiques : Région déclarative contenant l'ensemble des calculs nécessaires dans la pipeline 
+ */
 namespace Maths{
 
 	inline Uint8 clamp0_255(int n) {
@@ -31,7 +34,8 @@ namespace Maths{
 		return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
 	}
 
-    /* @brief Renvoie le vecteur normale au plan du triangle
+    /**
+	 * @brief Renvoie le vecteur normale au plan du triangle
      * @param t un triangle
     */
 	Vector getNormalVector(const Vertex& pl1, const Vertex& pl2, const Vertex& pl3) {

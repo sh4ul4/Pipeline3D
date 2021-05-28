@@ -1,4 +1,10 @@
 #pragma once
+
+/**
+ * @file Mouse.hpp
+ * @brief Interaction Utilisateur : Gère les mouvements ainsi que les clics de la souris.
+ */
+
 class Mouse {
 public:
 	int x = 0; // Mouse-X-Position

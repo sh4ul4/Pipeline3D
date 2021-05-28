@@ -1,4 +1,10 @@
 #pragma once
+
+/**
+ * @file Keyboard.hpp
+ * @brief Interaction Utilisateur : Gère les entrées de touches du clavier.
+ */
+
 class Key {
 public:
 	bool up = false;

@@ -1,6 +1,13 @@
 #pragma once
 #include <iomanip>
 #include <sstream>
+
+/**
+ * @file ShapeManager.hpp
+ * @brief Le Manager de formes est la classe principale du sous-moduel de gestion des entités géométriques, il contient l'ensemble
+ * des formes actives et en traitement continu sur la pipeline. Ce fichier contient également les méthodes d'import/export d'obj et de fichiers.
+ */
+
 class ShapeManager
 {
 private:
@@ -521,17 +528,17 @@ public:
 	}
 
 	// pas terminé
-	void exprt(const std::string& name)const {
-		std::ofstream out(name + ".flanf");
+	void exprt(const std::string& name) {
+		std::ofstream out(FIND_FILE(std::string("FLANF/")) + name + ".flanf");
 		for (size_t s = 0; s < shapes.size(); s++) {
 			out << "shape " + shapes[s]->name + "\n";
 			for (size_t t = 0; t < shapes[s]->triangles.size(); t++) {
 				out << "tr ";
-				out << (Uint8)shapes[s]->triangles[t].color.r << " "
-					<< (Uint8)shapes[s]->triangles[t].color.g << " "
-					<< (Uint8)shapes[s]->triangles[t].color.b << " "
-					<< (Uint8)shapes[s]->triangles[t].color.a << " ";
-				out << (bool)shapes[s]->triangles[t].fill << " ";
+				out << std::to_string(shapes[s]->triangles[t].color.r) << " "
+					<< std::to_string(shapes[s]->triangles[t].color.g) << " "
+					<< std::to_string(shapes[s]->triangles[t].color.b) << " "
+					<< std::to_string(shapes[s]->triangles[t].color.a) << " ";
+				out << std::to_string(shapes[s]->triangles[t].fill) << " ";
 				if (shapes[s]->triangles[t].bmp == nullptr) {
 					out << "null null ";
 				}
@@ -549,14 +556,32 @@ public:
 					<< shapes[s]->triangles[t].c.x << " "
 					<< shapes[s]->triangles[t].c.y << " "
 					<< shapes[s]->triangles[t].c.z << " endtr\n";
+
+				/*out << "mtl\n";
+
+					out << std::fixed << std::setprecision(8);
+					out << "f " << std::to_string((t + 1) * 3 - 2) << "/" << std::to_string((t + 1) * 3 - 2) << "/" << std::to_string(t + 1) << " ";
+					out << std::to_string((t + 1) * 3 - 1) << "/" << std::to_string((t + 1) * 3 - 1) << "/" << std::to_string(t + 1) << " ";
+					out << std::to_string((t + 1) * 3) << "/" << std::to_string((t + 1) * 3) << "/" << std::to_string(t + 1) << "\n";
+				if (shapes[s]->triangles[t].bmp != nullptr) {
+				
+		            out << "\n\tKd 0 0 0 " <<"\n\tmap_Ka " << shapes[s]->triangles[t].bmp->name.c_str() << ".png\n\tmap_Kd " << shapes[s]->triangles[t].bmp->name.c_str() << ".png\n";
+		            IMG_SavePNG(shapes[s]->triangles[t].bmp->surface, std::string(FIND_FILE(std::string("OBJ/")) + shapes[s]->triangles[t].bmp->name + ".png").c_str());
+				}
+
+				out << "endmtl\n";*/
 			}
+
+
+
+
 			out << "endshape\n";
 		}
 	}
 
 	// pas terminé
 	void imprt(const std::string& name) {
-		std::ifstream in(name + ".flanf");
+		std::ifstream in("FLANF/"+name + ".flanf");
 		std::string nxt;
 		while (in >> nxt) {
 			//std::cout << nxt << std::endl;
@@ -592,6 +617,9 @@ public:
 						trs.push_back(Triangle(a, b, c, n, color, fill));
 					}
 					else if (!tr.compare("endtr")) continue;
+					/*else if(!tr.compare("mtl")){
+
+					}*/
 					else if (!tr.compare("endshape")) break;
 				}
 				std::cout << name << std::endl;

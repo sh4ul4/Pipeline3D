@@ -1,4 +1,9 @@
 #pragma once
+
+/** 
+ * @file Color.hpp
+ * @brief La classe Color permet de faciliter l'utilisation de couleurs RGBA 32 bits.
+ */
 /** @brief class Color
  * La classe Color permet de faciliter l'utilisation de couleurs RGBA 32 bits
  */
@@ -22,6 +27,10 @@ public:
 		color.g = g;
 		color.b = b;
 		return color;
+	}
+
+	Uint32 toUint32() const {
+		return (b << 24) + (g << 16) + (r << 8) + (a);
 	}
 
 	// correspondance entre deux couleurs

@@ -62,7 +62,6 @@ void editWallsVisibility(ShapeManager &manager, bool visibility)
         manager.getShape(wall).visible = visibility;
         manager.getShape(wall + 'E').visible = visibility;
         manager.getShape(wall + 'T').visible = visibility;
-        manager.getShape(wall + 'B').visible = visibility;
         manager.getShape(wall + 'L').visible = visibility;
         manager.getShape(wall + 'R').visible = visibility;
     }
@@ -82,7 +81,6 @@ void switchCam(camPack *p)
         (*p->manager).getShape(p->referencedWall).visible = false;
         (*p->manager).getShape(p->referencedWall + 'E').visible = false;
         (*p->manager).getShape(p->referencedWall + 'T').visible = false;
-        (*p->manager).getShape(p->referencedWall + 'B').visible = false;
         (*p->manager).getShape(p->referencedWall + 'L').visible = false;
         (*p->manager).getShape(p->referencedWall + 'R').visible = false;
     }
@@ -348,7 +346,6 @@ private:
             refManager.removeShape(wall);
             refManager.removeShape(wall + 'E');
             refManager.removeShape(wall + 'T');
-            refManager.removeShape(wall + 'B');
             refManager.removeShape(wall + 'L');
             refManager.removeShape(wall + 'R');
         }
@@ -427,31 +424,27 @@ private:
         // Division à mettre en fonction de la surface a b c d coOrdonnées du soL
         manager->addRectangle("frontWall", c1, d1, c, d, 4, white, false, Bitmap::getBitmap("basic-wall"));
         manager->addRectangle("frontWallE", Vertex(c1.x + 3, c1.y, c1.z), Vertex(d1.x + 3, d1.y, d1.z), Vertex(c.x + 3, c.y, c.z), Vertex(d.x + 3, d.y, d.z), 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("frontWallT", Vertex(c1.x + 3, c1.y, c1.z), Vertex(d1.x + 3, d1.y, d1.z), c1, d1, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("frontWallB", Vertex(c.x + 3, c.y, c.z), Vertex(d.x + 3, d.y, d.z), c, d, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("frontWallL", Vertex(c1.x + 3, c1.y, c1.z), c1, Vertex(c.x + 3, c.y, c.z), c, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("frontWallR", Vertex(d1.x + 3, d1.y, d1.z), d1, Vertex(d.x + 3, d.y, d.z), d, 4, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("frontWallT", Vertex(c1.x + 3, c1.y, c1.z), Vertex(d1.x + 3, d1.y, d1.z), c1, d1, 1, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("frontWallL", Vertex(c1.x + 3, c1.y, c1.z), c1, Vertex(c.x + 3, c.y, c.z), c, 1, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("frontWallR", Vertex(d1.x + 3, d1.y, d1.z), d1, Vertex(d.x + 3, d.y, d.z), d, 1, white, false, Bitmap::getBitmap("exterior-wall"));
 
         manager->addRectangle("backWall", a1, b1, a, b, 4, white, false, Bitmap::getBitmap("windowed-wall"));
         manager->addRectangle("backWallE", Vertex(a1.x - 3, a1.y, a1.z), Vertex(b1.x - 3, b1.y, b1.z), Vertex(a.x - 3, a.y, a.z), Vertex(b.x - 3, b.y, b.z), 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("backWallT", Vertex(a1.x - 3, a1.y, a1.z), Vertex(b1.x - 3, b1.y, b1.z), a1, b1, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("backWallB", Vertex(a.x - 3, a.y, a.z), Vertex(b.x - 3, b.y, b.z), a, b, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("backWallL", Vertex(a1.x - 3, a1.y, a1.z), a1, Vertex(a.x - 3, a.y, a.z), a, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("backWallR", Vertex(b1.x - 3, b1.y, b1.z), b1, Vertex(b.x - 3, b.y, b.z), b, 4, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("backWallT", Vertex(a1.x - 3, a1.y, a1.z), Vertex(b1.x - 3, b1.y, b1.z), a1, b1, 1, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("backWallL", Vertex(a1.x - 3, a1.y, a1.z), a1, Vertex(a.x - 3, a.y, a.z), a, 1, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("backWallR", Vertex(b1.x - 3, b1.y, b1.z), b1, Vertex(b.x - 3, b.y, b.z), b, 1, white, false, Bitmap::getBitmap("exterior-wall"));
 
         manager->addRectangle("leftWall", a1, c1, a, c, 4, white, false, Bitmap::getBitmap("doored-wall"));
         manager->addRectangle("leftWallE", Vertex(a1.x, a1.y, a1.z - 3), Vertex(c1.x, c1.y, c1.z - 3), Vertex(a.x, a.y, a.z - 3), Vertex(c.x, c.y, c.z - 3), 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("leftWallT", Vertex(a1.x, a1.y, a1.z - 3), Vertex(c1.x, c1.y, c1.z - 3), a1, c1, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("leftWallB", Vertex(a.x, a.y, a.z - 3), Vertex(c.x, c.y, c.z - 3), a, c, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("leftWallL", Vertex(a1.x, a1.y, a1.z - 3), a1, Vertex(a.x, a.y, a.z - 3), a, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("leftWallR", Vertex(c1.x, c1.y, c1.z - 3), c1, Vertex(c.x, c.y, c.z - 3), c, 4, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("leftWallT", Vertex(a1.x, a1.y, a1.z - 3), Vertex(c1.x, c1.y, c1.z - 3), a1, c1, 1, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("leftWallL", Vertex(a1.x, a1.y, a1.z - 3), a1, Vertex(a.x, a.y, a.z - 3), a, 1, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("leftWallR", Vertex(c1.x, c1.y, c1.z - 3), c1, Vertex(c.x, c.y, c.z - 3), c, 1, white, false, Bitmap::getBitmap("exterior-wall"));
 
         manager->addRectangle("rightWall", b1, d1, b, d, 4, white, false, Bitmap::getBitmap("basic-wall"));
         manager->addRectangle("rightWallE", Vertex(b1.x, b1.y, b1.z + 3), Vertex(d1.x, d1.y, d1.z + 3), Vertex(b.x, b.y, b.z + 3), Vertex(d.x, d.y, d.z + 3), 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("rightWallT", Vertex(d1.x, d1.y, d1.z + 3), Vertex(b1.x, b1.y, b1.z + 3), d1, b1, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("rightWallB", Vertex(d.x, d.y, d.z + 3), Vertex(b.x, b.y, b.z + 3), d, b, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("rightWallL", Vertex(d1.x, d1.y, d1.z + 3), d1, Vertex(d.x, d.y, d.z + 3), d, 4, white, false, Bitmap::getBitmap("exterior-wall"));
-        manager->addRectangle("rightWallR", Vertex(b1.x, b1.y, b1.z + 3), b1, Vertex(b.x, b.y, b.z + 3), b, 4, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("rightWallT", Vertex(d1.x, d1.y, d1.z + 3), Vertex(b1.x, b1.y, b1.z + 3), d1, b1, 1, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("rightWallL", Vertex(d1.x, d1.y, d1.z + 3), d1, Vertex(d.x, d.y, d.z + 3), d, 1, white, false, Bitmap::getBitmap("exterior-wall"));
+        manager->addRectangle("rightWallR", Vertex(b1.x, b1.y, b1.z + 3), b1, Vertex(b.x, b.y, b.z + 3), b, 1, white, false, Bitmap::getBitmap("exterior-wall"));
 
         std::cout << "Scène créée" << std::endl;
     }

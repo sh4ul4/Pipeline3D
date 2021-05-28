@@ -1,4 +1,10 @@
 #pragma once
+
+/** 
+ * @file Triangle.hpp
+ * @brief La classe Triangle permet d'encapsuler les données d'un triangle, à la fois sous sa forme 3D
+ * dans l'environnement et sous sa forme 2D dans la frame.
+ */ 
 /**
  * @class Triangle permet d'encapsuler les données d'un triangle, à la fois sous sa forme 3D
  * dans l'environnement et sous sa forme 2D dans la frame.
@@ -114,7 +120,7 @@ public:
 	}
 
 	// dessiner le triangle dans la frame
-	void render(const Window& window, GlobalTexture& globalTexture, const Point2D<int>& center)  {
+	void render(const Window& window, GlobalTexture& globalTexture, const Point2D<int>& center, bool showDepth = false, bool showMesh = false)  {
 		if (!visible) return;
 		if (abs(aScreen.x) > 10000 || abs(aScreen.y) > 10000 ||
 			abs(bScreen.x) > 10000 || abs(bScreen.y) > 10000 ||
@@ -122,14 +128,18 @@ public:
 			//clip here
 			return;
 		}
+		Camera::getCurrent().lightSource.normalize();
 		float light = normalVec.dot(Camera::getCurrent().lightSource);
 		light *= Camera::getCurrent().lightIntensity;
 		light = Maths::clamp(light, 0.0f, 1.0f);
-		if (fill) {
+		if (showDepth && bmp != nullptr) {
+			drawDepth(*bmp, globalTexture, light, Camera::getCurrent().lightColor);
+		}
+		else if (fill && !showMesh) {
 			if (bmp != nullptr) draw(*bmp, globalTexture, light, Camera::getCurrent().lightColor);
 			else draw(color, globalTexture, light, Camera::getCurrent().lightColor);
 		}
-		else if (contour) {
+		else if (contour || showMesh) {
 			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, aScreen.z, Point2D<int>{ bScreen.x,bScreen.y }, bScreen.z, color);
 			globalTexture.drawLine(globalTexture, Point2D<int>{ bScreen.x,bScreen.y }, bScreen.z, Point2D<int>{ cScreen.x,cScreen.y }, cScreen.z, color);
 			globalTexture.drawLine(globalTexture, Point2D<int>{ aScreen.x,aScreen.y }, aScreen.z, Point2D<int>{ cScreen.x,cScreen.y }, cScreen.z, color);
@@ -170,6 +180,18 @@ private:
 			Point2D<int>(aScreen.x, aScreen.y),
 			Point2D<int>(bScreen.x, bScreen.y),
 			Point2D<int>(cScreen.x, cScreen.y),
+			aScreen.z, bScreen.z, cScreen.z,
+			dst, lightIntensity, lightColor);
+	}
+
+	void drawDepth(const Bitmap& src, GlobalTexture& dst, const float& lightIntensity, const Color& lightColor) const {
+		TextureManager::rasterizeDepth(src,
+			Point2D<int>(aScreen.x, aScreen.y),
+			Point2D<int>(bScreen.x, bScreen.y),
+			Point2D<int>(cScreen.x, cScreen.y),
+			Point2D<int>(bmp->surface->w * bmpA.x, std::abs(bmp->surface->h * bmpA.y - bmp->surface->h)),
+			Point2D<int>(bmp->surface->w * bmpB.x, std::abs(bmp->surface->h * bmpB.y - bmp->surface->h)),
+			Point2D<int>(bmp->surface->w * bmpC.x, std::abs(bmp->surface->h * bmpC.y - bmp->surface->h)),
 			aScreen.z, bScreen.z, cScreen.z,
 			dst, lightIntensity, lightColor);
 	}

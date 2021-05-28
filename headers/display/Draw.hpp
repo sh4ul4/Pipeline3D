@@ -1,5 +1,10 @@
 #pragma once
 
+/** 
+ * @file Draw.hpp
+ * @brief Contient la classe Draw et tous les appels SDL2 permettant le dessin 2D (point, ligne, rectangle, etc.)
+ */
+
 class Draw {
 
 	/**

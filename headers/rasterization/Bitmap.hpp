@@ -1,7 +1,8 @@
 #pragma once
 
 /**
- * @file Module Texturing
+ * @file Bitmap.hpp
+ * @brief La classe Bitmap permet de contenir les données d'une bitmap graphique et de simplifier sa création.
  */
 
 /** @brief class Bitmap

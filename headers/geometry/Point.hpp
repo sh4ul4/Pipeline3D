@@ -1,7 +1,7 @@
 #pragma once
 /**
- * @file Issu du module de Géométrie, sous-module (?) 
- * Regroupe les classes Point2D et Point 3D
+ * @file Point.hpp
+ * @brief Module de Géométrie, regroupe les classes Point2D et Point 3D
  */
 
 /*===========================================================================================

@@ -1,4 +1,10 @@
 #pragma once
+
+/**
+ * @file Window.hpp
+ * @brief Affichage 2D : permet d'encapsuler les informations nécessaires à la fenêtre graphique générée avec SDL.
+ */ 
+
 /**
  * @class Window pour permet d'encapsuler les informations nécessaires à la fenêtre graphique générée avec SDL
  */

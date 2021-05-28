@@ -1,5 +1,9 @@
 #pragma once
 
+/**
+ * @file Vector.hpp
+ * @brief Représente un Vecteur (3 coordonnées flottantes) et contient toutes les méthodes nécessaires au calcul vectoriel.
+ */
 class Vertex;
 
 class Vector {

@@ -1,13 +1,16 @@
 #pragma once
 
 /**
- * @file Issu du module de Rendering, sous-module (?) 
- * Rendering et Affichage des triangles
+ * @file Render.hpp
+ * @brief Module Affichage 2D, rendering et Affichage des triangles à l'écran via une pile de triangles à traiter actualisée à chaque tic
  */
 
 /*===========================================================================================
 	Render
 ===========================================================================================*/
+
+#define BNWfilter 1
+#define SOBELfilter 2
 
 class Render
 {
@@ -73,7 +76,25 @@ public:
 
 private:
 	// Rendering des triangles
-	void renderTriangles(const Window &window)
+	void renderTriangles(const Window &window, bool showMesh = false)
+	{
+		// render textures on surface
+		// signlethreaded version
+		toRender.shrink_to_fit();
+		const size_t size = toRender.size();
+		const Point2D<int> center(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2);
+		for (size_t i = 0; i < size; i++)
+		{
+			toRender[i]->visible = false;
+			if (toRender[i]->normalVec.dot(Camera::getCurrent().look) > 0.2)
+				continue;
+			toRender[i]->setScreenCoord(window, center, Camera::getCurrent());
+			// render triangle
+			toRender[i]->render(window, globalTexture, center, false, showMesh);
+		}
+	}
+	// Rendering des triangles
+	void renderTrianglesDepth(const Window& window, bool showMesh = false)
 	{
 		// render textures on surface
 		// signlethreaded version
@@ -86,7 +107,7 @@ private:
 				continue;
 			toRender[i]->setScreenCoord(window, center, Camera::getCurrent());
 			// render triangle
-			toRender[i]->render(window, globalTexture, center);
+			toRender[i]->render(window, globalTexture, center, true, showMesh);
 		}
 	}
 
@@ -97,7 +118,8 @@ public:
 		globalTexture.renderTexture(window.getRenderer(), topLeft, width, height, 0, 0);
 	}
 	// Rendering écran
-	void render(const Point2D<int> &topLeft, const int &width, const int &height, InputEvent &inputEvent, const Window &window, ShapeManager &manager)
+	void render(const Point2D<int> &topLeft, const int &width, const int &height, InputEvent &inputEvent, const Window &window, ShapeManager &manager,
+		int filter = 0, bool showDepth = false, bool showMesh = false)
 	{
 		if (Camera::currentExists())
 		{
@@ -114,13 +136,15 @@ public:
 			}
 			globalTexture.refreshZbuffer();
 			globalTexture.clearPixels();
-			renderTriangles(window);
-			//globalTexture.filterBnW();
+			if (showDepth)renderTrianglesDepth(window, showMesh);
+			else renderTriangles(window, showMesh);
+			if(filter == BNWfilter) globalTexture.filterBnW();
+			if (filter == SOBELfilter) globalTexture.linearTextureFilter();
 			globalTexture.updateTexture();
 			globalTexture.renderTexture(window.getRenderer(), topLeft, width, height, 0, 0);
 			// framerate.setNextTime(now);
 			// }
-			framerate.stabilizeCalculationAndRendering(60, &start);
+			//framerate.stabilizeCalculationAndRendering(60, &start);
 		}
 
 		//Wait(10);
@@ -150,7 +174,7 @@ public:
 		const Vertex xScreen = Camera::getCurrent().get2DWithoutPerspective(mx, clip, center, viewMatrix);
 		const Vertex yScreen = Camera::getCurrent().get2DWithoutPerspective(my, clip, center, viewMatrix);
 		const Vertex zScreen = Camera::getCurrent().get2DWithoutPerspective(mz, clip, center, viewMatrix);
-		Draw::DrawFillRoundedRectContoured(pos, size, size, 5, gray, black, window.getRenderer());
+		Draw::DrawFillRoundedRectContoured(pos, size, size, 5, Color(60, 60, 60), gray, window.getRenderer());
 		Draw::DrawLine(Point2D<int>(oScreen.x + pos.x + size / 2, oScreen.y + pos.y + size / 2), Point2D<int>(xScreen.x + pos.x + size / 2, xScreen.y + pos.y + size / 2), red, window.getRenderer());
 		Draw::DrawLine(Point2D<int>(oScreen.x + pos.x + size / 2, oScreen.y + pos.y + size / 2), Point2D<int>(yScreen.x + pos.x + size / 2, yScreen.y + pos.y + size / 2), green, window.getRenderer());
 		Draw::DrawLine(Point2D<int>(oScreen.x + pos.x + size / 2, oScreen.y + pos.y + size / 2), Point2D<int>(zScreen.x + pos.x + size / 2, zScreen.y + pos.y + size / 2), blue, window.getRenderer());

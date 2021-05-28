@@ -240,7 +240,7 @@ int main(int argc, char* argv[]) {
 	Texture2D LOGO("HM-Res/3DHomeProject.png", window.getRenderer());
 
 	r.updateTriangles(manager);
-	bool wbool = true;
+	bool wbool = true, meshbool = false, depthbool = false;
 	while (!(keyboard.ctrl.pressed && keyboard.q.down)) {
 		inputEvent.update();
 		r.updateTriangles(manager);
@@ -276,7 +276,12 @@ int main(int argc, char* argv[]) {
 
 		// if (Camera::getCurrent().locked) r.renderStatic(Point2D<int>(30,30),900,506, window);
 		// else r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager);
-		r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager);
+		if (meshbool)
+			r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager, 0, false, true);
+		else if (depthbool)
+			r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager, 0, true, false);
+		else
+			r.render(Point2D<int>(30,30),900,506, inputEvent, window, manager);
 		// Print camera position and angle
 		// std::cout<<Camera::getCurrent().getCameraPosition()<< " "<<Camera::getCurrent().angleX<<" "<<Camera::getCurrent().angleY<<std::endl;
 
@@ -337,6 +342,14 @@ int main(int argc, char* argv[]) {
 					editWallsVisibility(manager, wbool);
 					wbool = 1 - wbool;
 					manager.pushShapesEditing();
+				}
+				else if (keyboard.m.down)  {
+					meshbool = 1 - meshbool;
+					depthbool = 0;
+				}
+				else if (keyboard.d.down)  {
+					depthbool = 1 - depthbool;
+					meshbool = 0;
 				}
 				// else if (keyboard.F11.down) {
 				// 	window.ToggleWindow(window.getWidth(), window.getHeight());

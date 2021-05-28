@@ -1,11 +1,10 @@
 #pragma once
-/**
- * @file Module Affichage 2D
- */ 
 
-/** @brief class TextBox
- * La classe TextBox permet d'afficher du texte sous forme de texture directement sur la surface graphique.
- */
+ /**
+  * @file Textbox.hpp
+  * @brief Interaction Utilisateur : Permet d'afficher du texte sous forme de texture directement sur la surface graphique.
+  */
+
 class TextBox {
 	/*===========================================================================================
      *      ATTRIBUTS
