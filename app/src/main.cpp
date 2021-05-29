@@ -55,33 +55,33 @@ int main(int argc, char* argv[]) {
 	ButtonManager bm(inputEvent, window);
 
 	/**		Camera		**/
-	TextBox aovtb("angle of view : 60", "../fonts/calibri.ttf", 12, black, Point2D<int>(950, 30), window.getRenderer());
+	TextBox aovtb("angle of view : 60", "calibri.ttf", 12, black, Point2D<int>(950, 30), window.getRenderer());
 	DragBar aov(Point2D<int>(788, 30), 160, 11, 20, false);
 	aov.padPos = 81;
 
-	TextBox camcontroltb("camera-control : drag&drop / continuous", "../fonts/calibri.ttf", 12, black, Point2D<int>(800, 50), window.getRenderer());
+	TextBox camcontroltb("camera-control : drag&drop / continuous", "calibri.ttf", 12, black, Point2D<int>(800, 50), window.getRenderer());
 	bm.addCheckBox<Camera*>("dragndrop", dark_gray, gray, Point2D<int>(788, 50), 10);
 	bm.getButton<Camera*>("dragndrop").setAction([](Camera* cam) {if (cam->locked)cam->unlock(); else cam->lock(); }, &cam1);
 
-	TextBox lightxtb("light-source x : 0", "../fonts/calibri.ttf", 12, black, Point2D<int>(950, 70), window.getRenderer());
+	TextBox lightxtb("light-source x : 0", "calibri.ttf", 12, black, Point2D<int>(950, 70), window.getRenderer());
 	DragBar lightX(Point2D<int>(788, 70), 160, 11, 20, false);
-	TextBox lightytb("light-source y : 0", "../fonts/calibri.ttf", 12, black, Point2D<int>(950, 85), window.getRenderer());
+	TextBox lightytb("light-source y : 0", "calibri.ttf", 12, black, Point2D<int>(950, 85), window.getRenderer());
 	DragBar lightY(Point2D<int>(788, 85), 160, 11, 20, false);
-	TextBox lightztb("light-source z : 0", "../fonts/calibri.ttf", 12, black, Point2D<int>(950, 100), window.getRenderer());
+	TextBox lightztb("light-source z : 0", "calibri.ttf", 12, black, Point2D<int>(950, 100), window.getRenderer());
 	DragBar lightZ(Point2D<int>(788, 100), 160, 11, 20, false);
 
 	/**		Filter		**/
-	TextBox filtertb("black&white filter", "../fonts/calibri.ttf", 12, black, Point2D<int>(800, 150), window.getRenderer());
+	TextBox filtertb("black&white filter", "calibri.ttf", 12, black, Point2D<int>(800, 150), window.getRenderer());
 	int filter = 0;
 	bm.addCheckBox<int*>("bnw", dark_gray, gray, Point2D<int>(788, 150), 10);
 	bm.getButton<int*>("bnw").setAction([](int* filter) {if (*filter == BNWfilter)*filter = 0; else *filter = BNWfilter; }, &filter);
 
-	TextBox depthtb("z-buffer rendering", "../fonts/calibri.ttf", 12, black, Point2D<int>(800, 170), window.getRenderer());
+	TextBox depthtb("z-buffer rendering", "calibri.ttf", 12, black, Point2D<int>(800, 170), window.getRenderer());
 	bool renderDepth = false;
 	bm.addCheckBox<bool*>("renderD", dark_gray, gray, Point2D<int>(788, 170), 10);
 	bm.getButton<bool*>("renderD").setAction([](bool* renderD) {*renderD = !*renderD; }, &renderDepth);
 
-	TextBox showMeshtb("show mesh", "../fonts/calibri.ttf", 12, black, Point2D<int>(800, 190), window.getRenderer());
+	TextBox showMeshtb("show mesh", "calibri.ttf", 12, black, Point2D<int>(800, 190), window.getRenderer());
 	bool showMesh = false;
 	bm.addCheckBox<bool*>("showmesh", dark_gray, gray, Point2D<int>(788, 190), 10);
 	bm.getButton<bool*>("showmesh").setAction([](bool* showMesh) {*showMesh = !*showMesh; }, &showMesh);
@@ -100,29 +100,29 @@ int main(int argc, char* argv[]) {
 	bm.addRectTextButton<Camera*>("down", Point2D<int>(873, 265), 20, 20, "v");
 	bm.getButton<Camera*>("down").setAction([](Camera* cam) {cam->moveLockedCam(Vector(0, -1, 0)); }, &cam1);
 
-	TextBox anglextb("x-angle : ", "../fonts/calibri.ttf", 12, black, Point2D<int>(903, 235), window.getRenderer());
+	TextBox anglextb("x-angle : ", "calibri.ttf", 12, black, Point2D<int>(903, 235), window.getRenderer());
 	DragBar anglexbar(Point2D<int>(903, 245), 160, 11, 20, false);
 	anglexbar.padPos = 105;
-	TextBox angleytb("y-angle : ", "../fonts/calibri.ttf", 12, black, Point2D<int>(903, 265), window.getRenderer());
+	TextBox angleytb("y-angle : ", "calibri.ttf", 12, black, Point2D<int>(903, 265), window.getRenderer());
 	DragBar angleybar(Point2D<int>(903, 275), 160, 11, 20, false);
 	angleybar.padPos = 70;
 
 	/**		Matrix		**/
-	TextBox viewmatrixtb("view-matrix", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 324), window.getRenderer());
-	TextBox viewmatrixtbr1("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 339), window.getRenderer());
-	TextBox viewmatrixtbr2("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 349), window.getRenderer());
-	TextBox viewmatrixtbr3("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 359), window.getRenderer());
-	TextBox viewmatrixtbr4("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(788, 369), window.getRenderer());
+	TextBox viewmatrixtb("view-matrix", "calibri.ttf", 12, black, Point2D<int>(788, 324), window.getRenderer());
+	TextBox viewmatrixtbr1("test", "calibri.ttf", 12, black, Point2D<int>(788, 339), window.getRenderer());
+	TextBox viewmatrixtbr2("test", "calibri.ttf", 12, black, Point2D<int>(788, 349), window.getRenderer());
+	TextBox viewmatrixtbr3("test", "calibri.ttf", 12, black, Point2D<int>(788, 359), window.getRenderer());
+	TextBox viewmatrixtbr4("test", "calibri.ttf", 12, black, Point2D<int>(788, 369), window.getRenderer());
 
-	TextBox projmatrixtb("projection-matrix", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 324), window.getRenderer());
-	TextBox projmatrixtbr1("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 339), window.getRenderer());
-	TextBox projmatrixtbr2("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 349), window.getRenderer());
-	TextBox projmatrixtbr3("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 359), window.getRenderer());
-	TextBox projmatrixtbr4("test", "../fonts/calibri.ttf", 12, black, Point2D<int>(938, 369), window.getRenderer());
+	TextBox projmatrixtb("projection-matrix", "calibri.ttf", 12, black, Point2D<int>(938, 324), window.getRenderer());
+	TextBox projmatrixtbr1("test", "calibri.ttf", 12, black, Point2D<int>(938, 339), window.getRenderer());
+	TextBox projmatrixtbr2("test", "calibri.ttf", 12, black, Point2D<int>(938, 349), window.getRenderer());
+	TextBox projmatrixtbr3("test", "calibri.ttf", 12, black, Point2D<int>(938, 359), window.getRenderer());
+	TextBox projmatrixtbr4("test", "calibri.ttf", 12, black, Point2D<int>(938, 369), window.getRenderer());
 
 	/**		Shapes		**/
-	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth1", 0.001);
-	manager.imprtShapeObj(std::string("OBJ/Earth/"), "Earth.obj", "earth2", 0.001);
+	manager.imprtShapeObj("OBJ/Earth/", "Earth.obj", "earth1", 0.001);
+	manager.imprtShapeObj("OBJ/Earth/", "Earth.obj", "earth2", 0.001);
 	manager.getShape("earth2").move(Vector(10, 0, 25));
 
 

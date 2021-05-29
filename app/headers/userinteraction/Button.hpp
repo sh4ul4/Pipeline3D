@@ -184,13 +184,13 @@ public:
 	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const std::string& text, const Window& window,
 		const size_t DRAWTYPE = DRAWFILLCONTOURRECT)
 		: Button<paramType>(name, nullptr, dark_gray, Color(30,30,30),
-			new TextBox(text, "fonts/Segoe UI.ttf", 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
+			new TextBox(text, "Segoe UI.ttf", 14, light_gray, Point2D<int>(0, 0), window.getRenderer())),
 		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
 
 	RectTextButton(const std::string& name, const Point2D<int>& pos, const int& width, const int& height, const Color& bgCol, const Color& contCol, const std::string& text, const int fontsize, const Color& textCol, const Window& window,
 		const size_t DRAWTYPE = DRAWFILLCONTOURRECT)
 		: Button<paramType>(name, nullptr, bgCol, contCol,
-			new TextBox(text, "fonts/Segoe UI.ttf", fontsize, textCol, Point2D<int>(0, 0), window.getRenderer())),
+			new TextBox(text, "Segoe UI.ttf", fontsize, textCol, Point2D<int>(0, 0), window.getRenderer())),
 		pos(pos), width(width), height(height), DRAWTYPE(DRAWTYPE) {}
 
 	RectTextButton() = delete;
