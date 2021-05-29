@@ -121,11 +121,14 @@ public:
 	 * Vecteur du chemin qui peut être utilisé pour bouger la camera.
 	 */
 	std::vector<Vertex> path;
+	std::vector<float> anglesx;
+	std::vector<float> anglesy;
 	/**
 	 * Une variable publique.
 	 * Vitesse de mouvement de la camera pendant qu'elle suit le chemin.
 	 */
 	int pathMoveSpeed = 1;
+	float angleMoveSpeed = 0.01;
 
 	Vector look{ 0,0,0 };
 
@@ -199,6 +202,12 @@ public:
 	 */
 	void addToPath(const Vertex& v) {
 		path.push_back(v);
+	}
+
+	void addToPath(const Vertex& v, float angleX, float angleY) {
+		path.push_back(v);
+		anglesx.push_back(angleX);
+		anglesy.push_back(angleY);
 	}
 
 	static Matrix<4, 4> makeFPviewMatrix(const Vertex& eye, const float& pitch, const float& yaw) {
@@ -300,7 +309,7 @@ public:
 	 * @return
 	 */
 	void moveCameraPreCalculated(const Vector& v) {
-		if (locked)return;
+		if (locked && path.size() == 0)return;
 		if (hasSubject) subject += v;
 		else pos += v;
 	}
@@ -476,23 +485,38 @@ public:
 				angleX += sensitivity * (float)(mouse.x - frame.getWidth() * 0.5);
 				angleY += sensitivity * (float)(mouse.y - frame.getHeight() * 0.5);
 			}
-			
-			if (path.size() > 0 && current == this) {
-				Vector direction(path[0].x - pos.x, path[0].y - pos.y, path[0].z - pos.z); // goal - start
-				if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal
-					for (size_t i = 0; i < path.size() - 1; i++) {
-						path[i] = path[i + 1];
-					}path.pop_back();
-				}
-				else {
-					direction.normalizeOnLength(pathMoveSpeed);
-					// move
-					moveCameraPreCalculated(direction);
-					//subject += direction;
-				}
-			}
 		}
 		else SDL_ShowCursor(true);
+		if (anglesx.size() > 0 && current == this) {
+			if (anglesx[0] < angleX - angleMoveSpeed)angleX -= angleMoveSpeed;
+			else if (anglesx[0] > angleX + angleMoveSpeed)angleX += angleMoveSpeed;
+			else {
+				for (size_t i = 0; i < anglesx.size() - 1; i++) {
+					anglesx[i] = anglesx[i + 1];
+				}anglesx.pop_back();
+			}
+		}
+		if (anglesy.size() > 0 && current == this) {
+			if (anglesy[0] < angleY - angleMoveSpeed)angleY -= angleMoveSpeed;
+			else if (anglesy[0] > angleY + angleMoveSpeed)angleY += angleMoveSpeed;
+			else {
+				for (size_t i = 0; i < anglesy.size() - 1; i++) {
+					anglesy[i] = anglesy[i + 1];
+				}anglesy.pop_back();
+			}
+		}
+		if (path.size() > 0 && current == this) {
+			Vector direction(path[0].x - pos.x, path[0].y - pos.y, path[0].z - pos.z); // goal - start
+			if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal
+				for (size_t i = 0; i < path.size() - 1; i++) {
+					path[i] = path[i + 1];
+				}path.pop_back();
+			}
+			else {
+				direction.normalizeOnLength(pathMoveSpeed);
+				moveCameraPreCalculated(direction); // move
+			}
+		}
 		angleX = clampAngleX(angleX);
 		angleY = clampAngleY(angleY);
 		if (hasSubject && !locked) {

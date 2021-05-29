@@ -9,6 +9,24 @@ std::string stdstrprec(const T a_value, const int n = 2)
 	return out.str();
 }
 
+namespace cinematic {
+	bool playing;
+	Uint32 start_t;
+	Uint32 stop_t;
+	Uint32 duration_t;
+	void start() {
+		start_t = SDL_GetTicks();
+		playing = true;
+	}
+	void stop() {
+		stop_t = SDL_GetTicks();
+	}
+	void play() {
+		if (!playing)return;
+
+	}
+}
+
 int main(int argc, char* argv[]) {
 	Window window(1100, 550);
 	InputEvent inputEvent;
@@ -20,6 +38,18 @@ int main(int argc, char* argv[]) {
 	cam1.lightIntensity = 0.6;
 	cam1.setControlDragAndDrop();
 
+	cam1.angleMoveSpeed = 0.02;
+	cam1.addToPath(Vertex(-12, 3, -22), 0.055,3.17);
+	cam1.addToPath(Vertex(11, 3, -29), -0.2, 3.23);
+	cam1.addToPath(Vertex(45, 4, -13), -0.977, 3.214);
+
+	cam1.addToPath(Vertex(11, 3, -29), -0.2, 3.23);
+	cam1.addToPath(Vertex(45, 4, -13), -0.977, 3.214);
+
+	cam1.addToPath(Vertex(-12, 3, -22), 0.055, 3.17);
+	cam1.addToPath(Vertex(11, 3, -29), -0.2, 3.23);
+	cam1.addToPath(Vertex(45, 4, -13), -0.977, 3.214);
+	
 	TextBox::initLibrary();
 	Render r(window, 758, 464);
 	ButtonManager bm(inputEvent, window);
@@ -148,13 +178,13 @@ int main(int argc, char* argv[]) {
 		/*Movement*/
 		Draw::DrawFillContouredRect(Point2D<int>(788, 237) - 4, 300, 60, 2, Color(70, 70, 70), gray, window.getRenderer());
 
-		cam1.angleX = -M_PI + anglexbar.normalizedPadPos * 4*M_PI;
+		//cam1.angleX = -M_PI + anglexbar.normalizedPadPos * 4*M_PI;
 		anglextb.update("x-angle : " + std::to_string(cam1.angleX), window.getRenderer());
 		anglextb.render(window.getRenderer());
 		anglexbar.check(inputEvent, Point2D<int>(0, 0));
 		anglexbar.render(window.getRenderer());
 
-		cam1.angleY = -M_PI + angleybar.normalizedPadPos * 4*M_PI;
+		//cam1.angleY = -M_PI + angleybar.normalizedPadPos * 4*M_PI;
 		angleytb.update("y-angle : " + std::to_string(cam1.angleY), window.getRenderer());
 		angleytb.render(window.getRenderer());
 		angleybar.check(inputEvent, Point2D<int>(0, 0));
@@ -209,6 +239,7 @@ int main(int argc, char* argv[]) {
 
 		window.RenderScreen();
 		window.FillScreen(dark_gray);
+		//std::cout << Camera::getCurrent().getCameraPosition() << std::endl;
 	}
 	return 0;
 }
