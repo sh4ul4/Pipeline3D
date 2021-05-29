@@ -27,39 +27,39 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_I
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
 
-set(SRCS	src/main.cpp)
+set(SRCS	app/src/main.cpp)
 
 # add_compile_options(-Wall -g)
 
-set(HEADERS headers/rasterization/Bitmap.hpp
-			headers/geometry/Camera.hpp
-			headers/display/Chrono.hpp
-			headers/display/Color.hpp
-			headers/display/Draw.hpp
-			headers/userinteraction/ErrorsHandler.hpp
-			headers/display/FrameRate.hpp
-			headers/rasterization/GlobalTexture.hpp
-			headers/headers.hpp
-			headers/userinteraction/InputEvent.hpp
-			headers/userinteraction/Keyboard.hpp
-			headers/geometry/Maths.hpp
-			headers/geometry/Matrix.hpp
-			headers/userinteraction/Mouse.hpp
-			headers/geometry/Physics.hpp
-			headers/geometry/Point.hpp
-			headers/display/Render.hpp
-			headers/geometry/Shape.hpp
-			headers/geometry/ShapeManager.hpp
-			headers/userinteraction/TextBox.hpp
-			headers/userinteraction/TextInput.hpp
-			headers/display/Texture.hpp
-			headers/rasterization/TextureManager.hpp
-			headers/geometry/Triangle.hpp
-			headers/geometry/Vector.hpp
-			headers/geometry/Vertex.hpp
-			headers/display/Window.hpp
-			headers/userinteraction/Button.hpp
-			headers/userinteraction/ScrollArea.hpp
+set(HEADERS app/headers/rasterization/Bitmap.hpp
+			app/headers/geometry/Camera.hpp
+			app/headers/display/Chrono.hpp
+			app/headers/display/Color.hpp
+			app/headers/display/Draw.hpp
+			app/headers/userinteraction/ErrorsHandler.hpp
+			app/headers/display/FrameRate.hpp
+			app/headers/rasterization/GlobalTexture.hpp
+			app/headers/headers.hpp
+			app/headers/userinteraction/InputEvent.hpp
+			app/headers/userinteraction/Keyboard.hpp
+			app/headers/geometry/Maths.hpp
+			app/headers/geometry/Matrix.hpp
+			app/headers/userinteraction/Mouse.hpp
+			app/headers/geometry/Physics.hpp
+			app/headers/geometry/Point.hpp
+			app/headers/display/Render.hpp
+			app/headers/geometry/Shape.hpp
+			app/headers/geometry/ShapeManager.hpp
+			app/headers/userinteraction/TextBox.hpp
+			app/headers/userinteraction/TextInput.hpp
+			app/headers/display/Texture.hpp
+			app/headers/rasterization/TextureManager.hpp
+			app/headers/geometry/Triangle.hpp
+			app/headers/geometry/Vector.hpp
+			app/headers/geometry/Vertex.hpp
+			app/headers/display/Window.hpp
+			app/headers/userinteraction/Button.hpp
+			app/headers/userinteraction/ScrollArea.hpp
 			)
 
 

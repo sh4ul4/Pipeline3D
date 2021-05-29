@@ -74,12 +74,3 @@
 #include "userinteraction/Button.hpp"
 
 #include "userinteraction/ScrollArea.hpp"
-
-#include "Furniture.hpp"
-#include "HomeDesign.hpp"
-
-#include "Luminary.hpp"
-#include "Planet.hpp"
-#include "Star.hpp"
-#include "Cinematic.hpp"
-#include "starSystem.hpp"
