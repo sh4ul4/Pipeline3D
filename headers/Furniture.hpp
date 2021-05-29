@@ -237,8 +237,8 @@ static void furnitureInsertion(insertPack *ip)  {
                 (*ip->furnitures).push_back(new Furniture(ip->name, "Micro-onde", "HM-Res/furnitures/microOnde/", "microOnde.obj", 0, ip->scale));
                 break;
             case 5: // Table en bois 
-                (*ip->manager).imprtShapeObj(std::string("OBJ/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
-                (*ip->furnitures).push_back(new Furniture(ip->name, "Table en bois", "OBJ/woodtable/", "Wood_Table.obj", 0, ip->scale));
+                (*ip->manager).imprtShapeObj(std::string("HM-Res/furnitures/woodtable/"), "Wood_Table.obj", ip->name, ip->scale);
+                (*ip->furnitures).push_back(new Furniture(ip->name, "Table en bois", "HM-Res/furnitures/woodtable/", "Wood_Table.obj", 0, ip->scale));
                 // (*ip->manager).getShape(ip->name).groundZero();
                 break;
             default:
