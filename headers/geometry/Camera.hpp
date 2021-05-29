@@ -478,7 +478,7 @@ public:
 			}
 			
 			if (path.size() > 0 && current == this) {
-				Vector direction(path[0].x - subject.x, path[0].y - subject.y, path[0].z - subject.z); // goal - start
+				Vector direction(path[0].x - pos.x, path[0].y - pos.y, path[0].z - pos.z); // goal - start
 				if (direction.x + direction.y + direction.z < 5 && direction.x + direction.y + direction.z > -5) { // hit goal
 					for (size_t i = 0; i < path.size() - 1; i++) {
 						path[i] = path[i + 1];
@@ -487,7 +487,8 @@ public:
 				else {
 					direction.normalizeOnLength(pathMoveSpeed);
 					// move
-					subject += direction;
+					moveCameraPreCalculated(direction);
+					//subject += direction;
 				}
 			}
 		}
