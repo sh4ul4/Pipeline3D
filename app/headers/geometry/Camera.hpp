@@ -127,7 +127,7 @@ public:
 	 * Une variable publique.
 	 * Vitesse de mouvement de la camera pendant qu'elle suit le chemin.
 	 */
-	int pathMoveSpeed = 1;
+	float pathMoveSpeed = 1;
 	float angleMoveSpeed = 0.01;
 
 	Vector look{ 0,0,0 };
