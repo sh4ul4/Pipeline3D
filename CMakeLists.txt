@@ -1,15 +1,19 @@
 ﻿# CMakeList.txt : projet CMake pour Pipeline3d, incluez la source et définissez
 # la logique spécifique au projet ici.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.9)
 
 project ("Pipeline3d")
+
+project(Pipeline3d LANGUAGES CUDA CXX)
+
+enable_language(CUDA) 
 
 # Utiliser C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
+find_package(CUDA 10.1 REQUIRED)
 
 if (WIN32)
 	list(APPEND CMAKE_PREFIX_PATH ./SDL)
@@ -24,12 +28,21 @@ else()
 	pkg_check_modules(SDL2 REQUIRED sdl2 SDL2_ttf SDL2_mixer SDL2_image)
 endif()
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES( ${CUDA_INCLUDE_DIRS})
+
+#SET(GCC_COVERAGE_COMPILE_FLAGS "--expt-relaxed-constexpr")
+#SET(GCC_COVERAGE_LINK_FLAGS    "--expt-relaxed-constexpr")
+
+#SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
+# SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
 
-set(SRCS	app/src/main.cpp)
+set(SRCS	"app/src/main.cu")
 
-# add_compile_options(-Wall -g)
+#add_compile_options(--expt-relaxed-constexpr)
+#set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr")
+#set( CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS}" "--expt-relaxed-constexpr" )
 
 set(HEADERS app/headers/rasterization/Bitmap.hpp
 			app/headers/geometry/Camera.hpp
@@ -69,7 +82,10 @@ add_executable (Pipeline3d  ${SRCS} ${HEADERS})
 
 target_include_directories(Pipeline3d PRIVATE headers)
 
-target_link_libraries(Pipeline3d ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+target_link_libraries(Pipeline3d ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${CUDA_INCLUDE_DIRS})
+
+set_target_properties( Pipeline3d
+                       PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 
 if (WIN32)

@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _CUDA
+#include "../display/Cuda.cu"
+#endif
+
 /**
  * @file Bitmap.hpp
  * @brief La classe Bitmap permet de contenir les données d'une bitmap graphique et de simplifier sa création.
@@ -10,6 +14,10 @@
  */
 class Bitmap {
 public:
+
+#ifdef _CUDA
+	Uint32* pixels_dev;
+#endif
 
 	/**
 	 * @brief Contient les bitmaps créées avec la fonction newBitmap().
@@ -68,6 +76,11 @@ public:
 		const char* error_f = SDL_GetError();
 		if (*error_f) { std::cout << "Error occured in Bitmap(): " << error_f << std::endl; }
 		if (surface == nullptr) { std::cout << "ERROR : surface conversion.\n"; exit(1); }
+
+#ifdef _CUDA
+		gpuErrchk(cudaMalloc((void**)&pixels_dev, surface->w * surface->h * sizeof(Uint32)));
+		cudaMemcpy(pixels_dev, (Uint32*)surface->pixels, surface->h * surface->w * sizeof(Uint32), cudaMemcpyHostToDevice);
+#endif
 	}
 
 	/**
@@ -111,6 +124,9 @@ public:
 	~Bitmap() {
 		SDL_UnlockSurface(surface);
 		SDL_FreeSurface(surface);
+#ifdef _CUDA
+		cudaFree(pixels_dev);
+#endif
 	}
 };
 

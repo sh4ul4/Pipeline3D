@@ -85,6 +85,8 @@ public:
 		}
 	}
 
+#ifndef _CUDA_DEBUG
+
 	// rasteriser et colorier un triangle avec une texture tout en respectant la perspective
 	static inline void rasterize(const Bitmap& bmp,
 		const Point2D<int>& triA, const Point2D<int>& triB, const Point2D<int>& triC,
@@ -168,6 +170,49 @@ public:
 			}
 		}
 	}
+
+#else
+	static inline void _device_hostGlobal(GlobalTexture& globalTexture) {
+		gpuErrchk(cudaMemcpy(globalTexture.pixels.data(), globalTexture.pixels_dev, globalTexture.pixels.size() * sizeof(Uint32), cudaMemcpyDeviceToHost));
+		gpuErrchk(cudaMemcpy(globalTexture.zbuffer, globalTexture.zbuf_dev, globalTexture.pixels.size() * sizeof(float), cudaMemcpyDeviceToHost));
+	}
+	static inline void _host_deviceGlobal(GlobalTexture& globalTexture) {
+		gpuErrchk(cudaMemcpy(globalTexture.pixels_dev, globalTexture.pixels.data(), globalTexture.pixels.size() * sizeof(Uint32), cudaMemcpyHostToDevice));
+		gpuErrchk(cudaMemcpy(globalTexture.zbuf_dev, globalTexture.zbuffer, globalTexture.pixels.size() * sizeof(float), cudaMemcpyHostToDevice));
+	}
+
+	static inline void rasterize(const Bitmap& bmp,
+		const Point2D<int>& triA, const Point2D<int>& triB, const Point2D<int>& triC,
+		const Point2D<int>& bmpA, const Point2D<int>& bmpB, const Point2D<int>& bmpC,
+		const float& depthA, const float& depthB, const float& depthC,
+		GlobalTexture& globalTexture, const float lightIntensity, const Color& lightColor) {
+		// setup initial values
+		const int srcw = bmp.surface->w;
+		const int srch = bmp.surface->h;
+		const int dstw = globalTexture.getWidth();
+		const int dsth = globalTexture.getHeight();
+		// bounding box + clipping
+		Point2D<int> min(std::min(triA.x, std::min(triB.x, triC.x)), std::min(triA.y, std::min(triB.y, triC.y)));
+		Point2D<int> max(std::max(triA.x, std::max(triB.x, triC.x)), std::max(triA.y, std::max(triB.y, triC.y)));
+		min.x = std::max(min.x, 0);
+		min.y = std::max(min.y, 0);
+		max.x = std::min(max.x, dstw);
+		max.y = std::min(max.y, dsth);
+		// pre calculate values
+		const float depthABC = depthA * depthB * depthC;
+		// pixel mapping loop
+		int size = (max.x - min.x) * (max.y - min.y);
+		int threadsPerBlock = 256;
+		int blocksPerGrid = (size + threadsPerBlock - 1) / threadsPerBlock;
+		rasterizeCuda<<<threadsPerBlock, blocksPerGrid >>>( size,
+			min.x, min.y, max.x, max.y,
+			triA.x, triA.y, triB.x, triB.y, triC.x, triC.y,
+			bmpA.x, bmpA.y, bmpB.x, bmpB.y, bmpC.x, bmpC.y,
+			globalTexture.pixels_dev, bmp.pixels_dev, globalTexture.zbuf_dev, srcw, dstw, srch, dsth,
+			lightIntensity, lightColor.r, lightColor.g, lightColor.b,
+			depthA, depthB, depthC, depthABC);
+	}
+#endif // !_CUDA
 
 	// rasteriser et colorier un triangle avec une texture tout en respectant la perspective
 	static inline void rasterizeDepth(const Bitmap& bmp,

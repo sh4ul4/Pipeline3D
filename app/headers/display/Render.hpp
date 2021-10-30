@@ -19,6 +19,11 @@ class Render
 
 	// Prochain triangle à render
 	std::vector<Triangle *> toRender;
+#ifdef _CUDA_DEBUG
+	bool* clipValue;
+	float*** m;
+	float** res;
+#endif
 
 	// nombre de shapes incluses après la dernière mise-à-jour de toRender
 	size_t shapesNumber = 0;
@@ -75,8 +80,41 @@ public:
 	}
 
 private:
+#ifdef _CUDA
+	void renderTriangles(const Window& window, bool showMesh = false)
+	{
+		// render textures on surface
+		toRender.shrink_to_fit();
+		const Point2D<int> center(globalTexture.getWidth() / 2, globalTexture.getHeight() / 2);
+		for (size_t i = 0; i < toRender.size(); i++)
+		{
+			toRender[i]->visible = false;
+			if (toRender[i]->normalVec.dot(Camera::getCurrent().look) > 0.2)
+				continue;
+			if (toRender[i]->normalVec.dot(Camera::getCurrent().look) > 0.2) {
+				toRender[i]->rendered = false;
+			}else toRender[i]->rendered = true;
+		}
+		setScreenCoord(window, center, Camera::getCurrent(), toRender);
+#ifdef _CUDA_DEBUG
+		if (!showMesh) TextureManager::_host_deviceGlobal(globalTexture);
+#endif // _CUDA_DEBUG
+
+		for (size_t i = 0; i < toRender.size(); i++)
+		{
+			// render triangle
+			/*if (toRender[i]->normalVec.dot(Camera::getCurrent().look) > 0.2)
+				continue;*/
+			if (toRender[i]->rendered == false || !toRender[i]->visible)continue;
+			toRender[i]->render(window, globalTexture, center, false, showMesh);
+		}
+#ifdef _CUDA_DEBUG
+		if (!showMesh) TextureManager::_device_hostGlobal(globalTexture);
+#endif // _CUDA_DEBUG
+	}
+#else
 	// Rendering des triangles
-	void renderTriangles(const Window &window, bool showMesh = false)
+	void renderTriangles(const Window& window, bool showMesh = false)
 	{
 		// render textures on surface
 		// signlethreaded version
@@ -87,12 +125,13 @@ private:
 		{
 			toRender[i]->visible = false;
 			if (toRender[i]->normalVec.dot(Camera::getCurrent().look) > 0.2)
-				continue;
+				;// continue;
 			toRender[i]->setScreenCoord(window, center, Camera::getCurrent());
 			// render triangle
 			toRender[i]->render(window, globalTexture, center, false, showMesh);
 		}
 	}
+#endif
 	// Rendering des triangles
 	void renderTrianglesDepth(const Window& window, bool showMesh = false)
 	{

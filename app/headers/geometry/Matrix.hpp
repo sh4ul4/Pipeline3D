@@ -1,4 +1,9 @@
 #pragma once
+
+#ifdef _CUDA
+#include "../display/Cuda.cu"
+#endif
+
 /**
  * @file Matrix.hpp
  * @brief Module mathématiques : La classe Matrix permett de manipuler et calculer avec des matrices de tailles diverses nécessaires dans la pipeline 
@@ -11,6 +16,27 @@ public:
 
     float get(const int& row, const int& column) {
         return m[row][column];
+    }
+
+    float* generateArray() {
+        float* res_host = new float[16];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                res_host[i * 4 + j] = m[i][j];
+            }
+        }
+        float* res_dev = nullptr;
+        if (cudaMalloc((void**)&res_dev, 4 * 4 * sizeof(float)) != cudaSuccess) std::cout << "problem" << std::endl;//exit(10);
+        cudaMemcpy(res_dev, res_host, 4 * 4 * sizeof(float), cudaMemcpyHostToDevice);
+        /*for (int i = 0; i < 4; i++) {
+            delete[] res_host[i];
+        }*/
+        delete[] res_host;
+        return res_dev;
+    }
+
+    void deleteArray(float* arr) {
+        cudaFree(arr);
     }
 
     void set(const int& row, const int& column, const float& value) {
@@ -267,6 +293,17 @@ inline Matrix<4, 4> optimizedProduct(const Matrix<4, 4>& m1, const Matrix<4, 4>&
     res.m[0][1] = m1.m[0][0] * m2.m[0][1] + m1.m[0][1] * m2.m[1][1] + m1.m[0][2] * m2.m[2][1] + m2.m[3][1];
     res.m[0][2] = m1.m[0][0] * m2.m[0][2] + m1.m[0][1] * m2.m[1][2] + m1.m[0][2] * m2.m[2][2] + m2.m[3][2];
     res.m[0][3] = m1.m[0][0] * m2.m[0][3] + m1.m[0][1] * m2.m[1][3] + m1.m[0][2] * m2.m[2][3] + m2.m[3][3];
+    return res;
+}
+
+inline Matrix<4, 4> transpose(const Matrix<4, 4>& m1) {
+    Matrix<4, 4> tmp(m1);
+    Matrix<4, 4> res;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            res.m[i][j] = tmp.m[j][i];
+        }
+    }
     return res;
 }
 

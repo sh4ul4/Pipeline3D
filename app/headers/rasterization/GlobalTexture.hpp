@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _CUDA
+#include "../display/Cuda.cu"
+#endif
+
 /**
  * @file GlobalTexture.hpp
  * @brief Permet de contenir et mettre à jour la frame en bout de Pipeline.
@@ -10,7 +14,11 @@
  */
 class GlobalTexture {
 
-private:
+public:
+#ifdef _CUDA
+	Uint32* pixels_dev; // pixel-buffer on device-global memory
+	float* zbuf_dev; // depth-buffer on device-global memory
+#endif
 
 	// largeur de la bitmap
 	size_t width;
@@ -65,6 +73,10 @@ public:
 		pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB32);
 		const char* error_f = SDL_GetError();
 		if (*error_f) { std::cout << "Error occured in Texture(): " << error_f << std::endl; }
+#ifdef _CUDA
+		gpuErrchk(cudaMalloc((void**)&pixels_dev, pixels.size() * sizeof(Uint32)));
+		gpuErrchk(cudaMalloc((void**)&zbuf_dev, pixels.size() * sizeof(float)));
+#endif
 	}
 
 	/**	@brief ~GlobalTexture
@@ -81,6 +93,10 @@ public:
 		SDL_FreeFormat(pixelFormat);
 		const char* error_f = SDL_GetError();
 		if (*error_f) { std::cout << "Error occured in ~Texture(): " << error_f << std::endl; }
+#ifdef _CUDA
+		cudaFree(pixels_dev);
+		cudaFree(zbuf_dev);
+#endif
 	}
 
 	// renvoyer la valeur du zbuffer correspondant à la position demandée
@@ -229,10 +245,18 @@ public:
 	}
 
 	void filterBnW() {
+#ifdef _CUDA
+		cudaMemcpy(pixels_dev, pixels.data(), pixels.size() * sizeof(Uint32), cudaMemcpyHostToDevice);
+		int threadsPerBlock = 128;
+		int blocksPerGrid = (pixels.size() + threadsPerBlock - 1) / threadsPerBlock;
+		bnw<<<blocksPerGrid, threadsPerBlock>>>(pixels.size(), pixels_dev);
+		cudaMemcpy(pixels.data(), pixels_dev, pixels.size() * sizeof(Uint32), cudaMemcpyDeviceToHost);
+#else
 		for (Uint32& p : pixels) {
 			const Uint8 grayscale = ((Uint8)(p >> 8) + (Uint8)(p >> 16) + (Uint8)(p >> 24)) / 3;
 			p = (grayscale << 24) + (grayscale << 16) + (grayscale << 8) + (Uint8)p;
 		}
+#endif
 	}
 
 	void linearTextureFilter() {
